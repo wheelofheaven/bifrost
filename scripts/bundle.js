@@ -19,6 +19,7 @@ const OUT_DIR = path.join(__dirname, '../static/js/dist');
 const bundles = {
   'core.bundle.js': [
     'vendor/fuse.min.js',  // Fuse.js search library (self-hosted)
+    'vendor/fuse-global.js',  // Expose Fuse globally after UMD load
     'navbar.js',
     'navbar-mobile-toggle.js',
     'search.js',
