@@ -26,6 +26,7 @@ const bundles = {
     'pwa.js',
     'toc-scroll-spy.js',
     'to-top.js',
+    'prefetch.js',  // Prefetch links on hover for instant navigation
   ],
   'library.bundle.js': [
     'library-storage.js',
