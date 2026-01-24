@@ -1,0 +1,21 @@
+<figure class="figure">
+    {% set cdn_url = config.extra.cdn_url | default(value="") %}
+    {% set img_src = src | default(value="") %}
+    {% if cdn_url and not img_src is starting_with("http") %}
+        {% set full_src = cdn_url ~ "/images/" ~ img_src %}
+    {% else %}
+        {% set full_src = "/images/" ~ img_src %}
+    {% endif %}
+    <picture>
+        <source srcset="{{ full_src }}.avif" type="image/avif">
+        <source srcset="{{ full_src }}.webp" type="image/webp">
+        <img src="{{ full_src }}.jpg"
+             alt="{{ alt | default(value=caption | default(value='')) }}"
+             loading="lazy"
+             decoding="async"
+             class="figure__image">
+    </picture>
+    {% if caption %}
+    <figcaption class="figure__caption">{{ caption }}</figcaption>
+    {% endif %}
+</figure>
