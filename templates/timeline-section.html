@@ -202,7 +202,7 @@ load_data(path="data/ages.json") %}
     {% endfor %}
 </div>
 
-<script src="/js/timeline.js"></script>
+<script src="{{ get_url(path='js/dist/timeline.bundle.js') }}"></script>
 <script>
 // Space overlay detection for light theme readability
 (function() {
