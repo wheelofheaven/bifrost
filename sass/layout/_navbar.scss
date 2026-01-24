@@ -196,10 +196,7 @@ body.mobile-nav-open {
     }
 
     &__search {
-        position: absolute;
-        right: 14.5rem; // Position to left of language switcher, theme toggle, and Ask AI
-        top: 50%;
-        transform: translateY(-50%);
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: flex-end;
@@ -244,7 +241,9 @@ body.mobile-nav-open {
 
         // Expand search input when modal is open
         .search-modal-open & {
+            position: absolute;
             left: 5rem; // Extend toward logo
+            right: 0;
 
             .navbar__search-input {
                 width: 100%;

@@ -1,0 +1,29 @@
+// critical.scss
+//
+// Critical CSS for above-the-fold rendering.
+// This is inlined in the <head> to prevent render blocking.
+// Keep this minimal - only styles needed before first paint.
+
+// Core abstracts (variables, colors, mixins)
+@use "abstracts/colors";
+@use "abstracts/variables";
+@use "abstracts/functions";
+@use "abstracts/mixins";
+
+// Reset and base typography
+@use "base/reset";
+@use "base/typography";
+@use "base/base";
+
+// Theme system (required for color scheme)
+@use "themes/init";
+@use "themes/light";
+@use "themes/dark";
+
+// Layout essentials
+@use "layout/navbar";
+@use "layout/header";
+@use "layout/grid";
+
+// Landing page hero (above-fold on homepage)
+@use "pages/home";

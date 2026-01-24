@@ -1,12 +1,21 @@
 {% extends "base.html" %}
-{% import "macros/image.html" as img %}
 
 {% block content %}
 <div class="landing">
     <!-- Hero: Full-bleed immersive opening -->
     <section class="landing-hero">
         <div class="landing-hero__media">
-            {{ img::hero(path="hero-genesis", alt="Ancient stargazers contemplating the cosmos", class="landing-hero__image") }}
+            <picture>
+                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.avif" type="image/avif">
+                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.webp" type="image/webp">
+                <img
+                    src="{{ config.extra.cdn_url }}/images/hero/hero-genesis.webp"
+                    alt="Ancient stargazers contemplating the cosmos"
+                    class="landing-hero__image"
+                    loading="eager"
+                    fetchpriority="high"
+                />
+            </picture>
             <div class="landing-hero__overlay"></div>
         </div>
 

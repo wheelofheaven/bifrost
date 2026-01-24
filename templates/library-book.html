@@ -603,10 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 
-<!-- Library Reader Scripts -->
-<script src="{{ get_url(path='js/library-storage.js') }}"></script>
-<script src="{{ get_url(path='js/library-reader.js') }}"></script>
-<script src="{{ get_url(path='js/library-study-tools.js') }}"></script>
-<script src="{{ get_url(path='js/library-search.js') }}"></script>
+<!-- Library Reader Scripts (bundled) -->
+<script src="{{ get_url(path='js/dist/library.bundle.js') }}"></script>
 
 {% endblock content %}

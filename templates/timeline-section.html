@@ -3,7 +3,11 @@ load_data(path="data/ages.json") %}
 <div class="timeline-section" role="region" aria-label="Timeline of World Ages">
     <!-- Sun behind Earth -->
     <div class="earth-sunrise">
-        <img src="/images/sunrise.png" alt="Sun" class="sunrise-image" />
+        <picture>
+            <source srcset="{{ config.extra.cdn_url }}/images/hero/sunrise.avif" type="image/avif">
+            <source srcset="{{ config.extra.cdn_url }}/images/hero/sunrise.webp" type="image/webp">
+            <img src="{{ config.extra.cdn_url }}/images/hero/sunrise.webp" alt="Sun" class="sunrise-image" />
+        </picture>
     </div>
 
     <!-- Fixed Earth (SVG) -->
@@ -17,7 +21,7 @@ load_data(path="data/ages.json") %}
                     height="1"
                 >
                     <image
-                        href="/images/earth/earth-ocean-mist.png"
+                        href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-mist.webp"
                         width="600"
                         height="600"
                     />
@@ -198,7 +202,7 @@ load_data(path="data/ages.json") %}
     {% endfor %}
 </div>
 
-<script src="/js/timeline.js"></script>
+<script src="{{ get_url(path='js/dist/timeline.bundle.js') }}"></script>
 <script>
 // Space overlay detection for light theme readability
 (function() {
