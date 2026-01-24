@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/images/ages/modern-urban-landscape.avif",
         "/images/ages/saurian-experiments.avif",
       ],
-      earth_texture: "/images/earth/earth-ocean-mist.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-mist.webp",
     },
     {
       name: "Age of Capricorn",
@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Synthetic life engineering on the Elohim home planet with the inevitable escape of synthetic 'monster' lifeforms. Earth discovered, exploration. Known as the 1st day of Creation (Genesis)",
       link: "/timeline/age-of-capricorn",
       images: ["/images/ages/spacecraft-in-orbit.avif"],
-      earth_texture: "/images/earth/earth-ocean-mist.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-mist.webp",
     },
     {
       name: "Age of Sagittarius",
@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Study and analysis of Earth's atmosphere and its constitution and the harmfulness of the sun light. Known as the 2nd day of Creation (Genesis)",
       link: "/timeline/age-of-sagittarius",
       images: ["/images/ages/orbital-outpost.avif"],
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
     },
     {
       name: "Age of Scorpio",
@@ -71,7 +71,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Terraforming and first synthetic life engineering adapted to the new planet (Earth); creation of prokaryotes, fungi, plant life and most likely insects. Known as the 3rd day of Creation (Genesis)",
       link: "/timeline/age-of-scorpio",
       images: ["/images/ages/genetic-research-lab.avif"],
-      earth_texture: "/images/earth/earth-pangeae-arid.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-pangeae-arid.webp",
     },
     {
       name: "Age of Libra",
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Astronomy, measure of time, adaptation of life to Earth environment. Engineering of fish and bird life, as well as dragons, known to us as dinosaurs. Known as the 4th day of Creation (Genesis)",
       link: "/timeline/age-of-libra",
       images: ["/images/ages/fauna-and-flora.avif"],
-      earth_texture: "/images/earth/earth-pangeae-green.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-pangeae-green.webp",
     },
     {
       name: "Age of Virgo",
@@ -95,7 +95,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Engineering of all types of land animals, mammals, reptiles. Everything was done to keep things in balance/ecology. Known as the 5th day of Creation (Genesis)",
       link: "/timeline/age-of-virgo",
       images: ["/images/ages/dinosaurs-on-plain.avif"],
-      earth_texture: "/images/earth/earth-pangeae-green.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-pangeae-green.webp",
     },
     {
       name: "Age of Leo",
@@ -110,7 +110,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/images/ages/genetic-research-lab.avif",
         "/images/ages/saurian-experiments.avif",
       ],
-      earth_texture: "/images/earth/earth-pangeae-green.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-pangeae-green.webp",
     },
     {
       name: "Age of Cancer",
@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "The Elohim rebel group known as the Serpent/Dragon was banished to remain on Earth after they taught the Earthlings about their cosmic origins. They conceived offsprings with the humans, creating the first hybrids. Known as the 7th day of Creation (Genesis) of Rest.",
       link: "/timeline/age-of-cancer",
       images: ["/images/ages/blue-planet-surface.avif"],
-      earth_texture: "/images/earth/earth-pangeae-green.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-pangeae-green.webp",
     },
     {
       name: "Age of Gemini",
@@ -137,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "/images/ages/above-the-clouds-structure.avif",
         "/images/ages/orbital-outpost.avif",
       ],
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
     },
     {
       name: "Age of Taurus",
@@ -149,7 +149,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Destruction of the center of progress such as Sodom and Gomorrah. The Serpentine Elohim faction lost and was pardoned, so they returned back to their home planet. The public opinion about life on Earth got favorable. Events of Abraham.",
       link: "/timeline/age-of-taurus",
       images: [],
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
     },
     {
       name: "Age of Aries",
@@ -158,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function () {
       start: "−2370",
       end: "−210",
       event: "Events of Moses and Exodus",
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
       link: "/timeline/age-of-aries",
       images: [],
     },
@@ -172,7 +172,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Jesus and his fishermen, multiplication of people, increase of demographics, independent development.",
       link: "/timeline/age-of-pisces",
       images: [],
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
     },
     {
       name: "Age of Aquarius",
@@ -184,7 +184,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "Revelation of our cosmic origins, the last prophet, the avoiding of the nuclear holocaust/destroying our civilization, Golden Age is awaiting, the return of our father in Heaven, our creators, the Elohim",
       link: "/timeline/age-of-aquarius",
       images: [],
-      earth_texture: "/images/earth/earth-ocean-blue.png",
+      earth_texture: "https://assets.wheelofheaven.io/images/earth/earth-ocean-blue.webp",
     },
   ];
 
