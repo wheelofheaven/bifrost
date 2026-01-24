@@ -6,6 +6,10 @@
     font-size: typo.$font-size-sd;
     border-top: vars.$hairline-width solid var(--color-hairline);
     background: var(--color-footer-bg);
+    // iOS notch support - add safe area padding for bottom and sides
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
 
     &__content {
         max-width: 1200px;

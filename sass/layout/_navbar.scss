@@ -23,11 +23,14 @@ body.mobile-nav-open {
     align-items: center;
     justify-content: space-between;
     padding: 0.75rem 1.5rem;
+    // iOS notch support - add safe area padding
+    padding-left: max(1.5rem, env(safe-area-inset-left));
+    padding-right: max(1.5rem, env(safe-area-inset-right));
     background-color: var(--color-navbar-bg);
     backdrop-filter: blur(12px);
     border-radius: 1rem;
     position: fixed;
-    top: 0.5rem;
+    top: calc(0.5rem + env(safe-area-inset-top, 0px));
     left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -782,7 +785,7 @@ body.mobile-nav-open {
                 right: 0;
                 margin-top: 0.25rem;
                 max-height: calc(100vh - 5rem);
-                max-height: calc(100dvh - 5rem);
+                max-height: calc(100dvh - 5rem - env(safe-area-inset-bottom, 0px));
                 background: rgba(25, 28, 32, 0.75);
                 border: 1px solid rgba(255, 255, 255, 0.15);
                 border-radius: 1rem;
@@ -790,7 +793,7 @@ body.mobile-nav-open {
                 -webkit-backdrop-filter: blur(20px) saturate(180%);
                 box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
                 padding: 1rem;
-                padding-bottom: 2rem;
+                padding-bottom: calc(2rem + env(safe-area-inset-bottom, 0px));
                 z-index: 9999;
                 opacity: 0;
                 transform: translateY(-10px);
