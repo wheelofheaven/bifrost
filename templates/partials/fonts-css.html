@@ -1,6 +1,9 @@
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 
+<!-- Critical CSS - high priority, render-blocking (small, essential styles) -->
+<link rel="stylesheet" href="{{ get_url(path="critical.css") }}">
 
-<!-- Main Stylesheet -->
-<link rel="stylesheet" href="{{ get_url(path="main.css") }}">
+<!-- Main Stylesheet - low priority, non-blocking -->
+<link rel="preload" href="{{ get_url(path="main.css") }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ get_url(path="main.css") }}"></noscript>
