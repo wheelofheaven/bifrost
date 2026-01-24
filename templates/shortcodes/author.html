@@ -39,6 +39,8 @@ author_data = authors.authors[author_key] %} {% endif %}
                 class="author-profile__avatar"
                 src="{{ get_url(path=author_data.image) }}"
                 alt="{{ author_data.name }}"
+                loading="lazy"
+                decoding="async"
                 onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
             />
             {% endif %}

@@ -12,6 +12,9 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <!-- Preconnect to CDN for faster resource loading -->
+        <link rel="preconnect" href="https://assets.wheelofheaven.io" crossorigin />
+        <link rel="dns-prefetch" href="https://assets.wheelofheaven.io" />
         <title>
             {% if page.title %}{{ page.title }} | {% endif %}{{ config.title }}
         </title>

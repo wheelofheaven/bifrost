@@ -58,7 +58,9 @@
         <div class="essentials-card__image">
             <img src="{{ page.extra.header_image }}"
                  alt="{{ page.title }}"
-                 class="essentials-card__img" />
+                 class="essentials-card__img"
+                 loading="lazy"
+                 decoding="async" />
         </div>
         {% else %}
         <div class="essentials-card__image essentials-card__image--placeholder">
@@ -172,7 +174,9 @@
             {% endif %}
             <img src="{{ page.extra.header_image }}"
                  alt="{{ page.title }}"
-                 class="essentials-horizontal-card__img" />
+                 class="essentials-horizontal-card__img"
+                 loading="lazy"
+                 decoding="async" />
         </div>
         {% else %}
         <div class="essentials-horizontal-card__image essentials-horizontal-card__image--placeholder">

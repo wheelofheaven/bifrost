@@ -1,7 +1,12 @@
+<!-- Preload critical fonts -->
+<link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 
-<!-- Critical CSS - high priority, render-blocking (small, essential styles) -->
+<!-- Critical CSS - preload for early fetch, then apply -->
+<link rel="preload" href="{{ get_url(path="critical.css") }}" as="style">
 <link rel="stylesheet" href="{{ get_url(path="critical.css") }}">
 
 <!-- Main Stylesheet - low priority, non-blocking -->

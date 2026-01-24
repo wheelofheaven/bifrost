@@ -18,6 +18,7 @@ const OUT_DIR = path.join(__dirname, '../static/js/dist');
 // Bundle configurations
 const bundles = {
   'core.bundle.js': [
+    'vendor/fuse.min.js',  // Fuse.js search library (self-hosted)
     'navbar.js',
     'navbar-mobile-toggle.js',
     'search.js',
