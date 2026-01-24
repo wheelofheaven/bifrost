@@ -5,10 +5,5 @@
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 
-<!-- Critical CSS - preload for early fetch, then apply -->
-<link rel="preload" href="{{ get_url(path="critical.css") }}" as="style">
-<link rel="stylesheet" href="{{ get_url(path="critical.css") }}">
-
-<!-- Main Stylesheet - low priority, non-blocking -->
-<link rel="preload" href="{{ get_url(path="main.css") }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ get_url(path="main.css") }}"></noscript>
+<!-- Stylesheets -->
+<link rel="stylesheet" href="{{ get_url(path="main.css") }}">
