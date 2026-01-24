@@ -1,15 +1,12 @@
 {% extends "base.html" %}
+{% import "macros/image.html" as img %}
 
 {% block content %}
 <div class="landing">
     <!-- Hero: Full-bleed immersive opening -->
     <section class="landing-hero">
         <div class="landing-hero__media">
-            <img
-                src="/images/hero-genesis.jpg"
-                alt="Ancient stargazers contemplating the cosmos"
-                class="landing-hero__image"
-            />
+            {{ img::hero(path="hero-genesis", alt="Ancient stargazers contemplating the cosmos", class="landing-hero__image") }}
             <div class="landing-hero__overlay"></div>
         </div>
 
