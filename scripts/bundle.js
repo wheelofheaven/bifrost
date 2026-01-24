@@ -6,6 +6,9 @@
  * - core.bundle.js: Common scripts for all pages
  * - library.bundle.js: Library-specific scripts
  * - timeline.bundle.js: Timeline-specific scripts
+ *
+ * Vendor files (already minified) are concatenated separately to avoid
+ * esbuild's module detection interfering with their UMD patterns.
  */
 
 const esbuild = require('esbuild');
@@ -16,10 +19,10 @@ const JS_DIR = path.join(__dirname, '../static/js');
 const OUT_DIR = path.join(__dirname, '../static/js/dist');
 
 // Bundle configurations
+// Files prefixed with 'vendor/' are treated specially - concatenated without module wrapping
 const bundles = {
   'core.bundle.js': [
-    'vendor/fuse.min.js',  // Fuse.js search library (self-hosted)
-    'vendor/fuse-global.js',  // Expose Fuse globally after UMD load
+    'vendor/fuse.min.js',  // Fuse.js search library (self-hosted, already minified)
     'navbar.js',
     'navbar-mobile-toggle.js',
     'search.js',
@@ -50,8 +53,25 @@ async function bundle() {
   const results = [];
 
   for (const [outputFile, inputFiles] of Object.entries(bundles)) {
-    // Read and concatenate all input files
-    const contents = inputFiles
+    // Separate vendor files from regular files
+    const vendorFiles = inputFiles.filter(f => f.startsWith('vendor/'));
+    const regularFiles = inputFiles.filter(f => !f.startsWith('vendor/'));
+
+    // Read vendor files as-is (already minified, keep UMD pattern intact)
+    const vendorContents = vendorFiles
+      .map(file => {
+        const filePath = path.join(JS_DIR, file);
+        if (!fs.existsSync(filePath)) {
+          console.warn(`Warning: ${file} not found, skipping`);
+          return '';
+        }
+        return fs.readFileSync(filePath, 'utf8');
+      })
+      .filter(Boolean)
+      .join('\n');
+
+    // Read and concatenate regular files for esbuild processing
+    const regularContents = regularFiles
       .map(file => {
         const filePath = path.join(JS_DIR, file);
         if (!fs.existsSync(filePath)) {
@@ -63,50 +83,58 @@ async function bundle() {
       .filter(Boolean)
       .join('\n\n');
 
-    // Write temporary entry file
-    const entryFile = path.join(OUT_DIR, `_entry_${outputFile}`);
-    fs.writeFileSync(entryFile, contents);
+    let minifiedRegular = '';
 
-    try {
-      const result = await esbuild.build({
-        entryPoints: [entryFile],
-        bundle: false,
-        minify: true,
-        sourcemap: false,
-        outfile: path.join(OUT_DIR, outputFile),
-        target: ['es2020'],
-        format: 'iife',
-        ...(isWatch && {
-          watch: {
-            onRebuild(error, result) {
-              if (error) console.error(`Rebuild failed for ${outputFile}:`, error);
-              else console.log(`Rebuilt ${outputFile}`);
-            },
-          },
-        }),
-      });
+    if (regularContents) {
+      // Write temporary entry file for regular scripts
+      const entryFile = path.join(OUT_DIR, `_entry_${outputFile}`);
+      fs.writeFileSync(entryFile, regularContents);
 
-      // Clean up temp file
-      fs.unlinkSync(entryFile);
+      try {
+        const result = await esbuild.build({
+          entryPoints: [entryFile],
+          bundle: false,
+          minify: true,
+          sourcemap: false,
+          write: false,  // Don't write to file, we'll handle that
+          target: ['es2020'],
+          format: 'iife',
+        });
 
-      const stats = fs.statSync(path.join(OUT_DIR, outputFile));
-      const originalSize = inputFiles.reduce((sum, file) => {
-        const filePath = path.join(JS_DIR, file);
-        return sum + (fs.existsSync(filePath) ? fs.statSync(filePath).size : 0);
-      }, 0);
+        minifiedRegular = result.outputFiles[0].text;
 
-      results.push({
-        name: outputFile,
-        files: inputFiles.length,
-        original: originalSize,
-        minified: stats.size,
-        reduction: Math.round((1 - stats.size / originalSize) * 100),
-      });
+        // Clean up temp file
+        fs.unlinkSync(entryFile);
 
-    } catch (error) {
-      console.error(`Failed to bundle ${outputFile}:`, error);
-      process.exit(1);
+      } catch (error) {
+        console.error(`Failed to bundle ${outputFile}:`, error);
+        process.exit(1);
+      }
     }
+
+    // Combine vendor (as-is) + minified regular scripts
+    const finalContent = [vendorContents, minifiedRegular]
+      .filter(Boolean)
+      .join('\n');
+
+    // Write final bundle
+    const outputPath = path.join(OUT_DIR, outputFile);
+    fs.writeFileSync(outputPath, finalContent);
+
+    // Calculate stats
+    const stats = fs.statSync(outputPath);
+    const originalSize = inputFiles.reduce((sum, file) => {
+      const filePath = path.join(JS_DIR, file);
+      return sum + (fs.existsSync(filePath) ? fs.statSync(filePath).size : 0);
+    }, 0);
+
+    results.push({
+      name: outputFile,
+      files: inputFiles.length,
+      original: originalSize,
+      minified: stats.size,
+      reduction: Math.round((1 - stats.size / originalSize) * 100),
+    });
   }
 
   // Print summary
