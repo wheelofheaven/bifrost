@@ -1,0 +1,149 @@
+{#
+  Responsive Image Macro
+
+  Generates <picture> elements with AVIF and WebP sources from the CDN.
+
+  Usage:
+    {% import "macros/image.html" as img %}
+
+    {{ img::cdn(path="wiki/human-genesis", alt="Human Genesis illustration") }}
+    {{ img::cdn(path="timeline/equinox_1945", alt="Equinox 1945", class="hero-image", lazy=true) }}
+    {{ img::cdn(path="library/le-message-book", alt="Le Message book cover", sizes="(max-width: 768px) 100vw, 50vw") }}
+
+  Parameters:
+    - path: Image path relative to CDN /images/ (without extension)
+    - alt: Alt text (required for accessibility)
+    - class: Optional CSS class(es)
+    - lazy: If true, uses loading="lazy" and shows thumbnail first (default: false)
+    - sizes: Responsive sizes attribute (default: "100vw")
+    - width: Optional width attribute
+    - height: Optional height attribute
+#}
+
+{# CDN base URL from config #}
+{% macro cdn_base() %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") }}{% endmacro %}
+
+{#
+  Main CDN image macro
+  Generates a <picture> element with AVIF and WebP sources
+#}
+{% macro cdn(path, alt, class="", lazy=false, sizes="100vw", width="", height="") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set img_path = "/images/" ~ path %}
+<picture>
+  <source
+    type="image/avif"
+    srcset="{{ base }}{{ img_path }}.avif"
+    sizes="{{ sizes }}"
+  >
+  <source
+    type="image/webp"
+    srcset="{{ base }}{{ img_path }}.webp"
+    sizes="{{ sizes }}"
+  >
+  <img
+    src="{{ base }}{{ img_path }}.webp"
+    alt="{{ alt }}"
+    {% if class %}class="{{ class }}"{% endif %}
+    {% if lazy %}loading="lazy" decoding="async"{% endif %}
+    {% if width %}width="{{ width }}"{% endif %}
+    {% if height %}height="{{ height }}"{% endif %}
+  >
+</picture>
+{% endmacro cdn %}
+
+{#
+  CDN image with thumbnail placeholder for lazy loading
+  Shows low-res thumbnail initially, loads full image on scroll
+#}
+{% macro cdn_lazy(path, alt, class="", sizes="100vw", width="", height="") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set img_path = "/images/" ~ path %}
+<picture>
+  <source
+    type="image/avif"
+    srcset="{{ base }}{{ img_path }}_thumb.avif 400w, {{ base }}{{ img_path }}.avif 1200w"
+    sizes="{{ sizes }}"
+  >
+  <source
+    type="image/webp"
+    srcset="{{ base }}{{ img_path }}_thumb.webp 400w, {{ base }}{{ img_path }}.webp 1200w"
+    sizes="{{ sizes }}"
+  >
+  <img
+    src="{{ base }}{{ img_path }}_thumb.webp"
+    data-src="{{ base }}{{ img_path }}.webp"
+    alt="{{ alt }}"
+    {% if class %}class="{{ class }}"{% endif %}
+    loading="lazy"
+    decoding="async"
+    {% if width %}width="{{ width }}"{% endif %}
+    {% if height %}height="{{ height }}"{% endif %}
+  >
+</picture>
+{% endmacro cdn_lazy %}
+
+{#
+  Hero image macro - optimized for above-the-fold hero sections
+  No lazy loading, preload hint suggested
+#}
+{% macro hero(path, alt, class="", sizes="100vw") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set img_path = "/images/" ~ path %}
+<picture>
+  <source
+    type="image/avif"
+    srcset="{{ base }}{{ img_path }}.avif"
+    sizes="{{ sizes }}"
+  >
+  <source
+    type="image/webp"
+    srcset="{{ base }}{{ img_path }}.webp"
+    sizes="{{ sizes }}"
+  >
+  <img
+    src="{{ base }}{{ img_path }}.webp"
+    alt="{{ alt }}"
+    {% if class %}class="{{ class }}"{% endif %}
+    fetchpriority="high"
+    decoding="async"
+  >
+</picture>
+{% endmacro hero %}
+
+{#
+  Thumbnail only - for cards, grids, previews
+#}
+{% macro thumb(path, alt, class="", width="", height="") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set img_path = "/images/" ~ path %}
+<picture>
+  <source type="image/avif" srcset="{{ base }}{{ img_path }}_thumb.avif">
+  <source type="image/webp" srcset="{{ base }}{{ img_path }}_thumb.webp">
+  <img
+    src="{{ base }}{{ img_path }}_thumb.webp"
+    alt="{{ alt }}"
+    {% if class %}class="{{ class }}"{% endif %}
+    loading="lazy"
+    decoding="async"
+    {% if width %}width="{{ width }}"{% endif %}
+    {% if height %}height="{{ height }}"{% endif %}
+  >
+</picture>
+{% endmacro thumb %}
+
+{#
+  Background image helper - returns URL for use in CSS/inline styles
+  Returns WebP URL (best browser support for backgrounds)
+#}
+{% macro bg_url(path) %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") }}/images/{{ path }}.webp{% endmacro bg_url %}
+
+{#
+  Preload link for critical images (use in <head>)
+  Call from seo.html or base.html for hero images
+#}
+{% macro preload(path) %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set img_path = "/images/" ~ path %}
+<link rel="preload" as="image" type="image/avif" href="{{ base }}{{ img_path }}.avif">
+{% endmacro preload %}
