@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-        xmlns:xhtml="http://www.w3.org/1999/xhtml"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 {# Zola sitemap template - entries is provided by Zola with all pages and sections #}
-{# Supported languages for hreflang alternates #}
-{%- set languages = ["en", "de", "fr", "es", "ru", "ja", "zh", "zh-Hant", "ko"] -%}
 {% for sitemap_entry in entries %}
     <url>
         <loc>{{ sitemap_entry.permalink | safe }}</loc>
@@ -13,46 +10,10 @@
         {% endif %}
         <changefreq>{% if sitemap_entry.permalink is containing('/wiki/') %}monthly{% elif sitemap_entry.permalink is containing('/timeline/') %}monthly{% elif sitemap_entry.permalink is containing('/articles/') %}weekly{% elif sitemap_entry.permalink is containing('/essentials/') %}monthly{% else %}weekly{% endif %}</changefreq>
         <priority>{% if sitemap_entry.permalink is ending_with('.io/') or sitemap_entry.permalink is ending_with('.io') %}1.0{% elif sitemap_entry.permalink is containing('/essentials/') %}0.8{% elif sitemap_entry.permalink is containing('/wiki/') %}0.7{% elif sitemap_entry.permalink is containing('/timeline/') %}0.7{% elif sitemap_entry.permalink is containing('/library/') %}0.7{% elif sitemap_entry.permalink is containing('/articles/') %}0.6{% else %}0.5{% endif %}</priority>
-        {#- Generate hreflang alternates for multilingual content -#}
-        {%- set base_url = config.base_url -%}
-        {%- set url_path = sitemap_entry.permalink | replace(from=base_url, to="") -%}
-        {#- Detect current language from URL -#}
-        {%- set current_lang = "en" -%}
-        {%- if url_path is starting_with("/de/") -%}{%- set current_lang = "de" -%}
-        {%- elif url_path is starting_with("/fr/") -%}{%- set current_lang = "fr" -%}
-        {%- elif url_path is starting_with("/es/") -%}{%- set current_lang = "es" -%}
-        {%- elif url_path is starting_with("/ru/") -%}{%- set current_lang = "ru" -%}
-        {%- elif url_path is starting_with("/ja/") -%}{%- set current_lang = "ja" -%}
-        {%- elif url_path is starting_with("/zh-Hant/") -%}{%- set current_lang = "zh-Hant" -%}
-        {%- elif url_path is starting_with("/zh/") -%}{%- set current_lang = "zh" -%}
-        {%- elif url_path is starting_with("/ko/") -%}{%- set current_lang = "ko" -%}
-        {%- endif -%}
-        {#- Get the path without language prefix -#}
-        {%- if current_lang == "en" -%}
-            {%- set clean_path = url_path -%}
-        {%- elif current_lang == "zh-Hant" -%}
-            {%- set clean_path = url_path | replace(from="/zh-Hant/", to="/") -%}
-        {%- else -%}
-            {%- set clean_path = url_path | replace(from="/" ~ current_lang ~ "/", to="/") -%}
-        {%- endif -%}
-        {#- Only add hreflang for content pages (not homepage or language-specific roots) -#}
-        {%- if clean_path != "/" and clean_path | length > 1 -%}
-        <xhtml:link rel="alternate" hreflang="x-default" href="{{ base_url }}{{ clean_path | safe }}" />
-        <xhtml:link rel="alternate" hreflang="en" href="{{ base_url }}{{ clean_path | safe }}" />
-        {%- for lang in languages -%}
-            {%- if lang != "en" -%}
-                {%- if lang == "zh-Hant" -%}
-        <xhtml:link rel="alternate" hreflang="zh-Hant" href="{{ base_url }}/zh-Hant{{ clean_path | safe }}" />
-                {%- else -%}
-        <xhtml:link rel="alternate" hreflang="{{ lang }}" href="{{ base_url }}/{{ lang }}{{ clean_path | safe }}" />
-                {%- endif -%}
-            {%- endif -%}
-        {%- endfor -%}
-        {%- endif -%}
         {#- Add image if available in extra data -#}
         {%- if sitemap_entry.extra.image -%}
         <image:image>
-            <image:loc>{{ get_url(path=sitemap_entry.extra.image) | safe }}</image:loc>
+            <image:loc>{{ sitemap_entry.extra.image | safe }}</image:loc>
             {%- if sitemap_entry.extra.image_alt -%}
             <image:caption>{{ sitemap_entry.extra.image_alt | escape }}</image:caption>
             {%- endif -%}
