@@ -44,8 +44,8 @@
 </nav>
 {% endmacro wiki %}
 
-{# Convenience macro for Explainer pages #}
-{% macro explainer(page, lang="en") %}
+{# Convenience macro for Articles pages #}
+{% macro articles(page, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -56,8 +56,8 @@
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/explainers/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
-                <span itemprop="name">Explainers</span>
+            <a href="{{ get_url(path='/articles/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span itemprop="name">Articles</span>
             </a>
             <meta itemprop="position" content="2" />
         </li>
@@ -78,7 +78,7 @@
         {% endif %}
     </ol>
 </nav>
-{% endmacro explainer %}
+{% endmacro articles %}
 
 {# Convenience macro for Essentials pages #}
 {% macro essentials(page, lang="en") %}

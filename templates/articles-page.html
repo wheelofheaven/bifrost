@@ -1,0 +1,177 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/image.html" as img %}
+
+{% block content %}
+<!-- ScholarlyArticle Schema for Article Pages -->
+{% include "partials/schema/scholarly-article.html" %}
+
+<div class="article">
+    <!-- Breadcrumb Navigation -->
+    {{ breadcrumbs::articles(page=page, lang=detected_lang) }}
+
+    <div class="article__container">
+        <!-- Main Content -->
+        <main class="article__main">
+            <article class="article__article" role="article" aria-labelledby="article-title">
+                <!-- Hero Image Section -->
+                {% if page.extra.header_image_cdn %}
+                {# CDN image path (e.g., "articles/example") #}
+                <div class="article__hero">
+                    {{ img::hero(path=page.extra.header_image_cdn, alt=page.title, class="article__hero-image") }}
+                    <div class="article__hero-overlay">
+                        <h1 class="article__hero-title" id="article-title">{{ page.title }}</h1>
+                    </div>
+                </div>
+                {% elif page.extra.header_image %}
+                {# Legacy local image path #}
+                <div class="article__hero">
+                    <img
+                        src="{{ page.extra.header_image }}"
+                        alt="{{ page.title }}"
+                        class="article__hero-image"
+                        sizes="100vw"
+                    />
+                    <div class="article__hero-overlay">
+                        <h1 class="article__hero-title" id="article-title">{{ page.title }}</h1>
+                    </div>
+                </div>
+                {% else %}
+                <div class="article__hero article__hero--no-image">
+                    <div class="article__hero-overlay">
+                        <h1 class="article__hero-title" id="article-title">{{ page.title }}</h1>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Page Header -->
+                <header class="article__header">
+                    <!-- Metadata -->
+                    <div class="article__meta" aria-label="Article metadata">
+                        {% if page.extra.article_type == "explainer" %}
+                        <span class="article__type article__type--explainer">
+                            Explainer
+                        </span>
+                        {% endif %}
+                        {% if page.reading_time %}
+                        <span class="article__reading-time">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            {{ page.reading_time }} min read
+                        </span>
+                        {% endif %}
+                        {% include "partials/listen-button.html" %}
+                        {% if page.date %}
+                        <time class="article__date">
+                            {{ page.date | date(format="%B %d, %Y") }}
+                        </time>
+                        {% endif %}
+                        {% if page.extra.category %}
+                        <span class="article__category">{{ page.extra.category }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- Social Share -->
+                    {% include "partials/social-share.html" %}
+                </header>
+
+                <!-- Quick Summary for AI extraction -->
+                {% if page.extra.tldr or page.description %}
+                <div class="article__summary" data-ai-summary="true" aria-label="Quick summary">
+                    <p class="article__tldr">
+                        {{ page.extra.tldr | default(value=page.description) }}
+                    </p>
+                </div>
+                {% endif %}
+
+                <!-- Page Content -->
+                {% if page.content %}
+                <div class="article__content">{{ page.content | safe }}</div>
+                {% endif %}
+
+                <!-- See Also Section -->
+                {% if page.extra.see_also %}
+                <section class="article__see-also" role="complementary" aria-label="Related articles">
+                    <h2 class="article__section-title">See also</h2>
+                    <ul class="article__link-list">
+                        {% for item in page.extra.see_also %}
+                        <li class="article__link-item">
+                            {% if item.url %}
+                            <a href="{{ item.url }}" class="article__link">{{ item.title }}</a>
+                            {% else %}
+                            <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="article__link">{{ item.title }}</a>
+                            {% endif %}
+                            {% if item.description %}
+                            <span class="article__link-description">{{ item.description }}</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                <!-- External Links Section -->
+                {% if page.extra.external_links %}
+                <section class="article__external-links">
+                    <h2 class="article__section-title">External links</h2>
+                    <ul class="article__link-list">
+                        {% for link in page.extra.external_links %}
+                        <li class="article__link-item">
+                            <a href="{{ link.url }}" class="article__link article__link--external" target="_blank" rel="noopener noreferrer">
+                                {{ link.title }}
+                                <svg class="article__external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15,3 21,3 21,9"></polyline>
+                                    <line x1="10" y1="14" x2="21" y2="3"></line>
+                                </svg>
+                            </a>
+                            {% if link.description %}
+                            <span class="article__link-description">{{ link.description }}</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                <!-- References Section -->
+                {% if page.extra.references %}
+                <section class="article__references" role="doc-bibliography" aria-label="References and citations">
+                    <h2 class="article__section-title">References</h2>
+                    <ol class="article__reference-list">
+                        {% for ref in page.extra.references %}
+                        <li class="article__reference-item" id="ref-{{ loop.index }}">
+                            {% if ref.url %}
+                            <a href="{{ ref.url }}" class="article__reference-link" target="_blank" rel="noopener noreferrer">
+                                {{ ref.title }}
+                            </a>
+                            {% else %}
+                            <span class="article__reference-title">{{ ref.title }}</span>
+                            {% endif %}
+                            {% if ref.author %}
+                            <span class="article__reference-author">by {{ ref.author }}</span>
+                            {% endif %}
+                            {% if ref.publication %}
+                            <span class="article__reference-publication">{{ ref.publication }}</span>
+                            {% endif %}
+                            {% if ref.date %}
+                            <span class="article__reference-date">({{ ref.date }})</span>
+                            {% endif %}
+                            {% if ref.description %}
+                            <p class="article__reference-description">{{ ref.description }}</p>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </section>
+                {% endif %}
+
+                <!-- Related Content -->
+                {% include "partials/related-content.html" %}
+            </article>
+        </main>
+    </div>
+</div>
+{% endblock content %}

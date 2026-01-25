@@ -1,12 +1,12 @@
-// Explainer Section Styles
+// Articles Section Styles
 //
-// BEM-based styling for explainer section pages with card grid layout
+// BEM-based styling for articles section pages with card grid layout
 
 @use "../abstracts/variables" as vars;
 @use "../base/typography" as typo;
 
-// Minimal Explainer Header
-.explainer-header {
+// Minimal Articles Header
+.articles-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -93,7 +93,7 @@
 }
 
 // Filters Bar
-.explainer-filters {
+.articles-filters {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -160,7 +160,7 @@
         @media (max-width: 480px) {
             padding: 0.5rem;
 
-            .explainer-filters__random-text {
+            .articles-filters__random-text {
                 display: none;
             }
         }
@@ -168,7 +168,7 @@
 }
 
 // Discovery Footer
-.explainer-footer {
+.articles-footer {
     margin-top: 4rem;
     padding: 3rem 2rem;
     background: var(--color-background-secondary);
@@ -305,7 +305,7 @@
     }
 }
 
-.explainer-section {
+.articles-section {
     min-height: 100vh;
     background: var(--color-background);
     padding: 2rem 1rem;
@@ -477,8 +477,8 @@
     }
 }
 
-// Explainer Card Component
-.explainer-card {
+// Articles Card Component
+.articles-card {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -493,11 +493,11 @@
         box-shadow: 0 12px 32px rgba(102, 126, 234, 0.15);
         transform: translateY(-4px);
 
-        .explainer-card__accent {
+        .articles-card__accent {
             opacity: 1;
         }
 
-        .explainer-card__icon {
+        .articles-card__icon {
             transform: scale(1.05);
             background: linear-gradient(
                 135deg,
@@ -507,7 +507,7 @@
             color: white;
         }
 
-        .explainer-card__read-btn {
+        .articles-card__read-btn {
             background: var(--color-accent-primary);
             color: white;
             border-color: var(--color-accent-primary);
@@ -531,7 +531,7 @@
             var(--color-accent-primary) 100%
         );
         background-size: 200% 100%;
-        animation: explainer-accent-shimmer 8s ease-in-out infinite;
+        animation: articles-accent-shimmer 8s ease-in-out infinite;
         opacity: 0.7;
         transition: opacity 0.3s ease;
     }
@@ -683,7 +683,7 @@
     }
 }
 
-@keyframes explainer-accent-shimmer {
+@keyframes articles-accent-shimmer {
     0% {
         background-position: 0% 50%;
     }
@@ -696,7 +696,7 @@
 }
 
 // Wiki Subsection Card Component
-.explainer-subsection-card {
+.articles-subsection-card {
     background: var(--color-background);
     padding: 1.5rem 0;
     transition: all 0.2s ease;
@@ -767,7 +767,7 @@
 
 // Responsive Adjustments
 @media (max-width: 768px) {
-    .explainer-section {
+    .articles-section {
         &__header {
             padding: 2rem 1rem;
         }
@@ -781,13 +781,13 @@
         }
     }
 
-    .explainer-subsection-card {
+    .articles-subsection-card {
         padding: 1.25rem 0;
     }
 
     // List view on mobile should stack
-    .explainer-section__grid[data-view="list"] {
-        .explainer-card {
+    .articles-section__grid[data-view="list"] {
+        .articles-card {
             flex-direction: column;
 
             &__icon {
@@ -816,7 +816,7 @@
 }
 
 // Wiki Discovery and Navigation Styles
-.explainer-discovery {
+.articles-discovery {
     margin-bottom: 3rem;
     background: var(--color-background);
     border-top: 1px solid var(--color-hairline);
@@ -858,7 +858,7 @@
 }
 
 // Wiki Search Component
-.explainer-search {
+.articles-search {
     position: relative;
     display: flex;
     align-items: center;
@@ -901,8 +901,8 @@
 }
 
 // Wiki Filters and Sort
-.explainer-filter,
-.explainer-sort {
+.articles-filter,
+.articles-sort {
     padding: 0.75rem 1rem;
     border: 1px solid var(--color-hairline);
     border-radius: 0.5rem;
@@ -925,7 +925,7 @@
 }
 
 // View Toggle Component
-.explainer-view-toggle {
+.articles-view-toggle {
     display: flex;
     border: 1px solid var(--color-hairline);
     border-radius: 0.5rem;
@@ -964,7 +964,7 @@
 }
 
 // Alphabetical Navigation
-.explainer-alphabet {
+.articles-alphabet {
     display: flex;
     align-items: center;
     gap: 0.25rem;
@@ -1016,7 +1016,7 @@
 }
 
 // Featured Articles Section
-.explainer-featured {
+.articles-featured {
     margin-bottom: 3rem;
     padding: 2rem 0;
     border-top: 1px solid var(--color-hairline);
@@ -1043,7 +1043,7 @@
     }
 }
 
-.explainer-featured-card {
+.articles-featured-card {
     background: var(--color-background);
     border: 1px solid var(--color-hairline);
     border-radius: 0.5rem;
@@ -1100,7 +1100,7 @@
 }
 
 // Enhanced Wiki Card with Discovery Features
-.explainer-card {
+.articles-card {
     &__alternatives {
         margin-bottom: 1rem;
         font-size: 0.8rem;
@@ -1125,14 +1125,14 @@
 }
 
 // Letter Anchors
-.explainer-letter-anchor {
+.articles-letter-anchor {
     position: relative;
     margin-top: -6rem; // Account for sticky header
     padding-top: 6rem;
 }
 
 // No Results State
-.explainer-no-results {
+.articles-no-results {
     text-align: center;
     padding: 3rem 2rem;
     color: var(--color-text-muted);
@@ -1163,12 +1163,12 @@
 }
 
 // List View Styles
-.explainer-section__grid[data-view="list"] {
+.articles-section__grid[data-view="list"] {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
 
-    .explainer-card {
+    .articles-card {
         flex-direction: row;
         align-items: center;
         border-radius: 0.5rem;
@@ -1229,7 +1229,7 @@
 
 // Responsive Discovery Controls
 @media (max-width: 768px) {
-    .explainer-discovery {
+    .articles-discovery {
         padding: 1.5rem 1rem;
 
         &__controls {
@@ -1239,11 +1239,11 @@
         }
     }
 
-    .explainer-search__input {
+    .articles-search__input {
         width: 100%;
     }
 
-    .explainer-alphabet {
+    .articles-alphabet {
         justify-content: center;
         padding: 0.75rem 0;
 
@@ -1255,7 +1255,7 @@
         }
     }
 
-    .explainer-featured {
+    .articles-featured {
         padding: 1.5rem 1rem;
 
         &__grid {
@@ -1265,7 +1265,7 @@
 }
 
 // Wiki Statistics Component
-.explainer-stat {
+.articles-stat {
     text-align: center;
     font-family: typo.$font-family-tech;
 

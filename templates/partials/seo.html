@@ -60,7 +60,7 @@
 {% endif %}
 
 <!-- AI/LLM Optimization Hints -->
-<meta name="ai.content_type" content="{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% elif current_path is containing('/wiki/') %}DefinedTerm{% elif current_path is containing('/explainers/') %}ScholarlyArticle{% elif current_path is containing('/timeline/') %}HistoricalEvent{% elif current_path is containing('/library/') %}Book{% elif current_path is containing('/essentials/') %}HowTo{% else %}Article{% endif %}">
+<meta name="ai.content_type" content="{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% elif current_path is containing('/wiki/') %}DefinedTerm{% elif current_path is containing('/articles/') %}ScholarlyArticle{% elif current_path is containing('/timeline/') %}HistoricalEvent{% elif current_path is containing('/library/') %}Book{% elif current_path is containing('/essentials/') %}HowTo{% else %}Article{% endif %}">
 {% if page.extra.category %}
 <meta name="ai.topic" content="{{ page.extra.category }}">
 {% endif %}
@@ -72,8 +72,8 @@
 {% endif %}
 
 <!-- Enhanced AI/AEO Meta Tags -->
-<meta name="ai.extractable_sections" content=".wiki__summary, .wiki__content, .essentials__content, .explainer__content, .article__content, [data-ai-summary], [data-ai-definition], [data-ai-answer], blockquote[data-ai-cite]">
-<meta name="ai.entity_type" content="{% if page %}{% if current_path is containing('/wiki/') %}concept{% elif current_path is containing('/timeline/') %}historical_event{% elif current_path is containing('/library/') %}book{% elif current_path is containing('/essentials/') %}guide{% elif current_path is containing('/explainers/') %}explanation{% else %}article{% endif %}{% else %}website{% endif %}">
+<meta name="ai.extractable_sections" content=".wiki__summary, .wiki__content, .essentials__content, .article__content, [data-ai-summary], [data-ai-definition], [data-ai-answer], blockquote[data-ai-cite]">
+<meta name="ai.entity_type" content="{% if page %}{% if current_path is containing('/wiki/') %}concept{% elif current_path is containing('/timeline/') %}historical_event{% elif current_path is containing('/library/') %}book{% elif current_path is containing('/essentials/') %}guide{% elif current_path is containing('/articles/') %}explanation{% else %}article{% endif %}{% else %}website{% endif %}">
 {% if page.taxonomies.tags %}
 <meta name="ai.related_topics" content="{{ page.taxonomies.tags | join(sep=', ') }}">
 {% endif %}
@@ -103,7 +103,7 @@
 <meta name="ai.key_concepts" content="{{ page.title }}, {{ page.extra.alternative_names | join(sep=', ') }}">
 {% endif %}
 {% endif %}
-<meta name="ai.reading_level" content="{% if current_path is containing('/essentials/') %}beginner{% elif current_path is containing('/wiki/') %}intermediate{% elif current_path is containing('/explainers/') %}advanced{% else %}general{% endif %}">
+<meta name="ai.reading_level" content="{% if current_path is containing('/essentials/') %}beginner{% elif current_path is containing('/wiki/') %}intermediate{% elif current_path is containing('/articles/') %}advanced{% else %}general{% endif %}">
 
 <!-- Canonical URL -->
 <link rel="canonical" href="{{ current_url | safe }}">

@@ -2,7 +2,7 @@
 <script>
 (function() {
     // Find TOC container - works with wiki, resources, explainers
-    const tocNav = document.querySelector('.wiki__toc-nav, .resources__toc-nav, .explainer__toc-nav');
+    const tocNav = document.querySelector('.wiki__toc-nav, .resources__toc-nav, .article__toc-nav');
     if (!tocNav) return;
 
     const tocLinks = tocNav.querySelectorAll('a[href^="#"]');
@@ -58,7 +58,7 @@
             if (currentActive) {
                 currentActive.link.classList.remove(activeClass);
                 // Also remove from parent items if nested
-                const parentItem = currentActive.link.closest('.wiki__toc-item, .resources__toc-item, .explainer__toc-item');
+                const parentItem = currentActive.link.closest('.wiki__toc-item, .resources__toc-item, .article__toc-item');
                 if (parentItem) {
                     parentItem.classList.remove('is-active');
                 }
@@ -66,13 +66,13 @@
 
             // Add new active
             current.link.classList.add(activeClass);
-            const parentItem = current.link.closest('.wiki__toc-item, .resources__toc-item, .explainer__toc-item');
+            const parentItem = current.link.closest('.wiki__toc-item, .resources__toc-item, .article__toc-item');
             if (parentItem) {
                 parentItem.classList.add('is-active');
             }
 
             // Scroll TOC to keep active link visible
-            const tocContainer = tocNav.closest('.wiki__toc, .resources__toc, .explainer__toc');
+            const tocContainer = tocNav.closest('.wiki__toc, .resources__toc, .article__toc');
             if (tocContainer) {
                 const linkRect = current.link.getBoundingClientRect();
                 const containerRect = tocContainer.getBoundingClientRect();

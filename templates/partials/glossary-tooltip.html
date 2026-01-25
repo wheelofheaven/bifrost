@@ -23,7 +23,7 @@
     const definitionCache = new Map();
 
     // Find all wiki links in content areas
-    const contentSelectors = '.wiki__content, .explainer__content, .essentials__content, .resources__content, .library__content, .info-page__content, article';
+    const contentSelectors = '.wiki__content, .article__content, .essentials__content, .resources__content, .library__content, .info-page__content, article';
     const contentAreas = document.querySelectorAll(contentSelectors);
 
     contentAreas.forEach(area => {

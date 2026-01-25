@@ -39,7 +39,7 @@ textarea {
 // Links within text content - subtle underline focus
 .wiki__content,
 .resources__content,
-.explainer__content,
+.article__content,
 .essentials__content,
 .library-book__content {
     a:focus-visible {
@@ -55,7 +55,7 @@ textarea {
 .related-content__card,
 .wiki-section__card,
 .resources-section__card,
-.explainer-section__card,
+.articles-section__card,
 .essentials-section__card {
     &:focus-visible {
         outline: 2px solid var(--color-focus);
@@ -89,7 +89,7 @@ textarea {
 // TOC links
 .wiki__toc-link,
 .resources__toc-link,
-.explainer__toc-link,
+.article__toc-link,
 .library-book__toc-link {
     &:focus-visible {
         outline: 2px solid var(--color-focus);

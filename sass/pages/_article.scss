@@ -1,11 +1,11 @@
-// Wiki Page Styles
+// Article Page Styles
 //
-// BEM-based styling for wiki pages with frosted glass/futuristic aesthetic
+// BEM-based styling for article pages with frosted glass/futuristic aesthetic
 
 @use "../abstracts/variables" as vars;
 @use "../base/typography" as typo;
 
-.explainer {
+.article {
     min-height: 100vh;
     background: var(--color-background);
     padding: 0;
@@ -184,6 +184,53 @@
             background: var(--color-accent-primary);
             border-radius: 50%;
         }
+    }
+
+    // Article Type Badge (e.g., "Explainer")
+    &__type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.25rem 0.625rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        border-radius: 0.25rem;
+        background: var(--color-background-tertiary);
+        border: 1px solid var(--color-hairline);
+        color: var(--color-text-muted);
+
+        &--explainer {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+    }
+
+    // Quick Summary/TLDR
+    &__summary {
+        padding: 1.5rem 2rem;
+        background: linear-gradient(
+            135deg,
+            rgba(var(--color-accent-primary-rgb, 102, 126, 234), 0.08) 0%,
+            rgba(var(--color-accent-secondary-rgb, 118, 75, 162), 0.05) 100%
+        );
+        border-left: 4px solid var(--color-accent-primary);
+        margin: 0;
+
+        @media (max-width: 768px) {
+            padding: 1.25rem 1.5rem;
+        }
+    }
+
+    &__tldr {
+        margin: 0;
+        font-size: 1rem;
+        line-height: 1.6;
+        color: var(--color-text);
+        font-weight: 500;
     }
 
     // Main Content
@@ -489,7 +536,7 @@
         opacity: 0.7;
         transition: opacity 0.2s ease;
 
-        .explainer__link--external:hover & {
+        .article__link--external:hover & {
             opacity: 1;
         }
     }
@@ -637,7 +684,7 @@
 }
 
 // Inline Reference Citations
-.explainer-ref {
+.article-ref {
     &__link {
         color: var(--color-accent-primary);
         text-decoration: none;
@@ -697,7 +744,7 @@
 
 // Responsive Adjustments
 @media (max-width: 768px) {
-    .explainer {
+    .article {
         &__container {
             margin: 0;
             width: 100%;
@@ -756,7 +803,7 @@
 
 // Print Styles
 @media print {
-    .explainer {
+    .article {
         &__toc {
             display: none;
         }
@@ -776,7 +823,7 @@
         }
     }
 
-    .explainer-ref__link {
+    .article-ref__link {
         background: none !important;
         border: none !important;
         color: #000 !important;
@@ -784,7 +831,7 @@
 }
 
 // Wiki Info Box Component
-.explainer-info-box {
+.article-info-box {
     margin: 1.5rem 0;
     padding: 1.5rem;
     border-radius: 0.75rem;
@@ -848,7 +895,7 @@
             background: var(--color-accent-secondary);
         }
 
-        .explainer-info-box__icon {
+        .article-info-box__icon {
             color: var(--color-accent-secondary);
         }
     }
@@ -861,7 +908,7 @@
             background: #f59e0b;
         }
 
-        .explainer-info-box__icon {
+        .article-info-box__icon {
             color: #f59e0b;
         }
     }
@@ -874,7 +921,7 @@
             background: #ef4444;
         }
 
-        .explainer-info-box__icon {
+        .article-info-box__icon {
             color: #ef4444;
         }
     }
@@ -887,14 +934,14 @@
             background: #10b981;
         }
 
-        .explainer-info-box__icon {
+        .article-info-box__icon {
             color: #10b981;
         }
     }
 }
 
 // Wiki Definition Box Component
-.explainer-definition-box {
+.article-definition-box {
     margin: 1.5rem 0;
     padding: 1.5rem;
     background: var(--color-glass-bg);
@@ -931,7 +978,7 @@
 }
 
 // Wiki Reference Component
-.explainer-reference {
+.article-reference {
     display: inline;
     vertical-align: super;
     font-size: 0.75em;
@@ -968,7 +1015,7 @@
 }
 
 // Wiki Breadcrumbs Component
-.explainer__breadcrumbs {
+.article__breadcrumbs {
     padding: 1rem 2rem 0;
     border-bottom: 1px solid var(--color-hairline-subtle);
     margin-bottom: 0;
@@ -978,7 +1025,7 @@
     }
 }
 
-.explainer__breadcrumb-list {
+.article__breadcrumb-list {
     list-style: none;
     margin: 0;
     padding: 0;
@@ -989,7 +1036,7 @@
     font-size: 0.875rem;
 }
 
-.explainer__breadcrumb-item {
+.article__breadcrumb-item {
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -1001,7 +1048,7 @@
     }
 }
 
-.explainer__breadcrumb-link {
+.article__breadcrumb-link {
     color: var(--color-text-muted);
     text-decoration: none;
     padding: 0.25rem 0.5rem;
@@ -1014,7 +1061,7 @@
     }
 }
 
-.explainer__breadcrumb-current {
+.article__breadcrumb-current {
     color: var(--color-text);
     font-weight: 600;
     padding: 0.25rem 0.5rem;
@@ -1042,7 +1089,7 @@
 }
 
 // Special highlighting for active TOC links
-.explainer__toc-link--active {
+.article__toc-link--active {
     background: var(--color-accent-primary);
     color: var(--color-background);
     font-weight: 700;
