@@ -7,12 +7,13 @@
         {% set full_src = "/images/" ~ img_src %}
     {% endif %}
     <picture>
-        <source srcset="{{ full_src }}.avif" type="image/avif">
-        <source srcset="{{ full_src }}.webp" type="image/webp">
+        <source srcset="{{ full_src }}.avif" type="image/avif" sizes="(max-width: 768px) 100vw, 720px">
+        <source srcset="{{ full_src }}.webp" type="image/webp" sizes="(max-width: 768px) 100vw, 720px">
         <img src="{{ full_src }}.webp"
              alt="{{ alt | default(value=caption | default(value='')) }}"
              loading="lazy"
              decoding="async"
+             sizes="(max-width: 768px) 100vw, 720px"
              class="figure__image">
     </picture>
     {% if caption %}

@@ -119,7 +119,7 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{% if page %}{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% else %}Article{% endif %}{% else %}WebSite{% endif %}",
+  "@type": "{% if page %}{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% else %}Article{% endif %}{% elif section %}CollectionPage{% else %}WebSite{% endif %}",
   {% if page %}
   "headline": "{{ page.title | default(value="") | escape }}",
   "name": "{{ page.title | default(value="") | escape }}",

@@ -204,7 +204,7 @@
 {% macro hero_section(page) %}
     {% if page.extra.header_image %}
     <div class="explainer__hero">
-        <img src="{{ page.extra.header_image }}" alt="{{ page.title }}" class="explainer__hero-image">
+        <img src="{{ page.extra.header_image }}" alt="{{ page.title }}" class="explainer__hero-image" sizes="100vw">
         <div class="explainer__hero-overlay">
             <h1 class="explainer__hero-title">{{ page.title }}</h1>
         </div>

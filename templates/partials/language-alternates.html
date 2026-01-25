@@ -1,6 +1,26 @@
 <!-- Language Alternates -->
-<!-- x-default for search engines to identify the default language version -->
+<!-- x-default points to English (default language) version -->
+{% if page %}
+    {% set en_translation = page.translations | filter(attribute="lang", value="en") | first %}
+    {% if en_translation %}
+<link rel="alternate" hreflang="x-default" href="{{ en_translation.permalink }}">
+    {% elif lang == "en" %}
+<link rel="alternate" hreflang="x-default" href="{{ current_url | safe }}">
+    {% else %}
 <link rel="alternate" hreflang="x-default" href="{{ config.base_url }}/">
+    {% endif %}
+{% elif section %}
+    {% set en_translation = section.translations | filter(attribute="lang", value="en") | first %}
+    {% if en_translation %}
+<link rel="alternate" hreflang="x-default" href="{{ en_translation.permalink }}">
+    {% elif lang == "en" %}
+<link rel="alternate" hreflang="x-default" href="{{ current_url | safe }}">
+    {% else %}
+<link rel="alternate" hreflang="x-default" href="{{ get_url(path=section.path, lang="en") }}">
+    {% endif %}
+{% else %}
+<link rel="alternate" hreflang="x-default" href="{{ config.base_url }}/">
+{% endif %}
 <!-- Current language -->
 <link rel="alternate" hreflang="{{ lang }}" href="{{ current_url | safe }}">
 <!-- Other languages -->
@@ -15,6 +35,9 @@
             {% set translation = section.translations | filter(attribute="lang", value=lang_code) | first %}
             {% if translation %}
         <link rel="alternate" hreflang="{{ lang_code }}" href="{{ translation.permalink }}">
+            {% else %}
+                {# Fallback: construct URL for sections that exist in all languages #}
+        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path=section.path, lang=lang_code) }}">
             {% endif %}
         {% else %}
         <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path='/', lang=lang_code) }}">

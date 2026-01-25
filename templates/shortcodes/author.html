@@ -41,6 +41,7 @@ author_data = authors.authors[author_key] %} {% endif %}
                 alt="{{ author_data.name }}"
                 loading="lazy"
                 decoding="async"
+                sizes="48px"
                 onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden');"
             />
             {% endif %}

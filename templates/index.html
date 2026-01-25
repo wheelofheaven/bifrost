@@ -6,14 +6,15 @@
     <section class="landing-hero">
         <div class="landing-hero__media">
             <picture>
-                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.avif" type="image/avif">
-                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.webp" type="image/webp">
+                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.avif" type="image/avif" sizes="100vw">
+                <source srcset="{{ config.extra.cdn_url }}/images/hero/hero-genesis.webp" type="image/webp" sizes="100vw">
                 <img
                     src="{{ config.extra.cdn_url }}/images/hero/hero-genesis.webp"
                     alt="Ancient stargazers contemplating the cosmos"
                     class="landing-hero__image"
                     loading="eager"
                     fetchpriority="high"
+                    sizes="100vw"
                 />
             </picture>
             <div class="landing-hero__overlay"></div>
