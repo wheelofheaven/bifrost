@@ -248,8 +248,9 @@ body.mobile-nav-open {
         // Expand search input when modal is open
         .search-modal-open & {
             position: absolute;
-            left: 5rem; // Extend toward logo
-            right: 0;
+            left: 5rem;
+            right: 12rem; // Leave space for lang, theme, bookmark, ask-ai
+            z-index: 10;
 
             .navbar__search-input {
                 width: 100%;
