@@ -43,4 +43,10 @@ main:has(.landing) {
         padding-left: 0.75rem;
         padding-right: 0.75rem;
     }
+
+    // Landing page: keep full-bleed on mobile too
+    main:has(.landing) {
+        max-width: none;
+        padding: 0;
+    }
 }

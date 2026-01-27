@@ -8,6 +8,11 @@
 }
 
 .header {
+    // Header contains only fixed-position elements, so should not take up space
+    position: absolute;
+    width: 100%;
+    z-index: 100;
+
     &__decoration-bar {
         position: fixed;
         bottom: 0;
