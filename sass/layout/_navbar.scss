@@ -945,8 +945,14 @@ body.mobile-nav-open {
                     top: calc(100% + 0.5rem);
                     bottom: auto;
                     transform: translateY(-8px);
+                    // Use display instead of visibility to avoid reserving space
+                    display: none;
+                    opacity: 0;
 
                     &--open {
+                        display: block;
+                        opacity: 1;
+                        visibility: visible;
                         transform: translateY(0);
                     }
                 }
