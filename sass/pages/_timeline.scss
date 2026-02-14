@@ -694,13 +694,16 @@ main:has(.timeline-section) ~ footer {
         right: auto;
         left: auto;
         z-index: 10;
+        isolation: isolate; // Explicit stacking context for reliable z-index
         background: transparent;
         margin: 0;
         margin-bottom: auto; // Push card toward the top of the flex container
         padding: 0;
         transform: none;
 
-        // Navigation buttons on mobile - above card's backdrop-filter stacking context
+        // Navigation buttons on mobile — rendered AFTER .age-card in DOM
+        // so they naturally paint on top. No backdrop-filter to avoid
+        // WebKit compositing issues with sibling backdrop-filter layers.
         .timeline-nav__btn {
             position: absolute;
             top: 50%;
@@ -708,10 +711,11 @@ main:has(.timeline-section) ~ footer {
             width: 44px;
             height: 80px;
             border-radius: 0.75rem;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.6);
             border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: blur(10px);
+            backdrop-filter: none;
             z-index: 20;
+            pointer-events: auto;
 
             &--prev {
                 left: -8px;

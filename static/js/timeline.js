@@ -742,6 +742,20 @@ document.addEventListener("DOMContentLoaded", function () {
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
   }
 
+  // Debug: log what element receives clicks/touches (remove after fixing)
+  document.addEventListener("click", function (e) {
+    const el = e.target;
+    const tag = el.tagName;
+    const cls = el.className;
+    const id = el.id;
+    console.log(`[DEBUG CLICK] target: <${tag}> id="${id}" class="${cls}"`);
+    // Also check what elements are at this point
+    const elements = document.elementsFromPoint(e.clientX, e.clientY);
+    console.log("[DEBUG CLICK] elements at point:", elements.map(function(el) {
+      return el.tagName + (el.id ? "#" + el.id : "") + (el.className ? "." + String(el.className).split(" ").join(".") : "");
+    }));
+  }, true); // useCapture to see events before they're stopped
+
   // Initialize
   initializeTimeline();
 

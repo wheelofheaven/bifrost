@@ -49,39 +49,6 @@ load_data(path="data/ages.json") %}
 
     <!-- Integrated Age Card Container -->
     <div class="age-card-container" role="region" aria-label="Current age display">
-        <!-- Navigation buttons positioned on sides of container -->
-        <button
-            class="timeline-nav__btn timeline-nav__btn--prev"
-            id="nav-prev"
-            aria-label="Navigate to previous age"
-        >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                    d="M15 18L9 12L15 6"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-            </svg>
-        </button>
-
-        <button
-            class="timeline-nav__btn timeline-nav__btn--next"
-            id="nav-next"
-            aria-label="Navigate to next age"
-        >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                    d="M9 6L15 12L9 18"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-            </svg>
-        </button>
-
         <div class="age-card" id="age-card" aria-live="polite" aria-atomic="true">
             <div class="age-card__symbol" id="age-symbol" aria-hidden="true">♑</div>
 
@@ -178,6 +145,39 @@ load_data(path="data/ages.json") %}
                 </div>
             </div>
         </div>
+
+        <!-- Navigation buttons AFTER card so they paint on top (DOM order) -->
+        <button
+            class="timeline-nav__btn timeline-nav__btn--prev"
+            id="nav-prev"
+            aria-label="Navigate to previous age"
+        >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                    d="M15 18L9 12L15 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
+
+        <button
+            class="timeline-nav__btn timeline-nav__btn--next"
+            id="nav-next"
+            aria-label="Navigate to next age"
+        >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                    d="M9 6L15 12L9 18"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                />
+            </svg>
+        </button>
     </div>
 </div>
 
