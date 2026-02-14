@@ -114,8 +114,10 @@
                             %Y") }}
                         </time>
                         {% endif %} {% if page.extra.category %}
-                        <span class="wiki__category"
-                            >Category: {{ page.extra.category }}</span
+                        <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
+                           class="wiki__category"
+                           title="Browse all {{ page.extra.category }} entries"
+                            >{{ page.extra.category }}</a
                         >
                         {% endif %}
                     </div>

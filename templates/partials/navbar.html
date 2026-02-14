@@ -43,7 +43,7 @@
                 <!-- Mobile inline links (visible only in mobile expanded menu) -->
                 <div class="navbar__dropdown-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
-                    <a href="{{ get_url(path='explainers', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="explainers">Explainers</a>
+                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="explainers">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='resources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
@@ -676,16 +676,16 @@
                     <span data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</span>
                 </h3>
                 <div class="navbar-dropdown__links">
-                    <a href="{{ get_url(path='explainers', lang=detected_lang) }}" class="navbar-dropdown__link">
+                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
                             {% include "partials/icons/help-circle.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
-                                <span data-navbar-key="explainers">Explainers</span>
+                                <span data-navbar-key="explainers">{{ trans(key="navbarArticles", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="explainersDesc">Detailed explanations of key concepts and ideas</div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="explainersDesc">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">

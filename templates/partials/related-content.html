@@ -6,7 +6,7 @@
 {% if current_section.pages and current_section.pages | length > 1 %}
 
 {% set related_pages = [] %}
-{% set max_items = 3 %}
+{% set max_items = 4 %}
 
 {# Find related pages from the same section #}
 {% for sibling in current_section.pages %}
@@ -56,6 +56,9 @@
     <div class="related-content__grid">
         {% for related in related_pages %}
         <a href="{{ related.permalink }}" class="related-content__card">
+            {% if related.extra.category %}
+            <span class="related-content__card-category">{{ related.extra.category }}</span>
+            {% endif %}
             <h3 class="related-content__card-title">{{ related.title }}</h3>
             {% if related.description %}
             <p class="related-content__card-desc">{{ related.description | truncate(length=120) }}</p>

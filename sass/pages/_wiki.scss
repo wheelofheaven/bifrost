@@ -341,6 +341,15 @@
         }
     }
 
+    &__category {
+        color: var(--color-accent-primary);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
     // Main Content
     &__content {
         padding: 2rem;
