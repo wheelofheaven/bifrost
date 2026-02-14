@@ -303,10 +303,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     updateStarmapPosition();
 
-    // Reposition elements after card content changes
-    setTimeout(() => {
-      positionElementsBelowCard();
-    }, 50);
+    // Note: positionElementsBelowCard was removed — no longer needed
   }
 
   // Update card content
@@ -389,23 +386,33 @@ document.addEventListener("DOMContentLoaded", function () {
     navNext.disabled = index === agesData.length - 1;
   }
 
-  // Navigation button handlers
+  // Navigation button handlers — use both click and touchend for mobile compat
+  function handlePrevAction(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("PREV button triggered via", e.type);
+    if (currentAgeIndex > 0) {
+      updateAge(currentAgeIndex - 1, true);
+    }
+  }
+
+  function handleNextAction(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log("NEXT button triggered via", e.type);
+    if (currentAgeIndex < agesData.length - 1) {
+      updateAge(currentAgeIndex + 1, true);
+    }
+  }
+
   if (navPrev) {
-    navPrev.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentAgeIndex > 0) {
-        updateAge(currentAgeIndex - 1, true);
-      }
-    });
+    navPrev.addEventListener("click", handlePrevAction);
+    navPrev.addEventListener("touchend", handlePrevAction);
   }
 
   if (navNext) {
-    navNext.addEventListener("click", (e) => {
-      e.preventDefault();
-      if (currentAgeIndex < agesData.length - 1) {
-        updateAge(currentAgeIndex + 1, true);
-      }
-    });
+    navNext.addEventListener("click", handleNextAction);
+    navNext.addEventListener("touchend", handleNextAction);
   }
 
   // Age selector dropdown (triggered by progress bar clicks)
@@ -599,22 +606,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Lock/unlock scrolling — class on <html> triggers overflow: hidden
   // on both html and body (needed for iOS Safari).
-  const timelineSection = document.querySelector(".timeline-section");
-
   function lockScroll() {
     document.documentElement.classList.add("timeline-scroll-locked");
-    // Enable touch-action: none to prevent touch scrolling (CSS-level)
-    if (timelineSection) {
-      timelineSection.style.touchAction = "none";
-    }
   }
 
   function unlockScroll() {
     document.documentElement.classList.remove("timeline-scroll-locked");
-    // Restore normal touch behavior for vertical scrolling
-    if (timelineSection) {
-      timelineSection.style.touchAction = "";
-    }
   }
 
   // Initialize timeline

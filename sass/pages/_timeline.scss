@@ -739,6 +739,8 @@ main:has(.timeline-section) ~ footer {
         border-radius: 1rem;
         margin: 0 auto;
         max-width: 100%;
+        position: relative;
+        z-index: 1; // Must be below nav buttons (z-index: 20)
 
         &::before {
             background: rgba(255, 255, 255, 0.1);
