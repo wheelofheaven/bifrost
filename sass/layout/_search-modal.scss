@@ -13,7 +13,7 @@
     max-width: 80rem; // Same as navbar max-width
     opacity: 0;
     visibility: hidden;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
     pointer-events: none;
 
     // Mobile positioning adjustments
@@ -56,7 +56,7 @@
             inset 0 1px 0 rgba(255, 255, 255, 0.1);
         overflow: hidden;
         transform: translateY(-10px) scale(0.98);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         max-height: 70vh;
         display: flex;
         flex-direction: column;
