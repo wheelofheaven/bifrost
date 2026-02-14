@@ -637,6 +637,21 @@ document.addEventListener("DOMContentLoaded", function () {
     touchStartY = event.touches[0].clientY;
   }
 
+  // Prevent touch scrolling while in timeline mode, but allow taps.
+  // Small movements (< 10px) are allowed through so click events still fire.
+  function handleTouchMove(event) {
+    if (isVerticalScrolling) return;
+
+    const touch = event.touches[0];
+    const dx = Math.abs(touch.clientX - touchStartX);
+    const dy = Math.abs(touch.clientY - touchStartY);
+
+    // Only prevent when finger has moved enough to be a scroll gesture
+    if (dx > 10 || dy > 10) {
+      event.preventDefault();
+    }
+  }
+
   function handleTouchEnd(event) {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) return;
@@ -706,6 +721,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.removeEventListener("scroll", handleRegularScroll);
     document.removeEventListener("touchstart", handleTouchStart);
     document.removeEventListener("touchend", handleTouchEnd);
+    document.removeEventListener("touchmove", handleTouchMove);
 
     // Re-add appropriate event listeners
     if (isMobile) {
@@ -713,6 +729,9 @@ document.addEventListener("DOMContentLoaded", function () {
         passive: true,
       });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
     // Both desktop and mobile need wheel/scroll listeners
@@ -733,6 +752,9 @@ document.addEventListener("DOMContentLoaded", function () {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
+    document.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
   }
 
   // Initialize
