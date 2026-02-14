@@ -1,11 +1,14 @@
 {% import "macros/link.html" as link_macros %}
 {% set detected_lang = "en" %}
-{% if current_path is starting_with("/de/") %}{% set_global detected_lang = "de" %}
-{% elif current_path is starting_with("/fr/") %}{% set_global detected_lang = "fr" %}
-{% elif current_path is starting_with("/es/") %}{% set_global detected_lang = "es" %}
-{% elif current_path is starting_with("/ru/") %}{% set_global detected_lang = "ru" %}
-{% elif current_path is starting_with("/ja/") %}{% set_global detected_lang = "ja" %}
-{% elif current_path is starting_with("/zh/") %}{% set_global detected_lang = "zh" %}
+{% if current_path is starting_with("/") %}{% set_global _p = current_path %}{% else %}{% set_global _p = "/" ~ current_path %}{% endif %}
+{% if _p is starting_with("/zh-Hant/") %}{% set_global detected_lang = "zh-Hant" %}
+{% elif _p is starting_with("/zh/") %}{% set_global detected_lang = "zh" %}
+{% elif _p is starting_with("/de/") %}{% set_global detected_lang = "de" %}
+{% elif _p is starting_with("/fr/") %}{% set_global detected_lang = "fr" %}
+{% elif _p is starting_with("/es/") %}{% set_global detected_lang = "es" %}
+{% elif _p is starting_with("/ru/") %}{% set_global detected_lang = "ru" %}
+{% elif _p is starting_with("/ja/") %}{% set_global detected_lang = "ja" %}
+{% elif _p is starting_with("/ko/") %}{% set_global detected_lang = "ko" %}
 {% endif %}
 <!doctype html>
 <html lang="{{ detected_lang }}">
