@@ -597,20 +597,14 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
-  // Lock/unlock scrolling — uses CSS class with position: fixed for iOS compat.
-  // position: fixed on body loses scroll position, so we save/restore it.
-  let savedScrollY = 0;
-
+  // Lock/unlock scrolling — class on <html> triggers overflow: hidden
+  // on both html and body (needed for iOS Safari).
   function lockScroll() {
-    savedScrollY = window.scrollY;
-    document.body.classList.add("timeline-scroll-locked");
-    document.body.style.top = `-${savedScrollY}px`;
+    document.documentElement.classList.add("timeline-scroll-locked");
   }
 
   function unlockScroll() {
-    document.body.classList.remove("timeline-scroll-locked");
-    document.body.style.top = "";
-    window.scrollTo(0, savedScrollY);
+    document.documentElement.classList.remove("timeline-scroll-locked");
   }
 
   // Initialize timeline
