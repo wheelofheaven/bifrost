@@ -10,12 +10,24 @@ load_data(path="data/ages.json") %}
         </picture>
     </div>
 
-    <!-- Fixed Earth (SVG) -->
+    <!-- Fixed Earth (SVG) - Two layers for cross-fade transitions -->
     <div class="earth-container">
         <svg width="600" height="600" viewBox="0 0 600 600">
             <defs>
                 <pattern
-                    id="earthTexture"
+                    id="earthTextureA"
+                    patternUnits="objectBoundingBox"
+                    width="1"
+                    height="1"
+                >
+                    <image
+                        href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-mist.webp"
+                        width="600"
+                        height="600"
+                    />
+                </pattern>
+                <pattern
+                    id="earthTextureB"
                     patternUnits="objectBoundingBox"
                     width="1"
                     height="1"
@@ -27,33 +39,13 @@ load_data(path="data/ages.json") %}
                     />
                 </pattern>
             </defs>
-            <circle cx="300" cy="300" r="300" fill="url(#earthTexture)" />
+            <circle cx="300" cy="300" r="300" fill="url(#earthTextureA)" class="earth-layer earth-layer--a" />
+            <circle cx="300" cy="300" r="300" fill="url(#earthTextureB)" class="earth-layer earth-layer--b" opacity="0" />
         </svg>
     </div>
 
-    <!-- Scrolling Starmap Background - 3 repeating starmaps -->
-    <div class="starmap-background">
-        <div class="starmap-container" id="starmap-container">
-            <!-- Left starmap (previous cycle) -->
-            <img
-                src="/starmap.svg"
-                alt="Star Map Left"
-                class="starmap-layer starmap-layer--left"
-            />
-            <!-- Center starmap (current cycle) -->
-            <img
-                src="/starmap.svg"
-                alt="Star Map Center"
-                class="starmap-layer starmap-layer--center"
-            />
-            <!-- Right starmap (next cycle) -->
-            <img
-                src="/starmap.svg"
-                alt="Star Map Right"
-                class="starmap-layer starmap-layer--right"
-            />
-        </div>
-    </div>
+    <!-- Scrolling Starmap Background - CSS repeat-x handles seamless tiling -->
+    <div class="starmap-background" id="starmap-background"></div>
 
     <!-- Integrated Age Card Container -->
     <div class="age-card-container" role="region" aria-label="Current age display">

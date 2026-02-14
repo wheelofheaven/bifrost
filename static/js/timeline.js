@@ -189,21 +189,33 @@ document.addEventListener("DOMContentLoaded", function () {
   ];
 
   // Color mapping
-  // Earth texture management
+  // Earth texture management - cross-fade between two SVG layers
   let currentEarthTexture = null;
+  let earthLayerFront = "A";
 
   function updateEarthTexture(newTexturePath) {
-    const earthPattern = document.querySelector("#earthTexture image");
+    if (!newTexturePath || newTexturePath === currentEarthTexture) return;
 
-    if (
-      earthPattern &&
-      newTexturePath &&
-      newTexturePath !== currentEarthTexture
-    ) {
-      // Instant texture change
-      earthPattern.setAttribute("href", newTexturePath);
+    const backId = earthLayerFront === "A" ? "B" : "A";
+    const backPattern = document.querySelector(
+      `#earthTexture${backId} image`,
+    );
+    const backCircle = document.querySelector(
+      `.earth-layer--${backId.toLowerCase()}`,
+    );
+    const frontCircle = document.querySelector(
+      `.earth-layer--${earthLayerFront.toLowerCase()}`,
+    );
+
+    if (backPattern && backCircle && frontCircle) {
+      // Set new texture on back layer, then cross-fade
+      backPattern.setAttribute("href", newTexturePath);
+      backCircle.setAttribute("opacity", "1");
+      frontCircle.setAttribute("opacity", "0");
+
+      earthLayerFront = backId;
       currentEarthTexture = newTexturePath;
-      console.log("Earth texture updated to:", newTexturePath);
+      console.log("Earth texture cross-fade to:", newTexturePath);
     }
   }
 
@@ -220,53 +232,40 @@ document.addEventListener("DOMContentLoaded", function () {
     green: "#b9fbc0",
   };
 
+  // Starmap SVG aspect ratio (864×432 = 2:1)
+  const STARMAP_ASPECT_RATIO = 864 / 432;
+
   // Update starmap position based on current age - align constellations with Earth
   function updateStarmapPosition(customPosition = null) {
-    const starmapContainer = document.getElementById("starmap-container");
+    const starmapBackground = document.getElementById("starmap-background");
     const timelineContent = document.getElementById("timeline-content");
 
-    if (starmapContainer && timelineContent) {
-      // Use custom position if provided (for smooth scrolling), otherwise use current age index
+    if (starmapBackground && timelineContent) {
       const position =
         customPosition !== null ? customPosition : currentAgeIndex;
-
-      // Timeline moves horizontally through ages (each age is 100vw)
-      const timelineTransform = -(position * 100);
-
-      // Starmap positioning: Each age shows 1/12th of the single starmap
-      // The center starmap (middle of 3) should move so constellations align with Earth
-      // Position 0: Show leftmost constellation (0% of starmap)
-      // Position 11: Show rightmost constellation (100% of starmap)
-      const constellationProgress = position / 11; // 0 to 1 across 12 ages
-
-      // Move the center starmap within its container
-      // Each age should move exactly 1/13th of the starmap width (150vw / 13 ≈ 11.54vw)
-      // Earth is at 30% from left, so we need to offset starmap accordingly
-      const earthOffsetPercent = 30; // Earth's left position as percentage of viewport
-      const starmapRightShift = 20; // Additional 20% shift to the right
-      const initialOffset = -150 + earthOffsetPercent + starmapRightShift; // Start position adjusted for wider starmap
-      const starmapStepSize = 150 / 13; // ~11.54vw per age (1/13th of starmap width)
-      const starmapTransform = initialOffset - position * starmapStepSize;
 
       const isMobile = window.innerWidth <= 768;
 
       if (!isMobile) {
+        // Timeline moves horizontally through ages (each age is 100vw)
+        const timelineTransform = -(position * 100);
         timelineContent.style.transform = `translateX(${timelineTransform}vw)`;
 
-        // Responsive starmap transforms based on viewport size
-        const isTablet = window.innerWidth <= 1200 && window.innerWidth > 768;
+        // Starmap: rendered at auto × 100vh, so width = viewportHeight × aspectRatio
+        // One full image = one zodiac cycle. Repeat-x handles seamless tiling.
+        const imageWidth = window.innerHeight * STARMAP_ASPECT_RATIO;
+        const stepSize = imageWidth / 13;
 
-        let verticalOffset = "-10vh";
-        if (isTablet) {
-          verticalOffset = "-5vh";
-        }
+        // Align constellations with Earth (at 30% of viewport width)
+        const earthX = window.innerWidth * 0.30;
+        const bgX = earthX - (position * stepSize);
 
-        starmapContainer.style.transform = `translate3d(${starmapTransform}vw, ${verticalOffset}, 0)`;
+        starmapBackground.style.backgroundPosition = `${bgX}px center`;
       }
 
       if (customPosition === null) {
         console.log(
-          `Age ${currentAgeIndex + 1}/${agesData.length}: Timeline at ${timelineTransform}vw, Starmap at ${starmapTransform}vw`,
+          `Age ${currentAgeIndex + 1}/${agesData.length}: Starmap position updated`,
         );
       }
     }
@@ -466,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let hasCompletedAllAges = false;
   let isVerticalScrolling = false;
   let scrollResistanceCount = 0;
-  const SCROLL_RESISTANCE_THRESHOLD = 50; // Require 50 scroll attempts at end
+  const SCROLL_RESISTANCE_THRESHOLD = 15; // Require 15 scroll attempts at end
 
   // Simple scroll weight system with time-based throttling
   let scrollAccumulator = 0;
@@ -501,34 +500,8 @@ document.addEventListener("DOMContentLoaded", function () {
           scrollResistanceCount = 0;
           console.log("Enabling vertical scroll from Age of Aquarius!");
           document.body.style.overflow = "auto";
-          document.body.style.height = "200vh";
-
-          // Immediately hide the fixed elements before scrolling
-          const starmapBg = document.querySelector(".starmap-background");
-          const earthEl = document.querySelector(".earth-container");
-          const sunriseEl = document.querySelector(".earth-sunrise");
-          const ageCardEl = document.querySelector(".age-card-container");
-          const timelineSec = document.querySelector(".timeline-section");
-
-          if (starmapBg) {
-            starmapBg.style.opacity = "0";
-            starmapBg.style.transform = "translateY(-50vh)";
-          }
-          if (earthEl) earthEl.style.opacity = "0";
-          if (sunriseEl) sunriseEl.style.opacity = "0";
-          if (ageCardEl) {
-            ageCardEl.style.opacity = "0";
-            ageCardEl.style.transform = "translateY(-50vh)";
-          }
-          if (timelineSec) {
-            timelineSec.style.transform = "translateY(-100vh)";
-          }
-
-          // Scroll to the world ages section
-          window.scrollTo({
-            top: window.innerHeight,
-            behavior: "smooth",
-          });
+          // No auto-scroll — user's continued scrolling reveals world-ages
+          // section naturally. They can also scroll back up to return.
         }
         return; // Don't process this scroll for normal movement
       }
@@ -572,78 +545,22 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   // Handle vertical scrolling after completing timeline
+  // The world-ages-section (z-index: 2) naturally covers the fixed timeline
+  // elements (inside timeline-section z-index: 1 stacking context) as it
+  // scrolls into view — no opacity manipulation needed.
   function handleRegularScroll() {
     if (isVerticalScrolling) {
       const scrollY = window.scrollY;
-      const timelineSection = document.querySelector(".timeline-section");
-      const worldAgesSection = document.querySelector(".world-ages-section");
-      const starmapBackground = document.querySelector(".starmap-background");
-      const earthContainerEl = document.querySelector(".earth-container");
-      const earthSunrise = document.querySelector(".earth-sunrise");
-      const ageCardContainer = document.querySelector(".age-card-container");
 
-      // Only update styles when scrolling back UP (towards timeline)
-      // The initial transition to world-ages is handled when enabling vertical scroll
-      if (scrollY > 0 && scrollY < window.innerHeight && timelineSection && worldAgesSection) {
-        // User is scrolling back towards the timeline
-        const pushUpProgress = Math.min(scrollY / window.innerHeight, 1);
-        const timelineTransform = pushUpProgress * -100;
-        timelineSection.style.transform = `translateY(${timelineTransform}vh)`;
-
-        // Also transition the fixed elements to avoid black gap
-        // Fade out and move up the fixed elements in sync with timeline section
-        const fixedOpacity = 1 - pushUpProgress;
-        const fixedTransform = pushUpProgress * -50; // Move up slower than timeline
-
-        if (starmapBackground) {
-          starmapBackground.style.opacity = fixedOpacity;
-          starmapBackground.style.transform = `translateY(${fixedTransform}vh)`;
-        }
-        if (earthContainerEl) {
-          earthContainerEl.style.opacity = fixedOpacity;
-        }
-        if (earthSunrise) {
-          earthSunrise.style.opacity = fixedOpacity;
-        }
-        if (ageCardContainer) {
-          ageCardContainer.style.opacity = fixedOpacity;
-          ageCardContainer.style.transform = `translateY(${fixedTransform}vh)`;
-        }
-      }
-
-      // Allow scrolling back into timeline
+      // Allow scrolling back into timeline when at the top
       if (scrollY <= 10) {
-        // Small threshold for easier return
         isVerticalScrolling = false;
         hasCompletedAllAges = false;
-        scrollResistanceCount = 0; // Reset resistance counter
-        scrollAccumulator = 0; // Reset scroll accumulator
-        lastScrollTime = 0; // Reset scroll throttle
+        scrollResistanceCount = 0;
+        scrollAccumulator = 0;
+        lastScrollTime = 0;
         document.body.style.overflow = "hidden";
-        document.body.style.height = "auto";
-
-        if (timelineSection) {
-          timelineSection.style.transform = "translateY(0)";
-        }
-
-        // Reset fixed elements
-        if (starmapBackground) {
-          starmapBackground.style.opacity = "1";
-          starmapBackground.style.transform = "";
-        }
-        if (earthContainerEl) {
-          earthContainerEl.style.opacity = "1";
-        }
-        if (earthSunrise) {
-          earthSunrise.style.opacity = "1";
-        }
-        if (ageCardContainer) {
-          ageCardContainer.style.opacity = "1";
-          ageCardContainer.style.transform = "";
-        }
-
         console.log("Returned to timeline - horizontal scrolling re-enabled");
-        // World Ages section returns to natural position in document flow
       }
     }
   }
@@ -681,68 +598,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize timeline
   function initializeTimeline() {
-    // Only prevent scrolling on desktop
+    // Desktop: lock scrolling for horizontal age navigation
+    // Mobile: ensure normal vertical scrolling works
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) {
       document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "auto";
     }
 
-    // World Ages section is positioned naturally after timeline section
-    // No initial transform needed - it's part of normal document flow
-
-    // Set up starmap container with proper structure for seamless continuity
-    const starmapContainer = document.getElementById("starmap-container");
-    if (starmapContainer) {
-      const isMobile = window.innerWidth <= 768;
-
-      if (isMobile) {
-        // Mobile: Simple static positioning
-        starmapContainer.style.transform = "none";
-        starmapContainer.style.position = "static";
-
-        // Show only center starmap on mobile
-        const starmapLayers =
-          starmapContainer.querySelectorAll(".starmap-layer");
-        starmapLayers.forEach((layer, index) => {
-          if (
-            layer.classList.contains("starmap-layer--left") ||
-            layer.classList.contains("starmap-layer--right")
-          ) {
-            layer.style.display = "none";
-          } else {
-            layer.style.display = "block";
-            layer.style.objectFit = "cover";
-            layer.style.objectPosition = "center center";
-            layer.style.position = "absolute";
-            layer.style.top = "0";
-            layer.style.left = "0";
-            layer.style.width = "100%";
-            layer.style.height = "100%";
-          }
-        });
-      } else {
-        // Desktop/Tablet: Complex positioning
-        const isTablet = window.innerWidth <= 1200;
-        let verticalOffset = isTablet ? "-5vh" : "-10vh";
-
-        starmapContainer.style.transform = `translate3d(-120vw, ${verticalOffset}, 0)`;
-
-        const starmapLayers =
-          starmapContainer.querySelectorAll(".starmap-layer");
-        starmapLayers.forEach((layer) => {
-          layer.style.display = "block";
-          if (isTablet) {
-            layer.style.objectFit = "contain";
-            layer.style.objectPosition = "center center";
-          } else {
-            layer.style.objectFit = "cover";
-            layer.style.objectPosition = "center 20%";
-          }
-        });
-      }
-    }
-
-    // Initialize with first age
+    // Initialize with first age (also sets starmap position)
     updateAge(0, false);
 
     // Populate world age cards with images
@@ -784,56 +649,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle window resize to update starmap positioning
   function handleWindowResize() {
-    const starmapContainer = document.getElementById("starmap-container");
     const isMobile = window.innerWidth <= 768;
 
     // Update body scrolling based on viewport
     if (isMobile) {
       document.body.style.overflow = "auto";
-      document.body.style.height = "auto";
       isVerticalScrolling = false;
       hasCompletedAllAges = false;
     } else {
       document.body.style.overflow = "hidden";
-      document.body.style.height = "100vh";
     }
 
-    if (starmapContainer) {
-      if (isMobile) {
-        // Mobile setup
-        starmapContainer.style.transform = "none";
-        const starmapLayers =
-          starmapContainer.querySelectorAll(".starmap-layer");
-        starmapLayers.forEach((layer, index) => {
-          if (
-            layer.classList.contains("starmap-layer--left") ||
-            layer.classList.contains("starmap-layer--right")
-          ) {
-            layer.style.display = "none";
-          } else {
-            layer.style.display = "block";
-            layer.style.objectFit = "cover";
-            layer.style.objectPosition = "center center";
-          }
-        });
-      } else {
-        // Desktop setup
-        updateStarmapPosition();
-        const starmapLayers =
-          starmapContainer.querySelectorAll(".starmap-layer");
-        const isTablet = window.innerWidth <= 1200;
-
-        starmapLayers.forEach((layer) => {
-          layer.style.display = "block";
-          if (isTablet) {
-            layer.style.objectFit = "contain";
-            layer.style.objectPosition = "center center";
-          } else {
-            layer.style.objectFit = "cover";
-            layer.style.objectPosition = "center 20%";
-          }
-        });
-      }
+    // Recalculate starmap position for new viewport dimensions
+    if (!isMobile) {
+      updateStarmapPosition();
     }
 
     // Remove existing event listeners

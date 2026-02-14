@@ -6,6 +6,13 @@
 @use "../abstracts/variables" as vars;
 @use "../base/typography" as typo;
 
+// Let body height be content-driven on the timeline page
+// (overrides the global html,body { height: 100% } from reset)
+body:has(.timeline-section) {
+    height: auto;
+    overscroll-behavior-y: none;
+}
+
 // Timeline page main element override
 main:has(.timeline-section) {
     background: var(--color-background) !important;
@@ -15,6 +22,14 @@ main:has(.timeline-section) {
     z-index: 1;
     overflow: visible;
     min-height: 100vh;
+}
+
+// Ensure footer renders above the timeline stacking context (z-index 1)
+// box-shadow extends footer background below without adding scroll height
+main:has(.timeline-section) ~ footer {
+    position: relative;
+    z-index: 3;
+    box-shadow: 0 100px 0 0 var(--color-footer-bg);
 }
 
 // Timeline section - proper page section with opaque background
@@ -81,6 +96,10 @@ main:has(.timeline-section) {
 .earth-container svg {
     width: 100%;
     height: 100%;
+}
+
+.earth-layer {
+    transition: opacity 1s ease;
 }
 
 // Earth Sunrise - positioned directly above Earth, center at Earth's top edge
@@ -562,7 +581,7 @@ main:has(.timeline-section) {
     transition: transform 0.3s ease;
 }
 
-// Scrolling Starmap Background - 3 repeating starmaps for continuity
+// Scrolling Starmap Background - CSS background-image with repeat-x for seamless tiling
 .starmap-background {
     position: fixed;
     top: 0;
@@ -572,81 +591,20 @@ main:has(.timeline-section) {
     z-index: 1;
     overflow: hidden;
     pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.starmap-container {
-    position: relative;
-    width: 500vw; // Wider container to prevent cropping
-    height: 110vh;
-    display: flex;
-    will-change: transform;
-    transform: translate3d(
-        -100vw,
-        -10vh,
-        0
-    ); // Start with center starmap visible, shifted up
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-
-    @media (max-width: 1200px) {
-        height: 100vh;
-        transform: translate3d(-100vw, -5vh, 0);
-    }
-
-    @media (max-width: 768px) {
-        width: 100%;
-        height: 100%;
-        transform: none;
-        position: static;
-        display: block;
-    }
-}
-
-.starmap-layer {
-    position: relative;
-    width: 170vw; // Even wider to prevent horizontal gaps
-    height: 110vh;
-    object-fit: cover; // Cover instead of contain to fill gaps
-    object-position: center 20%;
-    opacity: 1;
-    backface-visibility: hidden;
-    flex-shrink: 0;
-
-    @media (max-width: 1200px) {
-        width: 150vw;
-        height: 100vh;
-        object-position: center center;
-    }
+    background-image: url("/starmap.svg");
+    background-size: auto 100%;
+    background-repeat: repeat-x;
+    background-position: 0 center;
+    transition: opacity 0.3s ease, transform 0.3s ease,
+        background-position 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
     @media (max-width: 768px) {
         position: absolute;
-        top: 0;
-        left: 0;
         width: 100%;
         height: 100%;
-        object-fit: cover;
-        object-position: center center;
-
-        &--left,
-        &--right {
-            display: none; // Only show center starmap on mobile
-        }
+        background-size: cover;
+        background-position: center center;
     }
-}
-
-// Left starmap (previous cycle)
-.starmap-layer--left {
-    transform: translateX(0);
-}
-
-// Center starmap (current cycle)
-.starmap-layer--center {
-    transform: translateX(0);
-}
-
-// Right starmap (next cycle)
-.starmap-layer--right {
-    transform: translateX(0);
 }
 
 // Timeline Age Sections - Each age takes 100vw
@@ -732,7 +690,7 @@ main:has(.timeline-section) {
         padding: 0;
         transform: none;
 
-        // Navigation buttons on mobile - inside the viewport
+        // Navigation buttons on mobile - within visible area
         .timeline-nav__btn {
             position: absolute;
             top: 50%;
@@ -745,11 +703,11 @@ main:has(.timeline-section) {
             backdrop-filter: blur(10px);
 
             &--prev {
-                left: -52px;
+                left: -8px;
             }
 
             &--next {
-                right: -52px;
+                right: -8px;
             }
 
             svg {
@@ -864,7 +822,7 @@ main:has(.timeline-section) {
 // Accessibility
 @media (prefers-reduced-motion: reduce) {
     .timeline-section,
-    .starmap-container {
+    .starmap-background {
         transition: none !important;
     }
 
@@ -912,8 +870,7 @@ main:has(.timeline-section) {
         background: #0a0a0a !important;
     }
 
-    .starmap-layer {
-        opacity: 1;
+    .starmap-background {
         filter: brightness(0.8);
     }
 
@@ -973,8 +930,7 @@ main:has(.timeline-section) {
         background: #f8f9fa !important;
     }
 
-    .starmap-layer {
-        opacity: 1;
+    .starmap-background {
         filter: brightness(1.1);
     }
 
