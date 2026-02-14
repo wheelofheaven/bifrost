@@ -83,11 +83,11 @@ main:has(.timeline-section) {
     height: 100%;
 }
 
-// Earth Sunrise - positioned at upper-right zenith of Earth
+// Earth Sunrise - positioned directly above Earth, center at Earth's top edge
 .earth-sunrise {
     position: fixed;
-    top: calc(85% - 450px); /* Above Earth's center */
-    left: calc(30% + 150px); /* To the right of Earth's center */
+    top: calc(85% - 327px); /* Slightly above Earth's top edge */
+    left: 30%;
     transform: translate(-50%, -50%);
     width: 200px;
     height: 200px;
@@ -96,15 +96,15 @@ main:has(.timeline-section) {
     transition: opacity 0.3s ease;
 
     @media (max-width: 1200px) {
-        top: calc(85% - 380px);
-        left: calc(25% + 120px);
+        top: calc(85% - 264px); /* Slightly above Earth's top edge */
+        left: 25%;
         width: 160px;
         height: 160px;
     }
 
     @media (max-width: 768px) {
-        top: calc(60% - 180px);
-        left: calc(50% + 80px);
+        top: calc(85% - 229px); /* Slightly above Earth's top edge */
+        left: 50%;
         width: 120px;
         height: 120px;
     }
@@ -710,9 +710,9 @@ main:has(.timeline-section) {
 
     .earth-sunrise {
         position: absolute;
-        bottom: 100px;
-        left: calc(50% + 100px);
-        transform: translateX(-50%);
+        bottom: 169px; /* Slightly above Earth's top edge */
+        left: 50%;
+        transform: translate(-50%, 50%);
         width: 80px;
         height: 80px;
         z-index: 2;
