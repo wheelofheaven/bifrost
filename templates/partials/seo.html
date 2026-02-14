@@ -221,7 +221,7 @@
 {% include "partials/schema/speakable.html" %}
 
 <!-- Additional Schema.org for Breadcrumbs (if applicable) -->
-{% if section or page.ancestors %}
+{% if page.ancestors is defined and page.ancestors | length > 0 %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -233,66 +233,59 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": {
-        "@type": "WebPage",
-        "@id": "{{ config.base_url }}/",
-        "url": "{{ config.base_url }}/",
-        "name": "Home"
-      }
+      "item": "{{ config.base_url }}/"
     }
-    {% if page %}
-      {% for ancestor in page.ancestors %}
-        {% set ancestor_section = get_section(path=ancestor) %}
-        ,{
-          "@type": "ListItem",
-          "position": {{ loop.index + 1 }},
-          "name": "{{ ancestor_section.title | default(value='') | escape }}",
-          "item": {
-            "@type": "WebPage",
-            "@id": "{{ ancestor_section.permalink }}",
-            "url": "{{ ancestor_section.permalink }}",
-            "name": "{{ ancestor_section.title | default(value='') | escape }}"
-          }
-        }
-      {% endfor %}
+    {% for ancestor in page.ancestors %}
+      {% set ancestor_section = get_section(path=ancestor) %}
+      {% set ancestor_name = ancestor_section.title | default(value=config.title) %}
+      {% if ancestor_name %}
       ,{
         "@type": "ListItem",
-        "position": {{ page.ancestors | length + 2 }},
-        "name": "{{ page.title | default(value='') | escape }}",
-        "item": {
-          "@type": "WebPage",
-          "@id": "{{ page.permalink }}",
-          "url": "{{ page.permalink }}",
-          "name": "{{ page.title | default(value='') | escape }}"
-        }
+        "position": {{ loop.index + 1 }},
+        "name": "{{ ancestor_name | escape }}",
+        "item": "{{ ancestor_section.permalink | safe }}"
       }
-    {% elif section %}
-      {% for ancestor in section.ancestors %}
-        {% set ancestor_section = get_section(path=ancestor) %}
-        ,{
-          "@type": "ListItem",
-          "position": {{ loop.index + 1 }},
-          "name": "{{ ancestor_section.title | default(value='') | escape }}",
-          "item": {
-            "@type": "WebPage",
-            "@id": "{{ ancestor_section.permalink }}",
-            "url": "{{ ancestor_section.permalink }}",
-            "name": "{{ ancestor_section.title | default(value='') | escape }}"
-          }
-        }
-      {% endfor %}
+      {% endif %}
+    {% endfor %}
+    ,{
+      "@type": "ListItem",
+      "position": {{ page.ancestors | length + 2 }},
+      "name": "{{ page.title | default(value=config.title) | escape }}"
+    }
+  ]
+}
+</script>
+{% elif section and section.ancestors is defined and section.ancestors | length > 0 %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "@id": "{{ current_url | safe }}#breadcrumb",
+  "name": "Breadcrumb Navigation",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ config.base_url }}/"
+    }
+    {% for ancestor in section.ancestors %}
+      {% set ancestor_section = get_section(path=ancestor) %}
+      {% set ancestor_name = ancestor_section.title | default(value=config.title) %}
+      {% if ancestor_name %}
       ,{
         "@type": "ListItem",
-        "position": {{ section.ancestors | length + 2 }},
-        "name": "{{ section.title | default(value='') | escape }}",
-        "item": {
-          "@type": "WebPage",
-          "@id": "{{ section.permalink }}",
-          "url": "{{ section.permalink }}",
-          "name": "{{ section.title | default(value='') | escape }}"
-        }
+        "position": {{ loop.index + 1 }},
+        "name": "{{ ancestor_name | escape }}",
+        "item": "{{ ancestor_section.permalink | safe }}"
       }
-    {% endif %}
+      {% endif %}
+    {% endfor %}
+    ,{
+      "@type": "ListItem",
+      "position": {{ section.ancestors | length + 2 }},
+      "name": "{{ section.title | default(value=config.title) | escape }}"
+    }
   ]
 }
 </script>
