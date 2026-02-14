@@ -563,6 +563,12 @@ document.addEventListener("DOMContentLoaded", function () {
         lockScroll();
         console.log("Returned to timeline - horizontal scrolling re-enabled");
       }
+    } else {
+      // Force scroll to top while in timeline mode — iOS Safari ignores
+      // overflow: hidden on html/body, so this is the fallback.
+      if (window.scrollY > 0) {
+        window.scrollTo(0, 0);
+      }
     }
   }
 
@@ -637,7 +643,9 @@ document.addEventListener("DOMContentLoaded", function () {
     touchStartY = event.touches[0].clientY;
   }
 
-  // Prevent default scrolling on the timeline section while in age-navigation mode
+  // Prevent default scrolling while in age-navigation mode.
+  // Must be on document level — iOS Safari scrolls at the viewport level,
+  // so a handler on just .timeline-section doesn't catch it.
   function handleTouchMove(event) {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) return;
@@ -718,11 +726,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.removeEventListener("scroll", handleRegularScroll);
     document.removeEventListener("touchstart", handleTouchStart);
     document.removeEventListener("touchend", handleTouchEnd);
-
-    const timelineEl = document.querySelector(".timeline-section");
-    if (timelineEl) {
-      timelineEl.removeEventListener("touchmove", handleTouchMove);
-    }
+    document.removeEventListener("touchmove", handleTouchMove);
 
     // Re-add appropriate event listeners
     if (isMobile) {
@@ -730,11 +734,9 @@ document.addEventListener("DOMContentLoaded", function () {
         passive: true,
       });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
-      if (timelineEl) {
-        timelineEl.addEventListener("touchmove", handleTouchMove, {
-          passive: false,
-        });
-      }
+      document.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
     }
 
     // Both desktop and mobile need wheel/scroll listeners
@@ -755,14 +757,9 @@ document.addEventListener("DOMContentLoaded", function () {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-
-    // Prevent default scroll on the timeline section to block iOS bounce
-    const timelineEl = document.querySelector(".timeline-section");
-    if (timelineEl) {
-      timelineEl.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
-    }
+    document.addEventListener("touchmove", handleTouchMove, {
+      passive: false,
+    });
   }
 
   // Initialize
