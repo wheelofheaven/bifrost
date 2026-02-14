@@ -81,12 +81,7 @@ main:has(.timeline-section) ~ footer {
         height: 480px;
     }
 
-    @media (max-width: 768px) {
-        left: 50%;
-        top: 85%;
-        width: 420px;
-        height: 420px;
-    }
+    // Mobile overrides in standalone @media (max-width: 768px) block below
 }
 
 .earth-sphere {
@@ -128,12 +123,7 @@ main:has(.timeline-section) ~ footer {
         height: 160px;
     }
 
-    @media (max-width: 768px) {
-        top: calc(85% - 229px); /* Slightly above Earth's top edge */
-        left: 50%;
-        width: 120px;
-        height: 120px;
-    }
+    // Mobile overrides in standalone @media (max-width: 768px) block below
 }
 
 .sunrise-image {
@@ -605,13 +595,7 @@ main:has(.timeline-section) ~ footer {
     transition: opacity 0.3s ease, transform 0.3s ease,
         background-position 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 
-    @media (max-width: 768px) {
-        position: absolute;
-        width: 100%;
-        height: 100%;
-        background-size: cover;
-        background-position: center center;
-    }
+    // Mobile overrides are in the standalone @media (max-width: 768px) block below
 }
 
 // Timeline Age Sections - Each age takes 100vw
@@ -657,32 +641,42 @@ main:has(.timeline-section) ~ footer {
 
     .starmap-background {
         position: absolute;
-        top: 0;
+        top: auto;
+        bottom: -80px; // Push band lower so constellations are more visible below the card
         left: 0;
-        width: 100%;
-        height: 100%;
+        width: 300%; // Wider than viewport so translateX reveals different parts
+        height: 60%; // Concentrate constellations into a band at the horizon
         z-index: 1;
+        background-size: auto 100%;
+        background-repeat: repeat-x;
+        background-position: 0 center;
+        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        // Fade both edges so constellations don't cut off abruptly
+        mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
     }
 
     .earth-container {
         position: absolute;
-        bottom: -60px;
+        top: auto;
+        bottom: -310px; // Push earth further down
         left: 50%;
         transform: translateX(-50%);
-        width: 220px;
-        height: 220px;
-        z-index: 2;
+        width: 500px;
+        height: 500px;
+        z-index: 3; // Above sunrise and starmap
         opacity: 1;
     }
 
     .earth-sunrise {
         position: absolute;
-        bottom: 175px; /* Above Earth's top edge */
+        top: auto;
+        bottom: 130px; // Center of sunrise aligns with Earth's visible top edge
         left: 50%;
-        transform: translate(-50%, 50%);
-        width: 60px;
-        height: 60px;
-        z-index: 2;
+        transform: translateX(-50%);
+        width: 120px;
+        height: 120px;
+        z-index: 2; // Above starmap (1), behind earth (3)
         opacity: 1;
     }
 
@@ -795,6 +789,10 @@ main:has(.timeline-section) ~ footer {
 
     .age-card__image {
         height: 80px;
+
+        &:nth-child(n + 2) {
+            display: none;
+        }
     }
 
     .age-progress {

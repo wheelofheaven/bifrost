@@ -196,26 +196,40 @@ document.addEventListener("DOMContentLoaded", function () {
   function updateEarthTexture(newTexturePath) {
     if (!newTexturePath || newTexturePath === currentEarthTexture) return;
 
-    const backId = earthLayerFront === "A" ? "B" : "A";
-    const backPattern = document.querySelector(
-      `#earthTexture${backId} image`,
+    const nextId = earthLayerFront === "A" ? "B" : "A";
+    const nextPattern = document.querySelector(
+      `#earthTexture${nextId} image`,
     );
-    const backCircle = document.querySelector(
-      `.earth-layer--${backId.toLowerCase()}`,
-    );
-    const frontCircle = document.querySelector(
-      `.earth-layer--${earthLayerFront.toLowerCase()}`,
+    const nextCircle = document.querySelector(
+      `.earth-layer--${nextId.toLowerCase()}`,
     );
 
-    if (backPattern && backCircle && frontCircle) {
-      // Set new texture on back layer, then cross-fade
-      backPattern.setAttribute("href", newTexturePath);
-      backCircle.setAttribute("opacity", "1");
-      frontCircle.setAttribute("opacity", "0");
+    if (nextPattern && nextCircle) {
+      // Preload the texture so it's cached before we start the cross-fade
+      const preloader = new Image();
+      preloader.onload = function () {
+        // Apply the new texture to the incoming layer
+        nextPattern.setAttribute("href", newTexturePath);
 
-      earthLayerFront = backId;
-      currentEarthTexture = newTexturePath;
-      console.log("Earth texture cross-fade to:", newTexturePath);
+        // Move the incoming layer on top in SVG paint order
+        nextCircle.parentNode.appendChild(nextCircle);
+
+        // Reset to hidden instantly (no transition)
+        nextCircle.style.transition = "none";
+        nextCircle.style.opacity = "0";
+        // Force the browser to commit opacity:0 (offsetWidth doesn't work for SVG)
+        window.getComputedStyle(nextCircle).opacity;
+
+        // Fade in over 1s — the old layer stays at opacity 1 underneath,
+        // so the earth is never transparent during the cross-dissolve
+        nextCircle.style.transition = "opacity 1s ease";
+        nextCircle.style.opacity = "1";
+
+        earthLayerFront = nextId;
+        currentEarthTexture = newTexturePath;
+        console.log("Earth texture cross-fade to:", newTexturePath);
+      };
+      preloader.src = newTexturePath;
     }
   }
 
@@ -246,7 +260,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const isMobile = window.innerWidth <= 768;
 
-      if (!isMobile) {
+      if (isMobile) {
+        // Mobile: starmap is 300% wide, slide it left via translateX
+        // Each age shifts by a fraction of the extra width (200% of viewport)
+        const shiftPercent = (position / (agesData.length - 1)) * -200;
+        starmapBackground.style.transform = `translateX(${shiftPercent}vw)`;
+      } else {
+        // Desktop: clear any mobile transform on the starmap
+        starmapBackground.style.transform = "";
+
         // Timeline moves horizontally through ages (each age is 100vw)
         const timelineTransform = -(position * 100);
         timelineContent.style.transform = `translateX(${timelineTransform}vw)`;
@@ -463,8 +485,9 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Keep Earth stationary for constellation alignment
-  if (earthContainer) {
+  // Keep Earth stationary for constellation alignment (desktop only)
+  // On mobile, CSS uses translateX(-50%) without Y shift
+  if (earthContainer && window.innerWidth > 768) {
     earthContainer.style.transform = `translate(-50%, -50%)`;
   }
 
@@ -500,6 +523,7 @@ document.addEventListener("DOMContentLoaded", function () {
           isVerticalScrolling = true;
           scrollResistanceCount = 0;
           console.log("Enabling vertical scroll from Age of Aquarius!");
+          hideTimelineElements();
           unlockScroll();
           // No auto-scroll — user's continued scrolling reveals world-ages
           // section naturally. They can also scroll back up to return.
@@ -561,6 +585,8 @@ document.addEventListener("DOMContentLoaded", function () {
         scrollAccumulator = 0;
         lastScrollTime = 0;
         mobileScrollResistance = 0;
+        window.scrollTo(0, 0);
+        showTimelineElements();
         lockScroll();
         console.log("Returned to timeline - horizontal scrolling re-enabled");
       }
@@ -612,6 +638,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function unlockScroll() {
     document.documentElement.classList.remove("timeline-scroll-locked");
+  }
+
+  // Show/hide fixed timeline elements when transitioning to/from world-ages section.
+  // The world-ages-section (z-index: 2) paints above the timeline-section's
+  // stacking context (z-index: 1), so fixed elements get covered. We fade them
+  // out for a clean transition and restore them when returning.
+  function hideTimelineElements() {
+    const sunrise = document.querySelector(".earth-sunrise");
+    const cardContainer = document.querySelector(".age-card-container");
+    const starmap = document.getElementById("starmap-background");
+    if (earthContainer) earthContainer.style.opacity = "0";
+    if (sunrise) sunrise.style.opacity = "0";
+    if (cardContainer) cardContainer.style.opacity = "0";
+    if (starmap) starmap.style.opacity = "0";
+  }
+
+  function showTimelineElements() {
+    const sunrise = document.querySelector(".earth-sunrise");
+    const cardContainer = document.querySelector(".age-card-container");
+    const starmap = document.getElementById("starmap-background");
+    if (earthContainer) earthContainer.style.opacity = "1";
+    if (sunrise) sunrise.style.opacity = "1";
+    if (cardContainer) cardContainer.style.opacity = "1";
+    if (starmap) starmap.style.opacity = "1";
   }
 
   // Initialize timeline
@@ -681,6 +731,7 @@ document.addEventListener("DOMContentLoaded", function () {
             isVerticalScrolling = true;
             hasCompletedAllAges = true;
             mobileScrollResistance = 0;
+            hideTimelineElements();
             unlockScroll();
             console.log("Mobile: transitioning to vertical scroll");
           }
