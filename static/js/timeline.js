@@ -499,7 +499,7 @@ document.addEventListener("DOMContentLoaded", function () {
           isVerticalScrolling = true;
           scrollResistanceCount = 0;
           console.log("Enabling vertical scroll from Age of Aquarius!");
-          document.body.style.overflow = "auto";
+          unlockScroll();
           // No auto-scroll — user's continued scrolling reveals world-ages
           // section naturally. They can also scroll back up to return.
         }
@@ -560,7 +560,7 @@ document.addEventListener("DOMContentLoaded", function () {
         scrollAccumulator = 0;
         lastScrollTime = 0;
         mobileScrollResistance = 0;
-        document.body.style.overflow = "hidden";
+        lockScroll();
         console.log("Returned to timeline - horizontal scrolling re-enabled");
       }
     }
@@ -597,10 +597,26 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   }
 
+  // Lock/unlock scrolling — uses CSS class with position: fixed for iOS compat.
+  // position: fixed on body loses scroll position, so we save/restore it.
+  let savedScrollY = 0;
+
+  function lockScroll() {
+    savedScrollY = window.scrollY;
+    document.body.classList.add("timeline-scroll-locked");
+    document.body.style.top = `-${savedScrollY}px`;
+  }
+
+  function unlockScroll() {
+    document.body.classList.remove("timeline-scroll-locked");
+    document.body.style.top = "";
+    window.scrollTo(0, savedScrollY);
+  }
+
   // Initialize timeline
   function initializeTimeline() {
     // Lock scrolling for age navigation on both desktop and mobile
-    document.body.style.overflow = "hidden";
+    lockScroll();
 
     // Initialize with first age (also sets starmap position)
     updateAge(0, false);
@@ -676,7 +692,7 @@ document.addEventListener("DOMContentLoaded", function () {
             isVerticalScrolling = true;
             hasCompletedAllAges = true;
             mobileScrollResistance = 0;
-            document.body.style.overflow = "auto";
+            unlockScroll();
             console.log("Mobile: transitioning to vertical scroll");
           }
         }
@@ -695,7 +711,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Reset scroll state and lock scrolling unless already in vertical mode
     if (!isVerticalScrolling) {
-      document.body.style.overflow = "hidden";
+      lockScroll();
     }
 
     // Recalculate starmap position for new viewport dimensions

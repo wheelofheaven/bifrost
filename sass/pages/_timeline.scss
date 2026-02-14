@@ -13,6 +13,14 @@ body:has(.timeline-section) {
     overscroll-behavior-y: none;
 }
 
+// When timeline scroll is locked (JS adds this class), prevent all scrolling.
+// position: fixed is required because iOS Safari ignores overflow: hidden on body.
+body.timeline-scroll-locked {
+    position: fixed;
+    width: 100%;
+    overflow: hidden;
+}
+
 // Timeline page main element override
 main:has(.timeline-section) {
     background: var(--color-background) !important;
@@ -641,6 +649,7 @@ main:has(.timeline-section) ~ footer {
         align-items: center;
         justify-content: flex-start;
         padding-top: 5rem;
+        touch-action: none; // Prevent browser-level touch scrolling
     }
 
     .timeline-content {
