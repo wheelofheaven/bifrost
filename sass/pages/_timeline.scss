@@ -78,7 +78,6 @@ main:has(.timeline-section) ~ footer {
         top: 85%;
         width: 420px;
         height: 420px;
-        opacity: 0.6;
     }
 }
 
@@ -200,11 +199,11 @@ main:has(.timeline-section) ~ footer {
         }
 
         &--prev {
-            left: -80px;
+            left: -10px;
         }
 
         &--next {
-            right: -80px;
+            right: -10px;
         }
 
         svg {
@@ -217,11 +216,11 @@ main:has(.timeline-section) ~ footer {
             height: 100px;
 
             &--prev {
-                left: -65px;
+                left: -10px;
             }
 
             &--next {
-                right: -65px;
+                right: -10px;
             }
 
             svg {
@@ -638,8 +637,10 @@ main:has(.timeline-section) ~ footer {
         position: relative;
         overflow: hidden;
         display: flex;
+        flex-direction: column;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
+        padding-top: 5rem;
     }
 
     .timeline-content {
@@ -657,24 +658,24 @@ main:has(.timeline-section) ~ footer {
 
     .earth-container {
         position: absolute;
-        bottom: -150px;
+        bottom: -60px;
         left: 50%;
         transform: translateX(-50%);
-        width: 300px;
-        height: 300px;
+        width: 220px;
+        height: 220px;
         z-index: 2;
-        opacity: 0.5;
+        opacity: 1;
     }
 
     .earth-sunrise {
         position: absolute;
-        bottom: 169px; /* Slightly above Earth's top edge */
+        bottom: 175px; /* Above Earth's top edge */
         left: 50%;
         transform: translate(-50%, 50%);
-        width: 80px;
-        height: 80px;
+        width: 60px;
+        height: 60px;
         z-index: 2;
-        opacity: 0.6;
+        opacity: 1;
     }
 
     .age-card-container {
@@ -687,10 +688,11 @@ main:has(.timeline-section) ~ footer {
         z-index: 10;
         background: transparent;
         margin: 0;
+        margin-bottom: auto; // Push card toward the top of the flex container
         padding: 0;
         transform: none;
 
-        // Navigation buttons on mobile - within visible area
+        // Navigation buttons on mobile - above card's backdrop-filter stacking context
         .timeline-nav__btn {
             position: absolute;
             top: 50%;
@@ -698,9 +700,10 @@ main:has(.timeline-section) ~ footer {
             width: 44px;
             height: 80px;
             border-radius: 0.75rem;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             backdrop-filter: blur(10px);
+            z-index: 20;
 
             &--prev {
                 left: -8px;

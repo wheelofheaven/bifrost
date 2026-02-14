@@ -559,6 +559,7 @@ document.addEventListener("DOMContentLoaded", function () {
         scrollResistanceCount = 0;
         scrollAccumulator = 0;
         lastScrollTime = 0;
+        mobileScrollResistance = 0;
         document.body.style.overflow = "hidden";
         console.log("Returned to timeline - horizontal scrolling re-enabled");
       }
@@ -598,14 +599,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Initialize timeline
   function initializeTimeline() {
-    // Desktop: lock scrolling for horizontal age navigation
-    // Mobile: ensure normal vertical scrolling works
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "auto";
-    }
+    // Lock scrolling for age navigation on both desktop and mobile
+    document.body.style.overflow = "hidden";
 
     // Initialize with first age (also sets starmap position)
     updateAge(0, false);
@@ -620,29 +615,76 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Handle mobile touch navigation
   let touchStartX = 0;
+  let touchStartY = 0;
+  let mobileScrollResistance = 0;
+  const MOBILE_SCROLL_RESISTANCE = 5;
 
   function handleTouchStart(event) {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) return;
 
     touchStartX = event.touches[0].clientX;
+    touchStartY = event.touches[0].clientY;
+  }
+
+  // Prevent default scrolling on the timeline section while in age-navigation mode
+  function handleTouchMove(event) {
+    const isMobile = window.innerWidth <= 768;
+    if (!isMobile) return;
+
+    // Allow normal scrolling when in vertical scroll mode
+    if (isVerticalScrolling) return;
+
+    // Prevent page scroll while navigating ages
+    event.preventDefault();
   }
 
   function handleTouchEnd(event) {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) return;
 
+    // If in vertical scroll mode, don't handle swipe navigation
+    if (isVerticalScrolling) return;
+
     const touchEndX = event.changedTouches[0].clientX;
-    const swipeDistance = touchStartX - touchEndX;
+    const touchEndY = event.changedTouches[0].clientY;
+    const swipeDistanceX = touchStartX - touchEndX;
+    const swipeDistanceY = touchStartY - touchEndY;
     const minSwipeDistance = 50;
 
-    if (Math.abs(swipeDistance) > minSwipeDistance) {
-      if (swipeDistance > 0 && currentAgeIndex < agesData.length - 1) {
-        // Swipe left - next age
+    // Determine if swipe is more horizontal or vertical
+    const isHorizontalSwipe = Math.abs(swipeDistanceX) > Math.abs(swipeDistanceY);
+
+    if (isHorizontalSwipe && Math.abs(swipeDistanceX) > minSwipeDistance) {
+      // Horizontal swipe — navigate between ages
+      if (swipeDistanceX > 0 && currentAgeIndex < agesData.length - 1) {
         updateAge(currentAgeIndex + 1, true);
-      } else if (swipeDistance < 0 && currentAgeIndex > 0) {
-        // Swipe right - previous age
+      } else if (swipeDistanceX < 0 && currentAgeIndex > 0) {
         updateAge(currentAgeIndex - 1, true);
+      }
+    } else if (!isHorizontalSwipe && Math.abs(swipeDistanceY) > minSwipeDistance) {
+      // Vertical swipe
+      if (swipeDistanceY > 0) {
+        // Swipe up — next age or transition to world-ages
+        if (currentAgeIndex < agesData.length - 1) {
+          updateAge(currentAgeIndex + 1, true);
+        } else {
+          // At last age — apply resistance before transitioning
+          mobileScrollResistance++;
+          console.log(`Mobile resistance: ${mobileScrollResistance}/${MOBILE_SCROLL_RESISTANCE}`);
+          if (mobileScrollResistance >= MOBILE_SCROLL_RESISTANCE) {
+            isVerticalScrolling = true;
+            hasCompletedAllAges = true;
+            mobileScrollResistance = 0;
+            document.body.style.overflow = "auto";
+            console.log("Mobile: transitioning to vertical scroll");
+          }
+        }
+      } else {
+        // Swipe down — previous age
+        if (currentAgeIndex > 0) {
+          updateAge(currentAgeIndex - 1, true);
+        }
       }
     }
   }
@@ -651,12 +693,8 @@ document.addEventListener("DOMContentLoaded", function () {
   function handleWindowResize() {
     const isMobile = window.innerWidth <= 768;
 
-    // Update body scrolling based on viewport
-    if (isMobile) {
-      document.body.style.overflow = "auto";
-      isVerticalScrolling = false;
-      hasCompletedAllAges = false;
-    } else {
+    // Reset scroll state and lock scrolling unless already in vertical mode
+    if (!isVerticalScrolling) {
       document.body.style.overflow = "hidden";
     }
 
@@ -671,26 +709,34 @@ document.addEventListener("DOMContentLoaded", function () {
     document.removeEventListener("touchstart", handleTouchStart);
     document.removeEventListener("touchend", handleTouchEnd);
 
+    const timelineEl = document.querySelector(".timeline-section");
+    if (timelineEl) {
+      timelineEl.removeEventListener("touchmove", handleTouchMove);
+    }
+
     // Re-add appropriate event listeners
-    if (!isMobile) {
-      window.addEventListener("wheel", handleWheelScroll, { passive: false });
-      window.addEventListener("scroll", handleRegularScroll, { passive: true });
-    } else {
+    if (isMobile) {
       document.addEventListener("touchstart", handleTouchStart, {
         passive: true,
       });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
+      if (timelineEl) {
+        timelineEl.addEventListener("touchmove", handleTouchMove, {
+          passive: false,
+        });
+      }
     }
-  }
 
-  // Add event listeners based on device type
-  const isMobile = window.innerWidth <= 768;
-
-  if (!isMobile) {
+    // Both desktop and mobile need wheel/scroll listeners
     window.addEventListener("wheel", handleWheelScroll, { passive: false });
     window.addEventListener("scroll", handleRegularScroll, { passive: true });
   }
 
+  // Add event listeners — both desktop and mobile need wheel/scroll
+  const isMobile = window.innerWidth <= 768;
+
+  window.addEventListener("wheel", handleWheelScroll, { passive: false });
+  window.addEventListener("scroll", handleRegularScroll, { passive: true });
   window.addEventListener("resize", handleWindowResize, { passive: true });
 
   // Mobile touch events
@@ -699,6 +745,14 @@ document.addEventListener("DOMContentLoaded", function () {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
+
+    // Prevent default scroll on the timeline section to block iOS bounce
+    const timelineEl = document.querySelector(".timeline-section");
+    if (timelineEl) {
+      timelineEl.addEventListener("touchmove", handleTouchMove, {
+        passive: false,
+      });
+    }
   }
 
   // Initialize
