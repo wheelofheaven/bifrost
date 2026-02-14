@@ -474,12 +474,6 @@ document.addEventListener("DOMContentLoaded", function () {
   const SCROLL_THROTTLE_MS = 200; // Minimum time between scroll counts (ms)
 
   function handleWheelScroll(event) {
-    // Skip all wheel handling on mobile
-    const isMobile = window.innerWidth <= 768;
-    if (isMobile) {
-      return; // Let mobile use normal scrolling
-    }
-
     if (isTransitioning) return;
 
     if (!isVerticalScrolling) {
@@ -643,20 +637,6 @@ document.addEventListener("DOMContentLoaded", function () {
     touchStartY = event.touches[0].clientY;
   }
 
-  // Prevent default scrolling while in age-navigation mode.
-  // Must be on document level — iOS Safari scrolls at the viewport level,
-  // so a handler on just .timeline-section doesn't catch it.
-  function handleTouchMove(event) {
-    const isMobile = window.innerWidth <= 768;
-    if (!isMobile) return;
-
-    // Allow normal scrolling when in vertical scroll mode
-    if (isVerticalScrolling) return;
-
-    // Prevent page scroll while navigating ages
-    event.preventDefault();
-  }
-
   function handleTouchEnd(event) {
     const isMobile = window.innerWidth <= 768;
     if (!isMobile) return;
@@ -726,7 +706,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.removeEventListener("scroll", handleRegularScroll);
     document.removeEventListener("touchstart", handleTouchStart);
     document.removeEventListener("touchend", handleTouchEnd);
-    document.removeEventListener("touchmove", handleTouchMove);
 
     // Re-add appropriate event listeners
     if (isMobile) {
@@ -734,9 +713,6 @@ document.addEventListener("DOMContentLoaded", function () {
         passive: true,
       });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
     }
 
     // Both desktop and mobile need wheel/scroll listeners
@@ -757,9 +733,6 @@ document.addEventListener("DOMContentLoaded", function () {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-    document.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
   }
 
   // Initialize
