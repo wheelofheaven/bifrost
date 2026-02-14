@@ -599,12 +599,22 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Lock/unlock scrolling — class on <html> triggers overflow: hidden
   // on both html and body (needed for iOS Safari).
+  const timelineSection = document.querySelector(".timeline-section");
+
   function lockScroll() {
     document.documentElement.classList.add("timeline-scroll-locked");
+    // Enable touch-action: none to prevent touch scrolling (CSS-level)
+    if (timelineSection) {
+      timelineSection.style.touchAction = "none";
+    }
   }
 
   function unlockScroll() {
     document.documentElement.classList.remove("timeline-scroll-locked");
+    // Restore normal touch behavior for vertical scrolling
+    if (timelineSection) {
+      timelineSection.style.touchAction = "";
+    }
   }
 
   // Initialize timeline
@@ -635,21 +645,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     touchStartX = event.touches[0].clientX;
     touchStartY = event.touches[0].clientY;
-  }
-
-  // Prevent touch scrolling while in timeline mode, but allow taps.
-  // Small movements (< 10px) are allowed through so click events still fire.
-  function handleTouchMove(event) {
-    if (isVerticalScrolling) return;
-
-    const touch = event.touches[0];
-    const dx = Math.abs(touch.clientX - touchStartX);
-    const dy = Math.abs(touch.clientY - touchStartY);
-
-    // Only prevent when finger has moved enough to be a scroll gesture
-    if (dx > 10 || dy > 10) {
-      event.preventDefault();
-    }
   }
 
   function handleTouchEnd(event) {
@@ -721,7 +716,6 @@ document.addEventListener("DOMContentLoaded", function () {
     window.removeEventListener("scroll", handleRegularScroll);
     document.removeEventListener("touchstart", handleTouchStart);
     document.removeEventListener("touchend", handleTouchEnd);
-    document.removeEventListener("touchmove", handleTouchMove);
 
     // Re-add appropriate event listeners
     if (isMobile) {
@@ -729,9 +723,6 @@ document.addEventListener("DOMContentLoaded", function () {
         passive: true,
       });
       document.addEventListener("touchend", handleTouchEnd, { passive: true });
-      document.addEventListener("touchmove", handleTouchMove, {
-        passive: false,
-      });
     }
 
     // Both desktop and mobile need wheel/scroll listeners
@@ -752,9 +743,6 @@ document.addEventListener("DOMContentLoaded", function () {
       passive: true,
     });
     document.addEventListener("touchend", handleTouchEnd, { passive: true });
-    document.addEventListener("touchmove", handleTouchMove, {
-      passive: false,
-    });
   }
 
   // Initialize
