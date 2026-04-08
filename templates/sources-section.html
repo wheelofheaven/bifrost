@@ -13,27 +13,17 @@
 {% set resources = get_section(path=lang_prefix ~ "resources/_index.md") %}
 {% set all_pages = resources.pages %}
 
-{# Authority tiers in display order (high authority → low). #}
-{% set tier_order = ["foundational", "primary", "scholarly", "scientific", "critical", "supplementary"] %}
-
-{# Short description of each tier, shown above its listing. #}
-{% set tier_labels = {
-    "foundational":  "Foundational Canon",
-    "primary":       "Primary Comparative Texts",
-    "scholarly":     "Scholarly Context",
-    "scientific":    "Scientific Context",
-    "critical":      "Critical & Skeptical",
-    "supplementary": "Supplementary & Learning Resources"
-} %}
-
-{% set tier_descriptions = {
-    "foundational":  "The Raëlian corpus. Highest authority within the project frame.",
-    "primary":       "Scriptures and primary witnesses from other traditions, read in dialogue with the canon.",
-    "scholarly":     "Academic context: philology, comparative religion, archaeoastronomy, reception history.",
-    "scientific":    "Empirical context: astronomy, genetics, archaeology, origins-of-life, intelligent design.",
-    "critical":      "Skeptical scholarship and objections that bound the interpretations on this site.",
-    "supplementary": "Documentaries, podcasts, web archives, manifestos, and proponent literature. Cite but don't lean on."
-} %}
+{# Authority tiers in display order (high authority → low), paired with
+   their display labels and descriptions. Tera does not support inline
+   dictionary literals, so we use arrays of [key, label, description]. #}
+{% set tier_data = [
+    ["foundational",  "Foundational Canon",                 "The Raëlian corpus. Highest authority within the project frame."],
+    ["primary",       "Primary Comparative Texts",          "Scriptures and primary witnesses from other traditions, read in dialogue with the canon."],
+    ["scholarly",     "Scholarly Context",                  "Academic context: philology, comparative religion, archaeoastronomy, reception history."],
+    ["scientific",    "Scientific Context",                 "Empirical context: astronomy, genetics, archaeology, origins-of-life, intelligent design."],
+    ["critical",      "Critical & Skeptical",               "Skeptical scholarship and objections that bound the interpretations on this site."],
+    ["supplementary", "Supplementary & Learning Resources", "Documentaries, podcasts, web archives, manifestos, and proponent literature. Cite but don't lean on."]
+] %}
 
 <div class="sources-section">
     <div class="sources-section__container">
@@ -46,11 +36,13 @@
 
         {# Table of contents — one chip per non-empty tier. #}
         <nav class="sources-section__toc" aria-label="Source tiers">
-            {% for tier in tier_order %}
+            {% for entry in tier_data %}
+                {% set tier = entry[0] %}
+                {% set tier_label = entry[1] %}
                 {% set tier_pages = all_pages | filter(attribute="extra.authority_tier", value=tier) %}
                 {% if tier_pages | length > 0 %}
                 <a href="#tier-{{ tier }}" class="sources-section__toc-link">
-                    <span class="sources-section__toc-label">{{ tier_labels[tier] }}</span>
+                    <span class="sources-section__toc-label">{{ tier_label }}</span>
                     <span class="sources-section__toc-count">{{ tier_pages | length }}</span>
                 </a>
                 {% endif %}
@@ -58,16 +50,19 @@
         </nav>
 
         {# Tiered listings. #}
-        {% for tier in tier_order %}
+        {% for entry in tier_data %}
+            {% set tier = entry[0] %}
+            {% set tier_label = entry[1] %}
+            {% set tier_description = entry[2] %}
             {% set tier_pages = all_pages | filter(attribute="extra.authority_tier", value=tier) %}
             {% if tier_pages | length > 0 %}
             <section class="sources-tier" id="tier-{{ tier }}" aria-labelledby="tier-{{ tier }}-title">
                 <header class="sources-tier__header">
                     <h2 class="sources-tier__title" id="tier-{{ tier }}-title">
-                        {{ tier_labels[tier] }}
+                        {{ tier_label }}
                         <span class="sources-tier__count">{{ tier_pages | length }}</span>
                     </h2>
-                    <p class="sources-tier__description">{{ tier_descriptions[tier] }}</p>
+                    <p class="sources-tier__description">{{ tier_description }}</p>
                 </header>
 
                 {# Group by family within tier; families listed alphabetically. #}
