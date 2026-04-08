@@ -25,6 +25,14 @@
             >
                 {{ trans(key="navbarTimeline", lang=detected_lang) }}
             </a>
+            <a
+                href="{{ get_url(path='sources', lang=detected_lang) }}"
+                class="navbar__link{% if current_path and current_path is starting_with('/sources') %} navbar__link--active{% endif %}"
+                data-navbar-key="sources"
+                {% if current_path and current_path is starting_with('/sources') %}aria-current="true"{% endif %}
+            >
+                {{ trans(key="navbarSources", lang=detected_lang) }}
+            </a>
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="Knowledge section">
                 <button

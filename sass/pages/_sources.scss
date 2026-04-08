@@ -1,0 +1,234 @@
+// Sources section page
+//
+// Strategy 3 / Phase 1: the tiered landing page at /sources/ that groups every
+// resource by authority_tier → source_family using the metadata backfilled in
+// Strategy 2 / Decision #5.
+//
+// Backed by: bifrost/templates/sources-section.html
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.sources-section {
+    &__container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: v.$spacing-xl v.$spacing-lg;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xl;
+    }
+
+    &__header {
+        text-align: center;
+    }
+
+    &__title {
+        font-size: v.$font-size-2xl;
+        font-weight: 700;
+        margin: 0 0 v.$spacing-sm;
+        color: var(--color-text);
+    }
+
+    &__description {
+        color: var(--color-text-muted);
+        max-width: 720px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    // --- Table of contents ---
+
+    &__toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-sm;
+        justify-content: center;
+        padding: v.$spacing-lg;
+        background: var(--color-surface);
+        border-radius: v.$border-radius-lg;
+        border: 1px solid var(--color-border);
+    }
+
+    &__toc-link {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-xs;
+        padding: v.$spacing-sm v.$spacing-md;
+        background: var(--color-background);
+        color: var(--color-text);
+        border-radius: v.$border-radius-full;
+        text-decoration: none;
+        font-size: v.$font-size-sm;
+        font-weight: 500;
+        border: 1px solid var(--color-border);
+        transition: v.$transition-default;
+
+        &:hover,
+        &:focus {
+            border-color: c.$yellow;
+            background: var(--color-surface);
+        }
+    }
+
+    &__toc-label {
+        white-space: nowrap;
+    }
+
+    &__toc-count {
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        background: var(--color-surface);
+        padding: 0 v.$spacing-xs;
+        border-radius: v.$border-radius-xs;
+        min-width: 1.5rem;
+        text-align: center;
+    }
+
+    // --- Footer note ---
+
+    &__footer {
+        padding: v.$spacing-lg;
+        border-top: 1px solid var(--color-border);
+    }
+
+    &__footer-note {
+        color: var(--color-text-muted);
+        font-size: v.$font-size-sm;
+        line-height: 1.6;
+        max-width: 720px;
+        margin: 0 auto;
+        text-align: center;
+
+        a {
+            color: var(--color-text);
+            text-decoration: underline;
+
+            &:hover {
+                color: c.$yellow;
+            }
+        }
+    }
+}
+
+// --- Per-tier section ---
+
+.sources-tier {
+    scroll-margin-top: v.$spacing-2xl;
+
+    &__header {
+        padding-bottom: v.$spacing-md;
+        border-bottom: 2px solid var(--color-border);
+        margin-bottom: v.$spacing-xl;
+    }
+
+    &__title {
+        display: flex;
+        align-items: baseline;
+        gap: v.$spacing-sm;
+        font-size: v.$font-size-xl;
+        font-weight: 700;
+        color: var(--color-text);
+        margin: 0 0 v.$spacing-xs;
+    }
+
+    &__count {
+        font-size: v.$font-size-sm;
+        font-weight: 400;
+        color: var(--color-text-muted);
+    }
+
+    &__description {
+        color: var(--color-text-muted);
+        font-size: v.$font-size-sm;
+        line-height: 1.5;
+        margin: 0;
+        max-width: 720px;
+    }
+}
+
+// --- Per-family group ---
+
+.sources-family {
+    margin-bottom: v.$spacing-xl;
+
+    &:last-child {
+        margin-bottom: 0;
+    }
+
+    &__title {
+        font-size: v.$font-size-lg;
+        font-weight: 600;
+        color: var(--color-text);
+        margin: 0 0 v.$spacing-md;
+        display: flex;
+        align-items: baseline;
+        gap: v.$spacing-sm;
+    }
+
+    &__count {
+        font-size: v.$font-size-xs;
+        font-weight: 400;
+        color: var(--color-text-muted);
+    }
+
+    &__list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: v.$spacing-sm;
+
+        @media (min-width: 768px) {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media (min-width: 1024px) {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+
+    &__item {
+        margin: 0;
+    }
+
+    &__link {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        padding: v.$spacing-md;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-md;
+        text-decoration: none;
+        transition: v.$transition-default;
+        height: 100%;
+
+        &:hover,
+        &:focus {
+            border-color: c.$yellow;
+            background: var(--color-background);
+        }
+    }
+
+    &__item-title {
+        font-size: v.$font-size-base;
+        font-weight: 600;
+        color: var(--color-text);
+        line-height: 1.3;
+    }
+
+    &__item-description {
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+        line-height: 1.5;
+    }
+
+    &__item-meta {
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        margin-top: auto;
+        padding-top: v.$spacing-2xs;
+    }
+}
