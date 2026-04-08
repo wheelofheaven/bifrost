@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% import "macros/claim-badge.html" as claim_badge %}
+
+{% block content %}
+{#
+    Tradition hub page — Strategy 3 / Phase 3 / Decision #10 pilot.
+
+    A tradition hub is the landing page for one source family shelf
+    (e.g., Hebrew & Biblical, Mesopotamian, Mormon). It answers:
+      - why Wheel of Heaven includes this tradition
+      - what the tradition claims in its own voice
+      - which motifs matter for the WoH frame
+      - where it converges with the Raëlian canon
+      - where it diverges
+      - which of the tradition's sources are primary vs secondary
+
+    Frontmatter schema:
+      [extra]
+      summary            = "..."
+      claim_type         = "direct" | "inferred" | "speculative"
+      source_family      = "abrahamic" | "mesopotamian" | ...   # drives the catalog filter
+      cited_sources      = [<slug>, ...]                        # ≥ 6
+      motifs             = [<motif>, ...]
+      related_concepts   = [<wiki slug>, ...]
+#}
+
+<div class="tradition-hub">
+    <div class="tradition-hub__container">
+
+        <header class="tradition-hub__header">
+            <div class="tradition-hub__kind-row">
+                <span class="tradition-hub__kind">Tradition Hub</span>
+                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+            </div>
+            <h1 class="tradition-hub__title" id="page-title">{{ page.title }}</h1>
+            {% if page.extra.summary or page.description %}
+            <p class="tradition-hub__summary" data-ai-summary="true" data-ai-answer="true">
+                {{ page.extra.summary | default(value=page.description) }}
+            </p>
+            {% endif %}
+        </header>
+
+        <div class="tradition-hub__layout">
+
+            <article class="tradition-hub__article" role="article" aria-labelledby="page-title">
+                {% if page.content %}
+                <div class="tradition-hub__content">{{ page.content | safe }}</div>
+                {% endif %}
+            </article>
+
+            <aside class="tradition-hub__aside" role="complementary" aria-label="Related metadata">
+
+                {# --- Sources from this family (auto-filtered from resources) --- #}
+                {% if page.extra.source_family %}
+                    {% set lang_prefix = "" %}
+                    {% if detected_lang != "en" %}
+                        {% set_global lang_prefix = detected_lang ~ "/" %}
+                    {% endif %}
+                    {% set resources = get_section(path=lang_prefix ~ "resources/_index.md") %}
+                    {% set family_pages = resources.pages | filter(attribute="extra.source_family", value=page.extra.source_family) %}
+                    {% if family_pages | length > 0 %}
+                    <section class="tradition-hub__aside-block">
+                        <h2 class="tradition-hub__aside-title">All sources in this family</h2>
+                        <p class="tradition-hub__aside-note">{{ family_pages | length }} entries</p>
+                        <ul class="tradition-hub__source-list">
+                        {% for source_page in family_pages | sort(attribute="title") %}
+                            <li class="tradition-hub__source-item">
+                                <a href="{{ source_page.permalink }}" class="tradition-hub__source-link">
+                                    <span class="tradition-hub__source-title">{{ source_page.title }}</span>
+                                    {% if source_page.extra.authority_tier %}
+                                    <span class="tradition-hub__source-tier">{{ source_page.extra.authority_tier | title }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </section>
+                    {% endif %}
+                {% endif %}
+
+                {# --- Cited sources (six-source rule) --- #}
+                {% if page.extra.cited_sources %}
+                <section class="tradition-hub__aside-block">
+                    <h2 class="tradition-hub__aside-title">Cited sources</h2>
+                    <p class="tradition-hub__aside-note">
+                        {{ page.extra.cited_sources | length }} cited
+                        {% if page.extra.cited_sources | length >= 6 %}
+                        <span class="tradition-hub__aside-check" title="Meets the six-source minimum">✓</span>
+                        {% endif %}
+                    </p>
+                    <ul class="tradition-hub__source-list">
+                    {% for source_slug in page.extra.cited_sources %}
+                        {% set source_page = get_page(path="resources/" ~ source_slug ~ ".md") %}
+                        <li class="tradition-hub__source-item">
+                            <a href="{{ source_page.permalink }}" class="tradition-hub__source-link">
+                                <span class="tradition-hub__source-title">{{ source_page.title }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {# --- Motifs --- #}
+                {% if page.extra.motifs %}
+                <section class="tradition-hub__aside-block">
+                    <h2 class="tradition-hub__aside-title">Motifs</h2>
+                    <ul class="tradition-hub__chip-list">
+                    {% for motif in page.extra.motifs %}
+                        <li class="tradition-hub__chip">{{ motif | replace(from="_", to=" ") | title }}</li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {# --- Related wiki entries --- #}
+                {% if page.extra.related_concepts %}
+                <section class="tradition-hub__aside-block">
+                    <h2 class="tradition-hub__aside-title">Related wiki entries</h2>
+                    <ul class="tradition-hub__related-list">
+                    {% for concept_slug in page.extra.related_concepts %}
+                        <li class="tradition-hub__related-item">
+                            <a href="{{ get_url(path='wiki/' ~ concept_slug, lang=detected_lang) }}" class="tradition-hub__related-link">
+                                {{ concept_slug | replace(from="-", to=" ") | title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock content %}

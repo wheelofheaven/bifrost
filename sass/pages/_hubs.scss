@@ -1,0 +1,254 @@
+// Concept hub and Tradition hub pages
+//
+// Strategy 3 / Phase 3 / Decision #10 pilot. Shared visual language
+// for /explore/concept/{slug}/ and /sources/tradition/{slug}/ landing pages.
+//
+// Backed by:
+//   bifrost/templates/concept-hub.html
+//   bifrost/templates/tradition-hub.html
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+// --- Shared mixin ---
+
+@mixin hub-layout {
+    &__container {
+        max-width: 1280px;
+        margin: 0 auto;
+        padding: v.$spacing-xl v.$spacing-lg;
+    }
+
+    &__header {
+        margin-bottom: v.$spacing-2xl;
+        padding-bottom: v.$spacing-lg;
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    &__kind-row {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-sm;
+        margin-bottom: v.$spacing-sm;
+        flex-wrap: wrap;
+    }
+
+    &__kind {
+        font-size: v.$font-size-xs;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-text-muted);
+        padding: 0.25rem 0.625rem;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-full;
+    }
+
+    &__title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        line-height: 1.15;
+        color: var(--color-text);
+        margin: 0 0 v.$spacing-md;
+    }
+
+    &__summary {
+        font-size: v.$font-size-lg;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+        max-width: 720px;
+        margin: 0;
+    }
+
+    &__layout {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: v.$spacing-2xl;
+
+        @media (min-width: 1024px) {
+            grid-template-columns: minmax(0, 1fr) 320px;
+        }
+    }
+
+    &__article {
+        min-width: 0;
+    }
+
+    &__content {
+        font-size: v.$font-size-base;
+        line-height: 1.75;
+        color: var(--color-text);
+
+        h2 {
+            font-size: v.$font-size-2xl;
+            font-weight: 700;
+            margin-top: v.$spacing-2xl;
+            margin-bottom: v.$spacing-md;
+            padding-bottom: v.$spacing-xs;
+            border-bottom: 1px solid var(--color-border);
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        h3 {
+            font-size: v.$font-size-xl;
+            font-weight: 600;
+            margin-top: v.$spacing-xl;
+            margin-bottom: v.$spacing-sm;
+        }
+
+        p {
+            margin-top: 0;
+            margin-bottom: v.$spacing-md;
+        }
+
+        blockquote {
+            margin: v.$spacing-lg 0;
+            padding: v.$spacing-md v.$spacing-lg;
+            border-left: 3px solid c.$yellow;
+            background: var(--color-surface);
+            border-radius: 0 v.$border-radius-sm v.$border-radius-sm 0;
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        a {
+            color: var(--color-text);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+
+            &:hover {
+                color: c.$yellow;
+            }
+        }
+
+        ul, ol {
+            margin-top: 0;
+            margin-bottom: v.$spacing-md;
+            padding-left: v.$spacing-lg;
+        }
+
+        li {
+            margin-bottom: v.$spacing-xs;
+        }
+    }
+
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-lg;
+    }
+
+    &__aside-block {
+        padding: v.$spacing-md v.$spacing-lg;
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-md;
+    }
+
+    &__aside-title {
+        font-size: v.$font-size-sm;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--color-text-muted);
+        margin: 0 0 v.$spacing-sm;
+    }
+
+    &__aside-note {
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        margin: 0 0 v.$spacing-sm;
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-2xs;
+    }
+
+    &__aside-check {
+        color: c.$mint;
+        font-weight: 700;
+    }
+
+    &__source-list,
+    &__related-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-xs;
+    }
+
+    &__source-item,
+    &__related-item {
+        margin: 0;
+    }
+
+    &__source-link,
+    &__related-link {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        padding: v.$spacing-xs v.$spacing-sm;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-sm;
+        text-decoration: none;
+        color: var(--color-text);
+        font-size: v.$font-size-sm;
+        transition: v.$transition-default;
+
+        &:hover,
+        &:focus {
+            border-color: c.$yellow;
+        }
+    }
+
+    &__source-title {
+        font-weight: 600;
+        line-height: 1.3;
+    }
+
+    &__source-family,
+    &__source-tier {
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+
+    &__chip-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-2xs;
+    }
+
+    &__chip {
+        display: inline-block;
+        padding: 0.1875rem 0.5rem;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-full;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+    }
+}
+
+// --- Concept hub ---
+
+.concept-hub {
+    @include hub-layout;
+}
+
+// --- Tradition hub ---
+
+.tradition-hub {
+    @include hub-layout;
+}

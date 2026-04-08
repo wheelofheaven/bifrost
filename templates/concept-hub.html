@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% import "macros/claim-badge.html" as claim_badge %}
+
+{% block content %}
+{#
+    Concept hub page — Strategy 3 / Phase 3 / Decision #10 pilot.
+
+    A concept hub is a landing page for a major concept (e.g., Elohim,
+    flood/reset, prophetic succession). It aggregates:
+      - definition + etymology
+      - how the canon treats it
+      - how other traditions treat it
+      - key passages
+      - scholarship
+      - limits / challenges
+      - cited sources (six minimum per decision #7)
+      - motifs + related traditions + related wiki
+
+    Frontmatter schema (see .claude/plans/strategy-website-structure.md):
+      [extra]
+      summary            = "..."
+      claim_type         = "direct" | "inferred" | "speculative"
+      cited_sources      = [<slug>, ...]           # must be ≥ 6
+      motifs             = [<motif>, ...]
+      related_traditions = [<source_family>, ...]
+      related_concepts   = [<wiki slug>, ...]
+      related_timeline_ages = [<timeline slug>, ...]
+#}
+
+<div class="concept-hub">
+    <div class="concept-hub__container">
+
+        <header class="concept-hub__header">
+            <div class="concept-hub__kind-row">
+                <span class="concept-hub__kind">Concept Hub</span>
+                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+            </div>
+            <h1 class="concept-hub__title" id="page-title">{{ page.title }}</h1>
+            {% if page.extra.summary or page.description %}
+            <p class="concept-hub__summary" data-ai-summary="true" data-ai-answer="true">
+                {{ page.extra.summary | default(value=page.description) }}
+            </p>
+            {% endif %}
+        </header>
+
+        <div class="concept-hub__layout">
+
+            <article class="concept-hub__article" role="article" aria-labelledby="page-title">
+                {% if page.content %}
+                <div class="concept-hub__content">{{ page.content | safe }}</div>
+                {% endif %}
+            </article>
+
+            <aside class="concept-hub__aside" role="complementary" aria-label="Related metadata">
+
+                {# --- Cited sources (six-source rule, decision #7) --- #}
+                {% if page.extra.cited_sources %}
+                <section class="concept-hub__aside-block">
+                    <h2 class="concept-hub__aside-title">Cited sources</h2>
+                    <p class="concept-hub__aside-note">
+                        {{ page.extra.cited_sources | length }} sources cited
+                        {% if page.extra.cited_sources | length >= 6 %}
+                        <span class="concept-hub__aside-check" title="Meets the six-source minimum">✓</span>
+                        {% endif %}
+                    </p>
+                    <ul class="concept-hub__source-list">
+                    {% for source_slug in page.extra.cited_sources %}
+                        {% set source_page = get_page(path="resources/" ~ source_slug ~ ".md") %}
+                        <li class="concept-hub__source-item">
+                            <a href="{{ source_page.permalink }}" class="concept-hub__source-link">
+                                <span class="concept-hub__source-title">{{ source_page.title }}</span>
+                                {% if source_page.extra.source_family %}
+                                <span class="concept-hub__source-family concept-hub__source-family--{{ source_page.extra.source_family }}">
+                                    {{ source_page.extra.source_family | replace(from="_", to=" ") | title }}
+                                </span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {# --- Motifs --- #}
+                {% if page.extra.motifs %}
+                <section class="concept-hub__aside-block">
+                    <h2 class="concept-hub__aside-title">Motifs</h2>
+                    <ul class="concept-hub__chip-list">
+                    {% for motif in page.extra.motifs %}
+                        <li class="concept-hub__chip">{{ motif | replace(from="_", to=" ") | title }}</li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {# --- Related traditions --- #}
+                {% if page.extra.related_traditions %}
+                <section class="concept-hub__aside-block">
+                    <h2 class="concept-hub__aside-title">Related traditions</h2>
+                    <ul class="concept-hub__chip-list">
+                    {% for tradition in page.extra.related_traditions %}
+                        <li class="concept-hub__chip">{{ tradition | replace(from="_", to=" ") | title }}</li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {# --- Related wiki concepts --- #}
+                {% if page.extra.related_concepts %}
+                <section class="concept-hub__aside-block">
+                    <h2 class="concept-hub__aside-title">Related wiki entries</h2>
+                    <ul class="concept-hub__related-list">
+                    {% for concept_slug in page.extra.related_concepts %}
+                        <li class="concept-hub__related-item">
+                            <a href="{{ get_url(path='wiki/' ~ concept_slug, lang=detected_lang) }}" class="concept-hub__related-link">
+                                {{ concept_slug | replace(from="-", to=" ") | title }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock content %}
