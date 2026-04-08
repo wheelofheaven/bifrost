@@ -14,15 +14,32 @@
 {% set all_pages = resources.pages %}
 
 {# Authority tiers in display order (high authority → low), paired with
-   their display labels and descriptions. Tera does not support inline
-   dictionary literals, so we use arrays of [key, label, description]. #}
-{% set tier_data = [
-    ["foundational",  "Foundational Canon",                 "The Raëlian corpus. Highest authority within the project frame."],
-    ["primary",       "Primary Comparative Texts",          "Scriptures and primary witnesses from other traditions, read in dialogue with the canon."],
-    ["scholarly",     "Scholarly Context",                  "Academic context: philology, comparative religion, archaeoastronomy, reception history."],
-    ["scientific",    "Scientific Context",                 "Empirical context: astronomy, genetics, archaeology, origins-of-life, intelligent design."],
-    ["critical",      "Critical & Skeptical",               "Skeptical scholarship and objections that bound the interpretations on this site."],
-    ["supplementary", "Supplementary & Learning Resources", "Documentaries, podcasts, web archives, manifestos, and proponent literature. Cite but don't lean on."]
+   their display labels and descriptions. Tera does not support nested
+   arrays or inline dictionary literals in `set` statements, so we use
+   three parallel arrays and index them by loop.index0. #}
+{% set tier_keys = [
+    "foundational",
+    "primary",
+    "scholarly",
+    "scientific",
+    "critical",
+    "supplementary"
+] %}
+{% set tier_labels = [
+    "Foundational Canon",
+    "Primary Comparative Texts",
+    "Scholarly Context",
+    "Scientific Context",
+    "Critical & Skeptical",
+    "Supplementary & Learning Resources"
+] %}
+{% set tier_descriptions = [
+    "The Raëlian corpus. Highest authority within the project frame.",
+    "Scriptures and primary witnesses from other traditions, read in dialogue with the canon.",
+    "Academic context: philology, comparative religion, archaeoastronomy, reception history.",
+    "Empirical context: astronomy, genetics, archaeology, origins-of-life, intelligent design.",
+    "Skeptical scholarship and objections that bound the interpretations on this site.",
+    "Documentaries, podcasts, web archives, manifestos, and proponent literature. Cite but don't lean on."
 ] %}
 
 <div class="sources-section">
@@ -36,9 +53,8 @@
 
         {# Table of contents — one chip per non-empty tier. #}
         <nav class="sources-section__toc" aria-label="Source tiers">
-            {% for entry in tier_data %}
-                {% set tier = entry[0] %}
-                {% set tier_label = entry[1] %}
+            {% for tier in tier_keys %}
+                {% set tier_label = tier_labels[loop.index0] %}
                 {% set tier_pages = all_pages | filter(attribute="extra.authority_tier", value=tier) %}
                 {% if tier_pages | length > 0 %}
                 <a href="#tier-{{ tier }}" class="sources-section__toc-link">
@@ -50,10 +66,9 @@
         </nav>
 
         {# Tiered listings. #}
-        {% for entry in tier_data %}
-            {% set tier = entry[0] %}
-            {% set tier_label = entry[1] %}
-            {% set tier_description = entry[2] %}
+        {% for tier in tier_keys %}
+            {% set tier_label = tier_labels[loop.index0] %}
+            {% set tier_description = tier_descriptions[loop.index0] %}
             {% set tier_pages = all_pages | filter(attribute="extra.authority_tier", value=tier) %}
             {% if tier_pages | length > 0 %}
             <section class="sources-tier" id="tier-{{ tier }}" aria-labelledby="tier-{{ tier }}-title">
