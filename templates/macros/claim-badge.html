@@ -1,0 +1,22 @@
+{# claim-badge macro — Strategy 3 / Phase 2 / Decision #11
+
+   Renders a small pill showing the epistemic status of a page.
+
+   Usage:
+     {% import "macros/claim-badge.html" as claim_badge %}
+     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+
+   Valid values: direct | inferred | speculative.
+
+   - direct:      the claim is explicit in a primary source
+   - inferred:    the claim is a reasonable reading not stated literally
+   - speculative: the claim is interpretive synthesis or hypothesis
+
+   See .claude/rules/content.md and
+   .claude/plans/strategy-decisions.md (decision #11). #}
+
+{% macro render(claim_type="") %}
+{% if claim_type and claim_type != "" %}
+<span class="claim-badge claim-badge--{{ claim_type }}" role="note" aria-label="Claim type: {{ claim_type | title }}" title="{% if claim_type == 'direct' %}Explicit in a primary source{% elif claim_type == 'inferred' %}Reasonable reading not stated literally{% elif claim_type == 'speculative' %}Interpretive synthesis or hypothesis{% endif %}">{{ claim_type | title }}</span>
+{% endif %}
+{% endmacro render %}

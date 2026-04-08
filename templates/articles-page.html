@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/image.html" as img %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
 <!-- ScholarlyArticle Schema for Article Pages -->
@@ -48,6 +49,7 @@
                 <header class="article__header">
                     <!-- Metadata -->
                     <div class="article__meta" aria-label="Article metadata">
+                        {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
                         {% if page.extra.article_type == "explainer" %}
                         <span class="article__type article__type--explainer">
                             Explainer

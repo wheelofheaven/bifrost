@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
 <!-- DefinedTerm Schema for Wiki Pages -->
@@ -62,6 +63,7 @@
                 <!-- Page Header -->
                 <header class="wiki__header">
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
 
                     <!-- Alternative Names/Spellings -->
                     {% if page.extra.alternative_names %}

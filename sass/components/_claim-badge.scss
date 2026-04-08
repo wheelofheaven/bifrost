@@ -1,0 +1,67 @@
+// Claim type badge — Strategy 3 / Phase 2 / Decision #11
+//
+// Small pill displayed near page titles showing whether a claim is:
+// - direct      → explicit in a primary source (cyan palette)
+// - inferred    → reasonable reading not stated literally (yellow palette)
+// - speculative → interpretive synthesis or hypothesis (lavender palette)
+//
+// Rendered by: bifrost/templates/macros/claim-badge.html
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.claim-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.625rem;
+    border-radius: v.$border-radius-full;
+    font-size: v.$font-size-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    white-space: nowrap;
+    border: 1px solid transparent;
+    cursor: help;
+    user-select: none;
+    vertical-align: middle;
+
+    &--direct {
+        color: c.$cyan-800;
+        background: c.$cyan-100;
+        border-color: c.$cyan-300;
+    }
+
+    &--inferred {
+        color: c.$yellow-800;
+        background: c.$yellow-100;
+        border-color: c.$yellow-300;
+    }
+
+    &--speculative {
+        color: c.$lavender-800;
+        background: c.$lavender-100;
+        border-color: c.$lavender-300;
+    }
+}
+
+// Dark theme — lighter text on subtle tinted backgrounds
+[data-theme="dark"] .claim-badge {
+    &--direct {
+        color: c.$cyan-200;
+        background: rgba(c.$cyan-600, 0.15);
+        border-color: rgba(c.$cyan-500, 0.35);
+    }
+
+    &--inferred {
+        color: c.$yellow-200;
+        background: rgba(c.$yellow-600, 0.15);
+        border-color: rgba(c.$yellow-500, 0.35);
+    }
+
+    &--speculative {
+        color: c.$lavender-200;
+        background: rgba(c.$lavender-600, 0.15);
+        border-color: rgba(c.$lavender-500, 0.35);
+    }
+}

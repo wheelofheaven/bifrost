@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/image.html" as img %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
 <!-- HowTo Schema for step-by-step guides -->
@@ -61,6 +62,9 @@
 
                 <!-- Page Header -->
                 <header class="essentials__header">
+                    <div class="essentials__header-meta">
+                        {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    </div>
                     <!-- Listen Button & Share -->
                     <div class="essentials__actions">
                         {% include "partials/listen-button.html" %}
