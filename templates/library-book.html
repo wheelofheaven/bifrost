@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/library.html" as library_macros %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
 {% set book_slug = page.slug %}
@@ -65,11 +66,18 @@
                     <h1 class="library-book__title" id="book-title">
                         {{ library_macros::get_book_title(book_data=book_data, lang=detected_lang) }}
                     </h1>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
 
-                    {% if book_data.primaryLang != lang and book_data.titles[book_data.primaryLang] %}
+                    {# Show the original-language title if it exists and differs from
+                       the current view. For books ingested as a translation of an older
+                       original (e.g., the Torah books ingested as ASV 1901 English with
+                       originalLang="he"), the `originalLang` field on the book's
+                       _meta.json takes precedence over primaryLang for this display. #}
+                    {% set original_lang = book_data.originalLang | default(value=book_data.primaryLang) %}
+                    {% if original_lang != detected_lang and book_data.titles and book_data.titles[original_lang] %}
                     <div class="library-book__original-title">
                         <span class="library-book__original-label">Original title:</span>
-                        <span class="library-book__original-text">{{ book_data.titles[book_data.primaryLang] }}</span>
+                        <span class="library-book__original-text">{{ book_data.titles[original_lang] }}</span>
                     </div>
                     {% endif %}
 
