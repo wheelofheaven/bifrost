@@ -94,7 +94,12 @@
                             {% for page in family_pages | sort(attribute="title") %}
                             <li class="sources-family__item">
                                 <a href="{{ page.permalink }}" class="sources-family__link">
-                                    <span class="sources-family__item-title">{{ page.title }}</span>
+                                    <span class="sources-family__item-title">
+                                        {{ page.title }}
+                                        {% if page.extra.library_slug %}
+                                        <span class="sources-family__hosted-badge" title="Full text available in the Library">📖 In Library</span>
+                                        {% endif %}
+                                    </span>
                                     {% if page.description %}
                                     <span class="sources-family__item-description">{{ page.description | truncate(length=140) }}</span>
                                     {% endif %}
@@ -115,12 +120,12 @@
 
         <footer class="sources-section__footer">
             <p class="sources-section__footer-note">
-                Every source is tagged with an <strong>authority tier</strong> (what
+                Every resource is tagged with an <strong>authority tier</strong> (what
                 kind of weight it carries within the project frame) and a
                 <strong>source family</strong> (which tradition or field it belongs to).
-                See the <a href="{{ get_url(path='resources', lang=detected_lang) }}">full
-                resources catalog</a> for the alphabetical view, medium filters, and
-                individual resource pages with complete metadata.
+                Resources marked <strong>📖 In Library</strong> have their full text
+                available in the <a href="{{ get_url(path='library', lang=detected_lang) }}">Library</a>
+                reader with chapter navigation and parallel translations.
             </p>
         </footer>
     </div>

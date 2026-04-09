@@ -25,18 +25,10 @@
             >
                 {{ trans(key="navbarTimeline", lang=detected_lang) }}
             </a>
-            <a
-                href="{{ get_url(path='sources', lang=detected_lang) }}"
-                class="navbar__link{% if current_path and current_path is starting_with('/sources') %} navbar__link--active{% endif %}"
-                data-navbar-key="sources"
-                {% if current_path and current_path is starting_with('/sources') %}aria-current="true"{% endif %}
-            >
-                {{ trans(key="navbarSources", lang=detected_lang) }}
-            </a>
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="Knowledge section">
                 <button
-                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/wiki') or current_path is starting_with('/explainers') or current_path is starting_with('/resources') or current_path is starting_with('/library')) %} navbar__dropdown-trigger--active{% endif %}"
+                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/wiki') or current_path is starting_with('/explainers') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
                     aria-expanded="false"
                     aria-haspopup="true"
                     aria-controls="knowledge-dropdown"
@@ -455,6 +447,8 @@
                             contributing: "Contributing",
                             forums: "Forums & Discussions",
                             faq: "FAQ",
+                            sources: "Sources",
+                            sourcesDesc: "Sources by authority tier and tradition",
                             followX: "Follow us on X",
                         },
                         fr: {
@@ -480,6 +474,8 @@
                             contributing: "Contribuer",
                             forums: "Forums et Discussions",
                             faq: "FAQ",
+                            sources: "Sources",
+                            sourcesDesc: "Sources par niveau d'autorité et tradition",
                             followX: "Suivez-nous sur X",
                         },
                         de: {
@@ -530,6 +526,8 @@
                             contributing: "Contribuir",
                             forums: "Foros y Discusiones",
                             faq: "FAQ",
+                            sources: "Fuentes",
+                            sourcesDesc: "Fuentes por nivel de autoridad y tradición",
                             followX: "Síguenos en X",
                         },
                         ja: {
@@ -552,6 +550,8 @@
                             contributing: "貢献",
                             forums: "フォーラム＆ディスカッション",
                             faq: "よくある質問",
+                            sources: "ソース",
+                            sourcesDesc: "権威レベルと伝統別のソース",
                             followX: "Xでフォロー",
                         },
                         ru: {
@@ -577,6 +577,8 @@
                             contributing: "Участие",
                             forums: "Форумы и обсуждения",
                             faq: "Часто задаваемые вопросы",
+                            sources: "Источники",
+                            sourcesDesc: "Источники по уровню авторитета и традиции",
                             followX: "Следите за нами в X",
                         },
                         zh: {
@@ -599,6 +601,8 @@
                             contributing: "贡献",
                             forums: "论坛与讨论",
                             faq: "常见问题",
+                            sources: "来源",
+                            sourcesDesc: "按权威等级和传统分类的来源",
                             followX: "在X上关注我们",
                         },
                         "zh-Hant": {
