@@ -4,7 +4,7 @@
         {{ book_data.titles[lang] }}
     {%- elif book_data.titles.en -%}
         {{ book_data.titles.en }}
-    {%- else -%}
+    {%- elif book_data.primaryLang and book_data.titles[book_data.primaryLang] -%}
         {{ book_data.titles[book_data.primaryLang] }}
     {%- endif -%}
 {% endmacro %}
