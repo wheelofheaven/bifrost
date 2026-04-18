@@ -185,6 +185,31 @@
 </nav>
 {% endmacro resources %}
 
+{# Convenience macro for Timeline pages #}
+{% macro timeline(page, lang="en") %}
+<nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <ol class="breadcrumbs__list">
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+                {% include "partials/brand/logomark.html" %}
+                <span class="visually-hidden" itemprop="name">Home</span>
+            </a>
+            <meta itemprop="position" content="1" />
+        </li>
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ get_url(path='/timeline/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span itemprop="name">Timeline</span>
+            </a>
+            <meta itemprop="position" content="2" />
+        </li>
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span class="breadcrumbs__current" itemprop="name">{{ page.title }}</span>
+            <meta itemprop="position" content="3" />
+        </li>
+    </ol>
+</nav>
+{% endmacro timeline %}
+
 {# Generic macro for simple Home > Title breadcrumbs #}
 {% macro generic(title, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">

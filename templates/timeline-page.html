@@ -1,0 +1,166 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
+
+{% block content %}
+<!-- Event Schema for Timeline Pages -->
+{% include "partials/schema/event.html" %}
+
+<div class="timeline-page">
+    <!-- Breadcrumb Navigation -->
+    {{ breadcrumbs::timeline(page=page, lang=detected_lang) }}
+
+    <div class="timeline-page__container">
+        <!-- Table of Contents Sidebar -->
+        <aside class="timeline-page__toc" role="complementary" aria-label="Table of contents">
+            <div class="timeline-page__toc-header">
+                <h3 class="timeline-page__toc-title" id="toc-heading">Contents</h3>
+            </div>
+            <nav class="timeline-page__toc-nav" aria-labelledby="toc-heading">
+                {% if page.toc %}
+                <ul class="timeline-page__toc-list">
+                    {% for h1 in page.toc %}
+                    <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                        <a href="#{{ h1.id }}" class="timeline-page__toc-link">{{ h1.title }}</a>
+                        {% if h1.children %}
+                        <ul class="timeline-page__toc-sublist">
+                            {% for h2 in h1.children %}
+                            <li class="timeline-page__toc-item timeline-page__toc-item--level-2">
+                                <a href="#{{ h2.id }}" class="timeline-page__toc-link">{{ h2.title }}</a>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="timeline-page__main">
+            <article class="timeline-page__article" role="article" aria-labelledby="page-title">
+                <!-- Chapter Header -->
+                <header class="timeline-page__header">
+                    <!-- Age Badge -->
+                    <div class="timeline-page__age-badge">
+                        {% if page.extra.symbol %}
+                        <span class="timeline-page__symbol">{{ page.extra.symbol }}</span>
+                        {% endif %}
+                        {% if page.extra.start_year and page.extra.end_year %}
+                        <span class="timeline-page__dates">{{ page.extra.start_year }} — {{ page.extra.end_year }}</span>
+                        {% endif %}
+                        {% if page.extra.genesis_day %}
+                        <span class="timeline-page__day">Day {{ page.extra.genesis_day }}</span>
+                        {% endif %}
+                    </div>
+
+                    <h1 class="timeline-page__title" id="page-title">{{ page.title }}</h1>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+
+                    <!-- Genesis Verse -->
+                    {% if page.extra.genesis_verse %}
+                    <blockquote class="timeline-page__verse" data-ai-cite="true">
+                        <p>{{ page.extra.genesis_verse }}</p>
+                    </blockquote>
+                    {% endif %}
+
+                    {% if page.extra.genesis_interpretation %}
+                    <div class="timeline-page__interpretation" data-ai-summary="true">
+                        {{ page.extra.genesis_interpretation | markdown | safe }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Metadata -->
+                    <div class="timeline-page__meta">
+                        {% if page.reading_time %}
+                        <span class="timeline-page__reading-time">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            {{ page.reading_time }} min read
+                        </span>
+                        {% endif %}
+                        {% include "partials/listen-button.html" %}
+                    </div>
+
+                    <!-- Social Share -->
+                    {% include "partials/social-share.html" %}
+                </header>
+
+                <!-- Chapter Content -->
+                {% if page.content %}
+                <div class="timeline-page__content">
+                    {{ page.content | safe }}
+                </div>
+                {% endif %}
+
+                <!-- Chapter Navigation -->
+                <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
+                    <div class="timeline-page__prev-next">
+                        {% if page.extra.prev_age %}
+                        <a href="{{ page.extra.prev_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
+                            <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="15,18 9,12 15,6"></polyline>
+                            </svg>
+                            <div class="timeline-page__nav-content">
+                                <span class="timeline-page__nav-label">Previous</span>
+                                <span class="timeline-page__nav-title">{{ page.extra.prev_age[0].symbol }} {{ page.extra.prev_age[0].name }}</span>
+                            </div>
+                        </a>
+                        {% endif %}
+
+                        {% if page.extra.next_age %}
+                        <a href="{{ page.extra.next_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
+                            <div class="timeline-page__nav-content">
+                                <span class="timeline-page__nav-label">Next</span>
+                                <span class="timeline-page__nav-title">{{ page.extra.next_age[0].symbol }} {{ page.extra.next_age[0].name }}</span>
+                            </div>
+                            <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="9,18 15,12 9,6"></polyline>
+                            </svg>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <!-- Back to Timeline -->
+                    <div class="timeline-page__hub-link">
+                        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="timeline-page__hub-btn">
+                            <svg class="timeline-page__hub-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 8 12 12 14 14"></polyline>
+                            </svg>
+                            Back to Timeline
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Related Ages -->
+                {% if page.extra.related_ages %}
+                <section class="timeline-page__related" role="complementary" aria-label="Related ages">
+                    <h2 class="timeline-page__section-title">Related Ages</h2>
+                    <ul class="timeline-page__related-list">
+                        {% for age in page.extra.related_ages %}
+                        <li class="timeline-page__related-item">
+                            <a href="{{ age.link }}" class="timeline-page__related-link">
+                                <span class="timeline-page__related-symbol">{{ age.symbol }}</span>
+                                <span class="timeline-page__related-name">{{ age.name }}</span>
+                            </a>
+                            {% if age.relation %}
+                            <span class="timeline-page__related-desc">{{ age.relation }}</span>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                <!-- Related Content -->
+                {% include "partials/related-content.html" %}
+            </article>
+        </main>
+    </div>
+</div>
+{% endblock content %}

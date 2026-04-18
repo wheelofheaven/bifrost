@@ -1,0 +1,430 @@
+// Timeline Page Styles
+//
+// BEM-based styling for timeline chapter pages — the narrative spine of the site.
+// Reuses the same grid/TOC pattern as wiki pages but adds chapter-specific
+// elements: age badge, Genesis verse, prev/next navigation.
+
+@use "../abstracts/variables" as vars;
+@use "../base/typography" as typo;
+
+.timeline-page {
+    min-height: 100vh;
+    background: var(--color-background);
+    padding: 0;
+
+    &__container {
+        max-width: vars.$viewport-max-width;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        gap: 0;
+        align-items: start;
+        min-height: 100vh;
+        background: var(--color-background);
+
+        @media (max-width: 1024px) {
+            grid-template-columns: 240px 1fr;
+        }
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    // Table of Contents Sidebar — mirrors wiki TOC
+    &__toc {
+        position: sticky;
+        top: 6rem;
+        background: var(--color-background);
+        padding: 1.5rem 2rem 2rem 1rem;
+        border-right: 1px solid var(--color-hairline);
+        height: calc(100vh - 6rem);
+        overflow-y: auto;
+
+        @media (max-width: 768px) {
+            position: relative;
+            top: auto;
+            order: 2;
+            height: auto;
+            padding: 1.5rem 1rem;
+            border-right: none;
+            border-top: 1px solid var(--color-hairline);
+        }
+    }
+
+    &__toc-header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        position: relative;
+
+        &::after {
+            content: "";
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--color-hairline);
+        }
+    }
+
+    &__toc-title {
+        margin: 0;
+        font-family: typo.$font-family-lead;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--color-text);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    &__toc-nav {
+        font-family: typo.$font-family-body;
+    }
+
+    &__toc-list,
+    &__toc-sublist {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__toc-sublist {
+        padding-left: 1rem;
+    }
+
+    &__toc-item {
+        margin: 0;
+
+        &--level-1 {
+            margin-bottom: 0.25rem;
+        }
+
+        &--level-2 {
+            margin-bottom: 0.125rem;
+        }
+    }
+
+    &__toc-link {
+        display: block;
+        padding: 0.25rem 0.5rem;
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border-radius: vars.$border-radius-xs;
+        transition: color vars.$transition-base, background vars.$transition-base;
+
+        &:hover {
+            color: var(--color-text);
+            background: var(--color-hover);
+        }
+    }
+
+    // Main Content Area
+    &__main {
+        padding: 2rem 3rem 4rem;
+
+        @media (max-width: 768px) {
+            padding: 1.5rem 1rem 3rem;
+        }
+    }
+
+    &__article {
+        max-width: 48rem;
+    }
+
+    // Chapter Header
+    &__header {
+        margin-bottom: 2.5rem;
+        padding-bottom: 2rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__age-badge {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+        font-family: typo.$font-family-lead;
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    &__symbol {
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+
+    &__dates,
+    &__day {
+        padding: 0.125rem 0.5rem;
+        border-radius: vars.$border-radius-full;
+        background: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        font-size: 0.8125rem;
+        white-space: nowrap;
+    }
+
+    &__title {
+        margin: 0 0 0.75rem;
+        font-family: typo.$font-family-lead;
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-text);
+        line-height: 1.2;
+
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
+    }
+
+    // Genesis Verse
+    &__verse {
+        margin: 1.25rem 0;
+        padding: 1rem 1.25rem;
+        border-left: 3px solid var(--color-accent);
+        background: var(--color-surface);
+        border-radius: 0 vars.$border-radius-sm vars.$border-radius-sm 0;
+        font-style: italic;
+        color: var(--color-text-muted);
+
+        p {
+            margin: 0;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+        }
+    }
+
+    &__interpretation {
+        margin: 1rem 0;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+    }
+
+    &__meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1rem;
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+    }
+
+    &__reading-time {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+    }
+
+    // Chapter Content
+    &__content {
+        font-family: typo.$font-family-body;
+        font-size: 1.0625rem;
+        line-height: 1.8;
+        color: var(--color-text);
+
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-family: typo.$font-family-lead;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--color-text);
+        }
+
+        h3 {
+            margin-top: 2rem;
+            margin-bottom: 0.75rem;
+            font-family: typo.$font-family-lead;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        p {
+            margin-bottom: 1.25rem;
+        }
+
+        blockquote {
+            margin: 1.5rem 0;
+            padding: 1rem 1.25rem;
+            border-left: 3px solid var(--color-border);
+            background: var(--color-surface);
+            border-radius: 0 vars.$border-radius-sm vars.$border-radius-sm 0;
+            font-style: italic;
+            color: var(--color-text-muted);
+        }
+
+        hr {
+            margin: 2.5rem 0;
+            border: none;
+            border-top: 1px solid var(--color-hairline);
+        }
+
+        a {
+            color: var(--color-accent);
+            text-decoration: underline;
+            text-underline-offset: 0.15em;
+            transition: color vars.$transition-base;
+
+            &:hover {
+                color: var(--color-text);
+            }
+        }
+    }
+
+    // Chapter Navigation
+    &__navigation {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__prev-next {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+
+        @media (max-width: 640px) {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    &__nav-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 1.25rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: vars.$border-radius-md;
+        background: var(--color-surface);
+        text-decoration: none;
+        color: var(--color-text);
+        transition: border-color vars.$transition-base, box-shadow vars.$transition-base;
+
+        &:hover {
+            border-color: var(--color-accent);
+            box-shadow: var(--shadow-sm);
+        }
+
+        &--prev {
+            grid-column: 1;
+        }
+
+        &--next {
+            grid-column: 2;
+            text-align: right;
+            justify-content: flex-end;
+
+            @media (max-width: 640px) {
+                grid-column: 1;
+            }
+        }
+    }
+
+    &__nav-icon {
+        flex-shrink: 0;
+        color: var(--color-text-muted);
+    }
+
+    &__nav-content {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+
+    &__nav-label {
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-muted);
+    }
+
+    &__nav-title {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    &__hub-link {
+        text-align: center;
+    }
+
+    &__hub-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border-radius: vars.$border-radius-full;
+        transition: color vars.$transition-base, background vars.$transition-base;
+
+        &:hover {
+            color: var(--color-text);
+            background: var(--color-hover);
+        }
+    }
+
+    &__hub-icon {
+        flex-shrink: 0;
+    }
+
+    // Related Ages
+    &__related {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__section-title {
+        margin: 0 0 1rem;
+        font-family: typo.$font-family-lead;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    &__related-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    &__related-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+
+    &__related-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: var(--color-accent);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__related-symbol {
+        font-size: 1.125rem;
+    }
+
+    &__related-desc {
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+        padding-left: 1.625rem;
+    }
+}
