@@ -8,8 +8,8 @@
         {% if sitemap_entry.date %}
         <lastmod>{{ sitemap_entry.date | date(format="%Y-%m-%d") }}</lastmod>
         {% endif %}
-        <changefreq>{% if sitemap_entry.permalink is containing('/wiki/') %}monthly{% elif sitemap_entry.permalink is containing('/timeline/') %}monthly{% elif sitemap_entry.permalink is containing('/articles/') %}weekly{% elif sitemap_entry.permalink is containing('/essentials/') %}monthly{% else %}weekly{% endif %}</changefreq>
-        <priority>{% if sitemap_entry.permalink is ending_with('.io/') or sitemap_entry.permalink is ending_with('.io') %}1.0{% elif sitemap_entry.permalink is containing('/essentials/') %}0.8{% elif sitemap_entry.permalink is containing('/wiki/') %}0.7{% elif sitemap_entry.permalink is containing('/timeline/') %}0.7{% elif sitemap_entry.permalink is containing('/library/') %}0.7{% elif sitemap_entry.permalink is containing('/articles/') %}0.6{% else %}0.5{% endif %}</priority>
+        <changefreq>{% if sitemap_entry.permalink is containing('/wiki/') %}monthly{% elif sitemap_entry.permalink is containing('/timeline/') %}monthly{% elif sitemap_entry.permalink is containing('/articles/') %}weekly{% elif sitemap_entry.permalink is containing('/read/') %}monthly{% else %}weekly{% endif %}</changefreq>
+        <priority>{% if sitemap_entry.permalink is ending_with('.io/') or sitemap_entry.permalink is ending_with('.io') %}1.0{% elif sitemap_entry.permalink is containing('/read/') %}0.9{% elif sitemap_entry.permalink is containing('/wiki/') %}0.7{% elif sitemap_entry.permalink is containing('/timeline/') %}0.7{% elif sitemap_entry.permalink is containing('/library/') %}0.7{% elif sitemap_entry.permalink is containing('/articles/') %}0.6{% else %}0.5{% endif %}</priority>
         {#- Add image if available in extra data -#}
         {%- if sitemap_entry.extra.image and sitemap_entry.extra.image is containing("/") -%}
         <image:image>

@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% set timeline = get_section(path="timeline/_index.md") %}
+
+<div class="read">
+    <header class="read__header">
+        <h1 class="read__title">{{ section.title }}</h1>
+        {% if section.extra.lede %}
+        <p class="read__lede" data-ai-summary="true">{{ section.extra.lede }}</p>
+        {% elif section.description %}
+        <p class="read__lede">{{ section.description }}</p>
+        {% endif %}
+    </header>
+
+    {% if section.content %}
+    <section class="read__intro" aria-label="Orientation">
+        <div class="read__intro-content">{{ section.content | safe }}</div>
+    </section>
+    {% endif %}
+
+    <div class="read__cards" aria-label="Reading paths">
+        <section class="read__card read__card--featured">
+            <header class="read__card-summary read__card-summary--static">
+                <span class="read__card-eyebrow">{{ trans(key="navbarReadBook", lang=detected_lang) }}</span>
+                <h2 class="read__card-title">Wheel of Heaven</h2>
+                <p class="read__card-subtitle">A Hidden History of Life on Earth, in Twelve Ages</p>
+                <p class="read__card-desc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</p>
+            </header>
+            <div class="read__card-body">
+                {% if timeline.pages %}
+                <ul class="read__sublinks read__sublinks--compact">
+                    {% for page in timeline.pages %}
+                    <li class="read__sublink">
+                        <a href="{{ page.permalink }}">
+                            <span class="read__sublink-title">{{ page.title }}</span>
+                            {% if page.extra and page.extra.symbol %}
+                            <span class="read__sublink-meta">{{ page.extra.symbol }}{% if page.extra.start_year %} · {{ page.extra.start_year }}{% if page.extra.end_year %}–{{ page.extra.end_year }}{% endif %}{% endif %}</span>
+                            {% elif page.extra and page.extra.start_year %}
+                            <span class="read__sublink-meta">{{ page.extra.start_year }}{% if page.extra.end_year %}–{{ page.extra.end_year }}{% endif %}</span>
+                            {% endif %}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+                <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="read__card-cta">
+                    {{ trans(key="navbarReadBook", lang=detected_lang) }}
+                    <span class="read__card-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+            </div>
+        </section>
+
+        <details class="read__card">
+            <summary class="read__card-summary">
+                <span class="read__card-eyebrow">{{ trans(key="navbarReadWiki", lang=detected_lang) }}</span>
+                <h2 class="read__card-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h2>
+                <p class="read__card-desc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</p>
+                <span class="read__card-chevron" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </summary>
+            <div class="read__card-body">
+                <ul class="read__sublinks">
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='wiki/elohim', lang=detected_lang) }}">
+                            <span class="read__sublink-title">Elohim</span>
+                            <span class="read__sublink-desc">The plural beings of Genesis — the project's central term</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='wiki/precession', lang=detected_lang) }}">
+                            <span class="read__sublink-title">Precession</span>
+                            <span class="read__sublink-desc">The 26,000-year wobble of Earth's axis — the cosmic clock</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='wiki/world-age', lang=detected_lang) }}">
+                            <span class="read__sublink-title">World Age</span>
+                            <span class="read__sublink-desc">The twelve precessional ages that organize the timeline</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='wiki/comparative-mythology', lang=detected_lang) }}">
+                            <span class="read__sublink-title">Comparative Mythology</span>
+                            <span class="read__sublink-desc">The shared shape across independent traditions</span>
+                        </a>
+                    </li>
+                </ul>
+                <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="read__card-cta">
+                    {{ trans(key="navbarWiki", lang=detected_lang) }}
+                    <span class="read__card-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+            </div>
+        </details>
+
+        <details class="read__card">
+            <summary class="read__card-summary">
+                <span class="read__card-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+                <h2 class="read__card-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h2>
+                <p class="read__card-desc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</p>
+                <span class="read__card-chevron" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </summary>
+            <div class="read__card-body">
+                <ul class="read__sublinks">
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='library/the-book-which-tells-the-truth', lang=detected_lang) }}">
+                            <span class="read__sublink-title">The Book Which Tells the Truth</span>
+                            <span class="read__sublink-desc">Raël's first message — the foundational Raëlian text</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='library/genesis', lang=detected_lang) }}">
+                            <span class="read__sublink-title">Genesis</span>
+                            <span class="read__sublink-desc">The opening book of the Hebrew Bible — creation, flood, patriarchs</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='library/book-of-enoch', lang=detected_lang) }}">
+                            <span class="read__sublink-title">The Book of Enoch</span>
+                            <span class="read__sublink-desc">Apocryphal text on the Watchers, Nephilim, and cosmic order</span>
+                        </a>
+                    </li>
+                    <li class="read__sublink">
+                        <a href="{{ get_url(path='library/enuma-elish', lang=detected_lang) }}">
+                            <span class="read__sublink-title">Enuma Elish</span>
+                            <span class="read__sublink-desc">The Babylonian creation epic</span>
+                        </a>
+                    </li>
+                </ul>
+                <a href="{{ get_url(path='library', lang=detected_lang) }}" class="read__card-cta">
+                    {{ trans(key="navbarLibrary", lang=detected_lang) }}
+                    <span class="read__card-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+            </div>
+        </details>
+    </div>
+</div>
+{% endblock content %}

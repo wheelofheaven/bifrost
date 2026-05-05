@@ -467,6 +467,7 @@ main:has(.timeline-section) ~ footer {
     gap: 0.75rem;
     width: 100%;
     padding: 0.75rem 1rem;
+    min-height: 44px;
     background: transparent;
     border: none;
     color: var(--color-text);
@@ -481,7 +482,8 @@ main:has(.timeline-section) ~ footer {
         border-bottom: none;
     }
 
-    &:hover {
+    &:hover,
+    &:active {
         background: rgba(255, 255, 255, 0.1);
         color: var(--color-accent-primary);
     }
@@ -712,11 +714,11 @@ main:has(.timeline-section) ~ footer {
             pointer-events: auto;
 
             &--prev {
-                left: -8px;
+                left: 4px;
             }
 
             &--next {
-                right: -8px;
+                right: 4px;
             }
 
             svg {
@@ -805,18 +807,21 @@ main:has(.timeline-section) ~ footer {
     }
 
     .age-progress__segments {
-        height: 16px;
+        height: 28px;
+        gap: 2px;
+        padding: 3px;
     }
 
     .age-progress__segment {
-        font-size: 0.4rem;
+        font-size: 0.55rem;
+        min-width: 16px;
     }
 
     .age-selector__dropdown {
         bottom: calc(100% + 10px);
         left: 0.75rem;
         right: 0.75rem;
-        max-height: 250px;
+        max-height: 280px;
     }
 
     // Swipe hint

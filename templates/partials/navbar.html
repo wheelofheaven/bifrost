@@ -10,14 +10,6 @@
     <div class="navbar__content">
         <div class="navbar__links">
             <a
-                href="{{ get_url(path='essentials', lang=detected_lang) }}"
-                class="navbar__link{% if current_path and current_path is starting_with('/essentials') %} navbar__link--active{% endif %}"
-                data-navbar-key="essentials"
-                {% if current_path and current_path is starting_with('/essentials') %}aria-current="true"{% endif %}
-            >
-                {{ trans(key="navbarEssentials", lang=detected_lang) }}
-            </a>
-            <a
                 href="{{ get_url(path='timeline', lang=detected_lang) }}"
                 class="navbar__link{% if current_path and current_path is starting_with('/timeline') %} navbar__link--active{% endif %}"
                 data-navbar-key="timeline"
@@ -78,59 +70,53 @@
             </div>
         </div>
 
-        <!-- Mobile controls section -->
-        <div class="navbar__mobile-content">
-            <div class="navbar__mobile-controls">
-                <div class="navbar__lang-dropdown" id="mobile-lang-switcher">
-                    <button
-                        class="navbar__lang-trigger"
-                        id="mobile-lang-trigger"
-                        aria-expanded="false"
-                        aria-haspopup="listbox"
-                        aria-label="Select language"
-                    >
-                        <span class="navbar__lang-current" id="mobile-lang-current">English</span>
-                        <svg class="navbar__lang-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </button>
-                    <ul class="navbar__lang-menu" id="mobile-lang-menu" role="listbox" aria-label="Available languages">
-                        <li class="navbar__lang-option" data-lang="en" role="option">English</li>
-                        <li class="navbar__lang-option" data-lang="de" role="option">Deutsch</li>
-                        <li class="navbar__lang-option" data-lang="es" role="option">Español</li>
-                        <li class="navbar__lang-option" data-lang="fr" role="option">Français</li>
-                        <li class="navbar__lang-option" data-lang="ja" role="option">日本語</li>
-                        <li class="navbar__lang-option" data-lang="ko" role="option">한국어</li>
-                        <li class="navbar__lang-option" data-lang="ru" role="option">Русский</li>
-                        <li class="navbar__lang-option" data-lang="zh" role="option">简体中文</li>
-                        <li class="navbar__lang-option" data-lang="zh-Hant" role="option">繁體中文</li>
-                    </ul>
-                </div>
-
-                <button
-                    id="mobile-theme-toggle"
-                    class="navbar__theme-toggle"
-                    aria-label="Toggle dark/light mode"
-                >
-                    <span class="navbar__theme-icon">
-                        <span class="icon icon--moon">{% include "partials/icons/feather-moon.html" %}</span>
-                        <span class="icon icon--sun">{% include "partials/icons/feather-sun.html" %}</span>
-                    </span>
-                </button>
-
-                <!-- Mobile Ask AI Button -->
-                <button
-                    class="navbar__ask-ai-trigger navbar__ask-ai-trigger--mobile"
-                    id="mobileAskAiTrigger"
-                    aria-label="Discuss this page with AI"
-                >
-                    {% include "partials/icons/lucide-sparkles.html" %}
-                </button>
-            </div>
-        </div>
     </div>
 
     <div class="navbar__controls">
+        <!-- Mobile controls (theme, language, AI) — visible in top bar on mobile -->
+        <div class="navbar__bar-controls mobile-only">
+            <button
+                id="mobile-theme-toggle"
+                class="navbar__bar-btn"
+                aria-label="Toggle dark/light mode"
+            >
+                <span class="navbar__theme-icon">
+                    <span class="icon icon--moon">{% include "partials/icons/feather-moon.html" %}</span>
+                    <span class="icon icon--sun">{% include "partials/icons/feather-sun.html" %}</span>
+                </span>
+            </button>
+
+            <div class="navbar__lang-dropdown" id="mobile-lang-switcher">
+                <button
+                    class="navbar__bar-btn navbar__lang-trigger"
+                    id="mobile-lang-trigger"
+                    aria-expanded="false"
+                    aria-haspopup="listbox"
+                    aria-label="Select language"
+                >
+                    <span class="navbar__lang-current" id="mobile-lang-current">EN</span>
+                </button>
+                <ul class="navbar__lang-menu" id="mobile-lang-menu" role="listbox" aria-label="Available languages">
+                    <li class="navbar__lang-option" data-lang="en" role="option">English</li>
+                    <li class="navbar__lang-option" data-lang="de" role="option">Deutsch</li>
+                    <li class="navbar__lang-option" data-lang="es" role="option">Español</li>
+                    <li class="navbar__lang-option" data-lang="fr" role="option">Français</li>
+                    <li class="navbar__lang-option" data-lang="ja" role="option">日本語</li>
+                    <li class="navbar__lang-option" data-lang="ko" role="option">한국어</li>
+                    <li class="navbar__lang-option" data-lang="ru" role="option">Русский</li>
+                    <li class="navbar__lang-option" data-lang="zh" role="option">简体中文</li>
+                    <li class="navbar__lang-option" data-lang="zh-Hant" role="option">繁體中文</li>
+                </ul>
+            </div>
+
+            <button
+                class="navbar__bar-btn navbar__ask-ai-trigger--mobile"
+                id="mobileAskAiTrigger"
+                aria-label="Discuss this page with AI"
+            >
+                {% include "partials/icons/lucide-sparkles.html" %}
+            </button>
+        </div>
         <!-- Mobile search input - expands from search icon to logo -->
         <div class="navbar__mobile-search mobile-only">
             <input
@@ -231,6 +217,29 @@
             </button>
         </div>
 
+        <!-- Read split-button CtA (rightmost) -->
+        <div class="navbar__dropdown navbar__cta-split" data-dropdown="read" role="navigation" aria-label="Read section">
+            <a
+                href="{{ get_url(path='read', lang=detected_lang) }}"
+                class="navbar__cta-split__main{% if current_path and current_path is starting_with('/read') %} navbar__cta-split__main--active{% endif %}"
+                data-navbar-key="read"
+                {% if current_path and current_path is starting_with('/read') %}aria-current="true"{% endif %}
+            >
+                {{ trans(key="navbarRead", lang=detected_lang) }}
+            </a>
+            <button
+                class="navbar__dropdown-trigger navbar__cta-split__chevron"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-controls="read-dropdown"
+                aria-label="Open Read menu"
+            >
+                <span class="navbar__dropdown-trigger__caret">
+                    {% include "partials/icons/chevron-down.html" %}
+                </span>
+            </button>
+        </div>
+
         <script>
             document.addEventListener("DOMContentLoaded", function () {
                 // Initialize navbar translations
@@ -274,14 +283,23 @@
                     "zh-Hant": "繁體中文"
                 };
 
+                // Short codes for mobile bar display
+                const langShortCodes = {
+                    en: "EN", de: "DE", es: "ES", fr: "FR",
+                    ja: "JA", ko: "KO", ru: "RU", zh: "ZH", "zh-Hant": "ZH"
+                };
+
                 // Update language dropdown to show current language
                 function updateLanguageSelector() {
                     const currentLang = getCurrentLanguage();
                     const displayName = langDisplayNames[currentLang] || "English";
 
-                    // Update display text
+                    // Update display text — short code for mobile bar, full name for desktop
                     document.querySelectorAll(".navbar__lang-current").forEach(el => {
-                        el.textContent = displayName;
+                        const isMobileBar = el.closest(".navbar__bar-controls");
+                        el.textContent = isMobileBar
+                            ? (langShortCodes[currentLang] || "EN")
+                            : displayName;
                     });
 
                     // Update active state on options
@@ -424,7 +442,11 @@
 
                     const translations = {
                         en: {
-                            essentials: "Essentials",
+                            read: "Read",
+                            readBook: "Wheel of Heaven",
+                            readSources: "Source Material",
+                            readBookDesc: "The book — cosmic chronology across the precessional ages",
+                            readSourcesDesc: "Read the foundational scriptures and primary texts",
                             timeline: "Timeline",
                             map: "Map",
                             knowledge: "Knowledge",
@@ -452,7 +474,6 @@
                             followX: "Follow us on X",
                         },
                         fr: {
-                            essentials: "Essentiels",
                             timeline: "Chronologie",
                             map: "Carte",
                             knowledge: "Connaissance",
@@ -479,7 +500,6 @@
                             followX: "Suivez-nous sur X",
                         },
                         de: {
-                            essentials: "Grundlagen",
                             timeline: "Zeitleiste",
                             map: "Karte",
                             knowledge: "Wissen",
@@ -504,7 +524,6 @@
                             followX: "Folgen Sie uns auf X",
                         },
                         es: {
-                            essentials: "Esenciales",
                             timeline: "Cronología",
                             map: "Mapa",
                             knowledge: "Conocimiento",
@@ -531,7 +550,6 @@
                             followX: "Síguenos en X",
                         },
                         ja: {
-                            essentials: "基本",
                             timeline: "タイムライン",
                             map: "マップ",
                             knowledge: "知識",
@@ -555,7 +573,6 @@
                             followX: "Xでフォロー",
                         },
                         ru: {
-                            essentials: "Основы",
                             timeline: "Хронология",
                             map: "Карта",
                             knowledge: "Знания",
@@ -582,7 +599,6 @@
                             followX: "Следите за нами в X",
                         },
                         zh: {
-                            essentials: "基础",
                             timeline: "时间线",
                             map: "地图",
                             knowledge: "知识",
@@ -606,7 +622,6 @@
                             followX: "在X上关注我们",
                         },
                         "zh-Hant": {
-                            essentials: "基礎",
                             timeline: "時間線",
                             map: "地圖",
                             knowledge: "知識",
@@ -628,7 +643,6 @@
                             followX: "在X上關注我們",
                         },
                         ko: {
-                            essentials: "기본",
                             timeline: "타임라인",
                             map: "지도",
                             knowledge: "지식",
@@ -677,6 +691,59 @@
 </nav>
 
 <!-- Dropdown panels (outside navbar for proper backdrop-filter) -->
+<div class="navbar-dropdown navbar-dropdown--read" id="read-dropdown">
+    <div class="navbar-dropdown__container">
+        <div class="navbar-dropdown__content">
+            <div class="navbar-dropdown__section">
+                <h3 class="navbar-dropdown__section-title">
+                    <span class="navbar-dropdown__section-icon">
+                        {% include "partials/icons/book-open.html" %}
+                    </span>
+                    <span data-navbar-key="read">{{ trans(key="navbarRead", lang=detected_lang) }}</span>
+                </h3>
+                <div class="navbar-dropdown__links">
+                    <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/book-open.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="readWiki">{{ trans(key="navbarReadWiki", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readWikiDesc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
+                    <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/book.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="readBook">{{ trans(key="navbarReadBook", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readBookDesc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
+                    <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/ph-scroll-light.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="readSources">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readSourcesDesc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="navbar-dropdown navbar-dropdown--knowledge" id="knowledge-dropdown">
     <div class="navbar-dropdown__container">
         <div class="navbar-dropdown__content">

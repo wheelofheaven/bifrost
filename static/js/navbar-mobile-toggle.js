@@ -389,7 +389,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Close mobile nav when a link is clicked
     const mobileNavLinks = navbar.querySelectorAll(
-      ".navbar__content .navbar__link, .navbar__content .navbar-dropdown__link",
+      ".navbar__content .navbar__link, .navbar__content .navbar-dropdown__link, .navbar__content .navbar__dropdown-inline-link",
     );
     mobileNavLinks.forEach((link) => {
       link.addEventListener("click", (e) => {

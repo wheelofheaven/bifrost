@@ -1,0 +1,264 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+
+.read {
+    max-width: 56rem;
+    margin: 0 auto;
+    padding: v.$spacing-3xl v.$spacing-lg v.$spacing-2xl;
+
+    &__header {
+        text-align: center;
+        margin-bottom: v.$spacing-2xl;
+    }
+
+    &__title {
+        font-family: typo.$font-family-body;
+        font-size: clamp(2rem, 5vw, 3rem);
+        font-weight: 700;
+        margin: 0 0 v.$spacing-md;
+        color: var(--color-text);
+    }
+
+    &__lede {
+        font-size: v.$font-size-lg;
+        color: var(--color-text-muted);
+        max-width: 40rem;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    &__intro {
+        margin: 0 auto v.$spacing-2xl;
+        max-width: 44rem;
+        padding: v.$spacing-xl v.$spacing-lg;
+        border-top: 1px solid var(--color-border);
+        border-bottom: 1px solid var(--color-border);
+
+        @media (min-width: 768px) {
+            padding: v.$spacing-2xl v.$spacing-xl;
+        }
+    }
+
+    &__intro-content {
+        font-size: v.$font-size-base;
+        line-height: 1.7;
+        color: var(--color-text);
+
+        h2 {
+            font-size: v.$font-size-xl;
+            font-weight: 600;
+            margin: v.$spacing-xl 0 v.$spacing-md;
+            color: var(--color-text);
+            scroll-margin-top: 80px;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        p {
+            margin: 0 0 v.$spacing-md;
+        }
+
+        a {
+            color: var(--color-link, var(--color-accent-primary));
+            text-decoration: underline;
+            text-underline-offset: 2px;
+
+            &:hover {
+                text-decoration-thickness: 2px;
+            }
+        }
+    }
+
+    &__cards {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-lg;
+    }
+
+    &__card {
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-lg;
+        background: var(--color-surface, var(--color-card-bg));
+        overflow: hidden;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &[open] {
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+
+        &:hover:not([open]):not(.read__card--featured) {
+            border-color: var(--color-border-strong, var(--color-border));
+        }
+
+        &--featured {
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+        }
+    }
+
+    &__card-summary {
+        position: relative;
+        padding: v.$spacing-xl v.$spacing-2xl v.$spacing-xl v.$spacing-xl;
+        cursor: pointer;
+        list-style: none;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+
+        // Hide default disclosure marker
+        &::-webkit-details-marker { display: none; }
+        &::marker { content: ""; }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: -2px;
+        }
+
+        &--static {
+            cursor: default;
+            padding-right: v.$spacing-xl;
+
+            &:focus-visible {
+                outline: none;
+            }
+        }
+    }
+
+    &__card-eyebrow {
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-accent-primary);
+    }
+
+    &__card-title {
+        font-family: typo.$font-family-body;
+        font-size: v.$font-size-2xl;
+        font-weight: 700;
+        margin: 0;
+        color: var(--color-text);
+    }
+
+    &__card-subtitle {
+        font-size: v.$font-size-base;
+        font-style: italic;
+        color: var(--color-text-muted);
+        margin: 0;
+    }
+
+    &__card-desc {
+        font-size: v.$font-size-base;
+        line-height: 1.55;
+        color: var(--color-text-muted);
+        margin: v.$spacing-xs 0 0;
+    }
+
+    &__card-chevron {
+        position: absolute;
+        top: v.$spacing-xl;
+        right: v.$spacing-lg;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text-muted);
+        transition: transform 0.25s ease;
+
+        svg { width: 1.5rem; height: 1.5rem; }
+    }
+
+    &__card[open] &__card-chevron {
+        transform: rotate(180deg);
+        color: var(--color-accent-primary);
+    }
+
+    &__card-body {
+        padding: v.$spacing-lg v.$spacing-xl v.$spacing-xl;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-md;
+        border-top: 1px solid var(--color-hairline);
+        background-color: var(--color-background-tertiary);
+    }
+
+    &__sublinks {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__sublink {
+        & + & {
+            border-top: 1px solid rgba(127, 127, 127, 0.3);
+        }
+
+        a {
+            display: flex;
+            flex-direction: column;
+            gap: v.$spacing-2xs;
+            padding: v.$spacing-md v.$spacing-md;
+            color: var(--color-text);
+            text-decoration: none;
+            transition: background-color 0.15s ease, color 0.15s ease;
+
+            &:hover,
+            &:focus {
+                background-color: var(--color-hover);
+                color: var(--color-accent-primary);
+                outline: none;
+            }
+        }
+    }
+
+    &__sublink-title {
+        font-weight: 600;
+        font-size: v.$font-size-base;
+    }
+
+    &__sublink-desc {
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+        line-height: 1.4;
+    }
+
+    &__sublink-meta {
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-body;
+    }
+
+    &__card-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-xs;
+        align-self: flex-start;
+        margin-top: v.$spacing-xs;
+        padding: v.$spacing-xs v.$spacing-md;
+        font-weight: 600;
+        color: var(--color-accent-primary);
+        text-decoration: none;
+        border-radius: v.$border-radius-sm;
+        transition: background-color 0.15s ease;
+
+        &:hover,
+        &:focus {
+            background-color: var(--color-hover);
+            outline: none;
+        }
+    }
+
+    &__card-arrow {
+        display: inline-flex;
+        transition: transform 0.2s ease;
+        svg { width: 1rem; height: 1rem; }
+    }
+
+    &__card-cta:hover &__card-arrow {
+        transform: translateX(4px);
+    }
+}
