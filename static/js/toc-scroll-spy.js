@@ -10,7 +10,9 @@
     ACTIVE_CLASS: "wiki__toc-link--active",
     TOC_SELECTOR: ".wiki__toc-nav",
     HEADING_SELECTOR: "h1[id], h2[id], h3[id], h4[id]",
-    CONTENT_SELECTOR: ".wiki__content",
+    // Watch the whole article so Read Next (rendered outside .wiki__content,
+    // inside .related-content) also triggers TOC highlighting.
+    CONTENT_SELECTOR: ".wiki__article",
   };
 
   class TocScrollSpy {

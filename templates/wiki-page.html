@@ -106,6 +106,22 @@
 
                 <!-- Related Content -->
                 {% include "partials/related-content.html" %}
+
+                <!-- Edit this page (GitHub edit-mode link to the source markdown) -->
+                {% set edit_url = "https://github.com/wheelofheaven/data-content/edit/main/" ~ page.relative_path %}
+                <div class="wiki__edit-footer">
+                    <a class="wiki__edit-btn"
+                       href="{{ edit_url | safe }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Edit this page on GitHub">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span>Edit this page</span>
+                    </a>
+                </div>
             </article>
         </main>
 
@@ -239,6 +255,13 @@
                             {% endif %}
                         </li>
                         {% endfor %}
+
+                        {# Read Next is rendered as the article's final section
+                           by partials/related-content.html with id="related-content-title".
+                           Mirror it here so the TOC reflects the full reading flow. #}
+                        <li class="wiki__toc-item wiki__toc-item--level-1 wiki__toc-item--read-next">
+                            <a href="#related-content-title" class="wiki__toc-link">{{ trans(key="readNext", default="Read Next") }}</a>
+                        </li>
                     </ul>
                 </nav>
             </div>
