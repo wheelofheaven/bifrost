@@ -14,66 +14,62 @@
         max-width: vars.$viewport-max-width;
         margin: 0 auto;
         display: grid;
-        grid-template-columns: 280px 1fr;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        grid-template-areas: "main sidebar";
         gap: 0;
-        align-items: start;
+        align-items: stretch;
         min-height: 100vh;
         background: var(--color-background);
 
-        @media (max-width: 1024px) {
-            grid-template-columns: 240px 1fr;
+        @media (max-width: 1100px) {
+            grid-template-columns: minmax(0, 1fr) 240px;
         }
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             grid-template-columns: 1fr;
+            grid-template-areas:
+                "main"
+                "sidebar";
         }
     }
 
-    // Table of Contents Sidebar
+    // Right sidebar: header (always visible at top) + sticky TOC below
+    &__sidebar {
+        grid-area: sidebar;
+        background: var(--color-background);
+        display: flex;
+        flex-direction: column;
+    }
+
+    // Table of Contents — sticks to top once scrolled past the header
     &__toc {
         position: sticky;
         top: 6rem; // Account for fixed navbar height + padding
         background: var(--color-background);
-        padding: 1.5rem 2rem 2rem 1rem;
-        border-right: 1px solid var(--color-hairline);
-        height: calc(100vh - 6rem);
+        padding: 1.5rem 1.5rem 2rem;
+        max-height: calc(100vh - 6rem);
         overflow-y: auto;
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             position: relative;
             top: auto;
-            order: 2;
-            height: auto;
-            padding: 1.5rem 1rem;
-            border-right: none;
-            border-top: 1px solid var(--color-hairline);
+            max-height: none;
+            padding: 1rem 1.5rem 1.5rem;
         }
     }
 
     &__toc-header {
-        margin-bottom: 1rem;
-        padding-bottom: 0.75rem;
-        position: relative;
-
-        &::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--color-hairline);
-        }
+        margin-bottom: 0.5rem;
     }
 
     &__toc-title {
         margin: 0;
-        font-family: typo.$font-family-lead;
-        font-size: 1.125rem;
-        font-weight: 700;
-        color: var(--color-text);
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        font-family: typo.$font-family-body;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: none;
+        letter-spacing: 0;
     }
 
     &__toc-nav {
@@ -88,25 +84,15 @@
 
     &__toc-sublist {
         list-style: none;
-        margin: 0.5rem 0 0 1rem;
-        padding: 0;
-        border-left: 1px solid var(--color-hairline-subtle);
-        padding-left: 1rem;
+        margin: 0.125rem 0 0 0;
+        padding: 0 0 0 0.875rem;
     }
 
     &__toc-item {
-        margin-bottom: 0.5rem;
+        margin: 0;
 
         &--level-1 {
-            margin-bottom: 0.75rem;
-        }
-
-        &--level-2 {
-            margin-bottom: 0.5rem;
-        }
-
-        &--level-3 {
-            margin-bottom: 0.25rem;
+            margin-top: 0.25rem;
         }
     }
 
@@ -114,30 +100,29 @@
         display: block;
         color: var(--color-text-muted);
         text-decoration: none;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-        line-height: 1.4;
-        transition: all 0.2s ease;
+        padding: 0.2rem 0.5rem 0.2rem 0.625rem;
+        margin-left: -0.125rem; // overlap the sublist border-left so the active accent aligns
+        border-left: 2px solid transparent;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        transition: color 0.15s ease, border-color 0.15s ease;
 
         &:hover {
-            background-color: var(--color-hover);
             color: var(--color-text);
-            transform: translateX(4px);
         }
 
-        &:focus {
+        &:focus-visible {
             outline: 2px solid var(--color-focus);
-            outline-offset: 2px;
+            outline-offset: -2px;
         }
 
         .wiki__toc-item--level-1 > & {
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 400;
+            font-size: 0.875rem;
         }
 
         .wiki__toc-item--level-2 > & {
-            font-size: 0.8rem;
+            font-size: 0.8125rem;
         }
 
         .wiki__toc-item--level-3 > & {
@@ -148,7 +133,8 @@
 
     // Main Content Area
     &__main {
-        min-width: 0; // Prevents flex/grid overflow
+        grid-area: main;
+        min-width: 0; // Prevents grid overflow
         background: var(--color-background);
         margin: 0;
         padding: 0;
@@ -156,52 +142,43 @@
 
     &__article {
         background: var(--color-background);
-        overflow: hidden;
         min-height: 100vh;
         margin: 0;
+        max-width: 64rem; // Cap prose width on ultrawide screens — Wikipedia-comfortable
         padding: 0;
     }
 
-    // Page Header
+    // Page Header — now lives inside the right sidebar.
+    // Compact panel sized for the narrow column.
     &__header {
-        padding: 1rem 2rem 1.5rem;
-        background: linear-gradient(
-            45deg,
-            var(--color-accent-primary) 0%,
-            var(--color-accent-secondary) 35%,
-            var(--color-accent-primary) 70%,
-            var(--color-accent-secondary) 100%
-        );
-        background-size: 300% 300%;
-        animation: gradient-shift 45s ease-in-out infinite;
+        padding: 1.5rem 1.5rem 1.25rem;
         position: relative;
-        border-bottom: 1px solid var(--color-hairline);
+        background: var(--color-background);
+    }
 
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: var(--color-glass-bg);
-            opacity: 0.8;
-            backdrop-filter: blur(8px);
-            -webkit-backdrop-filter: blur(8px);
-        }
+    // Page header lives in the main column, above the article body.
+    &__page-header {
+        padding: 0.5rem 2rem 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
 
-        > * {
-            position: relative;
-            z-index: 1;
+        @media (max-width: 900px) {
+            padding: 0.5rem 1.25rem 1rem;
         }
     }
 
     &__title {
-        margin: 0 0 0.75rem 0;
+        margin: 0;
         font-family: typo.$font-family-lead;
         font-size: 2.25rem;
         font-weight: 700;
         color: var(--color-text);
-        line-height: 1.1;
+        line-height: 1.15;
+        word-wrap: break-word;
 
-        @media (max-width: 768px) {
+        @media (max-width: 900px) {
             font-size: 1.875rem;
         }
     }
@@ -209,8 +186,7 @@
     // Alternative Names/Spellings
     &__alternative-names {
         margin-bottom: 1.25rem;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid var(--color-hairline-subtle);
+        padding: 0.75rem 0 0;
         font-family: typo.$font-family-body;
         font-size: 0.95rem;
         line-height: 1.5;
@@ -1205,13 +1181,81 @@
     }
 }
 
-// Special highlighting for active TOC links
+// Summary (collapsible <details>) — minimal, transparent, sits in the article body
+// after the first paragraph. No card chrome.
+.wiki__summary {
+    margin: 1.5rem 0 1.75rem;
+    padding: 0.5rem 0 0.75rem 1rem;
+    border-left: 2px solid var(--color-hairline);
+
+    &[open] {
+        border-left-color: var(--color-accent-primary);
+    }
+
+    &-label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        cursor: pointer;
+        list-style: none;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        transition: color 0.15s ease;
+        user-select: none;
+
+        &::-webkit-details-marker { display: none; }
+        &::marker { content: ""; }
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+
+    &[open] &-label {
+        color: var(--color-accent-primary);
+    }
+
+    &-chevron {
+        transition: transform 0.2s ease;
+        opacity: 0.7;
+    }
+
+    &[open] &-chevron {
+        transform: rotate(180deg);
+    }
+
+    &-content {
+        margin-top: 0.625rem;
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text);
+
+        p {
+            margin: 0 0 0.5rem;
+
+            &:last-child { margin-bottom: 0; }
+        }
+
+        a {
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+    }
+}
+
+// Active TOC link — lean Wikipedia-ish accent: thin left border + accent color, no fill
 .wiki__toc-link--active {
-    background: var(--color-accent-primary);
-    color: var(--color-background);
-    font-weight: 700;
+    color: var(--color-accent-primary);
+    border-left-color: var(--color-accent-primary);
+    font-weight: 500;
+    background: transparent;
 
     &:hover {
-        background: var(--color-accent-secondary);
+        color: var(--color-accent-primary);
+        background: transparent;
     }
 }

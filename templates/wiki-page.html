@@ -11,121 +11,13 @@
     {{ breadcrumbs::wiki(page=page, lang=detected_lang) }}
 
     <div class="wiki__container">
-        <!-- Table of Contents Sidebar -->
-        <aside class="wiki__toc" role="complementary" aria-label="Table of contents">
-            <div class="wiki__toc-header">
-                <h3 class="wiki__toc-title" id="toc-heading">Contents</h3>
-            </div>
-            <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
-                {% if page.toc %}
-                <ul class="wiki__toc-list">
-                    {% for h1 in page.toc %}
-                    <li class="wiki__toc-item wiki__toc-item--level-1">
-                        <a href="#{{ h1.id }}" class="wiki__toc-link"
-                            >{{ h1.title }}</a
-                        >
-                        {% if h1.children %}
-                        <ul class="wiki__toc-sublist">
-                            {% for h2 in h1.children %}
-                            <li class="wiki__toc-item wiki__toc-item--level-2">
-                                <a href="#{{ h2.id }}" class="wiki__toc-link"
-                                    >{{ h2.title }}</a
-                                >
-                                {% if h2.children %}
-                                <ul class="wiki__toc-sublist">
-                                    {% for h3 in h2.children %}
-                                    <li
-                                        class="wiki__toc-item wiki__toc-item--level-3"
-                                    >
-                                        <a
-                                            href="#{{ h3.id }}"
-                                            class="wiki__toc-link"
-                                            >{{ h3.title }}</a
-                                        >
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                                {% endif %}
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
+        <!-- Main column comes first in DOM so mobile readers see title + body before
+             the sidebar's metadata. Grid areas keep the visual order on desktop. -->
         <main class="wiki__main">
             <article class="wiki__article" role="article" aria-labelledby="wiki-title">
-                <!-- Page Header -->
-                <header class="wiki__header">
+                <!-- Page Title (between breadcrumbs and the first chapter heading) -->
+                <header class="wiki__page-header">
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
-
-                    <!-- Alternative Names/Spellings -->
-                    {% if page.extra.alternative_names %}
-                    <div class="wiki__alternative-names">
-                        <span class="wiki__alternative-label"
-                            >Also known as:</span
-                        >
-                        <span class="wiki__alternative-list">
-                            {% for name in page.extra.alternative_names %}
-                            <span class="wiki__alternative-name"
-                                >{{ name }}</span
-                            >{% if not loop.last %}, {% endif %} {% endfor %}
-                        </span>
-                    </div>
-                    {% endif %}
-
-                    <!-- Quick Answer / Management Summary - Optimized for AI extraction and voice assistants -->
-                    {% if page.extra.summary or page.description %}
-                    <div class="wiki__summary quick-answer" data-ai-summary="true" data-ai-answer="true" aria-label="Quick summary" itemprop="abstract">
-                        <div class="wiki__summary-label">
-                            <svg class="wiki__summary-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <path d="M12 16v-4"></path>
-                                <path d="M12 8h.01"></path>
-                            </svg>
-                            Quick Answer
-                        </div>
-                        <div class="wiki__summary-content wiki__tldr" data-speakable="true">
-                            {{ page.extra.summary |
-                            default(value=page.description) | markdown | safe }}
-                        </div>
-                    </div>
-                    {% endif %}
-
-                    <!-- Metadata -->
-                    <div class="wiki__meta">
-                        {% if page.reading_time %}
-                        <span class="wiki__reading-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            {{ page.reading_time }} min read
-                        </span>
-                        {% endif %}
-                        {% include "partials/listen-button.html" %}
-                        {% if page.date %}
-                        <time class="wiki__date">
-                            Last updated: {{ page.date | date(format="%B %d,
-                            %Y") }}
-                        </time>
-                        {% endif %} {% if page.extra.category %}
-                        <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
-                           class="wiki__category"
-                           title="Browse all {{ page.extra.category }} entries"
-                            >{{ page.extra.category }}</a
-                        >
-                        {% endif %}
-                    </div>
-
-                    <!-- Social Share -->
-                    {% include "partials/social-share.html" %}
                 </header>
 
                 <!-- Page Content -->
@@ -145,19 +37,12 @@
                         {% for item in page.extra.see_also %}
                         <li class="wiki__link-item">
                             {% if item.url %}
-                            <a href="{{ item.url }}" class="wiki__link"
-                                >{{ item.title }}</a
-                            >
+                            <a href="{{ item.url }}" class="wiki__link">{{ item.title }}</a>
                             {% else %}
-                            <a
-                                href="{{ get_url(path=item.path, lang=detected_lang) }}"
-                                class="wiki__link"
-                                >{{ item.title }}</a
-                            >
-                            {% endif %} {% if item.description %}
-                            <span class="wiki__link-description"
-                                >{{ item.description }}</span
-                            >
+                            <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="wiki__link">{{ item.title }}</a>
+                            {% endif %}
+                            {% if item.description %}
+                            <span class="wiki__link-description">{{ item.description }}</span>
                             {% endif %}
                         </li>
                         {% endfor %}
@@ -172,35 +57,16 @@
                     <ul class="wiki__link-list">
                         {% for link in page.extra.external_links %}
                         <li class="wiki__link-item">
-                            <a
-                                href="{{ link.url }}"
-                                class="wiki__link wiki__link--external"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
+                            <a href="{{ link.url }}" class="wiki__link wiki__link--external" target="_blank" rel="noopener noreferrer">
                                 {{ link.title }}
-                                <svg
-                                    class="wiki__external-icon"
-                                    width="12"
-                                    height="12"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <path
-                                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
-                                    ></path>
-                                    <polyline
-                                        points="15,3 21,3 21,9"
-                                    ></polyline>
+                                <svg class="wiki__external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                                    <polyline points="15,3 21,3 21,9"></polyline>
                                     <line x1="10" y1="14" x2="21" y2="3"></line>
                                 </svg>
                             </a>
                             {% if link.description %}
-                            <span class="wiki__link-description"
-                                >{{ link.description }}</span
-                            >
+                            <span class="wiki__link-description">{{ link.description }}</span>
                             {% endif %}
                         </li>
                         {% endfor %}
@@ -214,49 +80,25 @@
                     <h2 class="wiki__section-title" id="references-heading">References</h2>
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
                         {% for ref in page.extra.references %}
-                        <li
-                            class="wiki__reference-item"
-                            id="ref-{{ loop.index }}"
-                        >
+                        <li class="wiki__reference-item" id="ref-{{ loop.index }}">
                             {% if ref.url %}
-                            <a
-                                href="{{ ref.url }}"
-                                class="wiki__reference-link"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                {{ ref.title }}
-                            </a>
+                            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                             {% else %}
-                            <span class="wiki__reference-title"
-                                >{{ ref.title }}</span
-                            >
-                            {% endif %} {% if ref.author %}
-                            <span class="wiki__reference-author"
-                                >by {{ ref.author }}</span
-                            >
-                            {% endif %} {% if ref.publication %}
-                            <span class="wiki__reference-publication"
-                                >{{ ref.publication }}</span
-                            >
-                            {% endif %} {% if ref.date %}
-                            <span class="wiki__reference-date"
-                                >({{ ref.date }})</span
-                            >
-                            {% endif %} {% if ref.description %}
-                            <p class="wiki__reference-description">
-                                {{ ref.description }}
-                            </p>
+                            <span class="wiki__reference-title">{{ ref.title }}</span>
                             {% endif %}
+                            {% if ref.author %}<span class="wiki__reference-author">by {{ ref.author }}</span>{% endif %}
+                            {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
+                            {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
+                            {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
                         </li>
                         {% endfor %}
                     </ol>
                 </section>
                 {% endif %}
 
-                <!-- Auto-generated footnotes (if using markdown footnotes) -->
-                {% set has_footnotes = page.content | split(pat="[^") | length >
-                1 %} {% if has_footnotes %}
+                <!-- Auto-generated footnotes -->
+                {% set has_footnotes = page.content | split(pat="[^") | length > 1 %}
+                {% if has_footnotes %}
                 <section class="wiki__footnotes">
                     <!-- Footnotes will be auto-generated by Zola's markdown parser -->
                 </section>
@@ -266,6 +108,165 @@
                 {% include "partials/related-content.html" %}
             </article>
         </main>
+
+        <!-- Sidebar: claim badge + page meta + sticky TOC. On mobile,
+             a small JS helper lifts the TOC out of the sidebar and inserts it
+             into the article body after the first paragraph (Wikipedia pattern). -->
+        <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
+            <header class="wiki__header">
+                <!-- Claim Badge — first item, with explanatory tooltip -->
+                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+
+                <!-- Alternative Names/Spellings -->
+                {% if page.extra.alternative_names %}
+                <div class="wiki__alternative-names">
+                    <span class="wiki__alternative-label">Also known as:</span>
+                    <span class="wiki__alternative-list">
+                        {% for name in page.extra.alternative_names %}
+                        <span class="wiki__alternative-name">{{ name }}</span>{% if not loop.last %}, {% endif %} {% endfor %}
+                    </span>
+                </div>
+                {% endif %}
+
+                <!-- Summary (formerly Quick Answer) — collapsible, default closed.
+                     A small JS helper lifts this out of the sidebar and inserts it
+                     into the article body after the first paragraph. -->
+                {% if page.extra.summary or page.description %}
+                <details class="wiki__summary" data-ai-summary="true" data-ai-answer="true" aria-label="Summary" itemprop="abstract">
+                    <summary class="wiki__summary-label">
+                        Summary
+                        <svg class="wiki__summary-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <div class="wiki__summary-content wiki__tldr" data-speakable="true">
+                        {{ page.extra.summary | default(value=page.description) | markdown | safe }}
+                    </div>
+                </details>
+                {% endif %}
+
+                <!-- Metadata -->
+                <div class="wiki__meta">
+                    {% if page.reading_time %}
+                    <span class="wiki__reading-time">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <polyline points="12 6 12 12 16 14"></polyline>
+                        </svg>
+                        {{ page.reading_time }} min read
+                    </span>
+                    {% endif %}
+                    {% include "partials/listen-button.html" %}
+                    {% if page.date %}
+                    <time class="wiki__date">Last updated: {{ page.date | date(format="%B %d, %Y") }}</time>
+                    {% endif %}
+                    {% if page.extra.category %}
+                    <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
+                       class="wiki__category"
+                       title="Browse all {{ page.extra.category }} entries">{{ page.extra.category }}</a>
+                    {% endif %}
+                </div>
+
+                <!-- Social Share -->
+                {% include "partials/social-share.html" %}
+            </header>
+
+            <!-- Sticky Table of Contents -->
+            {% if page.toc %}
+            <div class="wiki__toc">
+                <div class="wiki__toc-header">
+                    <h3 class="wiki__toc-title" id="toc-heading">Contents</h3>
+                </div>
+                <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
+                    <ul class="wiki__toc-list">
+                        {% for h1 in page.toc %}
+                        <li class="wiki__toc-item wiki__toc-item--level-1">
+                            <a href="#{{ h1.id }}" class="wiki__toc-link">{{ h1.title }}</a>
+                            {% if h1.children %}
+                            <ul class="wiki__toc-sublist">
+                                {% for h2 in h1.children %}
+                                <li class="wiki__toc-item wiki__toc-item--level-2">
+                                    <a href="#{{ h2.id }}" class="wiki__toc-link">{{ h2.title }}</a>
+                                    {% if h2.children %}
+                                    <ul class="wiki__toc-sublist">
+                                        {% for h3 in h2.children %}
+                                        <li class="wiki__toc-item wiki__toc-item--level-3">
+                                            <a href="#{{ h3.id }}" class="wiki__toc-link">{{ h3.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </aside>
     </div>
 </div>
+
+<script>
+(function () {
+    // Mobile pattern: lift the sidebar TOC into the article body after the
+    // first paragraph (Wikipedia mobile flow), and put it back on desktop.
+    const MQ = window.matchMedia('(max-width: 900px)');
+    const toc = document.querySelector('.wiki__toc');
+    const sidebar = document.querySelector('.wiki__sidebar');
+    const content = document.querySelector('.wiki__content');
+    const firstParagraph = content && content.querySelector(':scope > p');
+
+    const summary = document.querySelector('.wiki__summary');
+
+    // The Summary moves into the article body (after the first paragraph) on
+    // every viewport — it's no longer a sidebar element.
+    function placeSummary() {
+        if (!summary || !firstParagraph) return;
+        firstParagraph.after(summary);
+    }
+
+    function placeToc() {
+        if (!toc || !sidebar || !content) return;
+        if (MQ.matches) {
+            // On mobile: TOC goes into the body too. Place it after the summary
+            // if present, otherwise after the first paragraph.
+            const anchor = (summary && summary.parentElement === content) ? summary : firstParagraph;
+            if (anchor) anchor.after(toc);
+            else content.prepend(toc);
+            toc.classList.add('wiki__toc--inline');
+        } else {
+            // On desktop: TOC returns to the sidebar (after the <header>).
+            const header = sidebar.querySelector('.wiki__header');
+            if (header) header.after(toc);
+            else sidebar.appendChild(toc);
+            toc.classList.remove('wiki__toc--inline');
+        }
+    }
+
+    placeSummary();
+    placeToc();
+    if (MQ.addEventListener) MQ.addEventListener('change', placeToc);
+    else MQ.addListener(placeToc);
+
+    // Click toggle for the claim badge tooltip on touch devices
+    // (CSS handles hover/focus on desktop).
+    const badge = document.querySelector('.claim-badge');
+    if (badge) {
+        badge.addEventListener('click', function (e) {
+            e.stopPropagation();
+            badge.classList.toggle('claim-badge--open');
+        });
+        document.addEventListener('click', function (e) {
+            if (!badge.contains(e.target)) badge.classList.remove('claim-badge--open');
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') badge.classList.remove('claim-badge--open');
+        });
+    }
+})();
+</script>
 {% endblock content %}

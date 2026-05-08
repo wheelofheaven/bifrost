@@ -1,9 +1,13 @@
 // Claim type badge — Strategy 3 / Phase 2 / Decision #11
 //
 // Small pill displayed near page titles showing whether a claim is:
-// - direct      → explicit in a primary source (cyan palette)
-// - inferred    → reasonable reading not stated literally (yellow palette)
-// - speculative → interpretive synthesis or hypothesis (lavender palette)
+// - direct      → uncontested in mainstream sources / project self-description (cyan)
+// - framework   → foundational premise of the Wheel of Heaven framework (mauve)
+// - inferred    → reasonable reading not stated literally (yellow)
+// - speculative → interpretive synthesis or hypothesis (lavender)
+//
+// On hover (desktop) or click/tap (mobile, via .claim-badge--open class set by JS),
+// a glassmorphic tooltip explains what the badge means.
 //
 // Rendered by: bifrost/templates/macros/claim-badge.html
 
@@ -11,6 +15,7 @@
 @use "../abstracts/colors" as c;
 
 .claim-badge {
+    position: relative;
     display: inline-flex;
     align-items: center;
     padding: 0.25rem 0.625rem;
@@ -32,6 +37,12 @@
         border-color: c.$cyan-300;
     }
 
+    &--framework {
+        color: c.$mauve-800;
+        background: c.$mauve-100;
+        border-color: c.$mauve-300;
+    }
+
     &--inferred {
         color: c.$yellow-800;
         background: c.$yellow-100;
@@ -43,6 +54,64 @@
         background: c.$lavender-100;
         border-color: c.$lavender-300;
     }
+
+    // ---- Glassmorphic explainer tooltip ----
+    &__tooltip {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        z-index: 100;
+        width: max-content;
+        max-width: 18rem;
+        padding: 0.75rem 0.875rem;
+        border-radius: v.$border-radius-md;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-hairline);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        color: var(--color-text);
+        font-weight: 400;
+        text-transform: none;
+        letter-spacing: 0;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        cursor: default;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.15s ease, transform 0.15s ease, visibility 0.15s ease;
+        pointer-events: none;
+    }
+
+    &__tooltip-title {
+        display: block;
+        font-weight: 600;
+        font-size: 0.8125rem;
+        margin-bottom: 0.25rem;
+        color: var(--color-accent-primary);
+    }
+
+    &__tooltip-body {
+        display: block;
+        color: var(--color-text-muted);
+    }
+
+    // Show tooltip on hover, focus (desktop), or when JS toggles --open (mobile click)
+    &:hover &__tooltip,
+    &:focus &__tooltip,
+    &:focus-within &__tooltip,
+    &--open &__tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+    }
 }
 
 // Dark theme — lighter text on subtle tinted backgrounds
@@ -51,6 +120,12 @@
         color: c.$cyan-200;
         background: rgba(c.$cyan-600, 0.15);
         border-color: rgba(c.$cyan-500, 0.35);
+    }
+
+    &--framework {
+        color: c.$mauve-200;
+        background: rgba(c.$mauve-600, 0.15);
+        border-color: rgba(c.$mauve-500, 0.35);
     }
 
     &--inferred {
@@ -64,4 +139,22 @@
         background: rgba(c.$lavender-600, 0.15);
         border-color: rgba(c.$lavender-500, 0.35);
     }
+
+    .claim-badge__tooltip {
+        background: rgba(27, 31, 34, 0.92);
+        border-color: rgba(255, 255, 255, 0.12);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+    }
+}
+
+// ---- Inline TOC variant: when JS lifts the TOC into the article body on mobile,
+//      it gets the modifier .wiki__toc--inline. Tone the surrounding chrome down. ----
+.wiki__toc--inline {
+    margin: 1.5rem 0 2rem;
+    padding: 1rem 1.25rem 1.25rem;
+    background: var(--color-background-tertiary);
+    border-radius: v.$border-radius-md;
+    max-height: none;
+    position: static; // override sticky from base styles when in body flow
+    top: auto;
 }

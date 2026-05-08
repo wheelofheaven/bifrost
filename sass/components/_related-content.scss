@@ -1,23 +1,31 @@
 // Related Content Suggestions
 // "Read Next" section at end of articles
 
+@use "../base/typography" as typo;
+
 .related-content {
-    margin-top: 3rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--color-hairline);
+    // Render as just another article section — no separator above, no special
+    // top padding. The shared .wiki__content h2 styling takes over via the
+    // .related-content__title rules below, which mirror the in-article h2.
+    margin-top: 2.5rem;
 
     &__title {
         display: flex;
         align-items: center;
         gap: 0.5rem;
-        margin: 0 0 1.25rem;
-        font-size: 1.125rem;
-        font-weight: 600;
+        margin: 0 0 1rem;
+        padding-bottom: 0.5rem;
+        font-family: typo.$font-family-lead;
+        font-size: 1.875rem;
+        font-weight: 700;
+        line-height: 1.3;
         color: var(--color-text);
+        border-bottom: 2px solid var(--color-hairline);
     }
 
     &__icon {
         color: var(--color-accent-primary);
+        flex-shrink: 0;
     }
 
     &__grid {

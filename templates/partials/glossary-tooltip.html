@@ -22,26 +22,39 @@
     // Cache for fetched definitions
     const definitionCache = new Map();
 
-    // Find all wiki links in content areas
-    const contentSelectors = '.wiki__content, .article__content, .essentials__content, .resources__content, .library__content, .info-page__content, article';
-    const contentAreas = document.querySelectorAll(contentSelectors);
+    // Attach tooltips to every wiki link on the page, except those inside
+    // chrome / navigational regions where a definition popup would be noise.
+    // Read Next cards, the navbar, footer, breadcrumbs, the wiki sidebar
+    // (TOC + page header) and the Read landing tiles are all excluded.
+    const excludeSelector = [
+        '.related-content',
+        '.navbar',
+        '.navbar-dropdown',
+        '.footer',
+        '.breadcrumbs',
+        '.wiki__sidebar',
+        '.read__cards',
+        '.read__sublinks',
+    ].join(',');
 
-    contentAreas.forEach(area => {
-        const wikiLinks = area.querySelectorAll('a[href*="/wiki/"]');
-        wikiLinks.forEach(link => {
-            // Skip if it's the current page
-            if (link.href === window.location.href) return;
-            // Skip external wiki links
-            if (!link.href.includes(window.location.hostname) && !link.href.startsWith('/')) return;
+    document.querySelectorAll('a[href*="/wiki/"]').forEach(link => {
+        // Skip the current page
+        if (link.href === window.location.href) return;
+        // Same-origin only (covers absolute URLs to our domain and root-relative paths)
+        if (!link.href.includes(window.location.hostname) && !link.href.startsWith('/')) return;
+        // Skip the wiki section index itself ("/wiki/" with no slug)
+        const path = link.getAttribute('href').replace(/[#?].*$/, '');
+        if (/\/wiki\/?$/.test(path)) return;
+        // Skip excluded ancestors (Read Next cards, navbar, footer, etc.)
+        if (link.closest(excludeSelector)) return;
 
-            link.classList.add('glossary-term');
-            link.setAttribute('data-glossary', 'true');
+        link.classList.add('glossary-term');
+        link.setAttribute('data-glossary', 'true');
 
-            link.addEventListener('mouseenter', handleMouseEnter);
-            link.addEventListener('mouseleave', handleMouseLeave);
-            link.addEventListener('focus', handleMouseEnter);
-            link.addEventListener('blur', handleMouseLeave);
-        });
+        link.addEventListener('mouseenter', handleMouseEnter);
+        link.addEventListener('mouseleave', handleMouseLeave);
+        link.addEventListener('focus', handleMouseEnter);
+        link.addEventListener('blur', handleMouseLeave);
     });
 
     let hideTimeout;
