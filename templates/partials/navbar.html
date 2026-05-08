@@ -28,7 +28,7 @@
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="Knowledge section">
                 <button
-                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/wiki') or current_path is starting_with('/explainers') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
+                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/wiki') or current_path is starting_with('/articles') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
                     aria-expanded="false"
                     aria-haspopup="true"
                     aria-controls="knowledge-dropdown"
@@ -43,7 +43,7 @@
                 <!-- Mobile inline links (visible only in mobile expanded menu) -->
                 <div class="navbar__dropdown-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
-                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="explainers">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='resources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
@@ -460,9 +460,9 @@
                             map: "Map",
                             knowledge: "Knowledge",
                             community: "Community",
-                            explainers: "Explainers",
-                            explainersDesc:
-                                "Detailed explanations of key concepts and ideas",
+                            articles: "Articles",
+                            articlesDesc:
+                                "In-depth articles including Explainers on key concepts",
                             revelations: "Revelations",
                             revelationsDesc:
                                 "Sacred texts and their modern interpretations",
@@ -488,9 +488,9 @@
                             map: "Carte",
                             knowledge: "Connaissance",
                             community: "Communauté",
-                            explainers: "Explicateurs",
-                            explainersDesc:
-                                "Explications détaillées des concepts et idées clés",
+                            articles: "Articles",
+                            articlesDesc:
+                                "Articles approfondis avec des explications sur les concepts clés",
                             revelations: "Révélations",
                             revelationsDesc:
                                 "Textes sacrés et leurs interprétations modernes",
@@ -515,9 +515,9 @@
                             map: "Karte",
                             knowledge: "Wissen",
                             community: "Community",
-                            explainers: "Erklärungen",
-                            explainersDesc:
-                                "Detaillierte Erklärungen wichtiger Konzepte und Ideen",
+                            articles: "Artikel",
+                            articlesDesc:
+                                "Ausführliche Artikel mit Erklärungen zu Schlüsselkonzepten",
                             revelations: "Offenbarungen",
                             revelationsDesc:
                                 "Heilige Texte und ihre modernen Interpretationen",
@@ -540,9 +540,9 @@
                             map: "Mapa",
                             knowledge: "Conocimiento",
                             community: "Comunidad",
-                            explainers: "Explicadores",
-                            explainersDesc:
-                                "Explicaciones detalladas de conceptos e ideas clave",
+                            articles: "Artículos",
+                            articlesDesc:
+                                "Artículos detallados con explicaciones de conceptos clave",
                             revelations: "Revelaciones",
                             revelationsDesc:
                                 "Textos sagrados y sus interpretaciones modernas",
@@ -567,8 +567,8 @@
                             map: "マップ",
                             knowledge: "知識",
                             community: "コミュニティ",
-                            explainers: "解説",
-                            explainersDesc: "重要な概念とアイデアの詳細な説明",
+                            articles: "記事",
+                            articlesDesc: "重要な概念の詳細な解説を含む記事",
                             revelations: "啓示",
                             revelationsDesc: "聖典とその現代的解釈",
                             wiki: "ウィキ",
@@ -591,9 +591,9 @@
                             map: "Карта",
                             knowledge: "Знания",
                             community: "Сообщество",
-                            explainers: "Объяснения",
-                            explainersDesc:
-                                "Подробные объяснения ключевых концепций и идей",
+                            articles: "Статьи",
+                            articlesDesc:
+                                "Подробные статьи с объяснениями ключевых концепций",
                             revelations: "Откровения",
                             revelationsDesc:
                                 "Священные тексты и их современные интерпретации",
@@ -618,8 +618,8 @@
                             map: "地图",
                             knowledge: "知识",
                             community: "社区",
-                            explainers: "解释",
-                            explainersDesc: "关键概念和想法的详细解释",
+                            articles: "文章",
+                            articlesDesc: "包含关键概念详细解释的深度文章",
                             revelations: "启示",
                             revelationsDesc: "神圣文本及其现代解释",
                             wiki: "百科",
@@ -642,8 +642,8 @@
                             map: "地圖",
                             knowledge: "知識",
                             community: "社群",
-                            explainers: "解釋",
-                            explainersDesc: "核心概念和想法的詳細解釋",
+                            articles: "文章",
+                            articlesDesc: "包含關鍵概念詳細解釋的深度文章",
                             revelations: "啟示",
                             revelationsDesc: "神聖文本及其現代解釋",
                             wiki: "百科",
@@ -664,8 +664,8 @@
                             map: "지도",
                             knowledge: "지식",
                             community: "커뮤니티",
-                            explainers: "설명",
-                            explainersDesc: "핵심 개념과 아이디어에 대한 상세 설명",
+                            articles: "기사",
+                            articlesDesc: "핵심 개념을 포함한 심층 기사",
                             revelations: "계시",
                             revelationsDesc: "신성한 문헌과 현대적 해석",
                             wiki: "위키",
@@ -778,10 +778,10 @@
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
-                                <span data-navbar-key="explainers">{{ trans(key="navbarArticles", lang=detected_lang) }}</span>
+                                <span data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="explainersDesc">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="articlesDesc">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">
