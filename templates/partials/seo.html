@@ -115,6 +115,11 @@
 <!-- Organization Schema (included on all pages) -->
 {% include "partials/schema/organization.html" %}
 
+{# WebSite schema only on the homepage, with sitelinks for crawlers #}
+{% if not page and not section or current_path == "/" or current_path == "" %}
+{% include "partials/schema/website.html" %}
+{% endif %}
+
 <!-- Schema.org Structured Data - Main Entity -->
 <script type="application/ld+json">
 {
