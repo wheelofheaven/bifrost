@@ -1,37 +1,62 @@
 {# claim-badge macro — Strategy 3 / Phase 2 / Decision #11
 
-   Renders a small pill showing the epistemic status of a page,
-   with a glassmorphic explanatory tooltip on hover (desktop) or
-   tap (mobile, via the click handler in wiki-page.html).
+   Renders the full set of four claim-type badges in fixed order:
+   direct → framework → inferred → speculative. The badge matching
+   the page's claim_type is highlighted in its accent color and shown
+   uncollapsed. The other three render muted, collapsed to a single
+   character. Hover/focus (desktop) or first click (mobile) expands an
+   inactive badge — and collapses the active one for the duration of
+   the interaction (managed via :has() in CSS). A subsequent click
+   opens the glassmorphic explainer tooltip.
+
+   Each label is split into __char (the first letter, always visible)
+   and __rest (the remaining characters, animated open via max-width).
+   The wrapping __label is aria-hidden because the outer span carries
+   the canonical aria-label.
 
    Usage:
      {% import "macros/claim-badge.html" as claim_badge %}
      {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
 
-   Valid values: direct | framework | inferred | speculative.
-
-   - direct:      uncontested across mainstream sources, or a direct description of the project itself
-   - framework:   foundational premise of the Wheel of Heaven framework — explicit in the Raëlian canon, not endorsed by mainstream scholarship
-   - inferred:    a reasonable reading of comparative material, not stated literally but consistent
-   - speculative: interpretive synthesis or hypothesis beyond what any single source states
-
-   See .claude/rules/content.md and
-   .claude/plans/strategy-decisions.md (decision #11). #}
+   See .claude/rules/content.md and .claude/plans/strategy-decisions.md (#11). #}
 
 {% macro render(claim_type="") %}
-{% if claim_type and claim_type != "" %}
-  {% if claim_type == "direct" %}{% set tip_title = "Direct" %}{% set tip_body = "Established or uncontested across mainstream sources, or a direct description of the project itself." %}
-  {% elif claim_type == "framework" %}{% set tip_title = "Framework" %}{% set tip_body = "Foundational premise of the Wheel of Heaven framework. Explicit in the Raëlian canon; not endorsed by mainstream scholarship." %}
-  {% elif claim_type == "inferred" %}{% set tip_title = "Inferred" %}{% set tip_body = "A reasonable reading of comparative material — not stated literally, but consistent with the source." %}
-  {% elif claim_type == "speculative" %}{% set tip_title = "Speculative" %}{% set tip_body = "Interpretive synthesis or hypothesis that goes beyond what any single source states." %}
-  {% else %}{% set tip_title = claim_type | title %}{% set tip_body = "" %}
-  {% endif %}
-<span class="claim-badge claim-badge--{{ claim_type }}" role="button" tabindex="0" aria-label="Claim type: {{ tip_title }}">
-    <span class="claim-badge__label">{{ tip_title }}</span>
-    <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
-        <span class="claim-badge__tooltip-title">{{ tip_title }}</span>
-        <span class="claim-badge__tooltip-body">{{ tip_body }}</span>
+<div class="claim-badges" role="group" aria-label="Claim type for this entry">
+    <span class="claim-badge claim-badge--direct{% if claim_type == 'direct' %} claim-badge--active{% endif %}"
+          role="button" tabindex="0"
+          aria-label="Claim type: Direct{% if claim_type == 'direct' %} — this entry{% endif %}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">D</span><span class="claim-badge__rest">irect</span></span>
+        <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
+            <span class="claim-badge__tooltip-title">Direct</span>
+            <span class="claim-badge__tooltip-body">Established or uncontested across mainstream sources, or a direct description of the project itself.</span>
+        </span>
     </span>
-</span>
-{% endif %}
+    <span class="claim-badge claim-badge--framework{% if claim_type == 'framework' %} claim-badge--active{% endif %}"
+          role="button" tabindex="0"
+          aria-label="Claim type: Framework{% if claim_type == 'framework' %} — this entry{% endif %}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">F</span><span class="claim-badge__rest">ramework</span></span>
+        <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
+            <span class="claim-badge__tooltip-title">Framework</span>
+            <span class="claim-badge__tooltip-body">Foundational premise of the Wheel of Heaven framework. Explicit in the Raëlian canon; not endorsed by mainstream scholarship.</span>
+        </span>
+    </span>
+    <span class="claim-badge claim-badge--inferred{% if claim_type == 'inferred' %} claim-badge--active{% endif %}"
+          role="button" tabindex="0"
+          aria-label="Claim type: Inferred{% if claim_type == 'inferred' %} — this entry{% endif %}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">I</span><span class="claim-badge__rest">nferred</span></span>
+        <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
+            <span class="claim-badge__tooltip-title">Inferred</span>
+            <span class="claim-badge__tooltip-body">A reasonable reading of comparative material — not stated literally, but consistent with the source.</span>
+        </span>
+    </span>
+    <span class="claim-badge claim-badge--speculative{% if claim_type == 'speculative' %} claim-badge--active{% endif %}"
+          role="button" tabindex="0"
+          aria-label="Claim type: Speculative{% if claim_type == 'speculative' %} — this entry{% endif %}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">S</span><span class="claim-badge__rest">peculative</span></span>
+        <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
+            <span class="claim-badge__tooltip-title">Speculative</span>
+            <span class="claim-badge__tooltip-body">Interpretive synthesis or hypothesis that goes beyond what any single source states.</span>
+        </span>
+    </span>
+</div>
 {% endmacro render %}

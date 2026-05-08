@@ -62,15 +62,6 @@
         margin-bottom: 0.5rem;
     }
 
-    &__toc-title {
-        margin: 0;
-        font-family: typo.$font-family-body;
-        font-size: 0.8125rem;
-        font-weight: 600;
-        color: var(--color-text-muted);
-        text-transform: none;
-        letter-spacing: 0;
-    }
 
     &__toc-nav {
         font-family: typo.$font-family-body;
@@ -183,49 +174,83 @@
         }
     }
 
-    // Alternative Names/Spellings
-    &__alternative-names {
+    // ---- Reading-status cluster (label above the four claim badges) ----
+    &__claim-section {
         margin-bottom: 1.25rem;
-        padding: 0.75rem 0 0;
-        font-family: typo.$font-family-body;
-        font-size: 0.95rem;
-        line-height: 1.5;
     }
 
-    &__alternative-label {
+    // Shared label typography for every section heading in the sidebar:
+    // Reading this as: / Also known as: / Reading time: / Listen: /
+    // Part of the series: / Share this page: / Read as Agent: / Last updated: /
+    // Contents (the TOC heading)
+    &__claim-label,
+    &__alternative-label,
+    &__meta-label,
+    &__toc-title {
+        display: block;
         color: var(--color-text-muted);
-        font-weight: 600;
-        margin-right: 0.75rem;
+        margin: 0 0 0.5rem;
         font-family: typo.$font-family-tech;
-        font-size: 0.875rem;
+        font-size: 0.6875rem;
+        font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.05em;
+        letter-spacing: 0.08em;
+    }
+
+    // ---- Alternative Names ----
+    // Label sits on its own row above; names render as small pills that
+    // stack with overlap (only the first chip fully visible, rest peeking
+    // out behind like a deck of cards). Hover/focus/tap fans them out.
+    &__alternative-names {
+        margin-bottom: 1.25rem;
+        padding: 0;
+        font-family: typo.$font-family-body;
+        line-height: 1.4;
     }
 
     &__alternative-list {
         color: var(--color-text);
         display: inline-flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
+        flex-wrap: nowrap;       // stacked: single row, chips overlap via -margin
+        align-items: center;     // chips aligned to a single baseline within the row
+        align-content: flex-start;
+        cursor: pointer;
+        padding: 0.25rem 0;
+        max-width: 100%;
+        outline: none;
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+            border-radius: 0.25rem;
+        }
     }
 
     &__alternative-name {
-        font-weight: 600;
-        color: var(--color-accent-primary);
-        background: var(--color-background-tertiary);
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.375rem;
-        border: 1px solid var(--color-hairline);
-        font-family: typo.$font-family-tech;
-        font-size: 0.8rem;
+        position: relative;
         display: inline-block;
-        transition: all 0.2s ease;
+        padding: 0.1875rem 0.6875rem;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-hairline);
+        border-radius: 9999px;
+        font-size: 0.8125rem;
+        line-height: 1.35;
+        color: var(--color-text);
+        font-weight: 500;
+        white-space: nowrap;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08), 0 1px 1px rgba(0, 0, 0, 0.04);
+        transition:
+            margin 0.45s cubic-bezier(0.65, 0, 0.35, 1),
+            transform 0.3s ease,
+            box-shadow 0.3s ease;
 
-        &:hover {
-            background: var(--color-accent-primary);
-            color: var(--color-background);
-            transform: scale(1.02);
+        // Stacked overlap. The amount is driven by --stack-overlap, set on
+        // the parent .wiki__alternative-list via :has() rules below — more
+        // chips means tighter overlap so they always fit one row.
+        margin-left: calc(-1 * var(--stack-overlap, 1.5rem));
+
+        &:first-child {
+            margin-left: 0;
         }
     }
 
@@ -277,24 +302,29 @@
         }
     }
 
-    // Metadata
+    // Metadata — labeled rows (Reading time / Listen / Last updated / Series)
     &__meta {
         display: flex;
-        gap: 1.25rem;
-        font-size: 0.875rem;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 0.5rem 0 1.25rem;
+        font-size: 0.8125rem;
         color: var(--color-text-muted);
-        font-family: typo.$font-family-tech;
-
-        @media (max-width: 768px) {
-            flex-direction: column;
-            gap: 0.375rem;
-        }
+        font-family: typo.$font-family-body;
     }
 
-    &__reading-time {
+    &__meta-row {
         display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+
+    &__meta-value {
+        display: inline-flex;
         align-items: center;
         gap: 0.375rem;
+        color: var(--color-text);
 
         svg {
             color: var(--color-accent-primary);
@@ -302,19 +332,10 @@
         }
     }
 
-    &__date,
-    &__category {
-        display: flex;
+    &__reading-time {
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-
-        &::before {
-            content: "";
-            width: 4px;
-            height: 4px;
-            background: var(--color-accent-primary);
-            border-radius: 50%;
-        }
+        gap: 0.375rem;
     }
 
     &__category {
@@ -324,6 +345,94 @@
         &:hover {
             text-decoration: underline;
         }
+    }
+
+    // ---- Share section: label above buttons ----
+    &__share-section {
+        margin: 1.25rem 0;
+
+        // Stack label + buttons in this context
+        .social-share {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        // Hide the default inline label inside social-share — we provide our own
+        .social-share__label {
+            display: none;
+        }
+    }
+
+    // ---- Read as Agent: copy-for-LLMs and view-as-markdown CTAs ----
+    &__agent-section {
+        margin: 1.25rem 0 0;
+    }
+
+    &__agent-buttons {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+    &__agent-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.375rem;
+        flex: 1 1 0;
+        min-width: 0;
+        padding: 0.5rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.5rem;
+        background: var(--color-card-bg);
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-body;
+        font-size: 0.75rem;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        svg {
+            flex-shrink: 0;
+        }
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+            background: var(--color-hover);
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+
+        &--ok {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+            background: var(--color-hover);
+        }
+
+        &--err {
+            border-color: var(--color-accent-secondary, var(--color-text-muted));
+            color: var(--color-accent-secondary, var(--color-text-muted));
+        }
+
+        &[disabled] {
+            opacity: 0.6;
+            cursor: progress;
+        }
+    }
+
+    &__agent-btn-label {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     // Main Content
@@ -1181,68 +1290,82 @@
     }
 }
 
-// Summary (collapsible <details>) — minimal, transparent, sits in the article body
-// after the first paragraph. No card chrome.
-.wiki__summary {
-    margin: 1.5rem 0 1.75rem;
-    padding: 0.5rem 0 0.75rem 1rem;
-    border-left: 2px solid var(--color-hairline);
+// First paragraph of the article body acts as the summary. The paragraph's
+// text stays on the same left margin as the rest of the body; the SUMMARY
+// block (a thick accent line + the rotated label) is suspended outside the
+// paragraph's left edge in the wiki__content padding area.
+.wiki__content > p:first-of-type {
+    position: relative;
+    margin: 1.25rem 0 1.75rem;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    color: var(--color-text);
+    min-height: 5.5rem; // ensures the rotated label has room to render
 
-    &[open] {
-        border-left-color: var(--color-accent-primary);
+    // Thick accent line — sits outside the paragraph's left edge
+    &::before {
+        content: "";
+        position: absolute;
+        left: -2.25rem;
+        top: 0;
+        bottom: 0;
+        width: 4px;
+        background: var(--color-accent-primary);
+        border-radius: 2px;
     }
 
-    &-label {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        cursor: pointer;
-        list-style: none;
-        font-size: 0.75rem;
-        font-weight: 600;
+    // "SUMMARY" label — rotated -90° (reads bottom-to-top), suspended between
+    // the accent line and the paragraph's text edge.
+    &::after {
+        content: "Summary";
+        position: absolute;
+        left: -1.125rem;
+        top: 50%;
+        transform: translate(-50%, -50%) rotate(-90deg);
+        transform-origin: 50% 50%;
         text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--color-text-muted);
-        transition: color 0.15s ease;
-        user-select: none;
-
-        &::-webkit-details-marker { display: none; }
-        &::marker { content: ""; }
-
-        &:hover {
-            color: var(--color-text);
-        }
-    }
-
-    &[open] &-label {
+        letter-spacing: 0.18em;
+        font-size: 0.6875rem;
+        font-weight: 700;
         color: var(--color-accent-primary);
+        white-space: nowrap;
+        pointer-events: none;
     }
+}
 
-    &-chevron {
-        transition: transform 0.2s ease;
-        opacity: 0.7;
+// ---- Stacked alt-names: z-order so the first chip sits on top of the rest ----
+// First DOM child = highest z = fully visible front of the deck.
+@for $i from 1 through 24 {
+    .wiki__alternative-name:nth-child(#{$i}) {
+        z-index: #{40 - $i};
     }
+}
 
-    &[open] &-chevron {
-        transform: rotate(180deg);
-    }
+// Tighten the stack overlap as the chip count grows so all of them fit in
+// one row of the sidebar. Last matching rule wins (same specificity).
+.wiki__alternative-list { --stack-overlap: 1.5rem; }
+.wiki__alternative-list:has(.wiki__alternative-name:nth-child(5))  { --stack-overlap: 2rem;   }
+.wiki__alternative-list:has(.wiki__alternative-name:nth-child(7))  { --stack-overlap: 2.5rem; }
+.wiki__alternative-list:has(.wiki__alternative-name:nth-child(10)) { --stack-overlap: 3rem;   }
+.wiki__alternative-list:has(.wiki__alternative-name:nth-child(14)) { --stack-overlap: 3.5rem; }
+.wiki__alternative-list:has(.wiki__alternative-name:nth-child(20)) { --stack-overlap: 4rem;   }
 
-    &-content {
-        margin-top: 0.625rem;
-        font-size: 0.9375rem;
-        line-height: 1.6;
-        color: var(--color-text);
+// Fan-out: hover, focus, or pinned (--expanded). Switch to wrap+gap so when
+// the chips fan out across multiple rows, every row's first chip starts on
+// the same x-edge and rows align via row-gap. align-items: center keeps
+// chips on the same baseline within each row.
+.wiki__alternative-list:hover,
+.wiki__alternative-list:focus-within,
+.wiki__alternative-list--expanded {
+    flex-wrap: wrap;
+    column-gap: 0.375rem;
+    row-gap: 0.375rem;
 
-        p {
-            margin: 0 0 0.5rem;
+    .wiki__alternative-name {
+        margin-left: 0; // gap takes over; no negative-margin alignment quirks
 
-            &:last-child { margin-bottom: 0; }
-        }
-
-        a {
-            color: var(--color-accent-primary);
-            text-decoration: underline;
-            text-underline-offset: 2px;
+        &:first-child {
+            margin-left: 0;
         }
     }
 }

@@ -4,10 +4,14 @@
 @use "../base/typography" as typo;
 
 .related-content {
-    // Render as just another article section — no separator above, no special
-    // top padding. The shared .wiki__content h2 styling takes over via the
-    // .related-content__title rules below, which mirror the in-article h2.
+    // Render as just another article section — same horizontal padding as the
+    // article body / see-also / references blocks so the left edge aligns.
     margin-top: 2.5rem;
+    padding: 0 2rem 2rem;
+
+    @media (max-width: 768px) {
+        padding: 0 1.5rem 1.5rem;
+    }
 
     &__title {
         display: flex;

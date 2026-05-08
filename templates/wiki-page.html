@@ -114,61 +114,98 @@
              into the article body after the first paragraph (Wikipedia pattern). -->
         <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
             <header class="wiki__header">
-                <!-- Claim Badge — first item, with explanatory tooltip -->
-                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                <!-- Reading-status / claim-type cluster -->
+                <div class="wiki__claim-section">
+                    <div class="wiki__claim-label">Reading this as:</div>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                </div>
 
-                <!-- Alternative Names/Spellings -->
+                <!-- Alternative Names/Spellings — stacked-paper chips that fan out on hover/click -->
                 {% if page.extra.alternative_names %}
                 <div class="wiki__alternative-names">
-                    <span class="wiki__alternative-label">Also known as:</span>
-                    <span class="wiki__alternative-list">
+                    <div class="wiki__alternative-label">Also known as:</div>
+                    <div class="wiki__alternative-list" role="button" tabindex="0" aria-label="Show all alternative names">
                         {% for name in page.extra.alternative_names %}
-                        <span class="wiki__alternative-name">{{ name }}</span>{% if not loop.last %}, {% endif %} {% endfor %}
-                    </span>
+                        <span class="wiki__alternative-name">{{ name }}</span>
+                        {% endfor %}
+                    </div>
                 </div>
                 {% endif %}
 
-                <!-- Summary (formerly Quick Answer) — collapsible, default closed.
-                     A small JS helper lifts this out of the sidebar and inserts it
-                     into the article body after the first paragraph. -->
-                {% if page.extra.summary or page.description %}
-                <details class="wiki__summary" data-ai-summary="true" data-ai-answer="true" aria-label="Summary" itemprop="abstract">
-                    <summary class="wiki__summary-label">
-                        Summary
-                        <svg class="wiki__summary-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <polyline points="6 9 12 15 18 9"></polyline>
-                        </svg>
-                    </summary>
-                    <div class="wiki__summary-content wiki__tldr" data-speakable="true">
-                        {{ page.extra.summary | default(value=page.description) | markdown | safe }}
-                    </div>
-                </details>
-                {% endif %}
-
-                <!-- Metadata -->
+                <!-- Metadata — each item on its own labeled row -->
                 <div class="wiki__meta">
                     {% if page.reading_time %}
-                    <span class="wiki__reading-time">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <polyline points="12 6 12 12 16 14"></polyline>
-                        </svg>
-                        {{ page.reading_time }} min read
-                    </span>
+                    <div class="wiki__meta-row">
+                        <span class="wiki__meta-label">Reading time:</span>
+                        <span class="wiki__meta-value wiki__reading-time">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            {{ page.reading_time }} min
+                        </span>
+                    </div>
                     {% endif %}
-                    {% include "partials/listen-button.html" %}
+
+                    <div class="wiki__meta-row">
+                        <span class="wiki__meta-label">Listen:</span>
+                        <span class="wiki__meta-value">{% include "partials/listen-button.html" %}</span>
+                    </div>
+
                     {% if page.date %}
-                    <time class="wiki__date">Last updated: {{ page.date | date(format="%B %d, %Y") }}</time>
+                    <div class="wiki__meta-row">
+                        <span class="wiki__meta-label">Last updated:</span>
+                        <span class="wiki__meta-value"><time>{{ page.date | date(format="%B %d, %Y") }}</time></span>
+                    </div>
                     {% endif %}
+
                     {% if page.extra.category %}
-                    <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
-                       class="wiki__category"
-                       title="Browse all {{ page.extra.category }} entries">{{ page.extra.category }}</a>
+                    <div class="wiki__meta-row">
+                        <span class="wiki__meta-label">Part of the series:</span>
+                        <span class="wiki__meta-value">
+                            <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
+                               class="wiki__category"
+                               title="Browse all {{ page.extra.category }} entries">{{ page.extra.category }}</a>
+                        </span>
+                    </div>
                     {% endif %}
                 </div>
 
-                <!-- Social Share -->
-                {% include "partials/social-share.html" %}
+                <!-- Share -->
+                <div class="wiki__share-section">
+                    <div class="wiki__meta-label">Share this page:</div>
+                    {% include "partials/social-share.html" %}
+                </div>
+
+                <!-- Read as Agent — copy/view raw markdown for LLM use -->
+                {% set md_url = "https://raw.githubusercontent.com/wheelofheaven/data-content/main/" ~ page.relative_path %}
+                <div class="wiki__agent-section">
+                    <div class="wiki__meta-label">Read as Agent:</div>
+                    <div class="wiki__agent-buttons">
+                        <button type="button"
+                                class="wiki__agent-btn"
+                                data-md-url="{{ md_url | safe }}"
+                                data-action="copy-md"
+                                aria-label="Copy this page as Markdown for an LLM">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="wiki__agent-btn-label">Copy for LLMs</span>
+                        </button>
+                        <a class="wiki__agent-btn"
+                           href="{{ md_url | safe }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="Open this page as raw Markdown in a new tab">
+                            <svg width="18" height="11" viewBox="0 0 208 128" fill="none" aria-hidden="true">
+                                <rect x="5" y="5" width="198" height="118" rx="10" ry="10" stroke="currentColor" stroke-width="10" fill="none"></rect>
+                                <path fill="currentColor" d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"></path>
+                            </svg>
+                            <span class="wiki__agent-btn-label">View as Markdown</span>
+                        </a>
+                    </div>
+                </div>
             </header>
 
             <!-- Sticky Table of Contents -->
@@ -220,22 +257,11 @@
     const content = document.querySelector('.wiki__content');
     const firstParagraph = content && content.querySelector(':scope > p');
 
-    const summary = document.querySelector('.wiki__summary');
-
-    // The Summary moves into the article body (after the first paragraph) on
-    // every viewport — it's no longer a sidebar element.
-    function placeSummary() {
-        if (!summary || !firstParagraph) return;
-        firstParagraph.after(summary);
-    }
-
     function placeToc() {
         if (!toc || !sidebar || !content) return;
         if (MQ.matches) {
-            // On mobile: TOC goes into the body too. Place it after the summary
-            // if present, otherwise after the first paragraph.
-            const anchor = (summary && summary.parentElement === content) ? summary : firstParagraph;
-            if (anchor) anchor.after(toc);
+            // On mobile: TOC goes into the body after the first paragraph.
+            if (firstParagraph) firstParagraph.after(toc);
             else content.prepend(toc);
             toc.classList.add('wiki__toc--inline');
         } else {
@@ -247,24 +273,144 @@
         }
     }
 
-    placeSummary();
     placeToc();
     if (MQ.addEventListener) MQ.addEventListener('change', placeToc);
     else MQ.addListener(placeToc);
 
-    // Click toggle for the claim badge tooltip on touch devices
-    // (CSS handles hover/focus on desktop).
-    const badge = document.querySelector('.claim-badge');
-    if (badge) {
-        badge.addEventListener('click', function (e) {
+    // Claim-badge state machine — supports the four-pill cluster:
+    //
+    //   1. Inactive badges render collapsed (one character, muted).
+    //   2. Hover (desktop, pure CSS) or first click (any device) expands an
+    //      inactive badge; siblings collapse so only one inactive is open at
+    //      a time alongside the always-expanded active badge.
+    //   3. A subsequent click on an already-expanded badge (whether expanded
+    //      via hover, click, or because it's active) opens its tooltip.
+    //   4. Click outside the cluster, or Escape, collapses inactive expansions
+    //      and closes any open tooltip.
+    const badges = Array.from(document.querySelectorAll('.claim-badges .claim-badge'));
+    if (badges.length) {
+        const isExpanded = (b) =>
+            b.classList.contains('claim-badge--active') ||
+            b.classList.contains('claim-badge--expanded') ||
+            b.matches(':hover'); // covers desktop hover preview
+
+        const collapseInactive = (except) => {
+            badges.forEach((b) => {
+                if (b === except) return;
+                if (!b.classList.contains('claim-badge--active')) {
+                    b.classList.remove('claim-badge--expanded');
+                }
+                b.classList.remove('claim-badge--tooltip-open');
+            });
+        };
+
+        badges.forEach((badge) => {
+            badge.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expanded = isExpanded(badge);
+
+                if (expanded) {
+                    // Already expanded → toggle tooltip on this one,
+                    // collapse and close tooltips on the others.
+                    const willOpen = !badge.classList.contains('claim-badge--tooltip-open');
+                    collapseInactive(badge);
+                    badge.classList.toggle('claim-badge--tooltip-open', willOpen);
+                } else {
+                    // Collapsed → expand it, collapse siblings.
+                    collapseInactive(badge);
+                    badge.classList.add('claim-badge--expanded');
+                }
+            });
+
+            // Keyboard activation parity (Enter / Space)
+            badge.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    badge.click();
+                }
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.claim-badges')) collapseInactive(null);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') collapseInactive(null);
+        });
+    }
+
+    // "Copy for LLMs" — fetch the raw markdown source from data-content and
+    // write it to the clipboard. Falls back to opening the raw URL in a new
+    // tab if the clipboard API is unavailable or the fetch fails (CORS, etc).
+    const copyBtn = document.querySelector('.wiki__agent-btn[data-action="copy-md"]');
+    if (copyBtn) {
+        const labelEl = copyBtn.querySelector('.wiki__agent-btn-label');
+        const originalLabel = labelEl ? labelEl.textContent : '';
+        copyBtn.addEventListener('click', async () => {
+            const url = copyBtn.getAttribute('data-md-url');
+            if (!url) return;
+            const setLabel = (text, ok) => {
+                if (!labelEl) return;
+                labelEl.textContent = text;
+                copyBtn.classList.toggle('wiki__agent-btn--ok', ok === true);
+                copyBtn.classList.toggle('wiki__agent-btn--err', ok === false);
+                setTimeout(() => {
+                    labelEl.textContent = originalLabel;
+                    copyBtn.classList.remove('wiki__agent-btn--ok', 'wiki__agent-btn--err');
+                }, 2000);
+            };
+
+            copyBtn.disabled = true;
+            try {
+                const res = await fetch(url, { mode: 'cors' });
+                if (!res.ok) throw new Error('fetch failed: ' + res.status);
+                const md = await res.text();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(md);
+                } else {
+                    // Legacy fallback for older browsers
+                    const ta = document.createElement('textarea');
+                    ta.value = md;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'absolute';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                setLabel('Copied!', true);
+            } catch (err) {
+                console.warn('Copy for LLMs failed:', err);
+                setLabel('Open instead →', false);
+                // Open the raw URL as a fallback so the user can copy manually
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } finally {
+                copyBtn.disabled = false;
+            }
+        });
+    }
+
+    // Stacked alt-names: tap/click toggles the fan-out (CSS handles hover).
+    const altList = document.querySelector('.wiki__alternative-list');
+    if (altList) {
+        altList.addEventListener('click', (e) => {
             e.stopPropagation();
-            badge.classList.toggle('claim-badge--open');
+            altList.classList.toggle('wiki__alternative-list--expanded');
         });
-        document.addEventListener('click', function (e) {
-            if (!badge.contains(e.target)) badge.classList.remove('claim-badge--open');
+        altList.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                altList.classList.toggle('wiki__alternative-list--expanded');
+            }
         });
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') badge.classList.remove('claim-badge--open');
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.wiki__alternative-list')) {
+                altList.classList.remove('wiki__alternative-list--expanded');
+            }
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') altList.classList.remove('wiki__alternative-list--expanded');
         });
     }
 })();
