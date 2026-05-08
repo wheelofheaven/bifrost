@@ -2,6 +2,8 @@
 {% import "macros/dispatch.html" as dispatch %}
 
 {% block content %}
+{% set entries = paginator.pages | default(value=section.pages) %}
+{% set total = section.pages | length %}
 <div class="newsroom">
     <div class="newsroom__container">
         <header class="newsroom__header">
@@ -12,8 +14,8 @@
                 {% endif %}
             </div>
             <div class="newsroom__header-meta">
-                {% if section.pages %}
-                <span class="newsroom__count">{{ section.pages | length }} dispatch{% if section.pages | length != 1 %}es{% endif %}</span>
+                {% if total > 0 %}
+                <span class="newsroom__count">{{ total }} dispatch{% if total != 1 %}es{% endif %}</span>
                 {% endif %}
                 <a class="newsroom__feed-link"
                    href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}"
@@ -28,12 +30,24 @@
             </div>
         </header>
 
-        {% if section.pages %}
+        {% if entries %}
         <div class="newsroom__list">
-            {% for page in section.pages %}
+            {% for page in entries %}
             {{ dispatch::card(page=page) }}
             {% endfor %}
         </div>
+
+        {% if paginator and paginator.number_pagers > 1 %}
+        <nav class="newsroom__pagination" aria-label="Newsroom pagination">
+            {% if paginator.previous %}
+            <a class="newsroom__pagination-link" href="{{ paginator.previous }}" rel="prev">← Newer</a>
+            {% endif %}
+            <span class="newsroom__pagination-info">Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
+            {% if paginator.next %}
+            <a class="newsroom__pagination-link" href="{{ paginator.next }}" rel="next">Older →</a>
+            {% endif %}
+        </nav>
+        {% endif %}
         {% else %}
         <p class="newsroom__empty">No dispatches yet. Check back soon, or follow the <a href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}">Atom feed</a>.</p>
         {% endif %}

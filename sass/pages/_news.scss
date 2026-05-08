@@ -103,6 +103,32 @@
         border-radius: v.$border-radius-md;
     }
 
+    &__pagination {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: v.$spacing-md;
+        margin-top: v.$spacing-2xl;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-hairline);
+        font-size: v.$font-size-sm;
+    }
+
+    &__pagination-link {
+        color: var(--color-link);
+        text-decoration: none;
+        font-weight: 600;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__pagination-info {
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+    }
+
     &__footer {
         margin-top: v.$spacing-2xl;
         padding-top: v.$spacing-lg;
