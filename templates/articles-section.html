@@ -7,7 +7,7 @@
             <div class="explainer-header__left">
                 <h1 class="explainer-header__title">{{ section.title }}</h1>
                 {% if section.pages %}
-                <span class="explainer-header__count">{{ section.pages | length }} explainers</span>
+                <span class="explainer-header__count">{{ section.pages | length }} article{% if section.pages | length != 1 %}s{% endif %}</span>
                 {% endif %}
             </div>
             <div class="explainer-header__search">
@@ -17,9 +17,9 @@
                 </svg>
                 <input type="text"
                        class="explainer-header__search-input"
-                       placeholder="Search explainers..."
+                       placeholder="Search articles..."
                        id="explainer-search"
-                       aria-label="Search explainer articles"
+                       aria-label="Search articles"
                        autocomplete="off">
             </div>
         </header>
@@ -51,7 +51,7 @@
 
             <div class="explainer-filters__right">
                 <!-- Random Explainer -->
-                <button class="explainer-filters__random" id="random-explainer-btn" title="Random explainer">
+                <button class="explainer-filters__random" id="random-explainer-btn" title="Random article">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M16 3h5v5"></path>
                         <path d="M4 20L21 3"></path>
@@ -179,7 +179,7 @@
 
                     <div class="explainer-card__footer">
                         <a href="{{ page.permalink }}" class="explainer-card__read-btn">
-                            <span>Read Explainer</span>
+                            <span>Read Article</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14"></path>
                                 <path d="M12 5l7 7-7 7"></path>
@@ -197,7 +197,7 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <h3 class="explainer-no-results__title">No explainers found</h3>
+                    <h3 class="explainer-no-results__title">No articles found</h3>
                     <p class="explainer-no-results__message">Try adjusting your search terms or category filter.</p>
                 </div>
             </div>
@@ -225,8 +225,7 @@
                     </p>
                     {% endif %} {% if subsection.pages %}
                     <div class="explainer-subsection-card__count">
-                        {{ subsection.pages | length }} {% if subsection.pages |
-                        length == 1 %}explainer{% else %}explainers{% endif %}
+                        {{ subsection.pages | length }} article{% if subsection.pages | length != 1 %}s{% endif %}
                     </div>
                     {% endif %}
                 </div>
@@ -245,7 +244,7 @@
                     <line x1="12" y1="17" x2="12.01" y2="17"></line>
                 </svg>
             </div>
-            <h2 class="explainer-footer__title">About Our Explainers</h2>
+            <h2 class="explainer-footer__title">About Articles</h2>
             {% if section.description %}
             <p class="explainer-footer__description">{{ section.description }}</p>
             {% endif %}
@@ -254,7 +253,7 @@
             <div class="explainer-footer__stats">
                 <div class="explainer-footer__stat">
                     <span class="explainer-footer__stat-number">{{ section.pages | length }}</span>
-                    <span class="explainer-footer__stat-label">Explainers</span>
+                    <span class="explainer-footer__stat-label">Article{% if section.pages | length != 1 %}s{% endif %}</span>
                 </div>
                 {% set categories = section.pages | map(attribute="extra.category") | unique %}
                 {% set category_count = 0 %}
