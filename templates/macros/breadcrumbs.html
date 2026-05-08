@@ -80,6 +80,31 @@
 </nav>
 {% endmacro articles %}
 
+{# Convenience macro for Newsroom dispatches #}
+{% macro news(page, lang="en") %}
+<nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+    <ol class="breadcrumbs__list">
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+                {% include "partials/brand/logomark.html" %}
+                <span class="visually-hidden" itemprop="name">Home</span>
+            </a>
+            <meta itemprop="position" content="1" />
+        </li>
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <a href="{{ get_url(path='/news/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span itemprop="name">Newsroom</span>
+            </a>
+            <meta itemprop="position" content="2" />
+        </li>
+        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <span class="breadcrumbs__current" itemprop="name">{{ page.title }}</span>
+            <meta itemprop="position" content="3" />
+        </li>
+    </ol>
+</nav>
+{% endmacro news %}
+
 {# Convenience macro for Essentials pages #}
 {% macro essentials(page, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">

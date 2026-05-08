@@ -1,0 +1,64 @@
+{# Dispatch macros — Newsroom
+
+   Render-helpers for the Newsroom section.
+
+   Usage:
+     {% import "macros/dispatch.html" as dispatch %}
+     {{ dispatch::chip(event_type=page.extra.event_type | default(value="")) }}
+     {{ dispatch::card(page=page) }}
+
+   See .claude/rules/content-editing.md ("Newsroom Dispatches"). #}
+
+{# Chip — small pill labeling the page as a Newsroom dispatch.
+   Optionally tinted by event_type. #}
+{% macro chip(event_type="") %}
+<span class="dispatch-chip{% if event_type %} dispatch-chip--{{ event_type }}{% endif %}"
+      role="note"
+      aria-label="Content type: Dispatch"
+      title="Newsroom dispatch — a time-anchored reading of a current event">
+    <svg class="dispatch-chip__icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
+        <path d="M18 14h-8"></path>
+        <path d="M15 18h-5"></path>
+        <path d="M10 6h8v4h-8z"></path>
+    </svg>
+    <span class="dispatch-chip__label">Dispatch</span>
+</span>
+{% endmacro chip %}
+
+{# Card — list-view entry for a dispatch. #}
+{% macro card(page) %}
+<article class="dispatch-card"
+         data-title="{{ page.title | lower }}"
+         data-event-type="{{ page.extra.event_type | default(value='') }}"
+         data-date="{{ page.date | default(value='') }}">
+    <div class="dispatch-card__meta">
+        {{ self::chip(event_type=page.extra.event_type | default(value="")) }}
+        {% if page.extra.event_date %}
+        <time class="dispatch-card__event-date" datetime="{{ page.extra.event_date | date(format='%Y-%m-%d') }}">
+            {{ page.extra.event_date | date(format="%b %d, %Y") }}
+        </time>
+        {% elif page.date %}
+        <time class="dispatch-card__event-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
+            {{ page.date | date(format="%b %d, %Y") }}
+        </time>
+        {% endif %}
+    </div>
+    <h2 class="dispatch-card__title">
+        <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
+    </h2>
+    {% if page.extra.summary or page.description %}
+    <p class="dispatch-card__summary">
+        {{ page.extra.summary | default(value=page.description) }}
+    </p>
+    {% endif %}
+    {% if page.extra.canon_links %}
+    <div class="dispatch-card__canon">
+        <span class="dispatch-card__canon-label">Touches:</span>
+        {% for item in page.extra.canon_links | slice(end=3) %}
+        <span class="dispatch-card__canon-item">{{ item.title }}</span>{% if not loop.last %}, {% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
+</article>
+{% endmacro card %}

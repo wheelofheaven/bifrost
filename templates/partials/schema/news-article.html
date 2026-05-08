@@ -1,0 +1,69 @@
+<!-- Schema.org NewsArticle - For Newsroom dispatches -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "NewsArticle",
+  "@id": "{{ current_url | safe }}",
+  "headline": "{{ page.title | escape }}",
+  "description": "{{ page.description | default(value='') | escape }}",
+  "url": "{{ current_url | safe }}",
+  "articleSection": "Newsroom",
+  {% if page.extra.event_type %}
+  "keywords": ["{{ page.extra.event_type }}", "Wheel of Heaven", "Newsroom"],
+  {% else %}
+  "keywords": ["Wheel of Heaven", "Newsroom"],
+  {% endif %}
+  {% if page.extra.header_image %}
+  "image": {
+    "@type": "ImageObject",
+    "url": "{{ get_url(path=page.extra.header_image) }}",
+    "width": 1200,
+    "height": 630
+  },
+  {% endif %}
+  "author": {
+    "@type": "{{ config.extra.author_type | default(value='Organization') }}",
+    "name": "{{ page.extra.author | default(value=config.extra.author) | default(value=config.title) }}",
+    "url": "{{ config.base_url }}/about/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
+    "name": "{{ config.title }}",
+    {% if config.extra.logo %}
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ get_url(path=config.extra.logo) }}"
+    }
+    {% endif %}
+  },
+  {% if page.date %}
+  "datePublished": "{{ page.date | date(format='%Y-%m-%dT%H:%M:%S') }}+00:00",
+  {% endif %}
+  {% if page.updated %}
+  "dateModified": "{{ page.updated | date(format='%Y-%m-%dT%H:%M:%S') }}+00:00",
+  {% endif %}
+  {% if page.extra.sources %}
+  "citation": [
+    {% for src in page.extra.sources %}
+    {
+      "@type": "CreativeWork",
+      "name": "{{ src.title | escape }}"
+      {% if src.outlet %},
+      "publisher": "{{ src.outlet | escape }}"
+      {% endif %}
+      {% if src.date %},
+      "datePublished": "{{ src.date }}"
+      {% endif %}
+      {% if src.url %},
+      "url": "{{ src.url | safe }}"
+      {% endif %}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ],
+  {% endif %}
+  "inLanguage": "{{ detected_lang | default(value='en') }}",
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+}
+</script>

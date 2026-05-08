@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
+{% import "macros/dispatch.html" as dispatch %}
+
+{% block content %}
+{% include "partials/schema/news-article.html" %}
+
+<div class="dispatch">
+    {{ breadcrumbs::news(page=page, lang=detected_lang) }}
+
+    <div class="dispatch__container">
+        <article class="dispatch__article" role="article" aria-labelledby="dispatch-title">
+            <header class="dispatch__header">
+                <div class="dispatch__meta" aria-label="Dispatch metadata">
+                    {{ dispatch::chip(event_type=page.extra.event_type | default(value="")) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    {% if page.extra.event_date %}
+                    <span class="dispatch__event-date">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        Event: <time datetime="{{ page.extra.event_date | date(format='%Y-%m-%d') }}">{{ page.extra.event_date | date(format="%B %d, %Y") }}</time>
+                    </span>
+                    {% endif %}
+                    {% if page.date %}
+                    <time class="dispatch__published">
+                        Published: {{ page.date | date(format="%B %d, %Y") }}
+                    </time>
+                    {% endif %}
+                    {% if page.reading_time %}
+                    <span class="dispatch__reading-time">{{ page.reading_time }} min read</span>
+                    {% endif %}
+                </div>
+
+                <h1 class="dispatch__title" id="dispatch-title">{{ page.title }}</h1>
+
+                {% if page.extra.summary or page.description %}
+                <div class="dispatch__summary" data-ai-summary="true">
+                    <p>{{ page.extra.summary | default(value=page.description) }}</p>
+                </div>
+                {% endif %}
+
+                {% include "partials/social-share.html" %}
+            </header>
+
+            {% if page.content %}
+            <div class="dispatch__content">{{ page.content | safe }}</div>
+            {% endif %}
+
+            {% if page.extra.canon_links %}
+            <section class="dispatch__canon" role="complementary" aria-label="Canon links">
+                <h2 class="dispatch__section-title">Canon touched</h2>
+                <ul class="dispatch__link-list">
+                    {% for item in page.extra.canon_links %}
+                    <li class="dispatch__link-item">
+                        {% if item.url %}
+                        <a href="{{ item.url }}" class="dispatch__link">{{ item.title }}</a>
+                        {% else %}
+                        <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="dispatch__link">{{ item.title }}</a>
+                        {% endif %}
+                        {% if item.description %}
+                        <span class="dispatch__link-description">— {{ item.description }}</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ul>
+            </section>
+            {% endif %}
+
+            {% if page.extra.sources %}
+            <section class="dispatch__sources" role="doc-bibliography" aria-label="Source material">
+                <h2 class="dispatch__section-title">Sources</h2>
+                <ol class="dispatch__source-list">
+                    {% for src in page.extra.sources %}
+                    <li class="dispatch__source-item" id="src-{{ loop.index }}">
+                        {% if src.url %}
+                        <a href="{{ src.url }}" class="dispatch__source-link" target="_blank" rel="noopener noreferrer">
+                            {{ src.title }}
+                        </a>
+                        {% else %}
+                        <span class="dispatch__source-title">{{ src.title }}</span>
+                        {% endif %}
+                        {% if src.outlet %}
+                        <span class="dispatch__source-outlet">{{ src.outlet }}</span>
+                        {% endif %}
+                        {% if src.date %}
+                        <span class="dispatch__source-date">({{ src.date }})</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ol>
+            </section>
+            {% endif %}
+
+            <footer class="dispatch__footer">
+                <a href="{{ get_url(path='news', lang=detected_lang) }}" class="dispatch__back-link">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Back to Newsroom
+                </a>
+            </footer>
+        </article>
+    </div>
+</div>
+{% endblock content %}

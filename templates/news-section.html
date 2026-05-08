@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% import "macros/dispatch.html" as dispatch %}
+
+{% block content %}
+<div class="newsroom">
+    <div class="newsroom__container">
+        <header class="newsroom__header">
+            <div class="newsroom__header-text">
+                <h1 class="newsroom__title">{{ section.title }}</h1>
+                {% if section.description %}
+                <p class="newsroom__description">{{ section.description }}</p>
+                {% endif %}
+            </div>
+            <div class="newsroom__header-meta">
+                {% if section.pages %}
+                <span class="newsroom__count">{{ section.pages | length }} dispatch{% if section.pages | length != 1 %}es{% endif %}</span>
+                {% endif %}
+                <a class="newsroom__feed-link"
+                   href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}"
+                   aria-label="Newsroom Atom feed">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M4 11a9 9 0 0 1 9 9"></path>
+                        <path d="M4 4a16 16 0 0 1 16 16"></path>
+                        <circle cx="5" cy="19" r="1"></circle>
+                    </svg>
+                    <span>Subscribe</span>
+                </a>
+            </div>
+        </header>
+
+        {% if section.pages %}
+        <div class="newsroom__list">
+            {% for page in section.pages %}
+            {{ dispatch::card(page=page) }}
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="newsroom__empty">No dispatches yet. Check back soon, or follow the <a href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}">Atom feed</a>.</p>
+        {% endif %}
+
+        <footer class="newsroom__footer">
+            <p class="newsroom__cross-link">
+                Looking for evergreen, thesis-driven pieces? See <a href="{{ get_url(path='articles', lang=detected_lang) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>.
+            </p>
+        </footer>
+    </div>
+</div>
+{% endblock content %}

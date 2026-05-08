@@ -46,6 +46,7 @@
 @use "components/reading-list";
 @use "components/figure";
 @use "components/claim-badge";
+@use "components/dispatch-chip";
 
 @use "pages/home";
 @use "pages/read";
@@ -54,6 +55,7 @@
 @use "pages/wiki-section";
 @use "pages/article";
 @use "pages/articles-section";
+@use "pages/news";
 @use "pages/timeline";
 @use "pages/timeline-page";
 @use "pages/about";
