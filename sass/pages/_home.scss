@@ -222,16 +222,28 @@
                 "Arial Hebrew",
                 "Noto Sans Hebrew",
                 sans-serif;
-            font-weight: 400;
-            font-size: 1.85em;
+            // Karantina renders visually large at 1em — 1.1em with light
+            // weight (300) gives parity with the surrounding English body
+            // without looking small.
+            font-weight: 300;
+            font-size: 1.3em;
             font-style: normal;
             color: var(--color-text);
             line-height: 1;
-            margin: 0 0.2em;
-            letter-spacing: -0.02em;
-            // Vertical-align so the Hebrew baseline sits with the surrounding
-            // body line at this larger size.
-            vertical-align: -0.18em;
+            margin: 0 0.15em 0 0;
+            letter-spacing: 0.08em;
+            vertical-align: baseline;
+        }
+
+        .landing-translit {
+            display: inline-block;
+            margin: 0 0.1em 0 0.3em;
+            font-family: typo.$font-family-body;
+            font-size: 0.75em;
+            font-style: italic;
+            color: var(--color-text-muted);
+            letter-spacing: 0.02em;
+            vertical-align: 0.05em;
         }
     }
 
@@ -379,22 +391,6 @@
     pointer-events: none;
 }
 
-// Subtle highlight on the plural ending of אֱלֹהִים.
-.landing-plural-mark {
-    color: var(--color-accent-primary);
-    position: relative;
-
-    &::after {
-        content: "";
-        position: absolute;
-        left: 0;
-        right: 0;
-        bottom: -0.18em;
-        height: 2px;
-        background: currentColor;
-        opacity: 0.6;
-    }
-}
 
 // ---- §3 — The Long Arc ----
 .landing-arc {
