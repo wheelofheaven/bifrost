@@ -308,16 +308,22 @@
 // Sections with a cinematic video background. Applied to any section that
 // has the .landing-section--video modifier or one of the section-specific
 // modifiers historically known to carry video. Copy goes white, overlay
-// keeps it legible, the section establishes its own stacking context.
+// keeps it legible.
+//
+// The media wrapper is `position: fixed` so the video stays framed in the
+// viewport while the text scrolls past. Cross-fade between adjacent video
+// sections is driven by the `is-active` class: only the active section's
+// media is at full opacity, others fade to 0. Painting order follows DOM
+// order — so a later non-video section's solid background naturally covers
+// any earlier fixed media that hasn't fully faded yet.
 .landing-section--question,
 .landing-section--video {
     color: #fff;
     overflow: hidden;
-    isolation: isolate;
 
     .landing-section__inner {
         position: relative;
-        z-index: 2;
+        z-index: 3;
     }
 
     .landing-section__heading,
@@ -335,7 +341,7 @@
 
     .landing-section__hint {
         color: rgba(255, 255, 255, 0.85);
-        z-index: 2;
+        z-index: 3;
 
         &:hover,
         &:focus-visible {
@@ -362,11 +368,32 @@
     }
 }
 
+// Magnetic / pinned video background. The media stays anchored to the
+// viewport (position: fixed) while the section's text scrolls past it.
+// Opacity is 0 by default and rises to 1 only when the parent section is
+// the active one — driven by the `is-active` class added by the
+// IntersectionObserver in index.html. Adjacent video sections cross-fade
+// because their fixed media elements stack at the viewport with opacity
+// transitioning in opposite directions.
 .landing-section__media {
-    position: absolute;
+    position: fixed;
     inset: 0;
     z-index: 0;
     overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.7s ease-in-out;
+    will-change: opacity;
+}
+
+.landing-section.is-active .landing-section__media {
+    opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-section__media {
+        transition: none;
+    }
 }
 
 .landing-section__video {
@@ -825,4 +852,14 @@
     &--coda {
         background: var(--color-background-secondary);
     }
+}
+
+// Video sections override the alternating tint with a solid dark backdrop.
+// The dark fallback shows through during the brief cross-fade window
+// between adjacent video sections, so the dissolve happens against a
+// matching dark frame instead of a flash of theme background. Comes after
+// the alternating rules so it wins.
+.landing-section--question,
+.landing-section--video {
+    background: #0a0a0a;
 }

@@ -32,7 +32,7 @@
                 loop
                 playsinline
                 poster="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.jpg"
-                onloadedmetadata="this.playbackRate = 0.65;"
+                onloadedmetadata="this.playbackRate = 0.5;"
             >
                 <source src="{{ config.extra.cdn_url }}/videos/landing/01-question.webm" type="video/webm">
             </video>
@@ -69,7 +69,7 @@
                 loop
                 playsinline
                 poster="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-poster.jpg"
-                onloadedmetadata="this.playbackRate = 0.65;"
+                onloadedmetadata="this.playbackRate = 0.5;"
             >
                 <source src="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis.webm" type="video/webm">
             </video>
@@ -107,7 +107,7 @@
                 loop
                 playsinline
                 poster="{{ config.extra.cdn_url }}/videos/landing/03-arc-poster.jpg"
-                onloadedmetadata="this.playbackRate = 0.65;"
+                onloadedmetadata="this.playbackRate = 0.5;"
             >
                 <source src="{{ config.extra.cdn_url }}/videos/landing/03-arc.webm" type="video/webm">
             </video>
@@ -149,7 +149,21 @@
     </section>
 
     {# §4 — The Cosmic Clock #}
-    <section id="section-4" class="landing-section landing-section--clock" data-section="4">
+    <section id="section-4" class="landing-section landing-section--clock landing-section--video" data-section="4">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                poster="{{ config.extra.cdn_url }}/videos/landing/04-clock-poster.jpg"
+                onloadedmetadata="this.playbackRate = 0.5;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/landing/04-clock.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner landing-section__inner--clock">
             <div class="landing-section__text">
                 <p class="landing-section__eyebrow">The cosmic clock</p>
@@ -370,7 +384,10 @@
 <script>
 (function () {
     "use strict";
-    // IntersectionObserver to highlight the active pagination dot.
+    // IntersectionObserver drives three things off the same "active section"
+    // signal: the pagination dot highlight, the `is-active` class on the
+    // section (which fades the pinned video background in/out via CSS), and
+    // play/pause on the video element so off-screen videos don't burn cycles.
     const dots = document.querySelectorAll('.landing__nav-dot');
     const sections = document.querySelectorAll('.landing-section');
     if (!dots.length || !sections.length) return;
@@ -381,6 +398,19 @@
                 'landing__nav-dot--active',
                 d.getAttribute('data-section-link') === String(idx)
             );
+        });
+        sections.forEach((s) => {
+            const isActive = s.getAttribute('data-section') === String(idx);
+            s.classList.toggle('is-active', isActive);
+            const video = s.querySelector('.landing-section__video');
+            if (video) {
+                if (isActive) {
+                    const p = video.play();
+                    if (p && typeof p.catch === 'function') p.catch(() => {});
+                } else {
+                    video.pause();
+                }
+            }
         });
     };
 
@@ -403,6 +433,21 @@
     );
 
     sections.forEach((s) => observer.observe(s));
+
+    // Seed the active state from the section currently under the viewport
+    // center on first paint, so the §1 video is already faded in before the
+    // observer fires.
+    const seedActive = () => {
+        const mid = window.innerHeight / 2;
+        for (const s of sections) {
+            const r = s.getBoundingClientRect();
+            if (r.top <= mid && r.bottom >= mid) {
+                setActive(s.getAttribute('data-section'));
+                return;
+            }
+        }
+    };
+    seedActive();
 })();
 </script>
 {% endblock content %}
