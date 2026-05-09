@@ -98,7 +98,21 @@
     </section>
 
     {# §3 — The Long Arc #}
-    <section id="section-3" class="landing-section landing-section--arc" data-section="3">
+    <section id="section-3" class="landing-section landing-section--arc landing-section--video" data-section="3">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                poster="{{ config.extra.cdn_url }}/videos/landing/03-arc-poster.jpg"
+                onloadedmetadata="this.playbackRate = 0.65;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/landing/03-arc.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner">
             <p class="landing-section__eyebrow">The scope</p>
             <h2 class="landing-section__heading">
