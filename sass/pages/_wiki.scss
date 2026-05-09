@@ -1568,6 +1568,60 @@
     }
 }
 
+// Soft-redirect callout — renders on stub entries (e.g. an old term that has
+// been renamed/merged into a canonical entry). The page itself still functions
+// as a normal wiki entry; this banner just signals the canonical destination.
+.wiki__redirect {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 0.75rem;
+    margin: 1rem 2rem 1.25rem;
+    padding: 0.625rem 0.875rem;
+    border: 1px solid var(--color-border);
+    border-left: 3px solid var(--color-accent-primary);
+    border-radius: 0.5rem;
+    background: var(--color-surface-muted, var(--color-surface));
+    font-size: 0.9375rem;
+    line-height: 1.4;
+
+    @media (max-width: 900px) {
+        margin: 0.75rem 1.25rem 1rem;
+    }
+}
+
+.wiki__redirect-label {
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-text-muted);
+}
+
+.wiki__redirect-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-accent-primary);
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover,
+    &:focus-visible {
+        text-decoration: underline;
+    }
+}
+
+.wiki__redirect-arrow {
+    flex: none;
+    transition: transform 0.2s ease;
+
+    .wiki__redirect-link:hover &,
+    .wiki__redirect-link:focus-visible & {
+        transform: translateX(2px);
+    }
+}
+
 // Lede — renders page.description as the page summary. The paragraph's
 // text stays on the same left margin as the rest of the body; the SUMMARY
 // block (a thick accent line + the rotated label) is suspended outside the

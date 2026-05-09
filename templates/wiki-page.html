@@ -20,6 +20,24 @@
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
                 </header>
 
+                {# Soft-redirect banner — when an entry has been superseded by a renamed
+                   or merged canonical entry, the stub still renders as its own wiki
+                   page (so the term stays browsable, searchable, and linkable) but
+                   prominently points at the canonical entry. Wikipedia-style. #}
+                {% if page.extra.redirect_to %}
+                <aside class="wiki__redirect" role="note" aria-label="This entry redirects to another page">
+                    <span class="wiki__redirect-label">Redirects to</span>
+                    <a class="wiki__redirect-link"
+                       href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url }}{% else %}{{ get_url(path=page.extra.redirect_to.path, lang=detected_lang) }}{% endif %}">
+                        {{ page.extra.redirect_to.title }}
+                        <svg class="wiki__redirect-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </a>
+                </aside>
+                {% endif %}
+
                 <!-- Lede / summary — uses page.description so the summary treatment
                      is editorially controlled and decoupled from the body's first paragraph. -->
                 {% if page.description %}
