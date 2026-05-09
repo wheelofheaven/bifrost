@@ -648,11 +648,18 @@
 
 // ---- §5 — Where We Are Now ----
 .landing-now__glyph {
-    font-size: clamp(4rem, 10vw, 6.5rem);
-    line-height: 1;
     color: var(--color-accent-primary);
     margin-bottom: 0.5rem;
-    user-select: none;
+    line-height: 1;
+    display: inline-flex;
+
+    svg {
+        width: clamp(4rem, 10vw, 6.5rem);
+        height: auto;
+        // Strokes are tuned for icon sizes; at hero scale they'd render thin,
+        // so bump the stroke a touch to keep the glyph confident.
+        stroke-width: 1.2;
+    }
 }
 
 // ---- §6 — Method (claim-type key) ----
