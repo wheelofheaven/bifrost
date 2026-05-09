@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
 <div class="landing" data-landing>
@@ -179,20 +180,30 @@
                     The corpus reads the creation traditions across its twelve ages.
                 </p>
             </div>
-            {% set zodiac_symbols = ["&#9809;", "&#9808;", "&#9807;", "&#9806;", "&#9805;", "&#9804;", "&#9803;", "&#9802;", "&#9801;", "&#9800;", "&#9799;", "&#9810;"] %}
-            {% set zodiac_names = ["Capricorn", "Sagittarius", "Scorpio", "Libra", "Virgo", "Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces", "Aquarius"] %}
-            {% set zodiac_slugs = ["age-of-capricorn", "age-of-sagittarius", "age-of-scorpio", "age-of-libra", "age-of-virgo", "age-of-leo", "age-of-cancer", "age-of-gemini", "age-of-taurus", "age-of-aries", "age-of-pisces", "age-of-aquarius"] %}
+            {# Order: Aquarius at the top (today), going clockwise back through
+               precession. That puts Leo at position 7 — directly opposite,
+               i.e. roughly half a Great Year (~13,000 years) ago. #}
+            {% set zodiac_icons = ["aquarius", "capricorn", "sagittarius", "scorpio", "libra", "virgo", "leo", "cancer", "gemini", "taurus", "aries", "pisces"] %}
+            {% set zodiac_names = ["Aquarius", "Capricorn", "Sagittarius", "Scorpio", "Libra", "Virgo", "Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces"] %}
+            {% set zodiac_slugs = ["age-of-aquarius", "age-of-capricorn", "age-of-sagittarius", "age-of-scorpio", "age-of-libra", "age-of-virgo", "age-of-leo", "age-of-cancer", "age-of-gemini", "age-of-taurus", "age-of-aries", "age-of-pisces"] %}
             <div class="landing-dial" aria-label="The twelve precessional ages">
                 <ol class="landing-dial__ring">
-                    {% for symbol in zodiac_symbols %}
+                    {% for icon_name in zodiac_icons %}
                     {% set i = loop.index0 %}
                     {% set slug = zodiac_slugs[i] %}
-                    <li class="landing-dial__sign landing-dial__sign--{{ loop.index }}{% if slug == 'age-of-aquarius' %} landing-dial__sign--current{% endif %}">
+                    {% set is_current = slug == 'age-of-aquarius' %}
+                    {% set is_opposite = slug == 'age-of-leo' %}
+                    <li class="landing-dial__sign landing-dial__sign--{{ loop.index }}{% if is_current %} landing-dial__sign--current{% endif %}{% if is_opposite %} landing-dial__sign--opposite{% endif %}">
                         <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
                            title="{{ zodiac_names[i] }}"
                            aria-label="{{ zodiac_names[i] }}">
-                            <span class="landing-dial__symbol">{{ symbol | safe }}</span>
+                            <span class="landing-dial__symbol">{{ zodiac::icon(name=icon_name) }}</span>
                         </a>
+                        {% if is_current %}
+                        <span class="landing-dial__sign-label landing-dial__sign-label--top">today</span>
+                        {% elif is_opposite %}
+                        <span class="landing-dial__sign-label landing-dial__sign-label--bottom">~13,000 years ago</span>
+                        {% endif %}
                     </li>
                     {% endfor %}
                 </ol>
