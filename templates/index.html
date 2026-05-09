@@ -1,12 +1,32 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="landing">
-    <!-- Hero: Full-bleed immersive opening -->
-    <section class="landing-hero">
-        <div class="landing-hero__media">
+<div class="landing" data-landing>
+
+    {# Pagination dots — fixed sidebar nav. Each dot links to a section
+       and highlights when its section is in view (via IntersectionObserver). #}
+    {% set nav_titles = ["The Question", "The Hypothesis", "The Long Arc", "The Cosmic Clock", "Where We Are", "The Method", "Reading Paths", "Coda"] %}
+    <nav class="landing__nav" aria-label="Page sections">
+        <ol class="landing__nav-list">
+            {% for title in nav_titles %}
+            <li class="landing__nav-item">
+                <a href="#section-{{ loop.index }}"
+                   class="landing__nav-dot"
+                   data-section-link="{{ loop.index }}"
+                   aria-label="{{ loop.index }}. {{ title }}">
+                    <span class="landing__nav-dot-number">{{ loop.index }}</span>
+                    <span class="landing__nav-dot-title">{{ title }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ol>
+    </nav>
+
+    {# §1 — The Opening Question #}
+    <section id="section-1" class="landing-section landing-section--question" data-section="1">
+        <div class="landing-section__media" aria-hidden="true">
             <video
-                class="landing-hero__video"
+                class="landing-section__video"
                 autoplay
                 muted
                 loop
@@ -16,270 +36,345 @@
             >
                 <source src="{{ config.extra.cdn_url }}/videos/hero/hero-cinematic.webm" type="video/webm">
             </video>
-            <div class="landing-hero__overlay"></div>
+            <div class="landing-section__overlay"></div>
         </div>
-
-        <div class="landing-hero__content">
-            <h1 class="landing-hero__title">
+        <div class="landing-section__inner">
+            <div class="landing-section__brandmark" aria-label="Wheel of Heaven">
+                {% include "partials/brand/wordmark.html" %}
+            </div>
+            <h1 class="landing-section__heading landing-section__heading--question">
                 What if the gods of Genesis were a civilization?
             </h1>
-            <p class="landing-hero__lead">
-                Wheel of Heaven is a long reading of the ancient world's creation
-                traditions through a single working hypothesis: that the beings
-                the Hebrew Bible calls <em>Elohim</em>&mdash;a plural noun, masked
-                by translation as a single God&mdash;were a small advanced human
-                civilization who came here, prepared the planet, designed life,
-                and left a record in the religious texts. The reading runs across
-                twelve ages of the precessional cycle.
+            <p class="landing-section__sub">
+                <em class="hebrew">אֱלֹהִ<span class="landing-plural-mark">ים</span></em>
+                — the Hebrew Bible's word for the figures who created humanity —
+                is a plural noun.
             </p>
-            <div class="landing-hero__scroll-hint">
-                <span>Scroll to begin</span>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M12 5v14M5 12l7 7 7-7"/>
-                </svg>
-            </div>
         </div>
+        <a href="#section-2" class="landing-section__hint" aria-label="Read on">
+            <span>Read on</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
     </section>
 
-    <!-- The Working Hypothesis -->
-    <section class="landing-narrative">
-        <div class="landing-narrative__container">
-            <div class="landing-narrative__block">
-                <span class="landing-narrative__eyebrow">The Working Hypothesis</span>
-                <h2 class="landing-narrative__heading">
-                    The gods of the older traditions appear, repeatedly, as a group.
-                </h2>
-                <p class="landing-narrative__text">
-                    The Hebrew Bible's word for the figures who created humanity is
-                    <em>Elohim</em>&mdash;a plural noun, masked by translation as the
-                    singular "God." Across the older creation traditions of the
-                    ancient world&mdash;Mesopotamian, biblical, Vedic, Mesoamerican,
-                    and others&mdash;the figures who shape the first humans appear
-                    repeatedly as a team, not a single deity, and as beings with
-                    technology and intentions that look strikingly like an
-                    organized expedition.
-                </p>
-                <p class="landing-narrative__text">
-                    Wheel of Heaven takes this seriously as a working hypothesis:
-                    that the <em>Elohim</em> were an advanced human civilization
-                    from elsewhere, that what we have inherited as religion is the
-                    long memory of their work, and that the precessional cycle the
-                    ancient astronomers preserved is the calendar that records it.
-                    The site is built to test this reading against the available
-                    evidence&mdash;text by text, age by age&mdash;and to be checked.
-                </p>
-            </div>
+    {# §2 — The Working Hypothesis #}
+    <section id="section-2" class="landing-section landing-section--hypothesis" data-section="2">
+        <div class="landing-section__inner">
+            <p class="landing-section__eyebrow">The hypothesis</p>
+            <h2 class="landing-section__heading">
+                An advanced human civilization, not a god.
+            </h2>
+            <p class="landing-section__body">
+                Wheel of Heaven holds, as a working hypothesis, that the
+                <em>Elohim</em> of the older creation traditions were a small
+                advanced human civilization from elsewhere &mdash; that they came
+                here, prepared the planet, designed life on Earth, and left a
+                record in the religious texts. The site reads those texts through
+                that hypothesis.
+            </p>
         </div>
+        <a href="#section-3" class="landing-section__hint" aria-label="Continue">
+            <span>Continue</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
     </section>
 
-    <!-- The Timeline -->
-    <section class="landing-ages">
-        <div class="landing-ages__container">
-            <div class="landing-ages__intro">
-                <span class="landing-narrative__eyebrow">The Cosmic Clock</span>
-                <h2 class="landing-narrative__heading">
-                    Twelve ages. Twenty-six thousand years. One arc.
-                </h2>
-                <p class="landing-narrative__text">
-                    Earth's axis traces a slow circle in the sky&mdash;the precession
-                    of the equinoxes&mdash;completing one full cycle in roughly 25,920
-                    years. Divided by the twelve constellations of the zodiac, that
-                    cycle yields ages of about 2,160 years each. Ancient astronomers
-                    from Mesopotamia to Mesoamerica encoded this clock in their
-                    monuments and myths. The Wheel of Heaven reading runs the
-                    events of the creation traditions across its twelve ages,
-                    treating each as a phase of one long project&mdash;from the
-                    project's first arrival in Capricorn twenty-two thousand years
-                    ago to the present age of Aquarius.
-                </p>
-            </div>
-
-            <div class="landing-ages__wheel">
-                <div class="landing-ages__track">
-                    <a href="{{ get_url(path='timeline/age-of-capricorn', lang=detected_lang) }}" class="landing-age" data-age="capricorn">
-                        <span class="landing-age__symbol">&#9809;</span>
-                        <span class="landing-age__name">Capricorn</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-sagittarius', lang=detected_lang) }}" class="landing-age" data-age="sagittarius">
-                        <span class="landing-age__symbol">&#9808;</span>
-                        <span class="landing-age__name">Sagittarius</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-scorpio', lang=detected_lang) }}" class="landing-age" data-age="scorpio">
-                        <span class="landing-age__symbol">&#9807;</span>
-                        <span class="landing-age__name">Scorpio</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-libra', lang=detected_lang) }}" class="landing-age" data-age="libra">
-                        <span class="landing-age__symbol">&#9806;</span>
-                        <span class="landing-age__name">Libra</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-virgo', lang=detected_lang) }}" class="landing-age" data-age="virgo">
-                        <span class="landing-age__symbol">&#9805;</span>
-                        <span class="landing-age__name">Virgo</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-leo', lang=detected_lang) }}" class="landing-age" data-age="leo">
-                        <span class="landing-age__symbol">&#9804;</span>
-                        <span class="landing-age__name">Leo</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-cancer', lang=detected_lang) }}" class="landing-age" data-age="cancer">
-                        <span class="landing-age__symbol">&#9803;</span>
-                        <span class="landing-age__name">Cancer</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-gemini', lang=detected_lang) }}" class="landing-age" data-age="gemini">
-                        <span class="landing-age__symbol">&#9802;</span>
-                        <span class="landing-age__name">Gemini</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-taurus', lang=detected_lang) }}" class="landing-age" data-age="taurus">
-                        <span class="landing-age__symbol">&#9801;</span>
-                        <span class="landing-age__name">Taurus</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-aries', lang=detected_lang) }}" class="landing-age" data-age="aries">
-                        <span class="landing-age__symbol">&#9800;</span>
-                        <span class="landing-age__name">Aries</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-pisces', lang=detected_lang) }}" class="landing-age" data-age="pisces">
-                        <span class="landing-age__symbol">&#9811;</span>
-                        <span class="landing-age__name">Pisces</span>
-                    </a>
-                    <a href="{{ get_url(path='timeline/age-of-aquarius', lang=detected_lang) }}" class="landing-age landing-age--current" data-age="aquarius">
-                        <span class="landing-age__symbol">&#9810;</span>
-                        <span class="landing-age__name">Aquarius</span>
-                        <span class="landing-age__label">Now</span>
-                    </a>
+    {# §3 — The Long Arc #}
+    <section id="section-3" class="landing-section landing-section--arc" data-section="3">
+        <div class="landing-section__inner">
+            <p class="landing-section__eyebrow">The scope</p>
+            <h2 class="landing-section__heading">
+                A project twenty-two thousand years in the making.
+            </h2>
+            <p class="landing-section__body">
+                On the Wheel of Heaven reading, the work began at the start of
+                the Age of Capricorn, around 19,800 BCE, when a small expedition
+                arrived at a barren Earth and began the long preparation. Twelve
+                precessional ages have since unfolded. We are inside the twelfth.
+            </p>
+            <div class="landing-arc" aria-hidden="true">
+                <div class="landing-arc__line"></div>
+                <div class="landing-arc__marker landing-arc__marker--start">
+                    <span class="landing-arc__year">19,800 BCE</span>
+                    <span class="landing-arc__label">Capricorn</span>
+                </div>
+                <div class="landing-arc__marker landing-arc__marker--mid">
+                    <span class="landing-arc__year">~10,000 BCE</span>
+                    <span class="landing-arc__label">Leo</span>
+                </div>
+                <div class="landing-arc__marker landing-arc__marker--now">
+                    <span class="landing-arc__year">today</span>
+                    <span class="landing-arc__label">Aquarius</span>
                 </div>
             </div>
-
-            <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="landing-ages__cta">
-                Walk through the twelve ages
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
         </div>
+        <a href="#section-4" class="landing-section__hint" aria-label="Continue">
+            <span>Continue</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
     </section>
 
-    <!-- The Invitation -->
-    <section class="landing-explore">
-        <div class="landing-explore__container">
-            <div class="landing-explore__intro">
-                <span class="landing-narrative__eyebrow">Reading paths</span>
-                <h2 class="landing-narrative__heading">
-                    Where would you like to start?
+    {# §4 — The Cosmic Clock #}
+    <section id="section-4" class="landing-section landing-section--clock" data-section="4">
+        <div class="landing-section__inner landing-section__inner--clock">
+            <div class="landing-section__text">
+                <p class="landing-section__eyebrow">The cosmic clock</p>
+                <h2 class="landing-section__heading">
+                    Twelve ages. Twenty-six thousand years. One arc.
                 </h2>
+                <p class="landing-section__body">
+                    Earth's axis traces a slow circle in the sky, completing one
+                    full cycle every 25,920 years &mdash; the precession of the
+                    equinoxes. Divided by the twelve constellations of the zodiac,
+                    that cycle yields ages of about 2,160 years each. The ancient
+                    astronomers preserved this clock in their monuments and myths.
+                    The corpus reads the creation traditions across its twelve ages.
+                </p>
             </div>
+            {% set zodiac_symbols = ["&#9809;", "&#9808;", "&#9807;", "&#9806;", "&#9805;", "&#9804;", "&#9803;", "&#9802;", "&#9801;", "&#9800;", "&#9799;", "&#9810;"] %}
+            {% set zodiac_names = ["Capricorn", "Sagittarius", "Scorpio", "Libra", "Virgo", "Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces", "Aquarius"] %}
+            {% set zodiac_slugs = ["age-of-capricorn", "age-of-sagittarius", "age-of-scorpio", "age-of-libra", "age-of-virgo", "age-of-leo", "age-of-cancer", "age-of-gemini", "age-of-taurus", "age-of-aries", "age-of-pisces", "age-of-aquarius"] %}
+            <div class="landing-dial" aria-label="The twelve precessional ages">
+                <ol class="landing-dial__ring">
+                    {% for symbol in zodiac_symbols %}
+                    {% set i = loop.index0 %}
+                    {% set slug = zodiac_slugs[i] %}
+                    <li class="landing-dial__sign landing-dial__sign--{{ loop.index }}{% if slug == 'age-of-aquarius' %} landing-dial__sign--current{% endif %}">
+                        <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
+                           title="{{ zodiac_names[i] }}"
+                           aria-label="{{ zodiac_names[i] }}">
+                            <span class="landing-dial__symbol">{{ symbol | safe }}</span>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ol>
+                <div class="landing-dial__center" aria-hidden="true">
+                    <span class="landing-dial__center-text">25,920<br>years</span>
+                </div>
+            </div>
+        </div>
+        <a href="#section-5" class="landing-section__hint" aria-label="Continue">
+            <span>Continue</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
 
-            <div class="landing-explore__paths">
-                <a href="{{ get_url(path='read', lang=detected_lang) }}" class="landing-path">
-                    <div class="landing-path__icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-                            <path d="M12 7v14"/>
-                        </svg>
-                    </div>
-                    <h3 class="landing-path__title">Start here</h3>
-                    <p class="landing-path__desc">
-                        New to the site? A short orientation, plus the three
-                        main reading paths: the book in twelve ages, the wiki
-                        for terms, and the source texts.
-                    </p>
-                    <span class="landing-path__link">Open the orientation</span>
-                </a>
+    {# §5 — Where We Are Now #}
+    <section id="section-5" class="landing-section landing-section--now" data-section="5">
+        <div class="landing-section__inner">
+            <div class="landing-now__glyph" aria-hidden="true">&#9810;</div>
+            <p class="landing-section__eyebrow">The present age</p>
+            <h2 class="landing-section__heading">
+                You are inside the twelfth age.
+            </h2>
+            <p class="landing-section__body">
+                The Age of Aquarius opened in the mid-twentieth century. On the
+                corpus's reading, this is the age in which what has been
+                contained is poured out &mdash; the age in which the long memory
+                of the project becomes legible, the age in which humanity becomes
+                scientifically capable of evaluating its own origin. The
+                disclosure is underway.
+            </p>
+        </div>
+        <a href="#section-6" class="landing-section__hint" aria-label="Continue">
+            <span>Continue</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
 
-                <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="landing-path">
-                    <div class="landing-path__icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+    {# §6 — How the Project Reads #}
+    <section id="section-6" class="landing-section landing-section--method" data-section="6">
+        <div class="landing-section__inner">
+            <p class="landing-section__eyebrow">The method</p>
+            <h2 class="landing-section__heading">
+                A working hypothesis, not a creed.
+            </h2>
+            <p class="landing-section__body">
+                The reading is a hypothesis to be tried, not a doctrine to be
+                defended. The corpus reads close to its sources &mdash; Raëlian,
+                biblical, Mesopotamian, Vedic, and others &mdash; with translations
+                named, parallels labeled, and differences preserved. Every page
+                marks its main claim as direct, inferred, or speculative. Where
+                the evidence shifts, the reading shifts.
+            </p>
+            <ul class="landing-method__key" aria-label="Claim type key">
+                <li class="landing-method__badge landing-method__badge--direct">
+                    <span class="landing-method__badge-char">D</span>
+                    <span class="landing-method__badge-rest">irect</span>
+                    <span class="landing-method__badge-note">explicit in a primary source</span>
+                </li>
+                <li class="landing-method__badge landing-method__badge--inferred">
+                    <span class="landing-method__badge-char">I</span>
+                    <span class="landing-method__badge-rest">nferred</span>
+                    <span class="landing-method__badge-note">a reasonable reading of a source</span>
+                </li>
+                <li class="landing-method__badge landing-method__badge--speculative">
+                    <span class="landing-method__badge-char">S</span>
+                    <span class="landing-method__badge-rest">peculative</span>
+                    <span class="landing-method__badge-note">interpretive synthesis or hypothesis</span>
+                </li>
+            </ul>
+        </div>
+        <a href="#section-7" class="landing-section__hint" aria-label="Continue">
+            <span>Continue</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
+
+    {# §7 — Reading paths #}
+    <section id="section-7" class="landing-section landing-section--paths" data-section="7">
+        <div class="landing-section__inner">
+            <p class="landing-section__eyebrow">Reading paths</p>
+            <h2 class="landing-section__heading">
+                Three ways in.
+            </h2>
+            <div class="landing-paths">
+                <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="landing-paths__item">
+                    <div class="landing-paths__icon" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
                             <circle cx="12" cy="12" r="10"/>
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
                     </div>
-                    <h3 class="landing-path__title">The Timeline</h3>
-                    <p class="landing-path__desc">
-                        Twenty-six thousand years organized along twelve
-                        precessional ages&mdash;from the first arrival in
-                        Capricorn to the present-day Aquarius.
+                    <h3 class="landing-paths__title">The Timeline</h3>
+                    <p class="landing-paths__desc">
+                        Twenty-six thousand years walked through twelve ages, from
+                        the first arrival in Capricorn to the present-day Aquarius.
                     </p>
-                    <span class="landing-path__link">See the twelve ages</span>
-                </a>
-
-                <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="landing-path">
-                    <div class="landing-path__icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
+                    <span class="landing-paths__cta">Walk the ages
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
-                    </div>
-                    <h3 class="landing-path__title">The Wiki</h3>
-                    <p class="landing-path__desc">
-                        Reference entries on Elohim, the precessional cycle,
-                        the figures of the creation traditions, and the
-                        project's own terminology.
-                    </p>
-                    <span class="landing-path__link">Browse entries</span>
+                    </span>
                 </a>
 
-                <a href="{{ get_url(path='library', lang=detected_lang) }}" class="landing-path">
-                    <div class="landing-path__icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <a href="{{ get_url(path='library', lang=detected_lang) }}" class="landing-paths__item">
+                    <div class="landing-paths__icon" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                         </svg>
                     </div>
-                    <h3 class="landing-path__title">The Library</h3>
-                    <p class="landing-path__desc">
-                        The primary texts the corpus reads from&mdash;Raëlian,
-                        biblical, Mesopotamian, and others&mdash;with commentary
+                    <h3 class="landing-paths__title">The Library</h3>
+                    <p class="landing-paths__desc">
+                        The primary texts the corpus reads from, with commentary
                         and context.
                     </p>
-                    <span class="landing-path__link">Open the library</span>
+                    <span class="landing-paths__cta">Open the library
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
                 </a>
 
-                <a href="{{ get_url(path='resources', lang=detected_lang) }}" class="landing-path">
-                    <div class="landing-path__icon">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="landing-paths__item">
+                    <div class="landing-paths__icon" aria-hidden="true">
+                        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                     </div>
-                    <h3 class="landing-path__title">Further Reading</h3>
-                    <p class="landing-path__desc">
-                        Outside the corpus&mdash;scholarly studies, scientific
-                        background, comparative traditions, and critical voices.
+                    <h3 class="landing-paths__title">The Wiki</h3>
+                    <p class="landing-paths__desc">
+                        Reference entries on Elohim, precession, the figures of
+                        the creation traditions, and the project's own terminology.
                     </p>
-                    <span class="landing-path__link">See further reading</span>
+                    <span class="landing-paths__cta">Browse entries
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </span>
+                </a>
+            </div>
+        </div>
+        <a href="#section-8" class="landing-section__hint" aria-label="Or finish with the project's own words">
+            <span>Or finish with the project's own words</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
+
+    {# §8 — Coda #}
+    <section id="section-8" class="landing-section landing-section--coda" data-section="8">
+        <div class="landing-section__inner">
+            <blockquote class="landing-coda__quote">
+                <p>
+                    The age is named for its constellation: Aquarius, the
+                    Water-Bearer. The corpus reads it at its most literal level:
+                    the Aquarian age is the age in which what has been contained
+                    is poured out.
+                </p>
+                <cite class="landing-coda__cite">&mdash; Wheel of Heaven, Age of Aquarius</cite>
+            </blockquote>
+            <p class="landing-coda__desc">
+                Wheel of Heaven is open-source, multilingual, and free. The text
+                is public. The reading is yours to evaluate.
+            </p>
+            <div class="landing-coda__links">
+                <a href="https://github.com/wheelofheaven/www.wheelofheaven.io" class="landing-coda__link" target="_blank" rel="noopener">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+                    </svg>
+                    GitHub
+                </a>
+                <a href="{{ get_url(path='about', lang=detected_lang) }}" class="landing-coda__link">
+                    About
                 </a>
             </div>
         </div>
     </section>
 
-    <!-- Coda -->
-    <section class="landing-coda">
-        <div class="landing-coda__container">
-            <blockquote class="landing-coda__quote">
-                "The age is named for its constellation: Aquarius, the
-                Water-Bearer. The corpus reads it at its most literal level:
-                the Aquarian age is the age in which what has been contained
-                is poured out."
-                <cite class="landing-coda__cite">&mdash; Wheel of Heaven, Age of Aquarius</cite>
-            </blockquote>
-            <div class="landing-coda__meta">
-                <p class="landing-coda__desc">
-                    Wheel of Heaven is open-source, multilingual, and free.
-                    The text is public. The reading is yours to evaluate.
-                </p>
-                <div class="landing-coda__links">
-                    <a href="https://github.com/wheelofheaven/www.wheelofheaven.io" class="landing-coda__link" target="_blank" rel="noopener">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
-                        </svg>
-                        GitHub
-                    </a>
-                    <a href="{{ get_url(path='about', lang=detected_lang) }}" class="landing-coda__link">
-                        About
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
 </div>
+
+<script>
+(function () {
+    "use strict";
+    // IntersectionObserver to highlight the active pagination dot.
+    const dots = document.querySelectorAll('.landing__nav-dot');
+    const sections = document.querySelectorAll('.landing-section');
+    if (!dots.length || !sections.length) return;
+
+    const setActive = (idx) => {
+        dots.forEach((d) => {
+            d.classList.toggle(
+                'landing__nav-dot--active',
+                d.getAttribute('data-section-link') === String(idx)
+            );
+        });
+    };
+
+    const observer = new IntersectionObserver(
+        (entries) => {
+            // Pick the entry with the highest intersectionRatio that's intersecting.
+            let best = null;
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    if (!best || entry.intersectionRatio > best.intersectionRatio) {
+                        best = entry;
+                    }
+                }
+            });
+            if (best) {
+                setActive(best.target.getAttribute('data-section'));
+            }
+        },
+        { threshold: [0.4, 0.6, 0.8], rootMargin: '-10% 0px -10% 0px' }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+})();
+</script>
 {% endblock content %}
