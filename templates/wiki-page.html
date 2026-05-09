@@ -20,6 +20,14 @@
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
                 </header>
 
+                <!-- Lede / summary — uses page.description so the summary treatment
+                     is editorially controlled and decoupled from the body's first paragraph. -->
+                {% if page.description %}
+                <div class="wiki__lede" data-ai-summary="true">
+                    <p>{{ page.description | markdown(inline=true) | safe }}</p>
+                </div>
+                {% endif %}
+
                 <!-- Page Content -->
                 {% if page.content %}
                 <div class="wiki__content" data-ai-definition="true" itemscope itemtype="https://schema.org/DefinedTerm">
@@ -107,9 +115,30 @@
                 <!-- Related Content -->
                 {% include "partials/related-content.html" %}
 
-                <!-- Edit this page (GitHub edit-mode link to the source markdown) -->
+                <!-- Edit footer: history link (left) + edit-on-GitHub CTA (right) -->
                 {% set edit_url = "https://github.com/wheelofheaven/data-content/edit/main/" ~ page.relative_path %}
+                {% set history_url = "https://github.com/wheelofheaven/data-content/commits/main/" ~ page.relative_path %}
                 <div class="wiki__edit-footer">
+                    <div class="wiki__history" data-history-path="{{ page.relative_path }}">
+                        <span class="wiki__history-meta" hidden>
+                            <span class="wiki__history-label">Last edited:</span>
+                            <time class="wiki__history-date" datetime=""></time>
+                            <span class="wiki__history-author"></span>
+                            <span class="wiki__history-sep" aria-hidden="true">·</span>
+                        </span>
+                        <a class="wiki__history-link"
+                           href="{{ history_url | safe }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="View edit history on GitHub">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 3v5h5"></path>
+                                <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+                                <polyline points="12 7 12 12 15 14"></polyline>
+                            </svg>
+                            <span>View edit history</span>
+                        </a>
+                    </div>
                     <a class="wiki__edit-btn"
                        href="{{ edit_url | safe }}"
                        target="_blank"
@@ -130,6 +159,26 @@
              into the article body after the first paragraph (Wikipedia pattern). -->
         <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
             <header class="wiki__header">
+                <!-- At-a-glance infobox (only when the page declares one) -->
+                {% if page.extra.infobox %}
+                <details class="wiki__infobox">
+                    <summary class="wiki__infobox-summary">
+                        <span class="wiki__infobox-title">At a glance</span>
+                        <svg class="wiki__infobox-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </summary>
+                    <dl class="wiki__infobox-list">
+                        {% for row in page.extra.infobox %}
+                        <div class="wiki__infobox-row">
+                            <dt class="wiki__infobox-key">{{ row.key }}</dt>
+                            <dd class="wiki__infobox-value">{{ row.value | markdown(inline=true) | safe }}</dd>
+                        </div>
+                        {% endfor %}
+                    </dl>
+                </details>
+                {% endif %}
+
                 <!-- Reading-status / claim-type cluster -->
                 <div class="wiki__claim-section">
                     <div class="wiki__claim-label">Reading this as:</div>
@@ -150,22 +199,24 @@
 
                 <!-- Metadata — each item on its own labeled row -->
                 <div class="wiki__meta">
-                    {% if page.reading_time %}
-                    <div class="wiki__meta-row">
-                        <span class="wiki__meta-label">Reading time:</span>
-                        <span class="wiki__meta-value wiki__reading-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            {{ page.reading_time }} min
-                        </span>
-                    </div>
-                    {% endif %}
+                    <div class="wiki__meta-row wiki__meta-row--split">
+                        {% if page.reading_time %}
+                        <div class="wiki__meta-pair wiki__meta-pair--start">
+                            <span class="wiki__meta-label">Reading time:</span>
+                            <span class="wiki__meta-value wiki__reading-time">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                {{ page.reading_time }} min
+                            </span>
+                        </div>
+                        {% endif %}
 
-                    <div class="wiki__meta-row">
-                        <span class="wiki__meta-label">Listen:</span>
-                        <span class="wiki__meta-value">{% include "partials/listen-button.html" %}</span>
+                        <div class="wiki__meta-pair wiki__meta-pair--end">
+                            <span class="wiki__meta-label">Listen:</span>
+                            <span class="wiki__meta-value">{% include "partials/listen-button.html" %}</span>
+                        </div>
                     </div>
 
                     {% if page.date %}
@@ -278,13 +329,16 @@
     const toc = document.querySelector('.wiki__toc');
     const sidebar = document.querySelector('.wiki__sidebar');
     const content = document.querySelector('.wiki__content');
+    const lede = document.querySelector('.wiki__lede');
     const firstParagraph = content && content.querySelector(':scope > p');
 
     function placeToc() {
         if (!toc || !sidebar || !content) return;
         if (MQ.matches) {
-            // On mobile: TOC goes into the body after the first paragraph.
-            if (firstParagraph) firstParagraph.after(toc);
+            // On mobile: TOC goes into the body after the lede (summary),
+            // falling back to the first body paragraph.
+            if (lede) lede.after(toc);
+            else if (firstParagraph) firstParagraph.after(toc);
             else content.prepend(toc);
             toc.classList.add('wiki__toc--inline');
         } else {
@@ -412,6 +466,44 @@
                 copyBtn.disabled = false;
             }
         });
+    }
+
+    // Last edit info — fetch the most recent commit for this file from the
+    // GitHub API and render the date + author next to "View edit history".
+    // Fails silently (the meta block stays hidden) on rate-limit / network errors.
+    const historyEl = document.querySelector('.wiki__history');
+    if (historyEl) {
+        const path = historyEl.getAttribute('data-history-path');
+        if (path) {
+            const apiUrl = `https://api.github.com/repos/wheelofheaven/data-content/commits?path=${encodeURIComponent(path)}&per_page=1`;
+            fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } })
+                .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+                .then((commits) => {
+                    if (!Array.isArray(commits) || commits.length === 0) return;
+                    const latest = commits[0];
+                    const iso = latest && latest.commit && latest.commit.author && latest.commit.author.date;
+                    const author = (latest && latest.author && latest.author.login)
+                        || (latest && latest.commit && latest.commit.author && latest.commit.author.name)
+                        || '';
+                    if (!iso) return;
+
+                    const dateEl = historyEl.querySelector('.wiki__history-date');
+                    const authorEl = historyEl.querySelector('.wiki__history-author');
+                    const meta = historyEl.querySelector('.wiki__history-meta');
+                    if (!dateEl || !meta) return;
+
+                    const d = new Date(iso);
+                    const formatted = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                    dateEl.setAttribute('datetime', iso);
+                    dateEl.setAttribute('title', d.toLocaleString());
+                    dateEl.textContent = formatted;
+                    if (author && authorEl) {
+                        authorEl.textContent = `by ${author}`;
+                    }
+                    meta.hidden = false;
+                })
+                .catch(() => { /* swallow — stays hidden */ });
+        }
     }
 
     // Stacked alt-names: tap/click toggles the fan-out (CSS handles hover).

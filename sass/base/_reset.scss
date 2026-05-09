@@ -16,6 +16,22 @@ body {
     font-family: sans-serif;
 }
 
+// Pin the footer to the bottom of the viewport on short pages.
+// Without this, body stops at viewport height and any extra space below the
+// last in-flow element (the footer) reveals body's background color.
+body {
+    display: flex;
+    flex-direction: column;
+}
+
+body > main {
+    flex: 1 0 auto;
+}
+
+body > footer {
+    flex-shrink: 0;
+}
+
 img,
 svg,
 video,

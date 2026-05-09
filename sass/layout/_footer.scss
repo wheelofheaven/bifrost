@@ -6,21 +6,29 @@
     font-size: typo.$font-size-sd;
     border-top: vars.$hairline-width solid var(--color-hairline);
     background: var(--color-footer-bg);
-    // iOS notch support - add safe area padding for bottom and sides
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+    // iOS notch support — only the side insets; the bottom inset is folded
+    // into the rainbow strip below so the strip can reach the true edge.
+    padding-bottom: 0;
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
+    margin-bottom: 0;
 
     &__content {
         max-width: 1200px;
         margin-inline: auto;
+        margin-top: 3rem;
+        margin-bottom: 3rem;
         padding: 3rem vars.$spacing-xl;
 
         @media (max-width: 768px) {
+            margin-top: 2rem;
+            margin-bottom: 2rem;
             padding: 2.5rem vars.$spacing-lg;
         }
 
         @media (max-width: 600px) {
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
             padding: 2.5rem vars.$spacing-md;
         }
     }
@@ -68,7 +76,7 @@
 
             li {
                 font-size: typo.$font-size-sm;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
                 line-height: 1.5;
 
                 a {
@@ -233,16 +241,112 @@
     }
 }
 
-// External link indicator - subtle styling
+// Bifrost rainbow strip — decorative band at the very bottom of the footer.
+// The rainbow itself fills the strip; a CSS mask fades its alpha from the top
+// downward so the footer's background shows through above and the colors only
+// emerge in the lower portion. The mask uses a multi-stop curve so the fade
+// is gentle and wide instead of a hard line. The horizontal hue pans slowly
+// using a seamlessly-looping gradient (first/last stop are the same color).
+.footer__rainbow {
+    display: block;
+    height: 13rem;
+    // Absorb the iOS bottom safe-area inset inside the strip so the rainbow
+    // continues all the way to the device edge with no theme-bg gap below.
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: content-box;
+    margin: 0;
+    background: linear-gradient(
+        90deg,
+        #{colors.$pink-300}     0%,
+        #{colors.$lavender-300} 14%,
+        #{colors.$mauve-300}    28%,
+        #{colors.$blue-300}     42%,
+        #{colors.$cyan-300}     56%,
+        #{colors.$mint-300}     70%,
+        #{colors.$green-300}    84%,
+        #{colors.$pink-300}     100%
+    );
+    background-size: 200% 100%;
+    background-repeat: repeat-x;
+    background-position: 0% 50%;
+
+    // Soft, wide vertical fade-in via alpha mask. The top stays fully
+    // transparent (footer bg shows through), then a long ease ramps the
+    // rainbow up. The mask plateaus at full opacity around 80% so the
+    // bottom ~20% of the strip is a solid band of pure rainbow color.
+    // The fade samples a smoothstep curve (3t² − 2t³) over the 5% → 88%
+    // range. Many closely-spaced stops keep each linear segment short, so
+    // the eye reads the transition as a smooth S-curve. The bottom 12%
+    // stays at full opacity — a thin band of solid pastel.
+    $fade: linear-gradient(
+        to bottom,
+        rgba(0, 0, 0, 0)     0%,
+        rgba(0, 0, 0, 0)     5%,
+        rgba(0, 0, 0, 0.020) 12%,
+        rgba(0, 0, 0, 0.066) 18%,
+        rgba(0, 0, 0, 0.133) 24%,
+        rgba(0, 0, 0, 0.217) 30%,
+        rgba(0, 0, 0, 0.314) 36%,
+        rgba(0, 0, 0, 0.420) 42%,
+        rgba(0, 0, 0, 0.545) 49%,
+        rgba(0, 0, 0, 0.651) 55%,
+        rgba(0, 0, 0, 0.752) 61%,
+        rgba(0, 0, 0, 0.840) 67%,
+        rgba(0, 0, 0, 0.914) 73%,
+        rgba(0, 0, 0, 0.967) 79%,
+        rgba(0, 0, 0, 0.997) 85%,
+        rgba(0, 0, 0, 1)     88%,
+        rgba(0, 0, 0, 1)    100%
+    );
+    -webkit-mask-image: $fade;
+            mask-image: $fade;
+
+    animation: footer-rainbow-shift 90s linear infinite;
+    pointer-events: none;
+
+    @media (max-width: 768px) {
+        height: 10rem;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+// background-size is 200% (gradient tile = 2× element width); shifting the
+// position by -200% advances exactly one tile, which lines up seamlessly
+// with the next tile because the gradient's first/last stops are both pink.
+@keyframes footer-rainbow-shift {
+    0%   { background-position: 0%    50%; }
+    100% { background-position: -200% 50%; }
+}
+
+// External link indicator — replaces the inline ↗ unicode (which renders thin
+// and inconsistently across fonts) with a crisp SVG drawn via CSS mask. The
+// element keeps the underlying ↗ glyph in markup for accessibility, but
+// text-indent hides it so only the SVG shows.
 .external-indicator {
+    $svg: "data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 17 17 7 M9 7H17V15' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E";
+
     display: inline-block;
+    width: 0.65em;
+    height: 0.65em;
     margin-left: 0.35em;
-    font-size: 0.55em;
-    opacity: 0.3;
-    vertical-align: super;
-    transition: opacity 0.2s ease;
+    vertical-align: -0.05em;
+    background-color: currentColor;
+    opacity: 0.5;
+    mask: url($svg) no-repeat center / contain;
+    -webkit-mask: url($svg) no-repeat center / contain;
+
+    // Hide the unicode glyph itself; the SVG mask draws the visible arrow.
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition: opacity 0.2s ease, transform 0.2s ease;
 
     a:hover & {
-        opacity: 0.5;
+        opacity: 0.85;
+        transform: translate(0.075em, -0.075em);
     }
 }

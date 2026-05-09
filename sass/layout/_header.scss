@@ -1,12 +1,3 @@
-@keyframes gradient-slide {
-    0% {
-        background-position: 0% 50%;
-    }
-    100% {
-        background-position: 100% 50%;
-    }
-}
-
 .header {
     // Header contains only fixed-position elements, so should not take up space
     position: absolute;
@@ -14,34 +5,8 @@
     z-index: 100;
     pointer-events: none; // Don't block clicks on content below (children re-enable)
 
-    // Re-enable pointer events on interactive children (navbar, decoration bar)
+    // Re-enable pointer events on interactive children (navbar)
     > * {
         pointer-events: auto;
-    }
-
-    &__decoration-bar {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 4px;
-        z-index: 9999;
-
-        background: linear-gradient(
-            90deg,
-            hsla(311, 64%, 85%, 1),
-            hsla(263, 64%, 84%, 1),
-            hsla(215, 77%, 80%, 1),
-            hsla(185, 84%, 76%, 1),
-            hsla(167, 82%, 78%, 1),
-            hsla(185, 84%, 76%, 1),
-            hsla(215, 77%, 80%, 1),
-            hsla(263, 64%, 84%, 1),
-            hsla(311, 64%, 85%, 1)
-        );
-
-        background-size: 400% 100%;
-        background-repeat: no-repeat;
-        animation: gradient-slide 6s linear infinite;
     }
 }
