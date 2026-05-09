@@ -32,6 +32,7 @@
                 loop
                 playsinline
                 poster="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.jpg"
+                onloadedmetadata="this.playbackRate = 0.65;"
             >
                 <source src="{{ config.extra.cdn_url }}/videos/landing/01-question.webm" type="video/webm">
             </video>
@@ -59,7 +60,21 @@
     </section>
 
     {# §2 — The Working Hypothesis #}
-    <section id="section-2" class="landing-section landing-section--hypothesis" data-section="2">
+    <section id="section-2" class="landing-section landing-section--hypothesis landing-section--video" data-section="2">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                poster="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-poster.jpg"
+                onloadedmetadata="this.playbackRate = 0.65;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner">
             <p class="landing-section__eyebrow">The hypothesis</p>
             <h2 class="landing-section__heading">

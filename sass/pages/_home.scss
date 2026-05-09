@@ -305,7 +305,12 @@
 // Cinematic video background in §1 only. The video is decorative; copy
 // sits above it via z-index, and a multi-stop overlay keeps text legible
 // across light/dark frames.
-.landing-section--question {
+// Sections with a cinematic video background. Applied to any section that
+// has the .landing-section--video modifier or one of the section-specific
+// modifiers historically known to carry video. Copy goes white, overlay
+// keeps it legible, the section establishes its own stacking context.
+.landing-section--question,
+.landing-section--video {
     color: #fff;
     overflow: hidden;
     isolation: isolate;
@@ -315,7 +320,8 @@
         z-index: 2;
     }
 
-    .landing-section__heading {
+    .landing-section__heading,
+    .landing-section__body {
         color: #fff;
     }
 
