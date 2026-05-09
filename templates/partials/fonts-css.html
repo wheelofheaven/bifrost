@@ -2,6 +2,14 @@
 <link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 
+<!-- Rubik: modern geometric Hebrew sans, used for inline Hebrew (Elohim,
+     biblical citations, etc.). Heavy weights also serve display use on the
+     landing page. Loaded from Google Fonts for now; can be self-hosted
+     later to match Jost/Space Grotesk/IA Writer. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Karantina:wght@300;400;700&family=Rubik:wght@400;500;600;700;800&display=swap">
+
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 

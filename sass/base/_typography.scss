@@ -27,8 +27,12 @@ $font-family-cjk-ko:
     "Nanum Gothic",
     "Noto Sans KR";
 
-// Hebrew font stack
+// Hebrew font stack — Rubik is a modern geometric Hebrew sans with good
+// nikud (vowel-mark) positioning and multiple weights, including display
+// weights for landing-page treatments.
 $font-family-hebrew:
+    "Rubik",
+    "Heebo",
     "Arial Hebrew",
     "Noto Sans Hebrew",
     "Segoe UI",

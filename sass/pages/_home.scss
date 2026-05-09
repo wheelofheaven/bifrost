@@ -215,10 +215,23 @@
         max-width: 36rem;
 
         .hebrew {
-            font-size: 1.4em;
+            font-family:
+                "Karantina",
+                "Rubik",
+                "Heebo",
+                "Arial Hebrew",
+                "Noto Sans Hebrew",
+                sans-serif;
+            font-weight: 400;
+            font-size: 1.85em;
             font-style: normal;
             color: var(--color-text);
-            margin: 0 0.125em;
+            line-height: 1;
+            margin: 0 0.2em;
+            letter-spacing: -0.02em;
+            // Vertical-align so the Hebrew baseline sits with the surrounding
+            // body line at this larger size.
+            vertical-align: -0.18em;
         }
     }
 
