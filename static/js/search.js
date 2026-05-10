@@ -18,21 +18,6 @@ const SECTIONS = {
         </svg>`,
         label: 'Wiki'
     },
-    Essentials: {
-        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M8 12h8"/><path d="M12 8v8"/>
-        </svg>`,
-        label: 'Essentials'
-    },
-    Explainers: {
-        icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/>
-            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
-            <path d="M12 17h.01"/>
-        </svg>`,
-        label: 'Explainers'
-    },
     Timeline: {
         icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <circle cx="12" cy="12" r="10"/>
@@ -70,7 +55,7 @@ const SUGGESTIONS = [
     { term: 'Age of Aquarius', section: 'Timeline' },
     { term: 'extraterrestrial', section: 'Wiki' },
     { term: 'creation', section: 'Wiki' },
-    { term: 'ancient astronauts', section: 'Explainers' },
+    { term: 'ancient astronauts', section: 'Articles' },
     { term: 'intelligent design', section: 'Wiki' }
 ];
 
@@ -134,10 +119,8 @@ function extractSection(url) {
     const section = segments[0];
     const sectionMap = {
         wiki: "Wiki",
-        essentials: "Essentials",
         revelations: "Library",
         library: "Library",
-        explainers: "Explainers",
         timeline: "Timeline",
         articles: "Articles",
         resources: "Resources"
@@ -161,8 +144,7 @@ function getNavigationLinks() {
     const baseUrl = currentLanguage === "en" ? "" : `/${currentLanguage}`;
     return [
         { title: "Home", url: baseUrl || "/", section: "Home", description: "Welcome page and site overview" },
-        { title: "Essentials", url: `${baseUrl}/essentials/`, section: "Essentials", description: "Core concepts and fundamental information" },
-        { title: "Explainers", url: `${baseUrl}/explainers/`, section: "Explainers", description: "Detailed explanations of key topics" },
+        { title: "Articles", url: `${baseUrl}/articles/`, section: "Articles", description: "Long-form analyses and arguments" },
         { title: "Timeline", url: `${baseUrl}/timeline/`, section: "Timeline", description: "Chronological overview of events" },
         { title: "Wiki", url: `${baseUrl}/wiki/`, section: "Wiki", description: "Comprehensive knowledge database" },
         { title: "Resources", url: `${baseUrl}/resources/`, section: "Resources", description: "Books, films, and external references" }
