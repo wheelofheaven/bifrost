@@ -1,7 +1,11 @@
 {% extends "base.html" %}
+{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
-{% set timeline = get_section(path="timeline/_index.md") %}
+{# ages.json is the chronological spine (Capricorn → Aquarius, prefixed with
+   the In-the-Beginning prologue). We iterate it instead of timeline.pages to
+   guarantee chronological order — Zola's default sort gives alphabetical. #}
+{% set ages_data = load_data(path="data/ages.json") %}
 
 <div class="read">
     <header class="read__header">
@@ -13,43 +17,46 @@
         {% endif %}
     </header>
 
-    {% if section.content %}
-    <section class="read__intro" aria-label="Orientation">
-        <div class="read__intro-content">{{ section.content | safe }}</div>
-    </section>
-    {% endif %}
-
     <div class="read__cards" aria-label="Reading paths">
-        <section class="read__card read__card--featured">
-            <header class="read__card-summary read__card-summary--static">
-                <span class="read__card-eyebrow">{{ trans(key="navbarReadBook", lang=detected_lang) }}</span>
+        <details class="read__card read__card--featured">
+            <summary class="read__card-summary">
+                <span class="read__card-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
                 <h2 class="read__card-title">Wheel of Heaven</h2>
-                <p class="read__card-subtitle">A reading of life on Earth, in twelve precessional ages</p>
-                <p class="read__card-desc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</p>
-            </header>
+                <p class="read__card-subtitle">{{ trans(key="readWoHSubtitle", lang=detected_lang) }}</p>
+                <p class="read__card-desc">{{ trans(key="readWoHDesc", lang=detected_lang) }}</p>
+                <span class="read__card-chevron" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </summary>
             <div class="read__card-body">
-                {% if timeline.pages %}
                 <ul class="read__sublinks read__sublinks--compact">
-                    {% for page in timeline.pages %}
+                    {% for age in ages_data %}
+                    {# Resolve the page (so title/permalink come from the live entry
+                       rather than ages.json) by deriving the slug from age.link. #}
+                    {% set slug = age.link | split(pat="/") | nth(n=2) %}
+                    {% set page = get_page(path="timeline/" ~ slug ~ ".md") %}
                     <li class="read__sublink">
                         <a href="{{ page.permalink }}">
                             <span class="read__sublink-title">{{ page.title }}</span>
-                            {% if page.extra and page.extra.symbol %}
-                            <span class="read__sublink-meta">{{ page.extra.symbol }}{% if page.extra.start_year %} · {{ page.extra.start_year }}{% if page.extra.end_year %}–{{ page.extra.end_year }}{% endif %}{% endif %}</span>
-                            {% elif page.extra and page.extra.start_year %}
-                            <span class="read__sublink-meta">{{ page.extra.start_year }}{% if page.extra.end_year %}–{{ page.extra.end_year }}{% endif %}</span>
-                            {% endif %}
+                            <span class="read__sublink-meta">
+                                <span class="read__sublink-glyph" aria-hidden="true">
+                                    {% if age.link == "/timeline/in-the-beginning" %}
+                                    ✦
+                                    {% else %}
+                                    {% set zslug = slug | replace(from="age-of-", to="") %}
+                                    {{ zodiac::icon(name=zslug, size=14) }}
+                                    {% endif %}
+                                </span>
+                                {% if page.extra.start_year %} · {{ page.extra.start_year }}{% if page.extra.end_year %}–{{ page.extra.end_year }}{% endif %}{% endif %}
+                            </span>
                         </a>
                     </li>
                     {% endfor %}
                 </ul>
-                {% endif %}
                 <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="read__card-cta">
                     {{ trans(key="navbarReadBook", lang=detected_lang) }}
                     <span class="read__card-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                 </a>
             </div>
-        </section>
+        </details>
 
         <details class="read__card">
             <summary class="read__card-summary">
@@ -133,5 +140,11 @@
             </div>
         </details>
     </div>
+
+    {% if section.content %}
+    <section class="read__intro" aria-label="Orientation">
+        <div class="read__intro-content">{{ section.content | safe }}</div>
+    </section>
+    {% endif %}
 </div>
 {% endblock content %}
