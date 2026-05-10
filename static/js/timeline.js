@@ -20,6 +20,37 @@ document.addEventListener("DOMContentLoaded", function () {
   let currentAgeIndex = 0;
   let isTransitioning = false;
 
+  // Zodiac SVG glyphs — must stay in sync with macros/zodiac.html. Body
+  // strings only (the wrapping <svg> is built in zodiacSvg()) so we don't
+  // duplicate the wrapper boilerplate per sign.
+  const ZODIAC_GLYPHS = {
+    aries: '<path d="M5 18 V11 Q5 5 9 5 Q12 5 12 12 Q12 5 15 5 Q19 5 19 11 V18"/>',
+    taurus: '<circle cx="12" cy="15" r="4"/><path d="M5 8 Q12 13 19 8"/>',
+    gemini: '<line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="19" x2="19" y2="19"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/>',
+    cancer: '<line x1="4" y1="9" x2="14" y2="9"/><circle cx="16" cy="11" r="2"/><line x1="20" y1="15" x2="10" y2="15"/><circle cx="8" cy="13" r="2"/>',
+    leo: '<circle cx="8" cy="16" r="3"/><path d="M11 16 Q11 8 14 6 Q19 5 19 11 Q19 14 17 16 Q15 17 17 19"/>',
+    virgo: '<path d="M5 19 V7 L9 13 L13 7 V19 Q15 14 18 14 Q21 14 19 19 Q17 22 15 19"/>',
+    libra: '<path d="M6 13 Q6 8 12 8 Q18 8 18 13"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/>',
+    scorpio: '<path d="M4 18 V7 L8 12 L12 7 V18 L16 12 V18 H21"/><path d="M19 16 L21 18 L19 20"/>',
+    sagittarius: '<line x1="5" y1="19" x2="19" y2="5"/><polyline points="13 5 19 5 19 11"/><line x1="9" y1="12" x2="12" y2="15"/>',
+    capricorn: '<path d="M4 7 V17 M4 7 L9 13 L13 7 Q17 7 17 13 Q17 18 13 18 Q9 18 9 14"/>',
+    aquarius: '<path d="M3 9 L7 7 L11 9 L15 7 L19 9"/><path d="M3 15 L7 13 L11 15 L15 13 L19 15"/>',
+    pisces: '<path d="M7 5 Q4 12 7 19"/><path d="M17 5 Q20 12 17 19"/><line x1="7" y1="12" x2="17" y2="12"/>',
+  };
+
+  // Render the glyph for an age. Falls back to emoji for non-zodiac entries
+  // (the "In the beginning..." sparkle).
+  function ageGlyphMarkup(age, size) {
+    const slug = (age.link || "").replace("/timeline/", "").replace("age-of-", "");
+    const body = ZODIAC_GLYPHS[slug];
+    if (!body) return age.symbol || "";
+    return (
+      '<svg xmlns="http://www.w3.org/2000/svg" width="' + size + '" height="' + size +
+      '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" ' +
+      'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + body + '</svg>'
+    );
+  }
+
   // Age data
   const agesData = [
     {
@@ -336,7 +367,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Update text content
-    ageSymbol.textContent = age.symbol;
+    ageSymbol.innerHTML = ageGlyphMarkup(age, 36);
     ageTitle.textContent = age.name;
     ageDescription.textContent = age.event;
     ageLink.href = age.link;

@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
+{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
 <!-- Event Schema for Timeline Pages -->
@@ -11,43 +12,17 @@
     {{ breadcrumbs::timeline(page=page, lang=detected_lang) }}
 
     <div class="timeline-page__container">
-        <!-- Table of Contents Sidebar -->
-        <aside class="timeline-page__toc" role="complementary" aria-label="Table of contents">
-            <div class="timeline-page__toc-header">
-                <h3 class="timeline-page__toc-title" id="toc-heading">Contents</h3>
-            </div>
-            <nav class="timeline-page__toc-nav" aria-labelledby="toc-heading">
-                {% if page.toc %}
-                <ul class="timeline-page__toc-list">
-                    {% for h1 in page.toc %}
-                    <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
-                        <a href="#{{ h1.id }}" class="timeline-page__toc-link">{{ h1.title }}</a>
-                        {% if h1.children %}
-                        <ul class="timeline-page__toc-sublist">
-                            {% for h2 in h1.children %}
-                            <li class="timeline-page__toc-item timeline-page__toc-item--level-2">
-                                <a href="#{{ h2.id }}" class="timeline-page__toc-link">{{ h2.title }}</a>
-                            </li>
-                            {% endfor %}
-                        </ul>
-                        {% endif %}
-                    </li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
+        <!-- Main column comes first in DOM so mobile readers see title + body before
+             the sidebar's metadata. Grid areas keep the visual order on desktop. -->
         <main class="timeline-page__main">
             <article class="timeline-page__article" role="article" aria-labelledby="page-title">
                 <!-- Chapter Header -->
-                <header class="timeline-page__header">
-                    <!-- Age Badge -->
+                <header class="timeline-page__page-header">
+                    {# Age Badge — zodiac is derived from the page slug
+                       ("age-of-leo" → "leo") so the SVG matches the landing-page set. #}
+                    {% set zodiac_name = page.slug | replace(from="age-of-", to="") %}
                     <div class="timeline-page__age-badge">
-                        {% if page.extra.symbol %}
-                        <span class="timeline-page__symbol">{{ page.extra.symbol }}</span>
-                        {% endif %}
+                        <span class="timeline-page__symbol" aria-hidden="true">{{ zodiac::icon(name=zodiac_name, size=28) }}</span>
                         {% if page.extra.start_year and page.extra.end_year %}
                         <span class="timeline-page__dates">{{ page.extra.start_year }} — {{ page.extra.end_year }}</span>
                         {% endif %}
@@ -57,9 +32,8 @@
                     </div>
 
                     <h1 class="timeline-page__title" id="page-title">{{ page.title }}</h1>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
 
-                    <!-- Genesis Verse -->
+                    <!-- Genesis Verse — canonical scripture for the age -->
                     {% if page.extra.genesis_verse %}
                     <blockquote class="timeline-page__verse" data-ai-cite="true">
                         <p>{{ page.extra.genesis_verse }}</p>
@@ -71,23 +45,6 @@
                         {{ page.extra.genesis_interpretation | markdown | safe }}
                     </div>
                     {% endif %}
-
-                    <!-- Metadata -->
-                    <div class="timeline-page__meta">
-                        {% if page.reading_time %}
-                        <span class="timeline-page__reading-time">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <circle cx="12" cy="12" r="10"></circle>
-                                <polyline points="12 6 12 12 16 14"></polyline>
-                            </svg>
-                            {{ page.reading_time }} min read
-                        </span>
-                        {% endif %}
-                        {% include "partials/listen-button.html" %}
-                    </div>
-
-                    <!-- Social Share -->
-                    {% include "partials/social-share.html" %}
                 </header>
 
                 <!-- Chapter Content -->
@@ -101,22 +58,30 @@
                 <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
                     <div class="timeline-page__prev-next">
                         {% if page.extra.prev_age %}
+                        {% set prev_zodiac = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) | replace(from="age-of-", to="") %}
                         <a href="{{ page.extra.prev_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="15,18 9,12 15,6"></polyline>
                             </svg>
                             <div class="timeline-page__nav-content">
                                 <span class="timeline-page__nav-label">Previous</span>
-                                <span class="timeline-page__nav-title">{{ page.extra.prev_age[0].symbol }} {{ page.extra.prev_age[0].name }}</span>
+                                <span class="timeline-page__nav-title">
+                                    <span class="timeline-page__nav-glyph" aria-hidden="true">{{ zodiac::icon(name=prev_zodiac, size=18) }}</span>
+                                    {{ page.extra.prev_age[0].name }}
+                                </span>
                             </div>
                         </a>
                         {% endif %}
 
                         {% if page.extra.next_age %}
+                        {% set next_zodiac = page.extra.next_age[0].link | split(pat="/") | nth(n=2) | replace(from="age-of-", to="") %}
                         <a href="{{ page.extra.next_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
                                 <span class="timeline-page__nav-label">Next</span>
-                                <span class="timeline-page__nav-title">{{ page.extra.next_age[0].symbol }} {{ page.extra.next_age[0].name }}</span>
+                                <span class="timeline-page__nav-title">
+                                    <span class="timeline-page__nav-glyph" aria-hidden="true">{{ zodiac::icon(name=next_zodiac, size=18) }}</span>
+                                    {{ page.extra.next_age[0].name }}
+                                </span>
                             </div>
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="9,18 15,12 9,6"></polyline>
@@ -137,30 +102,445 @@
                     </div>
                 </nav>
 
-                <!-- Related Ages -->
-                {% if page.extra.related_ages %}
-                <section class="timeline-page__related" role="complementary" aria-label="Related ages">
-                    <h2 class="timeline-page__section-title">Related Ages</h2>
-                    <ul class="timeline-page__related-list">
-                        {% for age in page.extra.related_ages %}
-                        <li class="timeline-page__related-item">
-                            <a href="{{ age.link }}" class="timeline-page__related-link">
-                                <span class="timeline-page__related-symbol">{{ age.symbol }}</span>
-                                <span class="timeline-page__related-name">{{ age.name }}</span>
-                            </a>
-                            {% if age.relation %}
-                            <span class="timeline-page__related-desc">{{ age.relation }}</span>
+                {# ---- Read Next: chapter spine (prev_age + next_age) ----
+                   Sequential reading of the Great Year. Cards show the actual
+                   page (looked up via get_page) so the description renders. #}
+                {% set neighbors = [] %}
+                {% if page.extra.prev_age %}
+                    {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set prev_page_obj = get_page(path="timeline/" ~ prev_slug ~ ".md") %}
+                    {% set_global neighbors = neighbors | concat(with=[prev_page_obj]) %}
+                {% endif %}
+                {% if page.extra.next_age %}
+                    {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set next_page_obj = get_page(path="timeline/" ~ next_slug ~ ".md") %}
+                    {% set_global neighbors = neighbors | concat(with=[next_page_obj]) %}
+                {% endif %}
+                {% if neighbors | length > 0 %}
+                <aside class="related-content" role="complementary" aria-labelledby="read-next-title">
+                    <h2 class="related-content__title" id="read-next-title">
+                        {{ trans(key="readNext", default="Read Next") }}
+                    </h2>
+                    <div class="related-content__grid">
+                        {% for related in neighbors %}
+                        <a href="{{ related.permalink }}" class="related-content__card">
+                            {% if related.extra.category %}
+                            <span class="related-content__card-category">{{ related.extra.category }}</span>
+                            {% endif %}
+                            <h3 class="related-content__card-title">{{ related.title }}</h3>
+                            {% if related.description %}
+                            <p class="related-content__card-desc">{{ related.description | truncate(length=120) }}</p>
+                            {% endif %}
+                            <span class="related-content__card-link">
+                                {{ trans(key="readMore", default="Read more") }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </aside>
+                {% endif %}
+
+                {# ---- Read Also: cross-section discovery ----
+                   Hybrid: editorial `extra.see_also` wins when present;
+                   otherwise we fall back to a convention list of generic
+                   wiki pages that are relevant to every age. Pages are
+                   resolved by iterating their section's pages so missing
+                   slugs are silently skipped instead of throwing. #}
+                {% set also_pages = [] %}
+                {% if page.extra.see_also %}
+                    {% for item in page.extra.see_also %}
+                        {% set parts = item.path | split(pat="/") %}
+                        {% set sect = parts | nth(n=1) %}
+                        {% set slug = parts | nth(n=2) %}
+                        {% if sect and slug %}
+                            {% set sec_obj = get_section(path=sect ~ "/_index.md") %}
+                            {% for sibling in sec_obj.pages %}
+                                {% if sibling.slug == slug %}
+                                    {% set_global also_pages = also_pages | concat(with=[sibling]) %}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    {% set conventional = ["great-year", "precession", "zodiac", "elohim"] %}
+                    {% set wiki_section = get_section(path="wiki/_index.md") %}
+                    {% for sibling in wiki_section.pages %}
+                        {% if sibling.slug in conventional and also_pages | length < 4 %}
+                            {% set_global also_pages = also_pages | concat(with=[sibling]) %}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% if also_pages | length > 0 %}
+                <aside class="related-content" role="complementary" aria-labelledby="read-also-title">
+                    <h2 class="related-content__title" id="read-also-title">
+                        {{ trans(key="readAlso", default="Read Also") }}
+                    </h2>
+                    <div class="related-content__grid">
+                        {% for related in also_pages %}
+                        <a href="{{ related.permalink }}" class="related-content__card">
+                            {% if related.extra.category %}
+                            <span class="related-content__card-category">{{ related.extra.category }}</span>
+                            {% endif %}
+                            <h3 class="related-content__card-title">{{ related.title }}</h3>
+                            {% if related.description %}
+                            <p class="related-content__card-desc">{{ related.description | truncate(length=120) }}</p>
+                            {% endif %}
+                            <span class="related-content__card-link">
+                                {{ trans(key="readMore", default="Read more") }}
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    <polyline points="12 5 19 12 12 19"></polyline>
+                                </svg>
+                            </span>
+                        </a>
+                        {% endfor %}
+                    </div>
+                </aside>
+                {% endif %}
+
+                <!-- Edit footer: history link (left) + edit-on-GitHub CTA (right) -->
+                {% set edit_url = "https://github.com/wheelofheaven/data-content/edit/main/" ~ page.relative_path %}
+                {% set history_url = "https://github.com/wheelofheaven/data-content/commits/main/" ~ page.relative_path %}
+                <div class="timeline-page__edit-footer">
+                    <div class="timeline-page__history" data-history-path="{{ page.relative_path }}">
+                        <span class="timeline-page__history-meta" hidden>
+                            <span class="timeline-page__history-label">Last edited:</span>
+                            <time class="timeline-page__history-date" datetime=""></time>
+                            <span class="timeline-page__history-author"></span>
+                            <span class="timeline-page__history-sep" aria-hidden="true">·</span>
+                        </span>
+                        <a class="timeline-page__history-link"
+                           href="{{ history_url | safe }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="View edit history on GitHub">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M3 3v5h5"></path>
+                                <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+                                <polyline points="12 7 12 12 15 14"></polyline>
+                            </svg>
+                            <span>View edit history</span>
+                        </a>
+                    </div>
+                    <a class="timeline-page__edit-btn"
+                       href="{{ edit_url | safe }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Edit this page on GitHub">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        <span>Edit this page</span>
+                    </a>
+                </div>
+            </article>
+        </main>
+
+        <!-- Sidebar: claim badge + page meta + sticky TOC. On mobile, a small JS
+             helper lifts the TOC out of the sidebar and inserts it into the article
+             body after the lede (Wikipedia pattern). -->
+        <aside class="timeline-page__sidebar" role="complementary" aria-labelledby="page-title">
+            <header class="timeline-page__header">
+                <!-- Reading-status / claim-type cluster -->
+                <div class="timeline-page__claim-section">
+                    <div class="timeline-page__claim-label">Reading this as:</div>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                </div>
+
+                <!-- Metadata — each item on its own labeled row -->
+                <div class="timeline-page__meta">
+                    <div class="timeline-page__meta-row timeline-page__meta-row--split">
+                        {% if page.reading_time %}
+                        <div class="timeline-page__meta-pair timeline-page__meta-pair--start">
+                            <span class="timeline-page__meta-label">Reading time:</span>
+                            <span class="timeline-page__meta-value timeline-page__reading-time">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                {{ page.reading_time }} min
+                            </span>
+                        </div>
+                        {% endif %}
+
+                        <div class="timeline-page__meta-pair timeline-page__meta-pair--end">
+                            <span class="timeline-page__meta-label">Listen:</span>
+                            <span class="timeline-page__meta-value">{% include "partials/listen-button.html" %}</span>
+                        </div>
+                    </div>
+
+                    {% if page.date %}
+                    <div class="timeline-page__meta-row">
+                        <span class="timeline-page__meta-label">Last updated:</span>
+                        <span class="timeline-page__meta-value"><time>{{ page.date | date(format="%B %d, %Y") }}</time></span>
+                    </div>
+                    {% endif %}
+
+                    <div class="timeline-page__meta-row">
+                        <span class="timeline-page__meta-label">Part of the series:</span>
+                        <span class="timeline-page__meta-value">
+                            <a href="{{ get_url(path='timeline', lang=detected_lang) }}"
+                               class="timeline-page__category"
+                               title="Browse the Great Year">The Great Year</a>
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Share -->
+                <div class="timeline-page__share-section">
+                    <div class="timeline-page__meta-label">Share this page:</div>
+                    {% include "partials/social-share.html" %}
+                </div>
+
+                <!-- Read as Agent — copy/view raw markdown for LLM use -->
+                {% set md_url = "https://raw.githubusercontent.com/wheelofheaven/data-content/main/" ~ page.relative_path %}
+                <div class="timeline-page__agent-section">
+                    <div class="timeline-page__meta-label">Read as Agent:</div>
+                    <div class="timeline-page__agent-buttons">
+                        <button type="button"
+                                class="timeline-page__agent-btn"
+                                data-md-url="{{ md_url | safe }}"
+                                data-action="copy-md"
+                                aria-label="Copy this page as Markdown for an LLM">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <span class="timeline-page__agent-btn-label">Copy for LLMs</span>
+                        </button>
+                        <a class="timeline-page__agent-btn"
+                           href="{{ md_url | safe }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="Open this page as raw Markdown in a new tab">
+                            <svg width="18" height="11" viewBox="0 0 208 128" fill="none" aria-hidden="true">
+                                <rect x="5" y="5" width="198" height="118" rx="10" ry="10" stroke="currentColor" stroke-width="10" fill="none"></rect>
+                                <path fill="currentColor" d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"></path>
+                            </svg>
+                            <span class="timeline-page__agent-btn-label">View as Markdown</span>
+                        </a>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Sticky Table of Contents -->
+            {% if page.toc %}
+            <div class="timeline-page__toc">
+                <div class="timeline-page__toc-header">
+                    <h3 class="timeline-page__toc-title" id="toc-heading">Contents</h3>
+                </div>
+                <nav class="timeline-page__toc-nav" aria-labelledby="toc-heading">
+                    <ul class="timeline-page__toc-list">
+                        {% for h1 in page.toc %}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                            <a href="#{{ h1.id }}" class="timeline-page__toc-link">{{ h1.title }}</a>
+                            {% if h1.children %}
+                            <ul class="timeline-page__toc-sublist">
+                                {% for h2 in h1.children %}
+                                <li class="timeline-page__toc-item timeline-page__toc-item--level-2">
+                                    <a href="#{{ h2.id }}" class="timeline-page__toc-link">{{ h2.title }}</a>
+                                    {% if h2.children %}
+                                    <ul class="timeline-page__toc-sublist">
+                                        {% for h3 in h2.children %}
+                                        <li class="timeline-page__toc-item timeline-page__toc-item--level-3">
+                                            <a href="#{{ h3.id }}" class="timeline-page__toc-link">{{ h3.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
                             {% endif %}
                         </li>
                         {% endfor %}
-                    </ul>
-                </section>
-                {% endif %}
 
-                <!-- Related Content -->
-                {% include "partials/related-content.html" %}
-            </article>
-        </main>
+                        {# Mirror the Read Next + Read Also discovery blocks
+                           in the TOC so the reader sees the full reading flow. #}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1 timeline-page__toc-item--read-next">
+                            <a href="#read-next-title" class="timeline-page__toc-link">{{ trans(key="readNext", default="Read Next") }}</a>
+                        </li>
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1 timeline-page__toc-item--read-also">
+                            <a href="#read-also-title" class="timeline-page__toc-link">{{ trans(key="readAlso", default="Read Also") }}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+        </aside>
     </div>
 </div>
+
+<script>
+(function () {
+    // Mobile pattern: lift the sidebar TOC into the article body after the
+    // chapter header (Wikipedia mobile flow), and put it back on desktop.
+    const MQ = window.matchMedia('(max-width: 900px)');
+    const toc = document.querySelector('.timeline-page__toc');
+    const sidebar = document.querySelector('.timeline-page__sidebar');
+    const content = document.querySelector('.timeline-page__content');
+    const pageHeader = document.querySelector('.timeline-page__page-header');
+    const firstParagraph = content && content.querySelector(':scope > p');
+
+    function placeToc() {
+        if (!toc || !sidebar) return;
+        if (MQ.matches) {
+            // On mobile: TOC goes after the chapter header, falling back to first body paragraph.
+            if (pageHeader) pageHeader.after(toc);
+            else if (firstParagraph) firstParagraph.after(toc);
+            else if (content) content.prepend(toc);
+            toc.classList.add('timeline-page__toc--inline');
+        } else {
+            // On desktop: TOC returns to the sidebar (after the <header>).
+            const header = sidebar.querySelector('.timeline-page__header');
+            if (header) header.after(toc);
+            else sidebar.appendChild(toc);
+            toc.classList.remove('timeline-page__toc--inline');
+        }
+    }
+
+    placeToc();
+    if (MQ.addEventListener) MQ.addEventListener('change', placeToc);
+    else MQ.addListener(placeToc);
+
+    // Claim-badge state machine — mirrors the wiki page behavior.
+    const badges = Array.from(document.querySelectorAll('.claim-badges .claim-badge'));
+    if (badges.length) {
+        const isExpanded = (b) =>
+            b.classList.contains('claim-badge--active') ||
+            b.classList.contains('claim-badge--expanded') ||
+            b.matches(':hover');
+
+        const collapseInactive = (except) => {
+            badges.forEach((b) => {
+                if (b === except) return;
+                if (!b.classList.contains('claim-badge--active')) {
+                    b.classList.remove('claim-badge--expanded');
+                }
+                b.classList.remove('claim-badge--tooltip-open');
+            });
+        };
+
+        badges.forEach((badge) => {
+            badge.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const expanded = isExpanded(badge);
+
+                if (expanded) {
+                    const willOpen = !badge.classList.contains('claim-badge--tooltip-open');
+                    collapseInactive(badge);
+                    badge.classList.toggle('claim-badge--tooltip-open', willOpen);
+                } else {
+                    collapseInactive(badge);
+                    badge.classList.add('claim-badge--expanded');
+                }
+            });
+
+            badge.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    badge.click();
+                }
+            });
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.claim-badges')) collapseInactive(null);
+        });
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') collapseInactive(null);
+        });
+    }
+
+    // "Copy for LLMs" — fetch raw markdown source and write to clipboard.
+    const copyBtn = document.querySelector('.timeline-page__agent-btn[data-action="copy-md"]');
+    if (copyBtn) {
+        const labelEl = copyBtn.querySelector('.timeline-page__agent-btn-label');
+        const originalLabel = labelEl ? labelEl.textContent : '';
+        copyBtn.addEventListener('click', async () => {
+            const url = copyBtn.getAttribute('data-md-url');
+            if (!url) return;
+            const setLabel = (text, ok) => {
+                if (!labelEl) return;
+                labelEl.textContent = text;
+                copyBtn.classList.toggle('timeline-page__agent-btn--ok', ok === true);
+                copyBtn.classList.toggle('timeline-page__agent-btn--err', ok === false);
+                setTimeout(() => {
+                    labelEl.textContent = originalLabel;
+                    copyBtn.classList.remove('timeline-page__agent-btn--ok', 'timeline-page__agent-btn--err');
+                }, 2000);
+            };
+
+            copyBtn.disabled = true;
+            try {
+                const res = await fetch(url, { mode: 'cors' });
+                if (!res.ok) throw new Error('fetch failed: ' + res.status);
+                const md = await res.text();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(md);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = md;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'absolute';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                setLabel('Copied!', true);
+            } catch (err) {
+                console.warn('Copy for LLMs failed:', err);
+                setLabel('Open instead →', false);
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } finally {
+                copyBtn.disabled = false;
+            }
+        });
+    }
+
+    // Last edit info — fetch the most recent commit for this file from the
+    // GitHub API. Fails silently on rate-limit / network errors.
+    const historyEl = document.querySelector('.timeline-page__history');
+    if (historyEl) {
+        const path = historyEl.getAttribute('data-history-path');
+        if (path) {
+            const apiUrl = `https://api.github.com/repos/wheelofheaven/data-content/commits?path=${encodeURIComponent(path)}&per_page=1`;
+            fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } })
+                .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+                .then((commits) => {
+                    if (!Array.isArray(commits) || commits.length === 0) return;
+                    const latest = commits[0];
+                    const iso = latest && latest.commit && latest.commit.author && latest.commit.author.date;
+                    const author = (latest && latest.author && latest.author.login)
+                        || (latest && latest.commit && latest.commit.author && latest.commit.author.name)
+                        || '';
+                    if (!iso) return;
+
+                    const dateEl = historyEl.querySelector('.timeline-page__history-date');
+                    const authorEl = historyEl.querySelector('.timeline-page__history-author');
+                    const meta = historyEl.querySelector('.timeline-page__history-meta');
+                    if (!dateEl || !meta) return;
+
+                    const d = new Date(iso);
+                    const formatted = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                    dateEl.setAttribute('datetime', iso);
+                    dateEl.setAttribute('title', d.toLocaleString());
+                    dateEl.textContent = formatted;
+                    if (author && authorEl) {
+                        authorEl.textContent = `by ${author}`;
+                    }
+                    meta.hidden = false;
+                })
+                .catch(() => { /* swallow — stays hidden */ });
+        }
+    }
+})();
+</script>
 {% endblock content %}

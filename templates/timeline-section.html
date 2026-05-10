@@ -1,4 +1,6 @@
-{% extends "base.html" %} {% block content %} {% set ages_data =
+{% extends "base.html" %}
+{% import "macros/zodiac.html" as zodiac %}
+{% block content %} {% set ages_data =
 load_data(path="data/ages.json") %}
 <div class="timeline-section" role="region" aria-label="Timeline of World Ages">
     <!-- Sun behind Earth -->
@@ -50,7 +52,7 @@ load_data(path="data/ages.json") %}
     <!-- Integrated Age Card Container -->
     <div class="age-card-container" role="region" aria-label="Current age display">
         <div class="age-card" id="age-card" aria-live="polite" aria-atomic="true">
-            <div class="age-card__symbol" id="age-symbol" aria-hidden="true">♑</div>
+            <div class="age-card__symbol" id="age-symbol" aria-hidden="true">{{ zodiac::icon(name="capricorn", size=36) }}</div>
 
             <div class="age-card__content">
                 <h2 class="age-card__title" id="age-title">Age of Capricorn</h2>
@@ -98,25 +100,16 @@ load_data(path="data/ages.json") %}
             <!-- Age Progress with 12 segments - positioned at bottom of card -->
             <div class="age-progress" role="navigation" aria-label="Age selection">
                 <div class="age-progress__segments" id="age-progress-segments" role="group" aria-label="Age indicators">
-                    <div class="age-progress__segment" data-segment="0">✦</div>
-                    <div class="age-progress__segment" data-segment="1">♑</div>
-                    <div class="age-progress__segment" data-segment="2">♐</div>
-                    <div class="age-progress__segment" data-segment="3">♏</div>
-                    <div class="age-progress__segment" data-segment="4">♎</div>
-                    <div class="age-progress__segment" data-segment="5">♍</div>
-                    <div class="age-progress__segment" data-segment="6">♌</div>
-                    <div class="age-progress__segment" data-segment="7">♋</div>
-                    <div class="age-progress__segment" data-segment="8">♊</div>
-                    <div class="age-progress__segment" data-segment="9">♉</div>
-                    <div class="age-progress__segment" data-segment="10">
-                        ♈
+                    {% for age in ages_data %}
+                    <div class="age-progress__segment" data-segment="{{ loop.index0 }}">
+                        {% if age.link == "/timeline/in-the-beginning" %}
+                        ✦
+                        {% else %}
+                        {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
+                        {{ zodiac::icon(name=zslug, size=14) }}
+                        {% endif %}
                     </div>
-                    <div class="age-progress__segment" data-segment="11">
-                        ♓
-                    </div>
-                    <div class="age-progress__segment" data-segment="12">
-                        ♒
-                    </div>
+                    {% endfor %}
                 </div>
 
                 <!-- Age Selector Dropdown -->
@@ -136,9 +129,14 @@ load_data(path="data/ages.json") %}
                         data-age-index="{{ loop.index }}"
                         data-age-color="{{ age.color }}"
                     >
-                        <span class="age-selector__option-symbol"
-                            >{{ age.symbol }}</span
-                        >
+                        <span class="age-selector__option-symbol">
+                            {% if age.link == "/timeline/in-the-beginning" %}
+                            ✦
+                            {% else %}
+                            {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
+                            {{ zodiac::icon(name=zslug, size=18) }}
+                            {% endif %}
+                        </span>
                         <span>{{ age.name }}</span>
                     </button>
                     {% endfor %}
@@ -302,7 +300,12 @@ load_data(path="data/ages.json") %}
                     <div class="world-age-card__content">
                         <div class="world-age-card__header">
                             <div class="world-age-card__symbol">
-                                {{ age.symbol }}
+                                {% if age.link == "/timeline/in-the-beginning" %}
+                                ✦
+                                {% else %}
+                                {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
+                                {{ zodiac::icon(name=zslug, size=30) }}
+                                {% endif %}
                             </div>
                             <h3 class="world-age-card__title">
                                 {{ age.name }}
