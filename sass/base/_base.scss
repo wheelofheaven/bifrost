@@ -264,6 +264,17 @@ textarea {
     background: transparent;
 }
 
+// Text selection color — pastel orange across both themes
+::selection {
+    background-color: #ffd1a4;
+    color: #1a1a1a;
+}
+
+::-moz-selection {
+    background-color: #ffd1a4;
+    color: #1a1a1a;
+}
+
 // =============================================================================
 // Language-specific typography optimizations
 // =============================================================================

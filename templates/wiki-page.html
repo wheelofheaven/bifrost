@@ -187,10 +187,10 @@
                         </svg>
                     </summary>
                     <dl class="wiki__infobox-list">
-                        {% for row in page.extra.infobox %}
+                        {% for key, value in page.extra.infobox %}
                         <div class="wiki__infobox-row">
-                            <dt class="wiki__infobox-key">{{ row.key }}</dt>
-                            <dd class="wiki__infobox-value">{{ row.value | markdown(inline=true) | safe }}</dd>
+                            <dt class="wiki__infobox-key">{{ key }}</dt>
+                            <dd class="wiki__infobox-value">{{ value | markdown(inline=true) | safe }}</dd>
                         </div>
                         {% endfor %}
                     </dl>
