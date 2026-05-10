@@ -239,6 +239,51 @@
     }
 }
 
+// ---- Legend variant ----
+// `.claim-badges--legend` renders the full set as a static educational
+// key (used in landing §6 "The Method"). All four badges sit colored,
+// expanded, and non-collapsing — the canonical interactive behavior is
+// disabled so the row reads as a glossary, not a control. Tooltips stay
+// available on click for the curious.
+.claim-badges--legend {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    justify-content: center;
+    margin: 1.5rem auto 0;
+
+    .claim-badge {
+        cursor: help;
+        padding: 0.375rem 0.875rem;
+        font-size: v.$font-size-sm;
+    }
+
+    // The legend is informational; never collapse, never mute.
+    .claim-badge__rest {
+        max-width: 8rem;
+        opacity: 1;
+    }
+
+    // Tooltip on hover/focus for any badge in the legend (the canonical
+    // version only opens for `--active` — here every badge IS active).
+    .claim-badge:hover .claim-badge__tooltip,
+    .claim-badge:focus-visible .claim-badge__tooltip,
+    .claim-badge--tooltip-open .claim-badge__tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+}
+
+// Suppress the global `:has()` collapse rule when the parent is a
+// legend — every badge is active and should stay expanded regardless of
+// which one the cursor is over.
+.claim-badges--legend:has(.claim-badge:is(:hover, :focus-within, .claim-badge--expanded))
+    .claim-badge--active:not(:hover):not(:focus-within) .claim-badge__rest {
+    max-width: 8rem;
+    opacity: 1;
+}
+
 // ---- Inline TOC variant: when JS lifts the TOC into the article body on
 //      mobile, it gets the modifier .wiki__toc--inline. ----
 .wiki__toc--inline {

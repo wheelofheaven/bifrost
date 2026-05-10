@@ -20,38 +20,43 @@
 
    See .claude/rules/content.md and .claude/plans/strategy-decisions.md (#11). #}
 
-{% macro render(claim_type="") %}
-<div class="claim-badges" role="group" aria-label="Claim type for this entry">
-    <span class="claim-badge claim-badge--direct{% if claim_type == 'direct' %} claim-badge--active{% endif %}"
+{% macro render(claim_type="", legend=false) %}
+{# `legend=true` renders the full set as a static educational key — all
+   four badges colored, expanded, and non-collapsing (used in landing
+   §6 "The Method"). The default call (legend=false) keeps the
+   interactive entry-page behavior: only `claim_type` is active, others
+   collapse to a single character and expand on hover/focus. #}
+<div class="claim-badges{% if legend %} claim-badges--legend{% endif %}" role="group" aria-label="{% if legend %}Claim types used across this site{% else %}Claim type for this entry{% endif %}">
+    <span class="claim-badge claim-badge--direct{% if legend or claim_type == 'direct' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Direct{% if claim_type == 'direct' %} — this entry{% endif %}">
+          aria-label="Claim type: Direct{% if not legend and claim_type == 'direct' %} — this entry{% endif %}">
         <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">D</span><span class="claim-badge__rest">irect</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
             <span class="claim-badge__tooltip-title">Direct</span>
             <span class="claim-badge__tooltip-body">Established or uncontested across mainstream sources, or a direct description of the project itself.</span>
         </span>
     </span>
-    <span class="claim-badge claim-badge--framework{% if claim_type == 'framework' %} claim-badge--active{% endif %}"
+    <span class="claim-badge claim-badge--framework{% if legend or claim_type == 'framework' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Framework{% if claim_type == 'framework' %} — this entry{% endif %}">
+          aria-label="Claim type: Framework{% if not legend and claim_type == 'framework' %} — this entry{% endif %}">
         <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">F</span><span class="claim-badge__rest">ramework</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
             <span class="claim-badge__tooltip-title">Framework</span>
             <span class="claim-badge__tooltip-body">Foundational premise of the Wheel of Heaven framework. Explicit in the Raëlian canon; not endorsed by mainstream scholarship.</span>
         </span>
     </span>
-    <span class="claim-badge claim-badge--inferred{% if claim_type == 'inferred' %} claim-badge--active{% endif %}"
+    <span class="claim-badge claim-badge--inferred{% if legend or claim_type == 'inferred' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Inferred{% if claim_type == 'inferred' %} — this entry{% endif %}">
+          aria-label="Claim type: Inferred{% if not legend and claim_type == 'inferred' %} — this entry{% endif %}">
         <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">I</span><span class="claim-badge__rest">nferred</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
             <span class="claim-badge__tooltip-title">Inferred</span>
             <span class="claim-badge__tooltip-body">A reasonable reading of comparative material — not stated literally, but consistent with the source.</span>
         </span>
     </span>
-    <span class="claim-badge claim-badge--speculative{% if claim_type == 'speculative' %} claim-badge--active{% endif %}"
+    <span class="claim-badge claim-badge--speculative{% if legend or claim_type == 'speculative' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Speculative{% if claim_type == 'speculative' %} — this entry{% endif %}">
+          aria-label="Claim type: Speculative{% if not legend and claim_type == 'speculative' %} — this entry{% endif %}">
         <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">S</span><span class="claim-badge__rest">peculative</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
             <span class="claim-badge__tooltip-title">Speculative</span>

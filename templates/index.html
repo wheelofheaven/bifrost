@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/zodiac.html" as zodiac %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
 <div class="landing" data-landing>
@@ -269,23 +270,7 @@
             <p class="landing-section__body">
                 {{ trans(key="landingS6Body", lang=detected_lang) | safe }}
             </p>
-            <ul class="landing-method__key" aria-label="{{ trans(key='landingMethodKeyAria', lang=detected_lang) }}">
-                <li class="landing-method__badge landing-method__badge--direct">
-                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeDirectChar", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeDirectRest", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeDirectNote", lang=detected_lang) }}</span>
-                </li>
-                <li class="landing-method__badge landing-method__badge--inferred">
-                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeInferredChar", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeInferredRest", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeInferredNote", lang=detected_lang) }}</span>
-                </li>
-                <li class="landing-method__badge landing-method__badge--speculative">
-                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeSpeculativeChar", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeSpeculativeRest", lang=detected_lang) }}</span>
-                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeSpeculativeNote", lang=detected_lang) }}</span>
-                </li>
-            </ul>
+            {{ claim_badge::render(legend=true) }}
         </div>
         <a href="#section-7" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
