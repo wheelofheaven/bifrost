@@ -46,10 +46,8 @@
         position: relative;
         width: 100%;
         background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
+        border: 1px solid var(--color-border);
         border-radius: 1rem;
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
         box-shadow:
             0 25px 50px rgba(0, 0, 0, 0.25),
             0 0 0 1px rgba(255, 255, 255, 0.05),
@@ -61,15 +59,21 @@
         display: flex;
         flex-direction: column;
 
-        // Background layer with proper rounded corners
+        // Glassmorphism via ::before — same recipe as `.navbar` so the
+        // search overlay sits in the same visual family as the navbar
+        // pill above it: tinted background-color via the theme's
+        // `--color-navbar-bg` plus a 12px blur. Putting the
+        // backdrop-filter on the pseudo (rather than on the container)
+        // matches the navbar's pattern and avoids WebKit's nested
+        // backdrop-filter issues with rounded corners.
         &::before {
             content: "";
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
+            inset: 0;
             border-radius: inherit;
+            background-color: var(--color-navbar-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             z-index: -1;
             pointer-events: none;
         }
@@ -377,42 +381,43 @@
     line-height: normal;
 }
 
-// Body class when modal is open - prevent background scroll but don't blur navbar
+// Body class when modal is open. The modal owns the page; the navbar
+// recedes. We dim *and* disable pointer events on the navbar so that
+// even if a navbar child (e.g. the CTA, which uses backdrop-filter
+// and therefore creates its own stacking context that some browsers
+// hoist above sibling layers) would otherwise paint above the
+// modal's backdrop, it visually fades out and can't be interacted
+// with. Background scroll is locked via `overflow: hidden`.
 .search-modal-open {
     overflow: hidden;
 
-    .navbar {
-        filter: none !important; // Ensure navbar stays sharp
-        backdrop-filter: blur(12px); // Maintain navbar's own blur
-        pointer-events: auto !important; // Force navbar interactions to work
-        z-index: 9999 !important; // Ensure navbar is above everything
+    // Hide the navbar's navigation children so the modal owns focus,
+    // but keep two things visible: the brandmark on the left (always
+    // an anchor to home, useful while the user is searching) and the
+    // inline search input that expands into the navbar as part of
+    // the modal UX. We can't hide the whole `.navbar` and then
+    // un-hide selected children (`opacity` and `visibility` both
+    // inherit through descendants in ways a child can't undo), so we
+    // target every navbar child *except* the paths leading to those
+    // two elements.
+    .navbar > *:not(.navbar__controls):not(.navbar__logo),
+    .navbar__controls > *:not(.navbar__search) {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
     }
-
-    // Disable pointer events on everything else when search modal is open
-    /* TEMP DISABLED TO TEST HOVER
-    * {
-        pointer-events: none !important;
-    }
-
-    .search-modal,
-    .navbar {
-        pointer-events: auto !important;
-    }
-    */
 }
 
 // Enhanced glassmorphism for dark theme
+// Theme-specific tweaks — the glass tint itself is theme-aware via
+// `--color-navbar-bg` on the container's ::before, so the only things
+// we need per theme are the surrounding shadow and the header border.
 [data-theme="dark"] .search-modal {
     &__container {
-        border: 1px solid rgba(255, 255, 255, 0.1);
         box-shadow:
             0 25px 50px rgba(0, 0, 0, 0.5),
             0 0 0 1px rgba(255, 255, 255, 0.02),
             inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-        &::before {
-            background: rgba(27, 31, 34, 0.85);
-        }
     }
 
     &__header {
@@ -425,28 +430,23 @@
     }
 }
 
-// Enhanced glassmorphism for light theme
 [data-theme="light"] .search-modal {
     &__backdrop {
         background-color: rgba(255, 255, 255, 0.5); // Light/white backdrop for light theme
     }
 
+    // Mirror the navbar's direct background-color override so the two
+    // glass surfaces match in light theme. (See `_light.scss` for the
+    // navbar/translation-notice equivalents — same pattern.)
     &__container {
-        // Disable backdrop-filter to prevent grey edges from showing through
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        border: 1px solid rgba(0, 0, 0, 0.1);
+        background-color: var(--color-navbar-bg);
         box-shadow:
             0 20px 40px rgba(0, 0, 0, 0.1),
             0 0 0 1px rgba(0, 0, 0, 0.05);
-
-        &::before {
-            background: #ffffff; // Solid white background with rounded corners
-        }
     }
 
     &__header {
-        background: rgba(248, 249, 250, 0.95);
+        background: transparent;
         border-bottom: 1px solid rgba(0, 0, 0, 0.06);
     }
 
