@@ -6,8 +6,17 @@
 
     {# Pagination dots — fixed sidebar nav. Each dot links to a section
        and highlights when its section is in view (via IntersectionObserver). #}
-    {% set nav_titles = ["The Question", "The Hypothesis", "The Long Arc", "The Cosmic Clock", "Where We Are", "The Method", "Reading Paths", "Coda"] %}
-    <nav class="landing__nav" aria-label="Page sections">
+    {% set nav_titles = [
+        trans(key="landingNav1", lang=detected_lang),
+        trans(key="landingNav2", lang=detected_lang),
+        trans(key="landingNav3", lang=detected_lang),
+        trans(key="landingNav4", lang=detected_lang),
+        trans(key="landingNav5", lang=detected_lang),
+        trans(key="landingNav6", lang=detected_lang),
+        trans(key="landingNav7", lang=detected_lang),
+        trans(key="landingNav8", lang=detected_lang)
+    ] %}
+    <nav class="landing__nav" aria-label="{{ trans(key='landingNavAria', lang=detected_lang) }}">
         <ol class="landing__nav-list">
             {% for title in nav_titles %}
             <li class="landing__nav-item">
@@ -44,16 +53,16 @@
                 {% include "partials/brand/wordmark.html" %}
             </div>
             <h1 class="landing-section__heading landing-section__heading--question">
-                What if the gods of Genesis were a civilization?
+                {{ trans(key="landingS1Heading", lang=detected_lang) }}
             </h1>
             <p class="landing-section__sub">
                 <em class="hebrew">אֱלֹהִים</em><span class="landing-translit">(Elohim)</span>
-                — the Hebrew Bible's word for the figures who created humanity —
-                is a plural noun.
+                — {{ trans(key="landingS1SubLead", lang=detected_lang) }} —
+                {{ trans(key="landingS1SubTrail", lang=detected_lang) }}
             </p>
         </div>
-        <a href="#section-2" class="landing-section__hint" aria-label="Read on">
-            <span>Read on</span>
+        <a href="#section-2" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -77,21 +86,16 @@
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
-            <p class="landing-section__eyebrow">The hypothesis</p>
+            <p class="landing-section__eyebrow">{{ trans(key="landingS2Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
-                An advanced human civilization, not a god.
+                {{ trans(key="landingS2Heading", lang=detected_lang) }}
             </h2>
             <p class="landing-section__body">
-                Wheel of Heaven holds, as a working hypothesis, that the
-                <em>Elohim</em> of the older creation traditions were a small
-                advanced human civilization from elsewhere &mdash; that they came
-                here, prepared the planet, designed life on Earth, and left a
-                record in the religious texts. The site reads those texts through
-                that hypothesis.
+                {{ trans(key="landingS2Body", lang=detected_lang) | safe }}
             </p>
         </div>
-        <a href="#section-3" class="landing-section__hint" aria-label="Continue">
-            <span>Continue</span>
+        <a href="#section-3" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -115,37 +119,34 @@
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
-            <p class="landing-section__eyebrow">The scope</p>
+            <p class="landing-section__eyebrow">{{ trans(key="landingS3Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
-                A project twenty-two thousand years in the making.
+                {{ trans(key="landingS3Heading", lang=detected_lang) }}
             </h2>
             <p class="landing-section__body">
-                On the Wheel of Heaven reading, the work began at the start of
-                the Age of Capricorn, around 19,800 BCE, when a small expedition
-                arrived at a barren Earth and began the long preparation. Twelve
-                precessional ages have since unfolded. We are inside the twelfth.
+                {{ trans(key="landingS3Body", lang=detected_lang) | safe }}
             </p>
             <div class="landing-arc" aria-hidden="true">
                 <div class="landing-arc__line"></div>
                 <div class="landing-arc__marker landing-arc__marker--start">
                     <span class="landing-arc__icon">{{ zodiac::icon(name='capricorn') }}</span>
                     <span class="landing-arc__year">19,800 BCE</span>
-                    <span class="landing-arc__label">Capricorn</span>
+                    <span class="landing-arc__label">{{ trans(key="landingArcCapricorn", lang=detected_lang) }}</span>
                 </div>
                 <div class="landing-arc__marker landing-arc__marker--mid">
                     <span class="landing-arc__icon">{{ zodiac::icon(name='leo') }}</span>
                     <span class="landing-arc__year">~10,000 BCE</span>
-                    <span class="landing-arc__label">Leo</span>
+                    <span class="landing-arc__label">{{ trans(key="landingArcLeo", lang=detected_lang) }}</span>
                 </div>
                 <div class="landing-arc__marker landing-arc__marker--now">
                     <span class="landing-arc__icon">{{ zodiac::icon(name='aquarius') }}</span>
-                    <span class="landing-arc__year">today</span>
-                    <span class="landing-arc__label">Aquarius</span>
+                    <span class="landing-arc__year">{{ trans(key="landingArcToday", lang=detected_lang) }}</span>
+                    <span class="landing-arc__label">{{ trans(key="landingArcAquarius", lang=detected_lang) }}</span>
                 </div>
             </div>
         </div>
-        <a href="#section-4" class="landing-section__hint" aria-label="Continue">
-            <span>Continue</span>
+        <a href="#section-4" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -170,17 +171,12 @@
         </div>
         <div class="landing-section__inner landing-section__inner--clock">
             <div class="landing-section__text">
-                <p class="landing-section__eyebrow">The cosmic clock</p>
+                <p class="landing-section__eyebrow">{{ trans(key="landingS4Eyebrow", lang=detected_lang) }}</p>
                 <h2 class="landing-section__heading">
-                    Twelve ages. Twenty-six thousand years. One arc.
+                    {{ trans(key="landingS4Heading", lang=detected_lang) }}
                 </h2>
                 <p class="landing-section__body">
-                    Earth's axis traces a slow circle in the sky, completing one
-                    full cycle every 25,920 years &mdash; the precession of the
-                    equinoxes. Divided by the twelve constellations of the zodiac,
-                    that cycle yields ages of about 2,160 years each. The ancient
-                    astronomers preserved this clock in their monuments and myths.
-                    The corpus reads the creation traditions across its twelve ages.
+                    {{ trans(key="landingS4Body", lang=detected_lang) | safe }}
                 </p>
             </div>
             {# Order: Aquarius at the top (today), going clockwise back through
@@ -189,7 +185,7 @@
             {% set zodiac_icons = ["aquarius", "capricorn", "sagittarius", "scorpio", "libra", "virgo", "leo", "cancer", "gemini", "taurus", "aries", "pisces"] %}
             {% set zodiac_names = ["Aquarius", "Capricorn", "Sagittarius", "Scorpio", "Libra", "Virgo", "Leo", "Cancer", "Gemini", "Taurus", "Aries", "Pisces"] %}
             {% set zodiac_slugs = ["age-of-aquarius", "age-of-capricorn", "age-of-sagittarius", "age-of-scorpio", "age-of-libra", "age-of-virgo", "age-of-leo", "age-of-cancer", "age-of-gemini", "age-of-taurus", "age-of-aries", "age-of-pisces"] %}
-            <div class="landing-dial" aria-label="The twelve precessional ages">
+            <div class="landing-dial" aria-label="{{ trans(key='landingDialAria', lang=detected_lang) }}">
                 <ol class="landing-dial__ring">
                     {% for icon_name in zodiac_icons %}
                     {% set i = loop.index0 %}
@@ -203,20 +199,20 @@
                             <span class="landing-dial__symbol">{{ zodiac::icon(name=icon_name) }}</span>
                         </a>
                         {% if is_current %}
-                        <span class="landing-dial__sign-label landing-dial__sign-label--top">today</span>
+                        <span class="landing-dial__sign-label landing-dial__sign-label--top">{{ trans(key="landingDialToday", lang=detected_lang) }}</span>
                         {% elif is_opposite %}
-                        <span class="landing-dial__sign-label landing-dial__sign-label--bottom">~13,000 years ago</span>
+                        <span class="landing-dial__sign-label landing-dial__sign-label--bottom">{{ trans(key="landingDialOpposite", lang=detected_lang) }}</span>
                         {% endif %}
                     </li>
                     {% endfor %}
                 </ol>
                 <div class="landing-dial__center" aria-hidden="true">
-                    <span class="landing-dial__center-text">25,920<br>years</span>
+                    <span class="landing-dial__center-text">{{ trans(key="landingDialCenter", lang=detected_lang) | safe }}</span>
                 </div>
             </div>
         </div>
-        <a href="#section-5" class="landing-section__hint" aria-label="Continue">
-            <span>Continue</span>
+        <a href="#section-5" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -224,24 +220,33 @@
     </section>
 
     {# §5 — Where We Are Now #}
-    <section id="section-5" class="landing-section landing-section--now" data-section="5">
+    <section id="section-5" class="landing-section landing-section--now landing-section--video" data-section="5">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                autoplay
+                muted
+                loop
+                playsinline
+                poster="{{ config.extra.cdn_url }}/videos/landing/05-now-poster.jpg"
+                onloadedmetadata="this.playbackRate = 0.5;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/landing/05-now.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner">
             <div class="landing-now__glyph" aria-hidden="true">{{ zodiac::icon(name='aquarius') }}</div>
-            <p class="landing-section__eyebrow">The present age</p>
+            <p class="landing-section__eyebrow">{{ trans(key="landingS5Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
-                You are inside the twelfth age.
+                {{ trans(key="landingS5Heading", lang=detected_lang) }}
             </h2>
             <p class="landing-section__body">
-                The Age of Aquarius opened in the mid-twentieth century. On the
-                corpus's reading, this is the age in which what has been
-                contained is poured out &mdash; the age in which the long memory
-                of the project becomes legible, the age in which humanity becomes
-                scientifically capable of evaluating its own origin. The
-                disclosure is underway.
+                {{ trans(key="landingS5Body", lang=detected_lang) | safe }}
             </p>
         </div>
-        <a href="#section-6" class="landing-section__hint" aria-label="Continue">
-            <span>Continue</span>
+        <a href="#section-6" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -251,38 +256,33 @@
     {# §6 — How the Project Reads #}
     <section id="section-6" class="landing-section landing-section--method" data-section="6">
         <div class="landing-section__inner">
-            <p class="landing-section__eyebrow">The method</p>
+            <p class="landing-section__eyebrow">{{ trans(key="landingS6Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
-                A working hypothesis, not a creed.
+                {{ trans(key="landingS6Heading", lang=detected_lang) }}
             </h2>
             <p class="landing-section__body">
-                The reading is a hypothesis to be tried, not a doctrine to be
-                defended. The corpus reads close to its sources &mdash; Raëlian,
-                biblical, Mesopotamian, Vedic, and others &mdash; with translations
-                named, parallels labeled, and differences preserved. Every page
-                marks its main claim as direct, inferred, or speculative. Where
-                the evidence shifts, the reading shifts.
+                {{ trans(key="landingS6Body", lang=detected_lang) | safe }}
             </p>
-            <ul class="landing-method__key" aria-label="Claim type key">
+            <ul class="landing-method__key" aria-label="{{ trans(key='landingMethodKeyAria', lang=detected_lang) }}">
                 <li class="landing-method__badge landing-method__badge--direct">
-                    <span class="landing-method__badge-char">D</span>
-                    <span class="landing-method__badge-rest">irect</span>
-                    <span class="landing-method__badge-note">explicit in a primary source</span>
+                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeDirectChar", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeDirectRest", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeDirectNote", lang=detected_lang) }}</span>
                 </li>
                 <li class="landing-method__badge landing-method__badge--inferred">
-                    <span class="landing-method__badge-char">I</span>
-                    <span class="landing-method__badge-rest">nferred</span>
-                    <span class="landing-method__badge-note">a reasonable reading of a source</span>
+                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeInferredChar", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeInferredRest", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeInferredNote", lang=detected_lang) }}</span>
                 </li>
                 <li class="landing-method__badge landing-method__badge--speculative">
-                    <span class="landing-method__badge-char">S</span>
-                    <span class="landing-method__badge-rest">peculative</span>
-                    <span class="landing-method__badge-note">interpretive synthesis or hypothesis</span>
+                    <span class="landing-method__badge-char">{{ trans(key="landingBadgeSpeculativeChar", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-rest">{{ trans(key="landingBadgeSpeculativeRest", lang=detected_lang) }}</span>
+                    <span class="landing-method__badge-note">{{ trans(key="landingBadgeSpeculativeNote", lang=detected_lang) }}</span>
                 </li>
             </ul>
         </div>
-        <a href="#section-7" class="landing-section__hint" aria-label="Continue">
-            <span>Continue</span>
+        <a href="#section-7" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -292,9 +292,9 @@
     {# §7 — Reading paths #}
     <section id="section-7" class="landing-section landing-section--paths" data-section="7">
         <div class="landing-section__inner">
-            <p class="landing-section__eyebrow">Reading paths</p>
+            <p class="landing-section__eyebrow">{{ trans(key="landingS7Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
-                Three ways in.
+                {{ trans(key="landingS7Heading", lang=detected_lang) }}
             </h2>
             <div class="landing-paths">
                 <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="landing-paths__item">
@@ -304,12 +304,11 @@
                             <polyline points="12 6 12 12 16 14"/>
                         </svg>
                     </div>
-                    <h3 class="landing-paths__title">The Timeline</h3>
+                    <h3 class="landing-paths__title">{{ trans(key="landingPathTimelineTitle", lang=detected_lang) }}</h3>
                     <p class="landing-paths__desc">
-                        Twenty-six thousand years walked through twelve ages, from
-                        the first arrival in Capricorn to the present-day Aquarius.
+                        {{ trans(key="landingPathTimelineDesc", lang=detected_lang) }}
                     </p>
-                    <span class="landing-paths__cta">Walk the ages
+                    <span class="landing-paths__cta">{{ trans(key="landingPathTimelineCta", lang=detected_lang) }}
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
@@ -323,12 +322,11 @@
                             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
                         </svg>
                     </div>
-                    <h3 class="landing-paths__title">The Library</h3>
+                    <h3 class="landing-paths__title">{{ trans(key="landingPathLibraryTitle", lang=detected_lang) }}</h3>
                     <p class="landing-paths__desc">
-                        The primary texts the corpus reads from, with commentary
-                        and context.
+                        {{ trans(key="landingPathLibraryDesc", lang=detected_lang) }}
                     </p>
-                    <span class="landing-paths__cta">Open the library
+                    <span class="landing-paths__cta">{{ trans(key="landingPathLibraryCta", lang=detected_lang) }}
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
@@ -342,12 +340,11 @@
                             <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                         </svg>
                     </div>
-                    <h3 class="landing-paths__title">The Wiki</h3>
+                    <h3 class="landing-paths__title">{{ trans(key="landingPathWikiTitle", lang=detected_lang) }}</h3>
                     <p class="landing-paths__desc">
-                        Reference entries on Elohim, precession, the figures of
-                        the creation traditions, and the project's own terminology.
+                        {{ trans(key="landingPathWikiDesc", lang=detected_lang) }}
                     </p>
-                    <span class="landing-paths__cta">Browse entries
+                    <span class="landing-paths__cta">{{ trans(key="landingPathWikiCta", lang=detected_lang) }}
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M5 12h14M12 5l7 7-7 7"/>
                         </svg>
@@ -355,8 +352,8 @@
                 </a>
             </div>
         </div>
-        <a href="#section-8" class="landing-section__hint" aria-label="Or finish with the project's own words">
-            <span>Or finish with the project's own words</span>
+        <a href="#section-8" class="landing-section__hint" aria-label="{{ trans(key='landingHintCoda', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintCoda", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
@@ -368,26 +365,22 @@
         <div class="landing-section__inner">
             <blockquote class="landing-coda__quote">
                 <p>
-                    The age is named for its constellation: Aquarius, the
-                    Water-Bearer. The corpus reads it at its most literal level:
-                    the Aquarian age is the age in which what has been contained
-                    is poured out.
+                    {{ trans(key="landingCodaQuote", lang=detected_lang) | safe }}
                 </p>
-                <cite class="landing-coda__cite">&mdash; Wheel of Heaven, Age of Aquarius</cite>
+                <cite class="landing-coda__cite">&mdash; {{ trans(key="landingCodaCite", lang=detected_lang) }}</cite>
             </blockquote>
             <p class="landing-coda__desc">
-                Wheel of Heaven is open-source, multilingual, and free. The text
-                is public. The reading is yours to evaluate.
+                {{ trans(key="landingCodaDesc", lang=detected_lang) }}
             </p>
             <div class="landing-coda__links">
                 <a href="https://github.com/wheelofheaven/www.wheelofheaven.io" class="landing-coda__link" target="_blank" rel="noopener">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                         <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
                     </svg>
-                    GitHub
+                    {{ trans(key="landingCodaGitHub", lang=detected_lang) }}
                 </a>
                 <a href="{{ get_url(path='about', lang=detected_lang) }}" class="landing-coda__link">
-                    About
+                    {{ trans(key="landingCodaAbout", lang=detected_lang) }}
                 </a>
             </div>
         </div>
