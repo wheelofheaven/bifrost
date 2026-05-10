@@ -52,8 +52,12 @@
         z-index: -1;
     }
 
-    // Warm hairline along the top edge — the visual cue that this is
-    // a notice, not just another navbar segment.
+    // Bifrost-rainbow hairline along the top edge — the visual cue
+    // that this is a notice, not just another navbar segment. Steps
+    // through the full project spectrum (yellow → pink → lavender →
+    // mauve → blue → cyan → teal → mint → green) with transparent
+    // fades at the edges so it reads as a single soft band rather
+    // than a hard line.
     &::after {
         content: "";
         position: absolute;
@@ -64,11 +68,18 @@
         background: linear-gradient(
             90deg,
             transparent 0%,
-            #{c.$yellow-400} 20%,
-            #{c.$yellow-400} 80%,
+            #{c.$yellow-500} 12%,
+            #{c.$pink-500} 22%,
+            #{c.$lavender-500} 32%,
+            #{c.$mauve-500} 42%,
+            #{c.$blue-500} 52%,
+            #{c.$cyan-500} 62%,
+            #{c.$teal-500} 72%,
+            #{c.$mint-500} 82%,
+            #{c.$green-500} 92%,
             transparent 100%
         );
-        opacity: 0.6;
+        opacity: 0.7;
     }
 
     &__inner {
