@@ -1,20 +1,26 @@
 @use "../abstracts/variables" as v;
 @use "../base/typography" as typo;
 
+// /read/ — three reading paths in a row + a featured-entries dropdown.
+// Aesthetic mirrors the landing page: hairlines instead of borders, lead-font
+// titles, tech-mono uppercase eyebrows, generous whitespace. Each path is a
+// fully-clickable card linking to its section index.
 .read {
-    max-width: 56rem;
+    max-width: 64rem;
     margin: 0 auto;
     padding: v.$spacing-3xl v.$spacing-lg v.$spacing-2xl;
 
     &__header {
         text-align: center;
-        margin-bottom: v.$spacing-2xl;
+        margin-bottom: v.$spacing-3xl;
     }
 
     &__title {
-        font-family: var(--font-family-body);
+        font-family: var(--font-family-lead);
         font-size: clamp(2rem, 5vw, 3rem);
         font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.15;
         margin: 0 0 v.$spacing-md;
         color: var(--color-text);
     }
@@ -22,21 +28,271 @@
     &__lede {
         font-size: v.$font-size-lg;
         color: var(--color-text-muted);
-        max-width: 40rem;
+        max-width: 44rem;
         margin: 0 auto;
-        line-height: 1.5;
+        line-height: 1.55;
     }
 
-    &__intro {
-        margin: v.$spacing-2xl auto 0;
-        max-width: 44rem;
-        padding: v.$spacing-xl v.$spacing-lg;
-        border-top: 1px solid var(--color-border);
-        border-bottom: 1px solid var(--color-border);
+    // ---- Three reading paths in a row ----
+    &__paths {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 0;
+        margin: 0 auto;
 
-        @media (min-width: 768px) {
-            padding: v.$spacing-2xl v.$spacing-xl;
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
         }
+    }
+
+    &__path {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        padding: v.$spacing-2xl v.$spacing-xl v.$spacing-3xl;
+        text-decoration: none;
+        color: var(--color-text);
+        background: transparent;
+        border-top: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+        transition: background-color 0.25s ease, transform 0.25s ease;
+
+        // Vertical hairline between paths on desktop. We rely on a
+        // left-border on every card and remove it from the first so the
+        // whole row reads as one segmented block, not three orphan tiles.
+        & + & {
+            border-left: 1px solid var(--color-hairline);
+        }
+
+        @media (max-width: 900px) {
+            padding: v.$spacing-xl v.$spacing-md v.$spacing-2xl;
+
+            // On mobile each card is full-width, so the side hairline is
+            // dropped (the top hairline already separates them).
+            & + & {
+                border-left: none;
+                border-top: 1px solid var(--color-hairline);
+                margin-top: -1px; // collapse adjacent borders
+            }
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            outline: none;
+
+            .read__path-arrow {
+                opacity: 1;
+                transform: translateX(4px);
+            }
+
+            .read__path-title {
+                color: var(--color-accent-primary);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: -2px;
+        }
+
+        // The featured (Wheel of Heaven) path gets a subtle accent at the
+        // top — a hairline width of accent color — so the eye lands on
+        // the central narrative first. No fill, no shadow.
+        &--featured {
+            border-top: 1px solid var(--color-accent-primary);
+        }
+    }
+
+    &__path-eyebrow {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--color-text-muted);
+        margin-bottom: v.$spacing-sm;
+    }
+
+    &__path-title {
+        font-family: var(--font-family-lead);
+        font-size: v.$font-size-2xl;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        line-height: 1.2;
+        margin: 0;
+        color: var(--color-text);
+        transition: color 0.2s ease;
+    }
+
+    &__path-desc {
+        font-size: v.$font-size-sm;
+        line-height: 1.55;
+        color: var(--color-text-muted);
+        margin: v.$spacing-sm 0 0;
+    }
+
+    &__path-arrow {
+        position: absolute;
+        bottom: v.$spacing-lg;
+        right: v.$spacing-xl;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-accent-primary);
+        opacity: 0.35;
+        transition: opacity 0.2s ease, transform 0.25s ease;
+
+        svg { width: 1rem; height: 1rem; }
+    }
+
+    // ---- Featured entries dropdown ----
+    // Sits below the paths with a clear gap so it reads as a separate beat.
+    // Uses native <details>/<summary> so the affordance is keyboard-friendly
+    // without JS.
+    &__featured {
+        margin: v.$spacing-3xl auto 0;
+        max-width: 56rem;
+    }
+
+    &__featured-summary {
+        cursor: pointer;
+        list-style: none;
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-xs;
+        padding: v.$spacing-sm 0;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--color-text-muted);
+        transition: color 0.2s ease;
+
+        &::-webkit-details-marker { display: none; }
+        &::marker { content: ""; }
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+            outline: none;
+
+            .read__featured-chevron {
+                color: var(--color-accent-primary);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 4px;
+            border-radius: v.$border-radius-xs;
+        }
+    }
+
+    &__featured-label {
+        // No special styling needed; inherits eyebrow look from summary
+    }
+
+    &__featured-chevron {
+        display: inline-flex;
+        color: var(--color-text-muted);
+        transition: transform 0.25s ease, color 0.2s ease;
+
+        svg { width: 0.875rem; height: 0.875rem; }
+    }
+
+    &__featured[open] &__featured-chevron {
+        transform: rotate(180deg);
+        color: var(--color-accent-primary);
+    }
+
+    &__featured-body {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: v.$spacing-2xl;
+        margin-top: v.$spacing-lg;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-hairline);
+
+        @media (max-width: 768px) {
+            grid-template-columns: 1fr;
+            gap: v.$spacing-xl;
+        }
+    }
+
+    &__featured-group {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-sm;
+    }
+
+    &__featured-group-title {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        color: var(--color-text-muted);
+        margin: 0 0 v.$spacing-xs;
+    }
+
+    &__featured-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-md;
+    }
+
+    &__featured-list a {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        text-decoration: none;
+        color: var(--color-text);
+        transition: transform 0.2s ease;
+
+        &:hover,
+        &:focus {
+            outline: none;
+            transform: translateX(2px);
+
+            .read__featured-item-title {
+                color: var(--color-accent-primary);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 4px;
+            border-radius: v.$border-radius-xs;
+        }
+    }
+
+    &__featured-item-title {
+        font-family: var(--font-family-lead);
+        font-size: v.$font-size-base;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+        color: var(--color-text);
+        transition: color 0.2s ease;
+    }
+
+    &__featured-item-desc {
+        font-size: v.$font-size-sm;
+        line-height: 1.55;
+        color: var(--color-text-muted);
+    }
+
+    // ---- Orientation prose at the bottom ----
+    &__intro {
+        margin: v.$spacing-3xl auto 0;
+        max-width: 44rem;
+        padding: v.$spacing-2xl 0 0;
+        border-top: 1px solid var(--color-hairline);
     }
 
     &__intro-content {
@@ -45,8 +301,10 @@
         color: var(--color-text);
 
         h2 {
+            font-family: var(--font-family-lead);
             font-size: v.$font-size-xl;
             font-weight: 600;
+            letter-spacing: -0.005em;
             margin: v.$spacing-xl 0 v.$spacing-md;
             color: var(--color-text);
             scroll-margin-top: 80px;
@@ -58,222 +316,19 @@
 
         p {
             margin: 0 0 v.$spacing-md;
+            color: var(--color-text-muted);
         }
 
         a {
-            color: var(--color-link, var(--color-accent-primary));
+            color: var(--color-accent-primary);
             text-decoration: underline;
             text-underline-offset: 2px;
+            text-decoration-thickness: 1px;
+            transition: text-decoration-thickness 0.15s ease;
 
             &:hover {
                 text-decoration-thickness: 2px;
             }
         }
-    }
-
-    &__cards {
-        display: flex;
-        flex-direction: column;
-        gap: v.$spacing-lg;
-    }
-
-    &__card {
-        border: 1px solid var(--color-border);
-        border-radius: v.$border-radius-lg;
-        background: var(--color-surface, var(--color-card-bg));
-        overflow: hidden;
-        transition: border-color 0.2s ease, box-shadow 0.2s ease;
-
-        &[open] {
-            border-color: var(--color-accent-primary);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-
-        &:hover:not([open]):not(.read__card--featured) {
-            border-color: var(--color-border-strong, var(--color-border));
-        }
-
-        &--featured {
-            border-color: var(--color-accent-primary);
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
-    }
-
-    &__card-summary {
-        position: relative;
-        padding: v.$spacing-xl v.$spacing-2xl v.$spacing-xl v.$spacing-xl;
-        cursor: pointer;
-        list-style: none;
-        display: flex;
-        flex-direction: column;
-        gap: v.$spacing-2xs;
-
-        // Hide default disclosure marker
-        &::-webkit-details-marker { display: none; }
-        &::marker { content: ""; }
-
-        &:focus-visible {
-            outline: 2px solid var(--color-accent-primary);
-            outline-offset: -2px;
-        }
-
-        &--static {
-            cursor: default;
-            padding-right: v.$spacing-xl;
-
-            &:focus-visible {
-                outline: none;
-            }
-        }
-    }
-
-    &__card-eyebrow {
-        font-size: v.$font-size-xs;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-        color: var(--color-accent-primary);
-    }
-
-    &__card-title {
-        font-family: var(--font-family-body);
-        font-size: v.$font-size-2xl;
-        font-weight: 700;
-        margin: 0;
-        color: var(--color-text);
-    }
-
-    &__card-subtitle {
-        font-size: v.$font-size-base;
-        font-style: italic;
-        color: var(--color-text-muted);
-        margin: 0;
-    }
-
-    &__card-desc {
-        font-size: v.$font-size-base;
-        line-height: 1.55;
-        color: var(--color-text-muted);
-        margin: v.$spacing-xs 0 0;
-    }
-
-    &__card-chevron {
-        position: absolute;
-        top: v.$spacing-xl;
-        right: v.$spacing-lg;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-text-muted);
-        transition: transform 0.25s ease;
-
-        svg { width: 1.5rem; height: 1.5rem; }
-    }
-
-    &__card[open] &__card-chevron {
-        transform: rotate(180deg);
-        color: var(--color-accent-primary);
-    }
-
-    &__card-body {
-        padding: v.$spacing-lg v.$spacing-xl v.$spacing-xl;
-        display: flex;
-        flex-direction: column;
-        gap: v.$spacing-md;
-        border-top: 1px solid var(--color-hairline);
-        background-color: var(--color-background-tertiary);
-    }
-
-    &__sublinks {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__sublink {
-        & + & {
-            border-top: 1px solid rgba(127, 127, 127, 0.3);
-        }
-
-        a {
-            display: flex;
-            flex-direction: column;
-            gap: v.$spacing-2xs;
-            padding: v.$spacing-md v.$spacing-md;
-            color: var(--color-text);
-            text-decoration: none;
-            transition: background-color 0.15s ease, color 0.15s ease;
-
-            &:hover,
-            &:focus {
-                background-color: var(--color-hover);
-                color: var(--color-accent-primary);
-                outline: none;
-            }
-        }
-    }
-
-    &__sublink-title {
-        font-weight: 600;
-        font-size: v.$font-size-base;
-    }
-
-    &__sublink-desc {
-        font-size: v.$font-size-sm;
-        color: var(--color-text-muted);
-        line-height: 1.4;
-    }
-
-    &__sublink-meta {
-        display: inline-flex;
-        align-items: center;
-        gap: v.$spacing-2xs;
-        font-size: v.$font-size-xs;
-        color: var(--color-text-muted);
-        font-family: var(--font-family-body);
-    }
-
-    &__sublink-glyph {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-accent-primary);
-
-        svg {
-            width: 0.875rem;
-            height: 0.875rem;
-        }
-    }
-
-    &__card-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: v.$spacing-xs;
-        align-self: flex-start;
-        margin-top: v.$spacing-xs;
-        padding: v.$spacing-xs v.$spacing-md;
-        font-weight: 600;
-        color: var(--color-accent-primary);
-        text-decoration: none;
-        border-radius: v.$border-radius-sm;
-        transition: background-color 0.15s ease;
-
-        &:hover,
-        &:focus {
-            background-color: var(--color-hover);
-            outline: none;
-        }
-    }
-
-    &__card-arrow {
-        display: inline-flex;
-        transition: transform 0.2s ease;
-        svg { width: 1rem; height: 1rem; }
-    }
-
-    &__card-cta:hover &__card-arrow {
-        transform: translateX(4px);
     }
 }
