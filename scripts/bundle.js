@@ -5,7 +5,6 @@
  * Creates optimized bundles for different page types:
  * - core.bundle.js: Common scripts for all pages
  * - library.bundle.js: Library-specific scripts
- * - timeline.bundle.js: Timeline-specific scripts
  *
  * Vendor files (already minified) are concatenated separately to avoid
  * esbuild's module detection interfering with their UMD patterns.
@@ -37,9 +36,6 @@ const bundles = {
     'library-reader.js',
     'library-search.js',
     'library-study-tools.js',
-  ],
-  'timeline.bundle.js': [
-    'timeline.js',
   ],
 };
 

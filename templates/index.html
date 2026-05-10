@@ -32,6 +32,12 @@
         </ol>
     </nav>
 
+    {# Mobile progress bar — replaces the right-rail dots on narrow viewports.
+       JS sets the fill width based on the active section index. #}
+    <div class="landing__progress" aria-hidden="true">
+        <div class="landing__progress-fill" data-progress-fill></div>
+    </div>
+
     {# §1 — The Opening Question #}
     <section id="section-1" class="landing-section landing-section--question" data-section="1">
         <div class="landing-section__media" aria-hidden="true">
@@ -397,7 +403,10 @@
     // play/pause on the video element so off-screen videos don't burn cycles.
     const dots = document.querySelectorAll('.landing__nav-dot');
     const sections = document.querySelectorAll('.landing-section');
+    const progressFill = document.querySelector('[data-progress-fill]');
     if (!dots.length || !sections.length) return;
+
+    const total = sections.length;
 
     const setActive = (idx) => {
         dots.forEach((d) => {
@@ -406,6 +415,10 @@
                 d.getAttribute('data-section-link') === String(idx)
             );
         });
+        if (progressFill) {
+            const pct = (Number(idx) / total) * 100;
+            progressFill.style.width = pct + '%';
+        }
         sections.forEach((s) => {
             const isActive = s.getAttribute('data-section') === String(idx);
             s.classList.toggle('is-active', isActive);

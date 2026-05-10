@@ -1,365 +1,251 @@
 {% extends "base.html" %}
 {% import "macros/zodiac.html" as zodiac %}
-{% block content %} {% set ages_data =
-load_data(path="data/ages.json") %}
-<div class="timeline-section" role="region" aria-label="Timeline of World Ages">
-    <!-- Sun behind Earth -->
-    <div class="earth-sunrise">
-        <picture>
-            <source srcset="{{ config.extra.cdn_url }}/images/hero/sunrise.avif" type="image/avif">
-            <source srcset="{{ config.extra.cdn_url }}/images/hero/sunrise.webp" type="image/webp">
-            <img src="{{ config.extra.cdn_url }}/images/hero/sunrise.webp" alt="Sun" class="sunrise-image" />
-        </picture>
-    </div>
 
-    <!-- Fixed Earth (SVG) - Two layers for cross-fade transitions -->
-    <div class="earth-container">
-        <svg width="600" height="600" viewBox="0 0 600 600">
-            <defs>
-                <pattern
-                    id="earthTextureA"
-                    patternUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                >
-                    <image
-                        href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-mist.webp"
-                        width="600"
-                        height="600"
-                    />
-                </pattern>
-                <pattern
-                    id="earthTextureB"
-                    patternUnits="objectBoundingBox"
-                    width="1"
-                    height="1"
-                >
-                    <image
-                        href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-mist.webp"
-                        width="600"
-                        height="600"
-                    />
-                </pattern>
-            </defs>
-            <circle cx="300" cy="300" r="300" fill="url(#earthTextureA)" class="earth-layer earth-layer--a" />
-            <circle cx="300" cy="300" r="300" fill="url(#earthTextureB)" class="earth-layer earth-layer--b" opacity="0" />
-        </svg>
-    </div>
+{% block content %}
+{# /timeline/ overview — serial-hero modeled on the landing page.
+   Reuses .landing / .landing-section so scroll-snap, pagination dots, and
+   the IntersectionObserver-driven active state all work without duplication.
 
-    <!-- Scrolling Starmap Background - CSS repeat-x handles seamless tiling -->
-    <div class="starmap-background" id="starmap-background"></div>
+   Sections:
+   §1  Opening — "Twelve precessional ages" (intro)
+   §2..§14  One section per ages.json entry (In-the-beginning + 12 ages),
+            in chronological order.
+#}
+{% set ages_data = load_data(path="data/ages.json") %}
 
-    <!-- Integrated Age Card Container -->
-    <div class="age-card-container" role="region" aria-label="Current age display">
-        <div class="age-card" id="age-card" aria-live="polite" aria-atomic="true">
-            <div class="age-card__symbol" id="age-symbol" aria-hidden="true">{{ zodiac::icon(name="capricorn", size=36) }}</div>
+<div class="landing landing--timeline-overview" data-landing>
 
-            <div class="age-card__content">
-                <h2 class="age-card__title" id="age-title">Age of Capricorn</h2>
-                <div class="age-card__timespan" id="age-timespan" aria-label="Time period">
-                    21810 BC → 19650 BC
-                </div>
-                <div class="age-card__description" id="age-description" data-ai-summary="true">
-                    Synthetic life engineering on the Elohim home planet with
-                    the inevitable escape of synthetic 'monster' lifeforms.
-                    Earth discovered, exploration. Known as the 1st day of
-                    Creation (Genesis)
-                </div>
+    {# Pagination dots — desktop side rail. Mobile gets a thin top progress
+       bar (rendered separately below).
 
-                <!-- Images section -->
-                <div class="age-card__images" id="age-card-images">
-                    <!-- Up to 3 landscape images will be inserted here dynamically -->
-                </div>
-
-                <div class="age-card__footer">
-                    <a
-                        href="/timeline/age-of-capricorn"
-                        class="age-card__link"
-                        id="age-link"
-                    >
-                        Explore This Age
-                        <svg
-                            class="age-card__link-icon"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 16 16"
-                            fill="none"
-                        >
-                            <path
-                                d="M6 12L10 8L6 4"
-                                stroke="currentColor"
-                                stroke-width="2"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
-                            />
-                        </svg>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Age Progress with 12 segments - positioned at bottom of card -->
-            <div class="age-progress" role="navigation" aria-label="Age selection">
-                <div class="age-progress__segments" id="age-progress-segments" role="group" aria-label="Age indicators">
-                    {% for age in ages_data %}
-                    <div class="age-progress__segment" data-segment="{{ loop.index0 }}">
+       Numbering and anchor scheme — the displayed number tracks the canonical
+       chronology rather than DOM position so the URL anchors are typeable
+       and intuitive: /timeline/#1 → Age of Capricorn, /timeline/#12 → Age of
+       Aquarius, /timeline/#0 → In the Beginning. The opening section uses
+       /timeline/#start and shows no number on its dot. #}
+    <nav class="landing__nav landing__nav--timeline" aria-label="Timeline section navigation">
+        <ol class="landing__nav-list">
+            <li class="landing__nav-item">
+                <a href="#start"
+                   class="landing__nav-dot landing__nav-dot--header"
+                   data-section-link="1"
+                   aria-label="Opening — {{ section.title }}">
+                    <span class="landing__nav-dot-year landing__nav-dot-year--label" aria-hidden="true">{{ trans(key="timelineYearLabel", lang=detected_lang) }}</span>
+                    <span class="landing__nav-dot-glyph" aria-hidden="true"></span>
+                    <span class="landing__nav-dot-title">{{ section.title }}</span>
+                </a>
+            </li>
+            {% for age in ages_data %}
+            {# Slug-based anchors so URLs are speakable: /timeline/#age-of-capricorn,
+               /timeline/#in-the-beginning, etc. #}
+            {% set slug = age.link | split(pat="/") | nth(n=2) %}
+            {# Strip the leading minus / en-dash from age.start. The chronology
+               makes BC vs AD legible from context, and the dot has limited
+               horizontal space. Aquarius (1950) prints as is. #}
+            {% set start_label = age.start | replace(from="−", to="") | replace(from="-", to="") %}
+            {% set zslug = slug | replace(from="age-of-", to="") %}
+            <li class="landing__nav-item">
+                <a href="#{{ slug }}"
+                   class="landing__nav-dot"
+                   data-section-link="{{ loop.index + 1 }}"
+                   aria-label="{{ age.name }} — {{ start_label }}">
+                    <span class="landing__nav-dot-year" aria-hidden="true">{{ start_label }}</span>
+                    <span class="landing__nav-dot-glyph" aria-hidden="true">
                         {% if age.link == "/timeline/in-the-beginning" %}
                         ✦
                         {% else %}
-                        {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
-                        {{ zodiac::icon(name=zslug, size=14) }}
+                        {{ zodiac::icon(name=zslug, size=12) }}
                         {% endif %}
-                    </div>
-                    {% endfor %}
-                </div>
+                    </span>
+                    <span class="landing__nav-dot-title">{{ age.name }}</span>
+                </a>
+            </li>
+            {% endfor %}
+        </ol>
+    </nav>
 
-                <!-- Age Selector Dropdown -->
-                <div class="age-selector__dropdown" id="age-selector-dropdown">
-                    <!-- In the beginning entry -->
-                    <button
-                        class="age-selector__option"
-                        data-age-index="0"
-                        data-age-color="yellow"
-                    >
-                        <span class="age-selector__option-symbol">✦</span>
-                        <span>In the beginning...</span>
-                    </button>
-                    {% for age in ages_data %}
-                    <button
-                        class="age-selector__option"
-                        data-age-index="{{ loop.index }}"
-                        data-age-color="{{ age.color }}"
-                    >
-                        <span class="age-selector__option-symbol">
-                            {% if age.link == "/timeline/in-the-beginning" %}
-                            ✦
-                            {% else %}
-                            {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
-                            {{ zodiac::icon(name=zslug, size=18) }}
-                            {% endif %}
-                        </span>
-                        <span>{{ age.name }}</span>
-                    </button>
-                    {% endfor %}
-                </div>
-            </div>
+    {# Mobile progress bar — thin hairline at the top that fills based on
+       the active section. JS toggles --active on the same data-section-link
+       integer used for the desktop dots, but here we render a single bar
+       whose width is computed from the active index. #}
+    <div class="landing__progress" aria-hidden="true">
+        <div class="landing__progress-fill" data-progress-fill></div>
+    </div>
+
+    {# Opening — id="start" so the URL anchor is typeable.
+       The hint targets the first age's slug (in-the-beginning). #}
+    {% set first_age = ages_data | first %}
+    {% set first_slug = first_age.link | split(pat="/") | nth(n=2) %}
+    <section id="start" class="landing-section landing-section--timeline-opening" data-section="1">
+        <div class="landing-section__inner">
+            <span class="landing-section__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
+            <h1 class="landing-section__heading landing-section__heading--question">{{ section.title }}</h1>
+            {% if section.description %}
+            <p class="landing-section__sub">{{ section.description }}</p>
+            {% endif %}
         </div>
-
-        <!-- Navigation buttons AFTER card so they paint on top (DOM order) -->
-        <button
-            class="timeline-nav__btn timeline-nav__btn--prev"
-            id="nav-prev"
-            aria-label="Navigate to previous age"
-        >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                    d="M15 18L9 12L15 6"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
+        <a href="#{{ first_slug }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
             </svg>
-        </button>
+        </a>
+    </section>
 
-        <button
-            class="timeline-nav__btn timeline-nav__btn--next"
-            id="nav-next"
-            aria-label="Navigate to next age"
-        >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                    d="M9 6L15 12L9 18"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                />
-            </svg>
-        </button>
-    </div>
-</div>
-
-<!-- Horizontal Timeline Content -->
-<div class="timeline-content" id="timeline-content">
-    <!-- In the beginning section -->
-    <div class="timeline-age-section" data-age-index="0">
-        <!-- Each age section is 100vw wide -->
-    </div>
+    {# One section per age, chronological.
+       id is the chapter slug (in-the-beginning, age-of-capricorn, …) so URL
+       anchors are speakable. data-section stays as DOM position (1..14) so
+       the IntersectionObserver maths and the progress-bar fill stay simple. #}
     {% for age in ages_data %}
-    <div class="timeline-age-section" data-age-index="{{ loop.index }}">
-        <!-- Each age section is 100vw wide -->
-    </div>
+    {% set idx = loop.index + 1 %}
+    {% set is_last = loop.last %}
+    {% set slug = age.link | split(pat="/") | nth(n=2) %}
+    {% set zslug = slug | replace(from="age-of-", to="") %}
+    {# Look-ahead for the hint anchor pointing at the next age (if any). #}
+    {% if not is_last %}
+        {% set next_age = ages_data | nth(n=loop.index) %}
+        {% set next_slug = next_age.link | split(pat="/") | nth(n=2) %}
+    {% endif %}
+    {% set start_year = age.start | replace(from="−", to="") | int %}
+    {% set end_year = age.end | replace(from="−", to="") | int %}
+    {% set start_label = start_year ~ " BC" %}
+    {% if not (age.start is starting_with("−")) %}
+        {% set start_label = start_year ~ " AD" %}
+    {% endif %}
+    {% set end_label = end_year ~ " BC" %}
+    {% if not (age.end is starting_with("−")) %}
+        {% set end_label = end_year ~ " AD" %}
+    {% endif %}
+
+    <section id="{{ slug }}"
+             class="landing-section landing-section--timeline-age landing-section--video"
+             data-section="{{ idx }}"
+             data-age-color="{{ age.color }}">
+        <div class="landing-section__media" aria-hidden="true">
+            {% if age.earth_texture %}
+            <img class="landing-section__bg-image"
+                 src="{{ age.earth_texture }}"
+                 alt=""
+                 loading="lazy"
+                 decoding="async">
+            {% endif %}
+            <div class="landing-section__overlay"></div>
+        </div>
+        <div class="landing-section__inner">
+            <div class="landing-section__zodiac" aria-hidden="true">
+                {% if age.link == "/timeline/in-the-beginning" %}
+                <span class="landing-section__zodiac-sparkle">✦</span>
+                {% else %}
+                {{ zodiac::icon(name=zslug, size=72) }}
+                {% endif %}
+            </div>
+            <span class="landing-section__eyebrow">{{ start_label }} → {{ end_label }}</span>
+            <h2 class="landing-section__heading">{{ age.name }}</h2>
+            <p class="landing-section__sub">{{ age.event }}</p>
+            <a href="{{ age.link }}/" class="landing-section__cta">
+                <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+        </div>
+        {% if not is_last %}
+        <a href="#{{ next_slug }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+        {% endif %}
+    </section>
     {% endfor %}
 </div>
 
-<script src="{{ get_url(path='js/dist/timeline.bundle.js') }}"></script>
 <script>
-// Space overlay detection for light theme readability
-(function() {
-    const worldAgesSection = document.querySelector('.world-ages-section');
-    if (!worldAgesSection) return;
+(function () {
+    "use strict";
+    // Drives three things off the same "active section" signal: pagination
+    // dot highlight (desktop), top progress bar fill (mobile), and the
+    // `is-active` class on the section (which fades the pinned background
+    // in/out via CSS).
+    const dots = document.querySelectorAll('.landing__nav-dot');
+    const sections = document.querySelectorAll('.landing-section');
+    const progressFill = document.querySelector('[data-progress-fill]');
+    if (!sections.length) return;
 
-    function updateSpaceOverlay() {
-        const isLightTheme = document.documentElement.getAttribute('data-theme') === 'light';
-        const rect = worldAgesSection.getBoundingClientRect();
-        // User is in space section if world-ages-section hasn't reached the top of viewport yet
-        const inSpaceSection = rect.top > 100;
+    const total = sections.length;
 
-        if (isLightTheme && inSpaceSection) {
-            document.body.classList.add('timeline-space-overlay');
-        } else {
-            document.body.classList.remove('timeline-space-overlay');
+    // Track which sections are currently intersecting so we can detect when
+    // the user has scrolled past every section (into the footer) and clear
+    // the active state — otherwise the last section's fixed bg-image stays
+    // at full opacity covering the footer.
+    const intersecting = new Set();
+
+    const setActive = (idx) => {
+        if (idx === null) {
+            // Past all sections — clear active markers but leave the
+            // progress bar at its last value (you've read everything).
+            dots.forEach((d) => d.classList.remove('landing__nav-dot--active'));
+            sections.forEach((s) => s.classList.remove('is-active'));
+            return;
         }
-    }
+        dots.forEach((d) => {
+            d.classList.toggle(
+                'landing__nav-dot--active',
+                d.getAttribute('data-section-link') === String(idx)
+            );
+        });
+        sections.forEach((s) => {
+            const isActive = s.getAttribute('data-section') === String(idx);
+            s.classList.toggle('is-active', isActive);
+        });
+        if (progressFill) {
+            const pct = (Number(idx) / total) * 100;
+            progressFill.style.width = pct + '%';
+        }
+    };
 
-    // Run on scroll
-    window.addEventListener('scroll', updateSpaceOverlay, { passive: true });
+    const observer = new IntersectionObserver(
+        (entries) => {
+            entries.forEach((entry) => {
+                const id = entry.target.getAttribute('data-section');
+                if (entry.isIntersecting) intersecting.add(id);
+                else intersecting.delete(id);
+            });
 
-    // Run on theme change
-    const observer = new MutationObserver(updateSpaceOverlay);
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+            let best = null;
+            entries.forEach((entry) => {
+                if (entry.isIntersecting) {
+                    if (!best || entry.intersectionRatio > best.intersectionRatio) {
+                        best = entry;
+                    }
+                }
+            });
 
-    // Initial check
-    updateSpaceOverlay();
+            if (best) {
+                setActive(best.target.getAttribute('data-section'));
+            } else if (intersecting.size === 0) {
+                setActive(null);
+            }
+        },
+        { threshold: [0.4, 0.6, 0.8], rootMargin: '-10% 0px -10% 0px' }
+    );
+
+    sections.forEach((s) => observer.observe(s));
+
+    // Seed from whichever section is under viewport centre on first paint.
+    const seedActive = () => {
+        const mid = window.innerHeight / 2;
+        for (const s of sections) {
+            const r = s.getBoundingClientRect();
+            if (r.top <= mid && r.bottom >= mid) {
+                setActive(s.getAttribute('data-section'));
+                return;
+            }
+        }
+    };
+    seedActive();
 })();
 </script>
-
-<!-- World Ages Cards Section -->
-<section class="world-ages-section" aria-labelledby="world-ages-heading">
-    <div class="world-ages-section__container">
-        <header class="world-ages-section__header">
-            <h2 class="world-ages-section__title" id="world-ages-heading">Explore the World Ages</h2>
-            <p class="world-ages-section__description">
-                Dive deeper into each cosmic age and discover the events that
-                shaped our world's history.
-            </p>
-        </header>
-
-        <div class="world-ages-section__grid" role="list" aria-label="World ages">
-            <!-- In the beginning card -->
-            <article class="world-age-card" data-age-color="yellow" role="listitem">
-                <a
-                    href="/timeline/in-the-beginning"
-                    class="world-age-card__link"
-                >
-                    <div class="world-age-card__content">
-                        <div class="world-age-card__header">
-                            <div class="world-age-card__symbol">✦</div>
-                            <h3 class="world-age-card__title">
-                                In the beginning...
-                            </h3>
-                        </div>
-
-                        <div class="world-age-card__timespan">
-                            23970 BC
-                            <span class="world-age-card__separator"> → </span>
-                            21810 BC
-                        </div>
-
-                        <p class="world-age-card__description">
-                            Before time began, in the vast expanse of the
-                            cosmos, the Elohim civilization flourished. Advanced
-                            beings who mastered science and creation, they would
-                            soon discover our world and begin the greatest
-                            experiment in galactic history.
-                        </p>
-
-                        <div class="world-age-card__footer">
-                            <span class="world-age-card__read-more">
-                                Explore Age
-                                <svg
-                                    class="world-age-card__arrow"
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <polyline
-                                        points="9,18 15,12 9,6"
-                                    ></polyline>
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Images displayed side by side -->
-                    <div
-                        class="world-age-card__images"
-                        id="world-age-images-beginning"
-                    >
-                        <!-- Images will be populated by JavaScript -->
-                    </div>
-                </a>
-            </article>
-
-            {% for age in ages_data %}
-            <article class="world-age-card" data-age-color="{{ age.color }}" role="listitem">
-                <a href="{{ age.link }}" class="world-age-card__link">
-                    <div class="world-age-card__content">
-                        <div class="world-age-card__header">
-                            <div class="world-age-card__symbol">
-                                {% if age.link == "/timeline/in-the-beginning" %}
-                                ✦
-                                {% else %}
-                                {% set zslug = age.link | replace(from="/timeline/age-of-", to="") %}
-                                {{ zodiac::icon(name=zslug, size=30) }}
-                                {% endif %}
-                            </div>
-                            <h3 class="world-age-card__title">
-                                {{ age.name }}
-                            </h3>
-                        </div>
-
-                        <div class="world-age-card__timespan">
-                            {% set start_year = age.start | replace(from="−",
-                            to="") | int %} {% if age.start is
-                            starting_with("−") %} {{ start_year }} BC {% else %}
-                            {{ start_year }} AD {% endif %}
-                            <span class="world-age-card__separator"> → </span>
-                            {% set end_year = age.end | replace(from="−", to="")
-                            | int %} {% if age.end is starting_with("−") %} {{
-                            end_year }} BC {% else %} {{ end_year }} AD {% endif
-                            %}
-                        </div>
-
-                        <p class="world-age-card__description">
-                            {{ age.event }}
-                        </p>
-
-                        <div class="world-age-card__footer">
-                            <span class="world-age-card__read-more">
-                                Explore Age
-                                <svg
-                                    class="world-age-card__arrow"
-                                    width="16"
-                                    height="16"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    stroke-width="2"
-                                >
-                                    <polyline
-                                        points="9,18 15,12 9,6"
-                                    ></polyline>
-                                </svg>
-                            </span>
-                        </div>
-                    </div>
-
-                    <!-- Images displayed side by side -->
-                    <div
-                        class="world-age-card__images"
-                        id="world-age-images-{{ loop.index }}"
-                    >
-                        <!-- Images will be populated by JavaScript -->
-                    </div>
-                </a>
-            </article>
-            {% endfor %}
-        </div>
-    </div>
-</section>
-
 {% endblock content %}

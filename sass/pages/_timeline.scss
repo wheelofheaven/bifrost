@@ -1,1343 +1,277 @@
-// Timeline Section - Immersive Experience
+// /timeline/ overview — serial-hero stack of 14 cinematic sections.
 //
-// Interactive storytelling timeline with Earth animation and smooth scroll transitions
+// Reuses the `.landing` / `.landing-section` system from _home.scss so the
+// scroll-snap, pagination dots, IntersectionObserver, and section transitions
+// all just work. This file only adds the timeline-specific extras:
+//
+// - Image background support (`.landing-section__bg-image`) — analogous to
+//   the landing's video backgrounds, but without the video element. Uses the
+//   `earth_texture` URL from ages.json.
+// - Zodiac glyph block placed inside `.landing-section__inner`.
+// - "Read this age" CTA at the bottom of each age section.
+// - Top progress bar shown on mobile in place of the fixed pagination dots.
 
-@use "../abstracts/colors" as colors;
-@use "../abstracts/variables" as vars;
+@use "../abstracts/variables" as v;
 @use "../base/typography" as typo;
 
-// Let body height be content-driven on the timeline page
-// (overrides the global html,body { height: 100% } from reset)
-body:has(.timeline-section) {
-    height: auto;
-    overscroll-behavior-y: none;
-}
-
-// When timeline scroll is locked (JS adds this class), prevent all scrolling.
-// Must apply to both html and body for iOS Safari compatibility.
-html.timeline-scroll-locked,
-html.timeline-scroll-locked body {
-    overflow: hidden;
-    height: 100%;
-}
-
-// Timeline page main element override
-main:has(.timeline-section) {
-    background: var(--color-background) !important;
-    padding: 0 !important;
-    max-width: none !important;
-    position: relative;
-    z-index: 1;
-    overflow: visible;
-    min-height: 100vh;
-}
-
-// Ensure footer renders above the timeline stacking context (z-index 1)
-// box-shadow extends footer background below without adding scroll height
-main:has(.timeline-section) ~ footer {
-    position: relative;
-    z-index: 3;
-    box-shadow: 0 100px 0 0 var(--color-footer-bg);
-}
-
-// Timeline section - proper page section with opaque background
-.timeline-section {
-    position: relative;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    background: var(--color-background);
-    z-index: 1;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-// Timeline content container - horizontal scroller
-.timeline-content {
-    position: absolute;
+// ---- Image-backed sections (no video, just a fixed/cinematic image) ----
+// We piggyback on the existing `.landing-section--video` modifier, which
+// already gives us white text + overlay. The bg-image is a sibling of the
+// (absent) video element inside `.landing-section__media`.
+.landing-section__bg-image {
+    position: fixed;
     top: 0;
     left: 0;
-    width: 1300vw; // 13 ages × 100vw each = 1300vw total width
+    width: 100vw;
     height: 100vh;
-    background: transparent;
-    overflow: visible;
-    display: flex;
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-// Earth Animation Container - Fixed position for constellation alignment
-.earth-container {
-    position: fixed;
-    top: 85%;
-    left: 30%;
-    transform: translate(-50%, -50%);
-    width: 600px;
-    height: 600px;
-    z-index: 6;
-    transition: opacity 0.3s ease;
-
-    @media (max-width: 1200px) {
-        left: 25%;
-        width: 480px;
-        height: 480px;
-    }
-
-    // Mobile overrides in standalone @media (max-width: 768px) block below
-}
-
-.earth-sphere {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    overflow: hidden;
-    box-shadow:
-        0 0 50px rgba(0, 0, 0, 0.3),
-        inset -20px -20px 50px rgba(0, 0, 0, 0.5);
-}
-
-.earth-container svg {
-    width: 100%;
-    height: 100%;
-}
-
-.earth-layer {
-    transition: opacity 1s ease;
-}
-
-// Earth Sunrise - positioned directly above Earth, center at Earth's top edge
-.earth-sunrise {
-    position: fixed;
-    top: calc(85% - 327px); /* Slightly above Earth's top edge */
-    left: 30%;
-    transform: translate(-50%, -50%);
-    width: 200px;
-    height: 200px;
-    pointer-events: none;
-    z-index: 5;
-    transition: opacity 0.3s ease;
-
-    @media (max-width: 1200px) {
-        top: calc(85% - 264px); /* Slightly above Earth's top edge */
-        left: 25%;
-        width: 160px;
-        height: 160px;
-    }
-
-    // Mobile overrides in standalone @media (max-width: 768px) block below
-}
-
-.sunrise-image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    pointer-events: none;
-}
-
-// Integrated Age Card Container
-.age-card-container {
-    position: fixed;
-    top: 10%;
-    right: 5%;
-    width: 450px;
-    z-index: 10;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-
-    @media (max-width: 1200px) {
-        width: 400px;
-        right: 3%;
-    }
-
-    @media (max-width: 768px) {
-        top: 50%;
-        left: 50%;
-        right: auto;
-        transform: translate(-50%, -50%);
-        width: 90%;
-        max-width: 400px;
-    }
-
-    // Navigation buttons positioned on sides of container
-    .timeline-nav__btn {
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 60px;
-        height: 120px;
-        border-radius: vars.$border-radius-lg;
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        backdrop-filter: blur(10px);
-        color: var(--color-accent-primary);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        z-index: 2;
-
-        &:hover {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: var(--color-accent-primary);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        }
-
-        &:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-
-            &:hover {
-                background: transparent;
-                border-color: rgba(255, 255, 255, 0.2);
-                box-shadow: none;
-            }
-        }
-
-        &--prev {
-            left: -10px;
-        }
-
-        &--next {
-            right: -10px;
-        }
-
-        svg {
-            width: 24px;
-            height: 24px;
-        }
-
-        @media (max-width: 768px) {
-            width: 50px;
-            height: 100px;
-
-            &--prev {
-                left: -10px;
-            }
-
-            &--next {
-                right: -10px;
-            }
-
-            svg {
-                width: 20px;
-                height: 20px;
-            }
-        }
-    }
-}
-
-.age-card {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: vars.$border-radius-xl;
-    padding: 2rem;
-    padding-bottom: 5rem; // Extra space for progress bar
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow:
-        0 25px 50px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all 0.4s ease;
-    position: relative;
-    overflow: visible;
-
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: inherit;
-        z-index: -1;
-    }
-
-    &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            var(--age-color, var(--color-accent-primary)),
-            transparent
-        );
-        border-radius: vars.$border-radius-xl vars.$border-radius-xl 0 0;
-    }
-}
-
-.age-card__symbol {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(
-        135deg,
-        var(--age-color, var(--color-accent-primary)),
-        var(--age-color, var(--color-accent-primary)) cc
-    );
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2.5rem;
-    font-family: typo.$font-family-tech;
-    color: #ffffff;
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.3),
-        0 0 0 2px rgba(255, 255, 255, 0.1);
-
-    @media (max-width: 768px) {
-        width: 50px;
-        height: 50px;
-        font-size: 1.25rem;
-        top: 1rem;
-        right: 1rem;
-    }
-}
-
-.age-card__content {
-    margin-top: 1rem;
-}
-
-.age-card__title {
-    font-family: var(--font-family-lead);
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--color-text);
-    margin: 0 0 1rem 0;
-    line-height: 1.2;
-
-    @media (max-width: 768px) {
-        font-size: 1.5rem;
-    }
-}
-
-.age-card__timespan {
-    font-family: typo.$font-family-tech;
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    margin-bottom: 1.5rem;
-    margin-top: 0.5rem;
-
-    @media (max-width: 768px) {
-        font-size: 0.75rem;
-    }
-}
-
-.age-card__separator {
-    color: var(--age-color, var(--color-accent-primary));
-    font-weight: 600;
-    font-size: 1.2em;
-}
-
-.age-card__description {
-    font-size: 1rem;
-    line-height: 1.6;
-    color: var(--color-text);
-    margin-bottom: 2rem;
-    text-align: left;
-
-    @media (max-width: 768px) {
-        font-size: 0.9rem;
-        margin-bottom: 1.5rem;
-    }
-}
-
-.age-card__footer {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-// Age Progress Bar with 12 segments - positioned at bottom of card
-.age-progress {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.1);
-    border-radius: 0 0 vars.$border-radius-xl vars.$border-radius-xl;
-    border-top: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(10px);
-}
-
-.age-progress__segments {
-    display: flex;
-    gap: 3px;
-    height: 18px;
-    background: var(--color-background-tertiary);
-    border-radius: 8px;
-    overflow: visible;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-    cursor: pointer;
-    padding: 2px;
-}
-
-.age-progress__segment {
-    flex: 1;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
-    transition: all 0.3s ease;
-    cursor: pointer;
-    min-width: 12px;
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: typo.$font-family-tech;
-    font-size: 0.5rem;
-    color: var(--color-text-muted);
-
-    &--active {
-        background: var(--age-color, var(--color-accent-primary));
-        box-shadow: 0 0 10px var(--age-color, var(--color-accent-primary));
-        transform: scaleY(1.2);
-        color: var(--color-background);
-    }
-
-    &:hover {
-        background: rgba(255, 255, 255, 0.4);
-        transform: scaleY(1.1);
-        color: var(--color-text);
-    }
-}
-
-// Age selector dropdown (positioned above progress bar)
-.age-selector {
-    position: relative;
-}
-
-.age-selector__dropdown {
-    position: absolute;
-    bottom: calc(100% + 15px);
-    left: 1.25rem;
-    right: 1.25rem;
-    max-height: 350px;
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    border-radius: vars.$border-radius-lg;
-    backdrop-filter: blur(20px) saturate(180%);
-    box-shadow:
-        0 30px 60px rgba(0, 0, 0, 0.4),
-        0 0 0 1px rgba(255, 255, 255, 0.1),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(15px) scale(0.95);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
-    z-index: 100;
-
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.18);
-        border-radius: inherit;
-        z-index: -1;
-    }
-
-    &--open {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0) scale(1);
-    }
-}
-
-.age-selector__option {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    width: 100%;
-    padding: 0.75rem 1rem;
-    min-height: 44px;
-    background: transparent;
-    border: none;
-    color: var(--color-text);
-    font-family: typo.$font-family-tech;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-align: left;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-
-    &:last-child {
-        border-bottom: none;
-    }
-
-    &:hover,
-    &:active {
-        background: rgba(255, 255, 255, 0.1);
-        color: var(--color-accent-primary);
-    }
-}
-
-.age-selector__option-symbol {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 24px;
-    height: 24px;
-    font-size: 1rem;
-    font-family: typo.$font-family-tech;
-}
-
-// Images section
-.age-card__images {
-    margin: 1rem -2rem 0 -2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.age-card__image {
-    width: 100%;
-    height: 120px;
     object-fit: cover;
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    object-position: center;
+    z-index: 1;
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
 }
 
-.age-card__link {
+// Only the active section's image is at full opacity. Same fade pattern
+// the landing's video uses; the `is-active` class is toggled by JS.
+.landing-section.is-active .landing-section__bg-image {
+    opacity: 1;
+}
+
+// ---- Zodiac glyph (large, decorative) inside the section's text column ----
+.landing-section__zodiac {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
-    padding: 1rem 2rem;
-    background: linear-gradient(
-        135deg,
-        var(--age-color, var(--color-accent-primary)),
-        var(--age-color, var(--color-accent-primary)) cc
-    );
-    color: var(--color-background);
-    text-decoration: none;
-    border-radius: vars.$border-radius-full;
+    color: var(--color-accent-primary);
+    margin-bottom: v.$spacing-xs;
+
+    svg {
+        width: 4.5rem;
+        height: 4.5rem;
+    }
+
+    @media (max-width: 768px) {
+        svg {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+    }
+}
+
+.landing-section__zodiac-sparkle {
+    font-family: var(--font-family-lead);
+    font-size: 4rem;
+    line-height: 1;
+    color: var(--color-accent-primary);
+
+    @media (max-width: 768px) {
+        font-size: 3rem;
+    }
+}
+
+// On `.landing-section--video` (which the timeline ages all carry), the
+// global rule sets text colour to white. The zodiac glyph should track the
+// same — it's a stroke-only SVG using currentColor.
+.landing-section--video .landing-section__zodiac {
+    color: #fff;
+}
+
+.landing-section--video .landing-section__zodiac-sparkle {
+    color: #fff;
+}
+
+// ---- Eyebrow (date range) — used by the timeline overview sections ----
+.landing-section__eyebrow {
+    font-family: typo.$font-family-tech;
+    font-size: 0.6875rem;
     font-weight: 600;
-    font-size: 0.875rem;
-    transition: all 0.3s ease;
-    box-shadow:
-        0 8px 24px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(255, 255, 255, 0.1);
-    position: relative;
-    overflow: hidden;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-text-muted);
+    margin: 0;
+}
 
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            rgba(255, 255, 255, 0.3),
-            transparent
-        );
-        transition: left 0.6s ease;
+.landing-section--video .landing-section__eyebrow {
+    color: rgba(255, 255, 255, 0.85);
+}
+
+// ---- "Read this age" CTA ----
+.landing-section__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    margin-top: v.$spacing-md;
+    padding: v.$spacing-sm v.$spacing-lg;
+    border: 1px solid currentColor;
+    border-radius: v.$border-radius-full;
+    font-family: typo.$font-family-tech;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    text-decoration: none;
+    color: var(--color-text);
+    background: transparent;
+    transition: background-color 0.2s ease, transform 0.2s ease, color 0.2s ease;
+
+    svg {
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
     }
 
-    &:hover {
-        transform: translateY(-2px);
-        box-shadow:
-            0 12px 36px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.2);
-        filter: brightness(1.1);
+    &:hover,
+    &:focus-visible {
+        outline: none;
+        background: var(--color-text);
+        color: var(--color-background);
 
-        &::before {
-            left: 100%;
+        svg {
+            transform: translateX(3px);
         }
-
-        .age-card__link-icon {
-            transform: translateX(4px);
-        }
-    }
-
-    &:active {
-        transform: translateY(0);
     }
 }
 
-.age-card__link-icon {
-    transition: transform 0.3s ease;
+// On video sections (white text), the CTA reads white-on-transparent and
+// inverts to white-on-translucent on hover.
+.landing-section--video .landing-section__cta {
+    color: #fff;
+    border-color: rgba(255, 255, 255, 0.7);
+
+    &:hover,
+    &:focus-visible {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
 }
 
-// Scrolling Starmap Background - CSS background-image with repeat-x for seamless tiling
-.starmap-background {
+// ---- Extended pagination dots (timeline overview only) ----
+// On the timeline overview each dot carries three always-visible bits beyond
+// the bullet + title: the age's start year, the canonical age number
+// (0 for In the Beginning, 1..12 for the zodiac ages), and the zodiac glyph.
+// The opening dot's spans render empty so the row's vertical alignment
+// stays consistent.
+.landing__nav--timeline .landing__nav-dot {
+    // Allow the year column to take the natural width of "23970" so columns
+    // line up across all dots regardless of digit count.
+    align-items: baseline;
+    gap: 0.5rem;
+}
+
+.landing__nav-dot-year {
+    order: -1; // sit to the left of the bullet (which is a ::before pseudo with default order 0)
+    font-family: typo.$font-family-tech;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+    opacity: 0.65;
+    text-align: right;
+    min-width: 2.75rem; // fits "23970" with breathing room; keeps bullets vertically aligned
+    transition: opacity 0.2s ease, color 0.2s ease;
+}
+
+.landing__nav-dot-glyph {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    opacity: 0.65;
+    width: 0.875rem;
+    min-width: 0.875rem;
+    transition: opacity 0.2s ease, color 0.2s ease;
+
+    svg {
+        width: 0.875rem;
+        height: 0.875rem;
+    }
+}
+
+// Hover / active states lift opacity on year + glyph too, so the active
+// dot reads as a single confident row.
+.landing__nav-dot:hover .landing__nav-dot-year,
+.landing__nav-dot:hover .landing__nav-dot-glyph,
+.landing__nav-dot--active .landing__nav-dot-year,
+.landing__nav-dot--active .landing__nav-dot-glyph {
+    opacity: 1;
+    color: inherit;
+}
+
+.landing__nav-dot--active .landing__nav-dot-glyph {
+    color: var(--color-accent-primary);
+}
+
+// ---- Header row (the opening section's dot) ----
+// The opening dot acts as a column-label row: "Year" on the left of the
+// bullet, the section title ("Timeline") always visible on the right.
+// The title's default hover-only behaviour is overridden here so both
+// labels read as a stable header for the column underneath.
+.landing__nav-dot--header {
+    // Drop the empty glyph slot so the title sits flush against the bullet
+    // instead of being pushed out by an invisible column.
+    .landing__nav-dot-glyph {
+        display: none;
+    }
+
+    // "Year" and "Timeline" both render as column-header labels — same
+    // tech-mono uppercase treatment so they read as a paired header row.
+    .landing__nav-dot-year--label,
+    .landing__nav-dot-title {
+        font-family: typo.$font-family-tech;
+        font-size: 0.625rem;
+        font-weight: 600;
+        font-style: normal;
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+        color: var(--color-text-muted);
+        opacity: 1;
+    }
+
+    .landing__nav-dot-title {
+        // Override the default hover-only translate so the title sits
+        // statically alongside its left counterpart.
+        transform: translateX(0);
+    }
+}
+
+// ---- Mobile top progress bar ----
+// On the desktop the right-rail dots carry navigation. On mobile (<= 900px)
+// the dots are hidden by the existing rule in _home.scss; the progress bar
+// fills the gap with a thin, low-chrome reading-position indicator.
+.landing__progress {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 1;
-    overflow: hidden;
+    right: 0;
+    height: 2px;
+    background: var(--color-hairline);
+    z-index: 41;
     pointer-events: none;
-    background-image: url("/starmap.svg");
-    background-size: auto 100%;
-    background-repeat: repeat-x;
-    background-position: 0 center;
-    transition: opacity 0.3s ease, transform 0.3s ease,
-        background-position 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display: none;
 
-    // Mobile overrides are in the standalone @media (max-width: 768px) block below
-}
-
-// Timeline Age Sections - Each age takes 100vw
-.timeline-age-section {
-    width: 100vw;
-    height: 100vh;
-    position: relative;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-// Animations
-@keyframes cardGlow {
-    0%,
-    100% {
-        opacity: 0.6;
-    }
-    50% {
-        opacity: 1;
+    @media (max-width: 900px) {
+        display: block;
     }
 }
 
-// Responsive Design
-@media (max-width: 768px) {
-    .timeline-section {
-        height: 100vh;
-        height: 100dvh; // Use dynamic viewport height on mobile
-        min-height: 100vh;
-        position: relative;
-        overflow: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        padding-top: 5rem;
-    }
-
-    .timeline-content {
-        display: none;
-    }
-
-    .starmap-background {
-        position: absolute;
-        top: auto;
-        bottom: -80px; // Push band lower so constellations are more visible below the card
-        left: 0;
-        width: 300%; // Wider than viewport so translateX reveals different parts
-        height: 60%; // Concentrate constellations into a band at the horizon
-        z-index: 1;
-        background-size: auto 100%;
-        background-repeat: repeat-x;
-        background-position: 0 center;
-        transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-        // Fade both edges so constellations don't cut off abruptly
-        mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
-        -webkit-mask-image: linear-gradient(to bottom, transparent, black 25%, black 75%, transparent);
-    }
-
-    .earth-container {
-        position: absolute;
-        top: auto;
-        bottom: -310px; // Push earth further down
-        left: 50%;
-        transform: translateX(-50%);
-        width: 500px;
-        height: 500px;
-        z-index: 3; // Above sunrise and starmap
-        opacity: 1;
-    }
-
-    .earth-sunrise {
-        position: absolute;
-        top: auto;
-        bottom: 130px; // Center of sunrise aligns with Earth's visible top edge
-        left: 50%;
-        transform: translateX(-50%);
-        width: 120px;
-        height: 120px;
-        z-index: 2; // Above starmap (1), behind earth (3)
-        opacity: 1;
-    }
-
-    .age-card-container {
-        position: relative;
-        width: calc(100% - 2rem);
-        max-width: 400px;
-        top: auto;
-        right: auto;
-        left: auto;
-        z-index: 10;
-        isolation: isolate; // Explicit stacking context for reliable z-index
-        background: transparent;
-        margin: 0;
-        margin-bottom: auto; // Push card toward the top of the flex container
-        padding: 0;
-        transform: none;
-
-        // Navigation buttons on mobile — rendered AFTER .age-card in DOM
-        // so they naturally paint on top. No backdrop-filter to avoid
-        // WebKit compositing issues with sibling backdrop-filter layers.
-        .timeline-nav__btn {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 44px;
-            height: 80px;
-            border-radius: 0.75rem;
-            background: rgba(0, 0, 0, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            backdrop-filter: none;
-            z-index: 20;
-            pointer-events: auto;
-
-            &--prev {
-                left: 4px;
-            }
-
-            &--next {
-                right: 4px;
-            }
-
-            svg {
-                width: 20px;
-                height: 20px;
-            }
-        }
-    }
-
-    .age-card {
-        background: rgba(0, 0, 0, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        padding: 1.5rem;
-        padding-bottom: 4.5rem;
-        border-radius: 1rem;
-        margin: 0 auto;
-        max-width: 100%;
-        position: relative;
-        z-index: 1; // Must be below nav buttons (z-index: 20)
-
-        &::before {
-            background: rgba(255, 255, 255, 0.1);
-        }
-    }
-
-    .age-card__symbol {
-        width: 44px;
-        height: 44px;
-        font-size: 1.25rem;
-    }
-
-    .age-card__title {
-        color: rgba(255, 255, 255, 0.95);
-        font-size: 1.25rem;
-        margin-bottom: 0.5rem;
-        padding-right: 50px;
-    }
-
-    .age-card__timespan {
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.8rem;
-        margin-bottom: 0.75rem;
-    }
-
-    .age-card__description {
-        color: rgba(255, 255, 255, 0.85);
-        font-size: 0.875rem;
-        line-height: 1.5;
-        margin-bottom: 1rem;
-        max-height: 120px;
-        overflow-y: auto;
-    }
-
-    .age-card__footer {
-        border-top-color: rgba(255, 255, 255, 0.15);
-        padding-top: 0.75rem;
-    }
-
-    .age-card__link {
-        padding: 0.75rem 1.5rem;
-        font-size: 0.8rem;
-    }
-
-    .age-card__images {
-        margin: 0.75rem -1.5rem 0;
-    }
-
-    .age-card__image {
-        height: 80px;
-
-        &:nth-child(n + 2) {
-            display: none;
-        }
-    }
-
-    .age-progress {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        border-radius: 0 0 1rem 1rem;
-        padding: 0.75rem;
-    }
-
-    .age-progress__segments {
-        height: 28px;
-        gap: 2px;
-        padding: 3px;
-    }
-
-    .age-progress__segment {
-        font-size: 0.55rem;
-        min-width: 16px;
-    }
-
-    .age-selector__dropdown {
-        bottom: calc(100% + 10px);
-        left: 0.75rem;
-        right: 0.75rem;
-        max-height: 280px;
-    }
-
-    // Swipe hint
-    .timeline-section::after {
-        content: "";
-        position: absolute;
-        bottom: 1.5rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 4px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 2px;
-        z-index: 20;
-    }
+.landing__progress-fill {
+    height: 100%;
+    width: 0;
+    background: var(--color-accent-primary);
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-// Accessibility
-@media (prefers-reduced-motion: reduce) {
-    .timeline-section,
-    .starmap-background {
-        transition: none !important;
-    }
-
-    .age-card,
-    .age-card__link,
-    .timeline-nav__btn {
-        transition: none !important;
-    }
-}
-
-// High Contrast Mode
-@media (prefers-contrast: high) {
-    .age-card {
-        background: var(--color-background);
-        border-width: 3px;
-        backdrop-filter: none;
-        box-shadow: none;
-    }
-
-    .timeline-nav__btn,
-    .age-selector__trigger,
-    .age-selector__dropdown {
-        background: var(--color-background);
-        border-width: 3px;
-        backdrop-filter: none;
-        box-shadow: none;
-    }
-
-    .earth-sphere {
-        box-shadow: 0 0 0 3px var(--color-text);
-    }
-}
-
-// Dark Theme Adjustments
-[data-theme="dark"] {
-    --color-cloud-primary: rgba(255, 255, 255, 0.15);
-    --color-cloud-secondary: rgba(255, 255, 255, 0.1);
-    --color-cloud-tertiary: rgba(255, 255, 255, 0.12);
-
-    main:has(.timeline-section) {
-        background: #0a0a0a !important;
-    }
-
-    .timeline-section {
-        background: #0a0a0a !important;
-    }
-
-    .starmap-background {
-        filter: brightness(0.8);
-    }
-
-    .earth-surface {
-        filter: brightness(0.8);
-    }
-
-    .sunrise-image {
-        filter: brightness(0.9);
-    }
-
-    // Enhanced glassmorphism for dark theme
-    .age-card {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.5),
-            0 0 0 1px rgba(255, 255, 255, 0.02),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-        &::before {
-            background: rgba(27, 31, 34, 0.4);
-        }
-    }
-
-    .age-progress {
-        background: rgba(27, 31, 34, 0.4);
-    }
-
-    .age-progress__segments {
-        background: rgba(0, 0, 0, 0.4);
-    }
-
-    .age-selector__dropdown {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.5),
-            0 0 0 1px rgba(255, 255, 255, 0.02),
-            inset 0 1px 0 rgba(255, 255, 255, 0.05);
-
-        &::before {
-            background: rgba(27, 31, 34, 0.4);
-        }
-    }
-}
-
-// Light Theme Adjustments
-[data-theme="light"] {
-    --color-cloud-primary: rgba(255, 255, 255, 0.5);
-    --color-cloud-secondary: rgba(255, 255, 255, 0.4);
-    --color-cloud-tertiary: rgba(255, 255, 255, 0.45);
-
-    main:has(.timeline-section) {
-        background: #f8f9fa !important;
-    }
-
-    .timeline-section {
-        background: #f8f9fa !important;
-    }
-
-    .starmap-background {
-        filter: brightness(1.1);
-    }
-
-    .earth-surface {
-        filter: brightness(1.2);
-    }
-
-    .sunrise-image {
-        filter: brightness(1.1);
-    }
-
-    // Enhanced glassmorphism for light theme
-    .age-card {
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-        &::before {
-            background: rgba(255, 255, 255, 0.25);
-        }
-    }
-
-    .age-progress {
-        background: rgba(255, 255, 255, 0.25);
-    }
-
-    .age-progress__segments {
-        background: rgba(0, 0, 0, 0.2);
-    }
-
-    .age-selector__dropdown {
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        box-shadow:
-            0 25px 50px rgba(0, 0, 0, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-
-        &::before {
-            background: rgba(255, 255, 255, 0.25);
-        }
-    }
-}
-
-// World Ages Cards Section
-.world-ages-section {
-    background: var(--color-background);
-    min-height: 100vh;
-    padding: 4rem 0;
-    position: relative;
-    z-index: 2;
-    transform: translateY(0); // Remove gap by positioning directly adjacent
-    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-top: 0;
-
-    &__container {
-        max-width: 1400px;
-        margin: 0 auto;
-        padding: 0 2rem;
-
-        @media (max-width: 768px) {
-            padding: 0 1rem;
-        }
-    }
-
-    &__header {
-        text-align: center;
-        margin-bottom: 4rem;
-
-        @media (max-width: 768px) {
-            margin-bottom: 3rem;
-        }
-    }
-
-    &__title {
-        font-family: var(--font-family-lead);
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        font-weight: 700;
+// ---- Heading override for timeline-overview opening section ----
+// On the timeline overview, the opening section uses the body background
+// (not a video), so the heading should sit in regular text colour.
+.landing-section--timeline-opening {
+    .landing-section__heading,
+    .landing-section__eyebrow {
         color: var(--color-text);
-        margin: 0 0 1.5rem;
-        line-height: 1.2;
     }
 
-    &__description {
-        font-size: 1.25rem;
+    .landing-section__sub {
         color: var(--color-text-muted);
-        max-width: 700px;
-        margin: 0 auto;
-        line-height: 1.6;
-
-        @media (max-width: 768px) {
-            font-size: 1.125rem;
-        }
-    }
-
-    &__grid {
-        display: flex;
-        flex-direction: column;
-        gap: 3rem;
-        margin-top: 2rem;
-
-        @media (max-width: 768px) {
-            gap: 2rem;
-        }
-    }
-}
-
-// World Age Card Component - Horizontal Layout
-.world-age-card {
-    background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: vars.$border-radius-xl;
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    box-shadow:
-        0 25px 50px rgba(0, 0, 0, 0.25),
-        0 0 0 1px rgba(255, 255, 255, 0.05),
-        inset 0 1px 0 rgba(255, 255, 255, 0.1);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-
-    &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(255, 255, 255, 0.15);
-        border-radius: inherit;
-        z-index: -1;
-    }
-
-    &::after {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(
-            90deg,
-            transparent,
-            var(--age-color, var(--color-accent-primary)),
-            transparent
-        );
-        border-radius: vars.$border-radius-xl vars.$border-radius-xl 0 0;
-    }
-
-    &:hover {
-        transform: translateY(-4px);
-        box-shadow:
-            0 30px 70px rgba(0, 0, 0, 0.3),
-            0 0 0 1px rgba(255, 255, 255, 0.1),
-            inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    }
-
-    // Color mapping
-    &[data-age-color="yellow"] {
-        --age-color: #fbf8cc;
-    }
-    &[data-age-color="pink"] {
-        --age-color: #fde4cf;
-    }
-    &[data-age-color="soft-pink"] {
-        --age-color: #ffcfd2;
-    }
-    &[data-age-color="lavender"] {
-        --age-color: #f1c0e8;
-    }
-    &[data-age-color="mauve"] {
-        --age-color: #cfbaf0;
-    }
-    &[data-age-color="blue"] {
-        --age-color: #a3c4f3;
-    }
-    &[data-age-color="cyan"] {
-        --age-color: #90dbf4;
-    }
-    &[data-age-color="teal"] {
-        --age-color: #8eecf5;
-    }
-    &[data-age-color="mint"] {
-        --age-color: #98f5e1;
-    }
-    &[data-age-color="green"] {
-        --age-color: #b9fbc0;
-    }
-
-    &__link {
-        display: flex;
-        align-items: stretch;
-        padding: 2rem;
-        text-decoration: none;
-        color: inherit;
-        height: 100%;
-        gap: 2rem;
-
-        @media (max-width: 768px) {
-            flex-direction: column;
-            padding: 1.5rem;
-            gap: 1rem;
-        }
-    }
-
-    &__content {
-        flex: 1;
-        display: flex;
-        flex-direction: column;
-        min-width: 0;
-    }
-
-    &__header {
-        display: flex;
-        align-items: center;
-        gap: 1rem;
-        margin-bottom: 1rem;
-    }
-
-    &__symbol {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: 50px;
-        height: 50px;
-        background: linear-gradient(
-            135deg,
-            var(--age-color, var(--color-accent-primary)),
-            var(--age-color, var(--color-accent-primary)) cc
-        );
-        border-radius: 50%;
-        font-size: 1.5rem;
-        font-family: typo.$font-family-tech;
-        color: #ffffff;
-        box-shadow:
-            0 8px 24px rgba(0, 0, 0, 0.3),
-            0 0 0 2px rgba(255, 255, 255, 0.1);
-        flex-shrink: 0;
-
-        @media (max-width: 768px) {
-            width: 40px;
-            height: 40px;
-            font-size: 1.25rem;
-        }
-    }
-
-    &__title {
-        font-family: var(--font-family-lead);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--color-text);
-        margin: 0;
-        line-height: 1.3;
-
-        @media (max-width: 768px) {
-            font-size: 1.25rem;
-        }
-    }
-
-    &__timespan {
-        font-family: typo.$font-family-tech;
-        font-size: 0.875rem;
-        color: var(--color-text-muted);
-        margin-bottom: 1rem;
-
-        @media (max-width: 768px) {
-            font-size: 0.8rem;
-        }
-    }
-
-    &__separator {
-        color: var(--age-color, var(--color-accent-primary));
-        font-weight: 600;
-    }
-
-    &__description {
-        font-size: 1rem;
-        line-height: 1.6;
-        color: var(--color-text);
-        margin: 0 0 auto;
-
-        @media (max-width: 768px) {
-            font-size: 0.9rem;
-        }
-    }
-
-    &__images {
-        display: flex;
-        gap: 0.5rem;
-        min-width: 300px;
-
-        @media (max-width: 768px) {
-            min-width: auto;
-            flex-direction: row;
-            overflow-x: auto;
-        }
-    }
-
-    &__image {
-        flex: 1;
-        height: 150px;
-        object-fit: cover;
-        border-radius: vars.$border-radius-md;
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        min-width: 90px;
-
-        @media (max-width: 768px) {
-            height: 120px;
-            min-width: 120px;
-        }
-    }
-
-    &__footer {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-
-    &__read-more {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: var(--age-color, var(--color-accent-primary));
-        transition: all 0.3s ease;
-    }
-
-    &__arrow {
-        transition: transform 0.3s ease;
-    }
-
-    &:hover &__read-more {
-        gap: 0.75rem;
-    }
-
-    &:hover &__arrow {
-        transform: translateX(4px);
-    }
-}
-
-// Print Styles
-@media print {
-    .timeline-section,
-    .timeline-content {
-        height: auto;
-        overflow: visible;
-        position: static;
-        width: 100%;
-    }
-
-    .earth-container,
-    .timeline-parallax,
-    .timeline-nav,
-    .age-selector,
-    .starmap-background {
-        display: none;
-    }
-
-    .age-card-container {
-        position: static;
-        transform: none;
-        width: 100%;
-        page-break-inside: avoid;
-    }
-
-    .age-card {
-        background: white;
-        color: black;
-        border: 2px solid #333;
-        box-shadow: none;
-        backdrop-filter: none;
-    }
-
-    .world-ages-section {
-        page-break-before: always;
-    }
-
-    .world-age-card {
-        background: white;
-        color: black;
-        border: 2px solid #333;
-        box-shadow: none;
-        backdrop-filter: none;
-        break-inside: avoid;
-        margin-bottom: 2rem;
     }
 }
