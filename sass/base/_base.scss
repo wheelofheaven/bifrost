@@ -348,3 +348,21 @@ textarea {
     unicode-bidi: isolate;
     display: inline-block;
 }
+
+// Greek text styling — single font stack (typo.$font-family-greek, which
+// leads with GFS Didot) used everywhere Greek renders, so terms stay
+// typographically consistent across the site. Both Ancient Greek (grc,
+// the dominant case in our wiki/timeline) and Modern Greek (el) get the
+// same scholarly serif treatment. No bidi handling — Greek is LTR.
+[lang="grc"],
+[lang="el"],
+:lang(grc),
+:lang(el) {
+    font-family: typo.$font-family-greek;
+}
+
+// For inline Greek within LTR content (e.g., Greek terms in English prose)
+.greek,
+.text-greek {
+    font-family: typo.$font-family-greek;
+}

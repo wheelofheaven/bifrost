@@ -109,6 +109,21 @@ $font-family-hebrew:
     "Times New Roman",
     serif;
 
+// Greek font stack — GFS Didot is the Greek Font Society's revival of
+// Didot's Greek, the typeface used in critical editions of classical
+// Greek texts. Full polytonic coverage (breathings, accents, iota
+// subscripts). Cardo follows for italic/bold contexts GFS Didot doesn't
+// ship; Noto Serif is the universal polytonic safety net. Used site-wide
+// for inline Greek (.greek, [lang="grc"], [lang="el"]) — Greek terms
+// appear as citations across every language page, so the stack is loaded
+// always-on alongside Frank Ruhl Libre.
+$font-family-greek:
+    "GFS Didot",
+    "Cardo",
+    "Noto Serif",
+    "Times New Roman",
+    serif;
+
 // Main font stacks with comprehensive fallbacks
 $font-family-sans:
     "Jost",
