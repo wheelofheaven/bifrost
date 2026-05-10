@@ -2,52 +2,119 @@
 {% import "macros/dispatch.html" as dispatch %}
 
 {% block content %}
-{% set entries = paginator.pages | default(value=section.pages) %}
-{% set total = section.pages | length %}
+{# When the section is paginated, `all_pages` is replaced by the
+   current paginator slice — so for the right-rail aggregations we
+   re-fetch the full section explicitly. `entries` is what we render
+   in the main column (the current paginator page); `all_pages` is
+   what feeds the rail. #}
+{% set full_section = get_section(path="news/_index.md") %}
+{% set all_pages = full_section.pages %}
+{% set entries = paginator.pages | default(value=all_pages) %}
+{% set total = all_pages | length %}
+
+{# Parallel arrays for the right-rail event-type filter. (Tera doesn't
+   take inline object literals in array form; loop.index0 ties the two
+   together.) #}
+{% set event_type_keys   = ["announcement", "discovery", "anniversary", "cultural-moment", "obituary"] %}
+{% set event_type_labels = ["Announcements", "Discoveries", "Anniversaries", "Cultural moments", "Obituaries"] %}
+
 <div class="newsroom">
     <div class="newsroom__container">
         <header class="newsroom__header">
-            <div class="newsroom__header-text">
-                <h1 class="newsroom__title">{{ section.title }}</h1>
-                {% if section.description %}
-                <p class="newsroom__description">{{ section.description }}</p>
-                {% endif %}
-            </div>
-            <div class="newsroom__header-meta">
-                {% if total > 0 %}
-                <span class="newsroom__count">{{ total }} dispatch{% if total != 1 %}es{% endif %}</span>
-                {% endif %}
-                <a class="newsroom__feed-link"
-                   href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}"
-                   aria-label="Newsroom Atom feed">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M4 11a9 9 0 0 1 9 9"></path>
-                        <path d="M4 4a16 16 0 0 1 16 16"></path>
-                        <circle cx="5" cy="19" r="1"></circle>
-                    </svg>
-                    <span>Subscribe</span>
-                </a>
-            </div>
+            <h1 class="newsroom__title">{{ section.title }}</h1>
+            {% if section.description %}
+            <p class="newsroom__description">{{ section.description }}</p>
+            {% endif %}
         </header>
 
         {% if entries %}
-        <div class="newsroom__list">
-            {% for page in entries %}
-            {{ dispatch::card(page=page) }}
-            {% endfor %}
-        </div>
+        <div class="newsroom__grid">
+            <main class="newsroom__main">
+                {{ dispatch::card_lead(page=entries | first) }}
 
-        {% if paginator and paginator.number_pagers > 1 %}
-        <nav class="newsroom__pagination" aria-label="Newsroom pagination">
-            {% if paginator.previous %}
-            <a class="newsroom__pagination-link" href="{{ paginator.previous }}" rel="prev">← Newer</a>
-            {% endif %}
-            <span class="newsroom__pagination-info">Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
-            {% if paginator.next %}
-            <a class="newsroom__pagination-link" href="{{ paginator.next }}" rel="next">Older →</a>
-            {% endif %}
-        </nav>
-        {% endif %}
+                {% set rest = entries | slice(start=1) %}
+                {% if rest | length > 0 %}
+                <div class="newsroom__feed">
+                    {% for page in rest %}
+                    {{ dispatch::card(page=page) }}
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                {% if paginator and paginator.number_pagers > 1 %}
+                <nav class="newsroom__pagination" aria-label="Newsroom pagination">
+                    {% if paginator.previous %}
+                    <a class="newsroom__pagination-link" href="{{ paginator.previous }}" rel="prev">← Newer</a>
+                    {% endif %}
+                    <span class="newsroom__pagination-info">Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
+                    {% if paginator.next %}
+                    <a class="newsroom__pagination-link" href="{{ paginator.next }}" rel="next">Older →</a>
+                    {% endif %}
+                </nav>
+                {% endif %}
+            </main>
+
+            <aside class="newsroom__rail" aria-label="Newsroom sidebar">
+                <section class="newsroom__rail-module">
+                    <h3 class="newsroom__rail-heading">Filed under</h3>
+                    <ul class="newsroom__filter-list">
+                        {% for key in event_type_keys %}
+                        {% set matches = all_pages | filter(attribute="extra.event_type", value=key) %}
+                        {% if matches | length > 0 %}
+                        <li class="newsroom__filter-item">
+                            <span class="newsroom__filter-label">{{ event_type_labels[loop.index0] }}</span>
+                            <span class="newsroom__filter-count">{{ matches | length }}</span>
+                        </li>
+                        {% endif %}
+                        {% endfor %}
+                        <li class="newsroom__filter-item newsroom__filter-item--total">
+                            <span class="newsroom__filter-label">All dispatches</span>
+                            <span class="newsroom__filter-count">{{ total }}</span>
+                        </li>
+                    </ul>
+                </section>
+
+                <section class="newsroom__rail-module newsroom__rail-module--subscribe">
+                    <h3 class="newsroom__rail-heading">Stay in the loop</h3>
+                    <p class="newsroom__rail-text">Dispatches are published as events warrant. Follow the Atom feed to catch them as they land.</p>
+                    <a class="newsroom__feed-link"
+                       href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}"
+                       aria-label="Newsroom Atom feed">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M4 11a9 9 0 0 1 9 9"></path>
+                            <path d="M4 4a16 16 0 0 1 16 16"></path>
+                            <circle cx="5" cy="19" r="1"></circle>
+                        </svg>
+                        <span>Subscribe via Atom</span>
+                    </a>
+                </section>
+
+                {% set seen_titles = [] %}
+                {% set canon_recent = [] %}
+                {% for page in all_pages | slice(end=8) %}
+                    {% if page.extra.canon_links %}
+                        {% for item in page.extra.canon_links %}
+                            {% if item.title not in seen_titles %}
+                                {% set_global seen_titles = seen_titles | concat(with=item.title) %}
+                                {% set_global canon_recent = canon_recent | concat(with=item) %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                {% endfor %}
+                {% if canon_recent | length > 0 %}
+                <section class="newsroom__rail-module">
+                    <h3 class="newsroom__rail-heading">Canon touched recently</h3>
+                    <ul class="newsroom__canon-list">
+                        {% for item in canon_recent | slice(end=8) %}
+                        <li class="newsroom__canon-list-item">
+                            <a href="{{ item.path }}" class="newsroom__canon-list-link">{{ item.title }}</a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+            </aside>
+        </div>
         {% else %}
         <p class="newsroom__empty">No dispatches yet. Check back soon, or follow the <a href="{{ get_url(path='news/atom.xml', lang=detected_lang) }}">Atom feed</a>.</p>
         {% endif %}

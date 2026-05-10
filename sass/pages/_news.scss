@@ -10,64 +10,152 @@
 
 // ---- Section: .newsroom ----
 
+// Newsroom layout — magazine-meets-feed:
+//   - Full-width header with title + lede.
+//   - Two-column grid below: a main column (lead dispatch up top, then
+//     a chronological feed of cards beneath) and a sticky right rail
+//     with three light modules (event-type filter, subscribe CTA,
+//     canon-touched-recently).
+//   - On narrow viewports the grid collapses to a single column and
+//     the rail moves below the feed.
+
 .newsroom {
-    padding: v.$spacing-xl 0;
+    padding: v.$spacing-xl 0 v.$spacing-2xl;
 
     &__container {
-        max-width: 56rem;
+        max-width: 76rem;
         margin: 0 auto;
         padding: 0 v.$spacing-lg;
     }
 
     &__header {
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
-        gap: v.$spacing-lg;
+        max-width: 56rem;
         padding-bottom: v.$spacing-lg;
         margin-bottom: v.$spacing-xl;
         border-bottom: 1px solid var(--color-hairline);
-
-        @media (max-width: 768px) {
-            flex-direction: column;
-            gap: v.$spacing-md;
-        }
-    }
-
-    &__header-text {
-        flex: 1;
-        min-width: 0;
-    }
-
-    &__header-meta {
-        display: flex;
-        align-items: center;
-        gap: v.$spacing-md;
-        flex-shrink: 0;
     }
 
     &__title {
         margin: 0 0 v.$spacing-xs;
         font-family: var(--font-family-lead);
-        font-size: 2.25rem;
+        font-size: 2.5rem;
         font-weight: 700;
+        line-height: 1.15;
         color: var(--color-text);
 
         @media (max-width: 768px) {
-            font-size: 1.75rem;
+            font-size: 1.875rem;
         }
     }
 
     &__description {
         margin: 0;
-        font-size: v.$font-size-base;
+        font-size: v.$font-size-lg;
         line-height: 1.6;
         color: var(--color-text-muted);
     }
 
-    &__count {
+    &__grid {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 18rem;
+        gap: v.$spacing-2xl;
+        align-items: start;
+
+        @media (max-width: 1023px) {
+            grid-template-columns: minmax(0, 1fr);
+            gap: v.$spacing-xl;
+        }
+    }
+
+    &__main {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xl;
+    }
+
+    &__feed {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-xl;
+    }
+
+    // Right rail — three stacked modules. Sticky on desktop so it
+    // stays visible as the feed scrolls; static on tablet/mobile
+    // where the grid collapses.
+    &__rail {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-lg;
+
+        @media (min-width: 1024px) {
+            position: sticky;
+            top: calc(0.5rem + 4rem); // navbar + breathing room
+        }
+    }
+
+    &__rail-module {
+        padding: v.$spacing-lg;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-md;
+        background: var(--color-background);
+
+        &--subscribe {
+            background: var(--color-background-secondary);
+        }
+    }
+
+    &__rail-heading {
+        margin: 0 0 v.$spacing-md;
         font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-subtle);
+    }
+
+    &__rail-text {
+        margin: 0 0 v.$spacing-md;
         font-size: v.$font-size-sm;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+    }
+
+    &__filter-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__filter-item {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: v.$spacing-sm;
+        padding: v.$spacing-xs 0;
+        font-size: v.$font-size-sm;
+        color: var(--color-text);
+
+        & + & {
+            border-top: 1px solid var(--color-hairline-subtle);
+        }
+
+        &--total {
+            margin-top: v.$spacing-xs;
+            padding-top: v.$spacing-sm;
+            border-top: 1px solid var(--color-hairline);
+            font-weight: 600;
+        }
+    }
+
+    &__filter-label {
+        min-width: 0;
+    }
+
+    &__filter-count {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
         color: var(--color-text-subtle);
     }
 
@@ -89,10 +177,29 @@
         }
     }
 
-    &__list {
+    &__canon-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
         display: flex;
         flex-direction: column;
-        gap: v.$spacing-xl;
+        gap: v.$spacing-2xs;
+    }
+
+    &__canon-list-item {
+        font-size: v.$font-size-sm;
+    }
+
+    &__canon-list-link {
+        color: var(--color-text);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: v.$transition-default;
+
+        &:hover {
+            color: var(--color-link);
+            border-bottom-color: currentColor;
+        }
     }
 
     &__empty {
@@ -156,10 +263,13 @@
 // ---- Card: .dispatch-card ----
 
 .dispatch-card {
+    // Feed cards are separated by hairlines (column-page rhythm),
+    // not boxed individually. The lead card overrides this with its
+    // own bordered/raised treatment further down.
     padding-bottom: v.$spacing-xl;
     border-bottom: 1px solid var(--color-hairline);
 
-    &:last-child {
+    .newsroom__feed > &:last-child {
         border-bottom: none;
         padding-bottom: 0;
     }
@@ -198,24 +308,121 @@
     }
 
     &__summary {
-        margin: 0 0 v.$spacing-sm;
+        margin: 0 0 v.$spacing-md;
         font-size: v.$font-size-base;
         line-height: 1.6;
         color: var(--color-text-muted);
     }
 
-    &__canon {
-        font-size: v.$font-size-sm;
-        color: var(--color-text-subtle);
+    // Ground-News-style attribution row at the bottom of every card:
+    // a "Sources" line of outlet pills and a "Canon" line of linked
+    // canon-entry pills. Two columns at narrow widths stack; at wide
+    // widths they sit on adjacent rows of the same flex column for
+    // density.
+    &__attribution {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-xs;
+        margin-top: v.$spacing-md;
     }
 
-    &__canon-label {
+    &__sources,
+    &__canon-pills {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: v.$spacing-2xs v.$spacing-xs;
+    }
+
+    &__attribution-label {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
         font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: var(--color-text-subtle);
         margin-right: v.$spacing-2xs;
     }
 
-    &__canon-item {
-        font-style: italic;
+    &__source-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.125rem 0.5rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-full;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        background: var(--color-background-secondary);
+        white-space: nowrap;
+    }
+
+    &__canon-pill {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.125rem 0.5rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-full;
+        font-size: v.$font-size-xs;
+        color: var(--color-text);
+        background: transparent;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: v.$transition-default;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+            background: var(--color-background-secondary);
+        }
+    }
+
+    &__attribution-overflow {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-subtle);
+    }
+
+    // Lead card — magazine cover treatment for the most-recent
+    // dispatch at the top of the section. Boxed (instead of the
+    // hairline rhythm of feed cards), with a soft accent and a
+    // larger headline + lede so it visually anchors the page.
+    &--lead {
+        padding: v.$spacing-xl;
+        margin-bottom: 0;
+        background: var(--color-background-secondary);
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-lg;
+
+        // The boxed treatment replaces the feed-card hairline.
+        border-bottom: 1px solid var(--color-hairline);
+
+        @media (max-width: 768px) {
+            padding: v.$spacing-lg;
+        }
+
+        .dispatch-card__title {
+            font-size: 2rem;
+            line-height: 1.2;
+            margin-bottom: v.$spacing-md;
+
+            @media (max-width: 768px) {
+                font-size: 1.625rem;
+            }
+        }
+
+        .dispatch-card__summary {
+            font-size: v.$font-size-lg;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+    }
+
+    &__lead-kicker {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--color-accent-primary);
     }
 }
 

@@ -26,7 +26,45 @@
 </span>
 {% endmacro chip %}
 
-{# Card — list-view entry for a dispatch. #}
+{# Attribution — Ground-News-style row of source-outlet pills + canon-link
+   pills used at the bottom of every dispatch card. Sources collapse to
+   unique outlet names; both columns cap at 4 with a "+N more" overflow
+   indicator. #}
+{% macro attribution(page) %}
+{% set outlets = [] %}
+{% if page.extra.sources %}
+    {% set outlets = page.extra.sources | map(attribute="outlet") | unique %}
+{% endif %}
+{% set canon = page.extra.canon_links | default(value=[]) %}
+{% if outlets | length > 0 or canon | length > 0 %}
+<footer class="dispatch-card__attribution">
+    {% if outlets | length > 0 %}
+    <div class="dispatch-card__sources">
+        <span class="dispatch-card__attribution-label">Sources</span>
+        {% for o in outlets | slice(end=4) %}
+        <span class="dispatch-card__source-pill">{{ o }}</span>
+        {% endfor %}
+        {% if outlets | length > 4 %}
+        <span class="dispatch-card__attribution-overflow">+{{ outlets | length - 4 }} more</span>
+        {% endif %}
+    </div>
+    {% endif %}
+    {% if canon | length > 0 %}
+    <div class="dispatch-card__canon-pills">
+        <span class="dispatch-card__attribution-label">Canon</span>
+        {% for item in canon | slice(end=4) %}
+        <a class="dispatch-card__canon-pill" href="{{ item.path }}">{{ item.title }}</a>
+        {% endfor %}
+        {% if canon | length > 4 %}
+        <span class="dispatch-card__attribution-overflow">+{{ canon | length - 4 }} more</span>
+        {% endif %}
+    </div>
+    {% endif %}
+</footer>
+{% endif %}
+{% endmacro attribution %}
+
+{# Card — feed-view entry for a dispatch. #}
 {% macro card(page) %}
 <article class="dispatch-card"
          data-title="{{ page.title | lower }}"
@@ -52,13 +90,40 @@
         {{ page.extra.summary | default(value=page.description) }}
     </p>
     {% endif %}
-    {% if page.extra.canon_links %}
-    <div class="dispatch-card__canon">
-        <span class="dispatch-card__canon-label">Touches:</span>
-        {% for item in page.extra.canon_links | slice(end=3) %}
-        <span class="dispatch-card__canon-item">{{ item.title }}</span>{% if not loop.last %}, {% endif %}
-        {% endfor %}
-    </div>
-    {% endif %}
+    {{ self::attribution(page=page) }}
 </article>
 {% endmacro card %}
+
+{# Lead card — magazine-cover treatment for the most recent dispatch
+   at the top of the section index. Same data, heavier visual weight:
+   "Lead dispatch" kicker, larger headline, longer lede. The `--lead`
+   modifier on the card root drives the size differences in CSS. #}
+{% macro card_lead(page) %}
+<article class="dispatch-card dispatch-card--lead"
+         data-title="{{ page.title | lower }}"
+         data-event-type="{{ page.extra.event_type | default(value='') }}"
+         data-date="{{ page.date | default(value='') }}">
+    <div class="dispatch-card__meta">
+        <span class="dispatch-card__lead-kicker">Lead dispatch</span>
+        {{ self::chip(event_type=page.extra.event_type | default(value="")) }}
+        {% if page.extra.event_date %}
+        <time class="dispatch-card__event-date" datetime="{{ page.extra.event_date | date(format='%Y-%m-%d') }}">
+            {{ page.extra.event_date | date(format="%b %d, %Y") }}
+        </time>
+        {% elif page.date %}
+        <time class="dispatch-card__event-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
+            {{ page.date | date(format="%b %d, %Y") }}
+        </time>
+        {% endif %}
+    </div>
+    <h2 class="dispatch-card__title">
+        <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
+    </h2>
+    {% if page.extra.summary or page.description %}
+    <p class="dispatch-card__summary">
+        {{ page.extra.summary | default(value=page.description) }}
+    </p>
+    {% endif %}
+    {{ self::attribution(page=page) }}
+</article>
+{% endmacro card_lead %}
