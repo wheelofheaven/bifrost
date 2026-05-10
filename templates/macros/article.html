@@ -1,0 +1,108 @@
+{# Article macros — Articles (Explainers)
+
+   Render-helpers for the Articles section index. Parallel to
+   `macros/dispatch.html`: a `card()` for the chronological feed and a
+   `card_lead()` for the magazine-cover treatment at the top.
+
+   Usage:
+     {% import "macros/article.html" as article %}
+     {{ article::card_lead(page=entries | first) }}
+     {{ article::card(page=page) }}
+
+   See .claude/rules/content-editing.md ("Articles (Explainers)"). #}
+
+{# Chip — small pill labeling the page as an Articles Explainer. The
+   section-type sibling of the Dispatch chip. Tonally consistent so the
+   two sections feel like part of one publication. #}
+{% macro chip() %}
+<span class="article-chip"
+      role="note"
+      aria-label="Content type: Explainer"
+      title="Article — long-form, thesis-driven Explainer">
+    <svg class="article-chip__icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="16" y1="13" x2="8" y2="13"></line>
+        <line x1="16" y1="17" x2="8" y2="17"></line>
+    </svg>
+    <span class="article-chip__label">Explainer</span>
+</span>
+{% endmacro chip %}
+
+{# Compact claim-type pill — a tiny color-tinted chip for the card meta
+   row. Use the full `claim-badge.html` macro on the article page itself;
+   this one trades the affordances for density. #}
+{% macro claim_pill(claim_type="") %}
+{% if claim_type %}
+<span class="article-card__claim article-card__claim--{{ claim_type }}"
+      title="Claim type: {{ claim_type | title }}">{{ claim_type | title }}</span>
+{% endif %}
+{% endmacro claim_pill %}
+
+{# Card — feed-view entry for an article. #}
+{% macro card(page) %}
+<article class="article-card"
+         data-title="{{ page.title | lower }}"
+         data-category="{{ page.extra.category | default(value='') | lower }}"
+         data-claim-type="{{ page.extra.claim_type | default(value='') }}"
+         data-date="{{ page.date | default(value='') }}">
+    <div class="article-card__meta">
+        {% if page.extra.category %}
+        <span class="article-card__category">{{ page.extra.category }}</span>
+        {% endif %}
+        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value='')) }}
+        {% if page.date %}
+        <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
+            {{ page.date | date(format="%b %d, %Y") }}
+        </time>
+        {% endif %}
+        {% if page.word_count %}
+        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} min read</span>
+        {% endif %}
+    </div>
+    <h2 class="article-card__title">
+        <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
+    </h2>
+    {% if page.extra.summary or page.description %}
+    <p class="article-card__summary">
+        {{ page.extra.summary | default(value=page.description) }}
+    </p>
+    {% endif %}
+</article>
+{% endmacro card %}
+
+{# Lead card — magazine-cover treatment for the featured/most-recent
+   article at the top of the section index. Same data, heavier visual
+   weight: "Featured Explainer" kicker, larger headline, longer lede.
+   The `--lead` modifier on the card root drives the size differences. #}
+{% macro card_lead(page) %}
+<article class="article-card article-card--lead"
+         data-title="{{ page.title | lower }}"
+         data-category="{{ page.extra.category | default(value='') | lower }}"
+         data-claim-type="{{ page.extra.claim_type | default(value='') }}"
+         data-date="{{ page.date | default(value='') }}">
+    <div class="article-card__meta">
+        <span class="article-card__lead-kicker">Featured Explainer</span>
+        {% if page.extra.category %}
+        <span class="article-card__category">{{ page.extra.category }}</span>
+        {% endif %}
+        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value='')) }}
+        {% if page.date %}
+        <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
+            {{ page.date | date(format="%b %d, %Y") }}
+        </time>
+        {% endif %}
+        {% if page.word_count %}
+        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} min read</span>
+        {% endif %}
+    </div>
+    <h2 class="article-card__title">
+        <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
+    </h2>
+    {% if page.extra.summary or page.description %}
+    <p class="article-card__summary">
+        {{ page.extra.summary | default(value=page.description) }}
+    </p>
+    {% endif %}
+</article>
+{% endmacro card_lead %}
