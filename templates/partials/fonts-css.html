@@ -1,6 +1,16 @@
 <!-- Preload critical fonts (always-on Latin/Cyrillic body + display) -->
 <link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+<!-- Language-switcher CJK subsets (12 glyphs total, ~9 KB). Always
+     loaded so the navbar `<li lang="...">` labels render correctly
+     even on Latin-language pages where the user's system may not have
+     PingFang / Hiragino / Apple SD Gothic. Each subset is bound to
+     its precise unicode-range in `_fonts.scss` so it never shadows
+     other CJK content. -->
+<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-sc-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-tc-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-jp-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-kr-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
 
 <!-- Web fonts. Frank Ruhl Libre is always loaded because Hebrew inline
      terms (e.g. אֱלֹהִים) appear in prose across every language. The
