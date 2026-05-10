@@ -466,25 +466,33 @@ body.mobile-nav-open {
             animation: navbar-search-cycle-hint 9s ease-in-out infinite;
         }
 
-        // Key-cap rendering of the "/" shortcut. Monospaced so the slash
-        // reads unambiguously as a keystroke.
+        // Line-art rendering of the "/" shortcut. Drawn in the same
+        // visual language as the surrounding feather icons: a single
+        // currentColor stroke for the outline plus a second stroke
+        // offset below the chip that reads as the cap's "base". No
+        // fill, no gradient, no photographic shadow — the depth cue is
+        // graphic, not realistic, so the chip stays consistent with
+        // the iconography next to it.
         &__kbd {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-width: 1.25rem;
-            height: 1.25rem;
-            padding: 0 0.3rem;
+            min-width: 1.4rem;
+            height: 1.4rem;
+            padding: 0 0.4rem;
             font-family: typo.$font-family-tech;
             font-size: 0.8rem;
             font-weight: 600;
             line-height: 1;
-            color: var(--color-text);
-            background-color: var(--color-card-bg);
-            border: 1px solid var(--color-border);
-            border-bottom-width: 2px;
+            color: inherit;
+            background: transparent;
+            border: 1.5px solid currentColor;
             border-radius: 0.3rem;
-            box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+            // Second stroke 2px below the chip, slightly inset on
+            // each side via negative spread. Reads as a thin "foot"
+            // under the cap — the line-art shorthand for "key" —
+            // without simulating real plastic.
+            box-shadow: 0 2px 0 -1px currentColor;
         }
 
         // Pause cycling and lock to the icon while interacting.
