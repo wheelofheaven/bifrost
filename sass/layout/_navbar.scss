@@ -385,18 +385,44 @@ body.mobile-nav-open {
             pointer-events: auto;
 
             .navbar__search-input {
+                // Theme-aware fill colour for the input interior; the
+                // border ring comes from the rainbow gradient below.
+                --search-fill: rgba(25, 28, 32, 0.85);
+
                 position: relative;
                 inset: auto;
                 width: 100%;
                 padding: 0.5rem 1rem;
                 border-radius: 0.75rem;
-                border: 2px solid var(--color-accent-primary);
-                background-color: rgba(25, 28, 32, 0.85);
+                // Bifrost-rainbow border via the dual-background trick:
+                // `padding-box` paints the input's interior fill and
+                // `border-box` paints the gradient under a transparent
+                // 2px border, so the border itself reads as a rainbow
+                // ring. (`<input>` elements can't host pseudo-elements,
+                // so the `::before` mask trick used by `.navbar__cta-
+                // split` isn't available here.)
+                border: 1.5px solid transparent;
+                // Pastel rainbow border, matching the footer's
+                // gradient strip (`_footer.scss`): same -300 shades,
+                // same colour order, same loop back to pink at the
+                // end so the ring reads as a soft band rather than
+                // sharp endpoints.
+                background:
+                    linear-gradient(var(--search-fill), var(--search-fill)) padding-box,
+                    linear-gradient(
+                        90deg,
+                        #{colors.$pink-300}     0%,
+                        #{colors.$lavender-300} 14%,
+                        #{colors.$mauve-300}    28%,
+                        #{colors.$blue-300}     42%,
+                        #{colors.$cyan-300}     56%,
+                        #{colors.$mint-300}     70%,
+                        #{colors.$green-300}    84%,
+                        #{colors.$pink-300}     100%
+                    ) border-box;
                 backdrop-filter: blur(20px) saturate(180%);
                 -webkit-backdrop-filter: blur(20px) saturate(180%);
-                box-shadow:
-                    0 0 0 4px rgba(var(--color-accent-primary), 0.3),
-                    0 8px 32px rgba(var(--color-accent-primary), 0.2);
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
                 font-size: 1rem;
 
                 &::placeholder {
@@ -409,7 +435,7 @@ body.mobile-nav-open {
             }
 
             [data-theme="light"] & .navbar__search-input {
-                background-color: rgba(255, 255, 255, 0.85);
+                --search-fill: rgba(255, 255, 255, 0.85);
             }
         }
     }
