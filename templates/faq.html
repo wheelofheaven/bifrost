@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+
+{% block content %}
+{% include "partials/schema/faq-page.html" %}
+
+<div class="faq">
+    {{ breadcrumbs::community(page=page, lang=detected_lang) }}
+
+    <div class="faq__container">
+        <article class="faq__article" role="article" aria-labelledby="faq-title">
+            <header class="faq__header">
+                <h1 class="faq__title" id="faq-title">{{ page.title }}</h1>
+
+                {% if page.description %}
+                <p class="faq__description">{{ page.description }}</p>
+                {% endif %}
+
+                {% if page.extra.summary %}
+                <div class="faq__summary" data-ai-summary="true">
+                    <p>{{ page.extra.summary }}</p>
+                </div>
+                {% endif %}
+
+                {% if page.extra.last_updated %}
+                <p class="faq__meta">
+                    <time datetime="{{ page.extra.last_updated }}">Last updated: {{ page.extra.last_updated }}</time>
+                </p>
+                {% endif %}
+            </header>
+
+            {% if page.extra.faq_groups %}
+            <nav class="faq__toc" aria-label="On this page">
+                <h2 class="faq__toc-title">On this page</h2>
+                <ul class="faq__toc-list">
+                    {% for group in page.extra.faq_groups %}
+                    <li><a href="#{{ group.slug }}">{{ group.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
+
+            {% for group in page.extra.faq_groups %}
+            <section class="faq__group" aria-labelledby="{{ group.slug }}">
+                <h2 class="faq__group-title" id="{{ group.slug }}">{{ group.title }}</h2>
+                <div class="faq__list">
+                    {% for item in group.items %}
+                    <details class="faq__item" id="{{ item.slug }}">
+                        <summary class="faq__question">{{ item.question }}</summary>
+                        <div class="faq__answer">
+                            {{ item.answer | markdown | safe }}
+                        </div>
+                    </details>
+                    {% endfor %}
+                </div>
+            </section>
+            {% endfor %}
+            {% endif %}
+
+            <footer class="faq__footer">
+                <h2 class="faq__footer-title">Still have questions?</h2>
+                <p class="faq__footer-text">
+                    If your question isn't answered here, the
+                    <a href="https://github.com/orgs/wheelofheaven/discussions" target="_blank" rel="noopener">GitHub Discussions</a>
+                    are the right place to ask. Substantive questions may end up added to this page.
+                </p>
+            </footer>
+        </article>
+    </div>
+</div>
+{% endblock content %}

@@ -1,18 +1,29 @@
 <!-- Schema.org FAQPage - For pages with FAQ sections -->
-{% if page.extra.faq %}
+{% if page.extra.faq_groups %}
+{% set_global faq_items = [] %}
+{% for group in page.extra.faq_groups %}
+    {% for item in group.items %}
+        {% set_global faq_items = faq_items | concat(with=item) %}
+    {% endfor %}
+{% endfor %}
+{% elif page.extra.faq %}
+{% set_global faq_items = page.extra.faq %}
+{% endif %}
+
+{% if faq_items %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "FAQPage",
   "@id": "{{ current_url | safe }}#faq",
   "mainEntity": [
-    {% for item in page.extra.faq %}
+    {% for item in faq_items %}
     {
       "@type": "Question",
-      "name": "{{ item.question | escape }}",
+      "name": {{ item.question | json_encode | safe }},
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "{{ item.answer | escape }}"
+        "text": {{ item.answer | markdown | striptags | trim | json_encode | safe }}
       }
     }{% if not loop.last %},{% endif %}
     {% endfor %}
@@ -20,7 +31,7 @@
   "isPartOf": {
     "@type": "WebPage",
     "@id": "{{ current_url | safe }}",
-    "name": "{{ page.title }}"
+    "name": "{{ page.title | escape }}"
   }
 }
 </script>

@@ -1,0 +1,296 @@
+// FAQ page
+//
+// Scholarly, restrained register — mirrors the .dispatch / .newsroom aesthetic
+// rather than the gradient-hero treatment of other .info-page pages.
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+
+.faq {
+    padding: v.$spacing-md 0 v.$spacing-2xl;
+
+    &__container {
+        max-width: 48rem;
+        margin: 0 auto;
+        padding: 0 v.$spacing-lg;
+    }
+
+    &__article {
+        background: var(--color-background);
+    }
+
+    &__header {
+        margin-bottom: v.$spacing-xl;
+        padding-bottom: v.$spacing-lg;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__title {
+        margin: 0 0 v.$spacing-md;
+        font-family: typo.$font-family-lead;
+        font-size: 2.25rem;
+        font-weight: 700;
+        line-height: 1.2;
+        color: var(--color-text);
+
+        @media (max-width: 768px) {
+            font-size: 1.75rem;
+        }
+    }
+
+    &__description {
+        margin: 0 0 v.$spacing-md;
+        font-size: v.$font-size-lg;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+    }
+
+    &__summary {
+        margin-top: v.$spacing-md;
+        padding: v.$spacing-md v.$spacing-lg;
+        background: var(--color-background-secondary);
+        border-left: 3px solid c.$mint-500;
+        border-radius: v.$border-radius-sm;
+
+        p {
+            margin: 0;
+            font-size: v.$font-size-base;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+    }
+
+    &__meta {
+        margin: v.$spacing-md 0 0;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-subtle);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+    }
+
+    // Table of contents
+    &__toc {
+        margin: 0 0 v.$spacing-2xl;
+        padding: v.$spacing-md v.$spacing-lg;
+        background: var(--color-background-secondary);
+        border-radius: v.$border-radius-sm;
+        border: 1px solid var(--color-hairline);
+    }
+
+    &__toc-title {
+        margin: 0 0 v.$spacing-sm;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--color-text-subtle);
+    }
+
+    &__toc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+
+        li {
+            margin: 0;
+        }
+
+        a {
+            color: var(--color-link);
+            text-decoration: none;
+            font-size: v.$font-size-base;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+
+    // Group sections
+    &__group {
+        margin-bottom: v.$spacing-2xl;
+
+        &:last-of-type {
+            margin-bottom: v.$spacing-xl;
+        }
+    }
+
+    &__group-title {
+        margin: 0 0 v.$spacing-lg;
+        padding-bottom: v.$spacing-sm;
+        border-bottom: 1px solid var(--color-hairline);
+        font-family: typo.$font-family-lead;
+        font-size: v.$font-size-2xl;
+        font-weight: 700;
+        color: var(--color-text);
+        scroll-margin-top: v.$spacing-xl;
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-sm;
+    }
+
+    // Individual Q&A
+    &__item {
+        border-bottom: 1px solid var(--color-hairline);
+        scroll-margin-top: v.$spacing-xl;
+        padding-bottom: v.$spacing-sm;
+
+        &:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        &[open] {
+            .faq__question::after {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    &__question {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: v.$spacing-md;
+        padding: v.$spacing-lg 0;
+        font-family: typo.$font-family-lead;
+        font-size: v.$font-size-lg;
+        font-weight: 600;
+        line-height: 1.4;
+        color: var(--color-text);
+        cursor: pointer;
+        list-style: none;
+        transition: color v.$transition-base ease;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::after {
+            content: "";
+            flex-shrink: 0;
+            width: 18px;
+            height: 18px;
+            margin-top: 0.35em;
+            background-color: currentColor;
+            mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+            mask-repeat: no-repeat;
+            -webkit-mask-repeat: no-repeat;
+            mask-size: contain;
+            -webkit-mask-size: contain;
+            mask-position: center;
+            -webkit-mask-position: center;
+            opacity: 0.6;
+            transition: transform v.$transition-base ease, opacity v.$transition-base ease;
+        }
+
+        &:hover::after {
+            opacity: 1;
+        }
+
+        &:hover {
+            color: var(--color-link);
+        }
+    }
+
+    &__answer {
+        padding: v.$spacing-xs 0 v.$spacing-xl;
+        font-size: v.$font-size-base;
+        line-height: 1.8;
+        color: var(--color-text);
+
+        p {
+            margin: 0 0 v.$spacing-lg;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+
+        ul,
+        ol {
+            margin: 0 0 v.$spacing-lg;
+            padding-left: 1.5rem;
+
+            li {
+                margin-bottom: v.$spacing-sm;
+                line-height: 1.7;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        blockquote {
+            margin: v.$spacing-md 0 v.$spacing-lg;
+            padding: v.$spacing-md v.$spacing-lg;
+            border-left: 3px solid var(--color-hairline);
+            color: var(--color-text-muted);
+            font-style: italic;
+
+            p {
+                margin: 0;
+            }
+        }
+
+        a {
+            color: var(--color-link);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
+    // Footer
+    &__footer {
+        margin-top: v.$spacing-2xl;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__footer-title {
+        margin: 0 0 v.$spacing-sm;
+        font-family: typo.$font-family-lead;
+        font-size: v.$font-size-xl;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    &__footer-text {
+        margin: 0;
+        font-size: v.$font-size-base;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+
+        a {
+            color: var(--color-link);
+            text-decoration: none;
+            font-weight: 600;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}
