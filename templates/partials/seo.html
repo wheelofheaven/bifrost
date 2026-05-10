@@ -112,6 +112,10 @@
 <link rel="alternate" type="application/atom+xml" title="{{ config.title }} - Atom Feed" href="{{ get_url(path='atom.xml', lang=detected_lang) }}">
 <link rel="alternate" type="application/rss+xml" title="{{ config.title }} - RSS Feed" href="{{ get_url(path='rss.xml', lang=detected_lang) }}">
 
+<!-- llms.txt Autodiscovery (LLM-friendly content map and full corpus) -->
+<link rel="alternate" type="text/markdown" title="{{ config.title }} - llms.txt" href="{{ get_url(path='llms.txt') }}">
+<link rel="alternate" type="text/markdown" title="{{ config.title }} - llms-full.txt" href="{{ get_url(path='llms-full.txt') }}">
+
 <!-- Organization Schema (included on all pages) -->
 {% include "partials/schema/organization.html" %}
 
