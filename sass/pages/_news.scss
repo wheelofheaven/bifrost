@@ -48,7 +48,7 @@
 
     &__title {
         margin: 0 0 v.$spacing-xs;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 2.25rem;
         font-weight: 700;
         color: var(--color-text);
@@ -182,7 +182,7 @@
 
     &__title {
         margin: 0 0 v.$spacing-sm;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         line-height: 1.3;
@@ -263,7 +263,7 @@
 
     &__title {
         margin: 0 0 v.$spacing-md;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 2.25rem;
         font-weight: 700;
         line-height: 1.2;
@@ -296,7 +296,7 @@
 
         h2 {
             margin: v.$spacing-xl 0 v.$spacing-md;
-            font-family: typo.$font-family-lead;
+            font-family: var(--font-family-lead);
             font-size: v.$font-size-2xl;
             font-weight: 700;
         }

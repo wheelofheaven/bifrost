@@ -26,7 +26,7 @@
     border-radius: 0.75rem;
     padding: 1.5rem 2rem;
     margin: 1.5rem 0;
-    font-family: typo.$font-family-quote;
+    font-family: var(--font-family-quote);
     font-size: 0.9rem;
     line-height: 1.6;
     font-weight: 400;
@@ -42,7 +42,7 @@
         left: 1rem;
         font-size: 2.5rem;
         color: var(--color-accent-primary);
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-weight: 300;
         opacity: 0.3;
         line-height: 1;
@@ -110,7 +110,7 @@
         font-weight: 500;
         color: var(--color-text-muted);
         font-size: 0.95rem;
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         letter-spacing: 0.02em;
 
         &::before {
@@ -177,7 +177,7 @@
                 var(--color-accent-secondary)
             );
             color: var(--color-background);
-            font-family: typo.$font-family-lead;
+            font-family: var(--font-family-lead);
             font-weight: 700;
             font-size: 0.8rem;
         }
@@ -224,7 +224,7 @@
     }
 
     &__name {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-weight: 600;
         font-size: 0.85rem;
         color: var(--color-text);
@@ -249,7 +249,7 @@
     }
 
     &__work {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.9rem;
         color: var(--color-text-muted);
         font-style: italic;
@@ -294,7 +294,7 @@
     border-radius: 0.75rem;
     padding: 1.5rem 2rem;
     margin: 2rem 0;
-    font-family: typo.$font-family-quote;
+    font-family: var(--font-family-quote);
     font-size: 0.9rem;
     line-height: 1.6;
     font-weight: 400;
@@ -391,7 +391,7 @@
         font-size: 0.9rem;
         color: var(--color-text-muted);
         text-align: right;
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
 
         &::before {
             content: "— ";

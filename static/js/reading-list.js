@@ -146,12 +146,12 @@
 
     // Update the counter badge
     function updateCounterBadge() {
-        const badge = document.querySelector('.reading-list-toggle__badge');
-        if (badge) {
-            const count = readingList.length;
+        const badges = document.querySelectorAll('.reading-list-toggle__badge');
+        const count = readingList.length;
+        badges.forEach(badge => {
             badge.textContent = count;
             badge.style.display = count > 0 ? 'flex' : 'none';
-        }
+        });
     }
 
     // Create the reading list panel
@@ -330,7 +330,7 @@
             if (e.ctrlKey || e.metaKey || e.altKey) return;
 
             // Check if any modal is open
-            const anyModalOpen = document.querySelector('.search-modal--open, .keyboard-shortcuts-modal--open, .ask-ai__panel--open');
+            const anyModalOpen = document.querySelector('.search-modal--open, .keyboard-shortcuts-modal--open');
 
             if (e.key === 'b' && !e.shiftKey && !anyModalOpen) {
                 // Toggle bookmark for current page

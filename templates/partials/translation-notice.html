@@ -1,0 +1,14 @@
+{# Shown above the header on every non-English page. The corpus is written
+   first in English; translations are gradually catching up. This banner is
+   the honest signal that not every page is fully localized yet. #}
+{% if detected_lang and detected_lang != "en" %}
+<div class="translation-notice" role="status" aria-live="polite">
+    <div class="translation-notice__inner">
+        <p class="translation-notice__text">{{ trans(key="translationNotice", lang=detected_lang) | safe }}</p>
+        <a class="translation-notice__link"
+           href="{{ get_url(path='', lang='en') }}"
+           hreflang="en"
+           lang="en">{{ trans(key="translationNoticeReadEnglish", lang=detected_lang) }}</a>
+    </div>
+</div>
+{% endif %}

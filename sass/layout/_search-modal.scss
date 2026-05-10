@@ -95,7 +95,7 @@
         font-size: 1.1rem;
         font-weight: 600;
         color: var(--color-text);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
     }
 
     &__shortcut {
@@ -104,7 +104,7 @@
         gap: 0.25rem;
         font-size: 0.8rem;
         color: var(--color-text-muted);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
 
         kbd {
             background-color: var(--color-background-tertiary);
@@ -192,7 +192,7 @@
         font-size: 1.1rem;
         font-weight: 600;
         color: var(--color-text);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
     }
 
     &__empty-text {

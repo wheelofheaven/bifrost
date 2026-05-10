@@ -1,14 +1,66 @@
-<!-- Preload critical fonts -->
+<!-- Preload critical fonts (always-on Latin/Cyrillic body + display) -->
 <link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 
-<!-- Frank Ruhl Libre: the classic Hebrew text serif, used site-wide for
-     all Hebrew (inline terms like Elohim, scriptural citations, and any
-     block Hebrew). Loaded from Google Fonts for now; can be self-hosted
-     later to match Jost/Space Grotesk/IA Writer. -->
+<!-- Web fonts. Frank Ruhl Libre is always loaded because Hebrew inline
+     terms (e.g. אֱלֹהִים) appear in prose across every language. The
+     other families are only pulled on pages whose detected_lang actually
+     needs them, so a French reader doesn't pay for CJK CSS and a
+     Japanese reader doesn't pay for Cyrillic. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+{# Frank Ruhl Libre — Hebrew, every page #}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap">
+
+{# Language-switcher CJK glyphs (日本語, 简体中文, 繁體中文, 한국어) are
+   resolved via the `lang="X"` attribute on each `<li>` plus the
+   per-script attribute selectors in `_base.scss`. Those stacks lead
+   with the right system CJK font (Hiragino, PingFang SC/TC, Apple SD
+   Gothic Neo on macOS; equivalents on Windows/Linux) so the labels
+   render in the correct script regardless of the page's primary
+   language. Earlier we tried a Google Fonts `&text=` subset for the
+   12 switcher glyphs, but Google Fonts ships those subsets as
+   @font-face declarations *without* `unicode-range`, which shadowed
+   the full Noto Sans SC/TC/JP/KR loaded on their own language pages
+   and produced Latin-substitute glyphs (e.g. 释 → ü) for other CJK
+   characters. System-font fallback turned out to be safer and works
+   on every platform that has the corresponding script installed. #}
+
+{# Japanese: Zen Kaku Gothic New (body, humanist Jost analog) +
+   M PLUS 1p (display, geometric Space Grotesk analog). #}
+{% if detected_lang == "ja" %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
+{% endif %}
+
+{# Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
+   serif contrast for headings — matches the Jost/Space-Grotesk pairing-
+   of-opposites feel). #}
+{% if detected_lang == "zh" %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;500;700;900&display=swap">
+{% endif %}
+
+{# Traditional Chinese: Noto Sans TC + Noto Serif TC. #}
+{% if detected_lang == "zh-Hant" %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@400;500;700;900&display=swap">
+{% endif %}
+
+{# Korean: Pretendard (body, the de-facto Jost/SF-Pro analog for Hangul,
+   loaded from its official CDN since it's not on Google Fonts) +
+   IBM Plex Sans KR (display, matches the project's existing IBM Plex
+   Mono code font). #}
+{% if detected_lang == "ko" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+{% endif %}
+
+{# Russian/Cyrillic: Jost already covers Cyrillic body. Space Grotesk
+   needs the Cyrillic subset for headings — Google Fonts ships exactly
+   the unicode-range we need, so non-Cyrillic visitors aren't affected
+   even on this page. #}
+{% if detected_lang == "ru" %}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap">
+{% endif %}
 
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}

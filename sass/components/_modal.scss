@@ -76,7 +76,7 @@
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--color-text);
-    font-family: typo.$font-family-body;
+    font-family: var(--font-family-body);
 }
 
 @mixin modal-close-button {
@@ -158,7 +158,7 @@
     border-radius: 0.5rem;
     transition: all 0.2s ease;
     font-weight: 500;
-    font-family: typo.$font-family-body;
+    font-family: var(--font-family-body);
 
     &:hover,
     &:focus {

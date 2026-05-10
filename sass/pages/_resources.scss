@@ -182,7 +182,7 @@
 
     &__title {
         margin: 0 0 0.75rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 2.5rem;
         font-weight: 700;
         color: var(--color-text);
@@ -356,7 +356,7 @@
 
     // Content Area
     &__content {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 1.0625rem;
         line-height: 1.8;
         color: var(--color-text);
@@ -366,7 +366,7 @@
         h4,
         h5,
         h6 {
-            font-family: typo.$font-family-lead;
+            font-family: var(--font-family-lead);
             color: var(--color-text);
             margin-top: 2.5rem;
             margin-bottom: 1rem;
@@ -463,7 +463,7 @@
 
     // Section Titles
     &__section-title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--color-text);

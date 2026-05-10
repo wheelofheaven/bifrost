@@ -39,7 +39,7 @@
 
     &__title {
         margin: 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.125rem;
         font-weight: 700;
         color: var(--color-text);
@@ -160,7 +160,7 @@
     }
 
     &__term {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.25rem;
         font-weight: 700;
         color: var(--color-accent-primary);
@@ -251,7 +251,7 @@
     border-radius: 0.5rem;
     padding: 1.5rem 2rem;
     margin: 1.5rem 0;
-    font-family: typo.$font-family-quote;
+    font-family: var(--font-family-quote);
     font-size: 0.9rem;
     line-height: 1.6;
     font-weight: 400;
@@ -267,7 +267,7 @@
         left: 1rem;
         font-size: 2.5rem;
         color: var(--color-accent-primary);
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-weight: 300;
         opacity: 0.3;
         line-height: 1;
@@ -332,7 +332,7 @@
         font-weight: 500;
         color: var(--color-text-muted);
         font-size: 0.95rem;
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         letter-spacing: 0.02em;
 
         &::before {
@@ -362,7 +362,7 @@
             var(--color-accent-secondary)
         );
         color: var(--color-background);
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.05em;

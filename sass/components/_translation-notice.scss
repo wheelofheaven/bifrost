@@ -1,0 +1,145 @@
+// Translation notice — non-English layouts
+//
+// A glassmorphic pill that mirrors the navbar's design language and
+// docks just below the navbar at the top of the document. Critically,
+// the banner is `position: absolute` (not `fixed`) so it scrolls with
+// the document — and its z-index sits below the navbar, so as the
+// user scrolls down the banner slides "behind" the fixed navbar pill
+// and disappears off the top of the viewport. Scrolling back to the
+// top brings it back into view.
+//
+// Rendered by: bifrost/templates/partials/translation-notice.html
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.translation-notice {
+    // Pill geometry — matches `.navbar` so the two glass elements
+    // stack as a unified pair at the top of the document.
+    //
+    // `position: absolute` (not `fixed`): the banner is anchored to
+    // the document's top, not the viewport's, so it scrolls upward
+    // with the page and slides out of view when the user scrolls.
+    // Returning to the top brings it back into view. The navbar stays
+    // fixed (see :has() override below) so it remains visible as the
+    // user reads down.
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 80rem;
+    // Below the navbar's z-index (50) so that during the scroll
+    // transition (when the banner's bottom edge briefly overlaps the
+    // navbar's vertical band) the navbar wins and the banner
+    // visually slips behind it before exiting the viewport.
+    z-index: 49;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+
+    // Backdrop-filter glass via ::before — same trick the navbar uses.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: -1;
+    }
+
+    // Warm hairline along the top edge — the visual cue that this is
+    // a notice, not just another navbar segment.
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 1rem;
+        right: 1rem;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            #{c.$yellow-400} 20%,
+            #{c.$yellow-400} 80%,
+            transparent 100%
+        );
+        opacity: 0.6;
+    }
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-sm;
+        padding: 0.625rem 1.25rem;
+        flex-wrap: wrap;
+        position: relative;
+    }
+
+    &__text {
+        margin: 0;
+        flex: 1 1 auto;
+        min-width: 12rem;
+        color: var(--color-text-muted);
+    }
+
+    &__link {
+        flex-shrink: 0;
+        font-weight: 500;
+        color: var(--color-text);
+        text-decoration: underline;
+        text-decoration-color: c.$yellow-500;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+        transition: opacity v.$transition-base ease;
+
+        &:hover,
+        &:focus-visible {
+            opacity: 0.7;
+        }
+    }
+
+    @media (max-width: 767px) {
+        font-size: v.$font-size-xs;
+
+        &__inner {
+            padding: 0.5rem 0.875rem;
+            gap: v.$spacing-xs;
+        }
+    }
+}
+
+// `--translation-notice-h` is the budgeted banner height. The desktop
+// banner is one line (~2.5rem with padding); on narrow viewports the
+// banner can wrap to two lines so the budget grows.
+:root {
+    --translation-notice-h: 2.5rem;
+}
+@media (max-width: 767px) {
+    :root {
+        --translation-notice-h: 4rem;
+    }
+}
+
+// When the banner is present, the navbar starts docked beneath it
+// (with a 0.5rem gap mirroring its own viewport offset) so the two
+// glass pills stack vertically at the top of the page. As the user
+// scrolls down and the banner translates upward out of view, the
+// navbar dynamically rises to `top: 0.5rem` so the post-scroll
+// layout matches the English pages exactly. The transition is
+// driven by `partials/translation-notice-script.html`, which writes
+// the navbar's `top` based on `window.scrollY`. This SCSS only sets
+// the *starting* (top-of-page) position — the JS handles the rest.
+//
+// `main`'s padding-top and the landing scroll-padding-top stay at
+// their English defaults (6rem / 4rem); the banner is purely a
+// floating overlay and does not push any content down.
+body:has(> .translation-notice) {
+    .navbar {
+        top: calc(var(--translation-notice-h) + 1rem);
+    }
+}

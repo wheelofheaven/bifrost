@@ -33,7 +33,7 @@
         border: 1px solid var(--color-hairline);
         border-radius: 0.5rem;
         color: var(--color-text);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.875rem;
         cursor: pointer;
         transition: all 0.2s ease;
@@ -240,7 +240,7 @@
 
     &__title {
         margin: 0 0 1rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--color-text);

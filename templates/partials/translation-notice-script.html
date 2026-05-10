@@ -1,0 +1,57 @@
+{# Animates the navbar's `top` based on scroll position so the navbar
+   rises from its banner-shifted starting position to `top: 0.5rem`
+   (the English-page position) as the translation banner scrolls out
+   of view. Only runs when the banner is present.
+
+   At scroll 0 the navbar sits beneath the banner; over a scroll
+   range equal to the banner's height plus a small buffer, navbar's
+   top eases up to 0.5rem. Beyond that the navbar matches the layout
+   of every other page on the site. #}
+{% if detected_lang and detected_lang != "en" %}
+<script>
+(function () {
+    "use strict";
+    const navbar = document.querySelector(".navbar");
+    const notice = document.querySelector(".translation-notice");
+    if (!navbar || !notice) return;
+
+    const rem = () =>
+        parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+
+    let bannerH, navbarStart, navbarMin, range;
+
+    const measure = () => {
+        const r = rem();
+        bannerH = notice.offsetHeight;          // px
+        navbarStart = bannerH + r;              // banner height + 1rem gap
+        navbarMin = 0.5 * r;                    // English navbar position
+        range = navbarStart - navbarMin;        // px to traverse
+    };
+
+    const update = () => {
+        const scrollY = Math.max(0, window.scrollY);
+        const ratio = Math.min(1, scrollY / range);
+        const top = navbarStart - range * ratio;
+        navbar.style.top = top + "px";
+    };
+
+    let scheduled = false;
+    const onScroll = () => {
+        if (scheduled) return;
+        scheduled = true;
+        requestAnimationFrame(() => {
+            update();
+            scheduled = false;
+        });
+    };
+
+    measure();
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", () => {
+        measure();
+        update();
+    });
+})();
+</script>
+{% endif %}

@@ -310,7 +310,7 @@ main:has(.timeline-section) ~ footer {
 }
 
 .age-card__title {
-    font-family: typo.$font-family-lead;
+    font-family: var(--font-family-lead);
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--color-text);
@@ -1027,7 +1027,7 @@ main:has(.timeline-section) ~ footer {
     }
 
     &__title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: clamp(2.5rem, 5vw, 4rem);
         font-weight: 700;
         color: var(--color-text);
@@ -1200,7 +1200,7 @@ main:has(.timeline-section) ~ footer {
     }
 
     &__title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--color-text);

@@ -33,7 +33,6 @@
 @use "components/content-shared";
 @use "components/snackbar";
 @use "components/study-tools";
-@use "components/ask-ai";
 @use "components/listen-button";
 @use "components/reading-progress";
 @use "components/glossary-tooltip";
@@ -47,6 +46,7 @@
 @use "components/figure";
 @use "components/claim-badge";
 @use "components/dispatch-chip";
+@use "components/translation-notice";
 
 @use "pages/home";
 @use "pages/read";

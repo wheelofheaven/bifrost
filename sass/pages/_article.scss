@@ -73,7 +73,7 @@
     }
 
     &__hero-title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 3rem;
         font-weight: 700;
         line-height: 1.1;
@@ -135,7 +135,7 @@
 
     &__title {
         margin: 0 0 0.75rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 2.25rem;
         font-weight: 700;
         color: var(--color-text);
@@ -236,7 +236,7 @@
     // Main Content
     &__content {
         padding: 2rem;
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         line-height: 1.7;
         color: var(--color-text);
 
@@ -250,7 +250,7 @@
         h4,
         h5,
         h6 {
-            font-family: typo.$font-family-lead;
+            font-family: var(--font-family-lead);
             color: var(--color-text);
             margin-top: 2.5rem;
             margin-bottom: 1rem;
@@ -328,7 +328,7 @@
             );
             border-radius: 0.75rem;
             position: relative;
-            font-family: typo.$font-family-quote;
+            font-family: var(--font-family-quote);
             font-size: 0.9rem;
             line-height: 1.7;
             font-weight: 400;
@@ -359,7 +359,7 @@
                 font-size: 4rem;
                 color: var(--color-accent-primary);
                 opacity: 0.15;
-                font-family: typo.$font-family-lead;
+                font-family: var(--font-family-lead);
                 line-height: 1;
                 font-weight: 300;
             }
@@ -415,13 +415,13 @@
         th {
             background: var(--color-background-tertiary);
             font-weight: 600;
-            font-family: typo.$font-family-lead;
+            font-family: var(--font-family-lead);
         }
     }
 
     // Section Titles
     &__section-title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--color-text);
@@ -865,7 +865,7 @@
 
     &__title {
         margin: 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.125rem;
         font-weight: 700;
         color: var(--color-text);
@@ -952,7 +952,7 @@
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 
     &__term {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.25rem;
         font-weight: 700;
         color: var(--color-accent-primary);

@@ -4,28 +4,97 @@
 
 @use "fonts";
 
-// CJK font stacks (Chinese, Japanese, Korean)
-$font-family-cjk-ja:
+// Per-script font pairings. Each non-Latin script gets its own
+// "body" + "display" pair — the analog of Jost (humanist body) plus
+// Space Grotesk (geometric display) used for Latin. The web fonts
+// themselves are loaded conditionally in `partials/fonts-css.html`
+// based on detected_lang; system-font fallbacks come after so the page
+// stays readable if the network drops the web font.
+//
+// Japanese: Zen Kaku Gothic New (humanist, Jost-like) for body,
+//           M PLUS 1p (geometric, Space Grotesk-like) for display.
+$font-family-ja-body:
+    "Zen Kaku Gothic New",
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
     "Yu Gothic UI",
     "Yu Gothic",
     "Meiryo",
-    "Noto Sans JP";
-$font-family-cjk-zh:
+    "Noto Sans JP",
+    sans-serif;
+$font-family-ja-display:
+    "M PLUS 1p",
+    "Zen Kaku Gothic New",
+    "Hiragino Kaku Gothic ProN",
+    "Yu Gothic UI",
+    "Noto Sans JP",
+    sans-serif;
+
+// Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
+// serif contrast for headings).
+$font-family-zh-body:
+    "Noto Sans SC",
     "PingFang SC",
     "Hiragino Sans GB",
     "Microsoft YaHei",
-    "Noto Sans SC";
-$font-family-cjk-zh-hant:
+    sans-serif;
+$font-family-zh-display:
+    "Noto Serif SC",
+    "Songti SC",
+    "SimSun",
+    "Source Han Serif SC",
+    serif;
+
+// Traditional Chinese: Noto Sans TC + Noto Serif TC.
+$font-family-zh-hant-body:
+    "Noto Sans TC",
     "PingFang TC",
     "Microsoft JhengHei",
-    "Noto Sans TC";
-$font-family-cjk-ko:
+    sans-serif;
+$font-family-zh-hant-display:
+    "Noto Serif TC",
+    "Songti TC",
+    "PMingLiU",
+    "Source Han Serif TC",
+    serif;
+
+// Korean: Pretendard (body, Jost-like) + IBM Plex Sans KR (display,
+// matches the project's IBM Plex Mono code font).
+$font-family-ko-body:
+    "Pretendard",
+    "Pretendard Variable",
     "Apple SD Gothic Neo",
     "Malgun Gothic",
     "Nanum Gothic",
-    "Noto Sans KR";
+    "Noto Sans KR",
+    sans-serif;
+$font-family-ko-display:
+    "IBM Plex Sans KR",
+    "Pretendard",
+    "Apple SD Gothic Neo",
+    "Malgun Gothic",
+    "Noto Sans KR",
+    sans-serif;
+
+// Russian / Cyrillic — Jost already covers Cyrillic body (the local
+// `jost-v19-cyrillic_latin-*.woff2` files include the Cyrillic subset).
+// For headings we need the Cyrillic-supporting Space Grotesk, which is
+// the Google Fonts version (registered as the two-word family name
+// "Space Grotesk", distinct from the project's local "SpaceGrotesk"
+// one-word @font-face that only ships the Latin subset).
+$font-family-ru-display:
+    "Space Grotesk",   // Google Fonts (Cyrillic + Latin)
+    "SpaceGrotesk",    // local Latin-only — covers any incidental Latin
+    "Inter",
+    "Segoe UI",
+    "Roboto",
+    sans-serif;
+
+// Backwards-compat aliases (other files still reference these names).
+$font-family-cjk-ja: $font-family-ja-body;
+$font-family-cjk-zh: $font-family-zh-body;
+$font-family-cjk-zh-hant: $font-family-zh-hant-body;
+$font-family-cjk-ko: $font-family-ko-body;
 
 // Hebrew font stack — Frank Ruhl Libre is the classic Hebrew text serif
 // (originally cut by Raphael Frank in 1908, modernized for the web by

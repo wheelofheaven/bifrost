@@ -67,7 +67,7 @@
 
     &__title {
         margin: 0 0 1rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 3rem;
         font-weight: 700;
         color: var(--color-text);
@@ -175,7 +175,7 @@
 
     &__title {
         margin: 0 0 0.75rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.75rem;
         font-weight: 700;
         color: var(--color-text);
@@ -260,7 +260,7 @@
         align-items: center;
         gap: 0.75rem;
         margin: 0 0 0.75rem 0;
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.5rem;
         font-weight: 700;
         color: var(--color-text);

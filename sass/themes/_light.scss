@@ -67,3 +67,10 @@
 [data-theme="light"] .navbar {
     background-color: var(--color-navbar-bg);
 }
+
+// Mirror the navbar's direct background-color override on the
+// translation-notice pill so the two glass elements match in light
+// theme. (In dark theme both rely on `::before` only.)
+[data-theme="light"] .translation-notice {
+    background-color: var(--color-navbar-bg);
+}

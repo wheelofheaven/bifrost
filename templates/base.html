@@ -37,9 +37,12 @@
     <body>
         {% include "partials/reading-progress.html" %}
         {% include "partials/skip-links.html" %}
+        {% include "partials/translation-notice.html" %}
         {% include "partials/header.html" %}
         <main id="main-content" role="main" aria-label="{% if page.title %}{{ page.title }}{% elif section.title %}{{ section.title }}{% else %}Main content{% endif %}">{% block content %}{% endblock content %}</main>
-        {% include "partials/totop.html" %} {% include "partials/footer.html" %}
+        {% include "partials/totop.html" %}
+        {% include "partials/search-fab.html" %}
+        {% include "partials/footer.html" %}
         {% include "partials/snackbar.html" %}
         {% include "partials/glossary-tooltip.html" %}
         {% include "partials/highlight-share.html" %}
@@ -47,5 +50,6 @@
         {% include "partials/keyboard-shortcuts.html" %}
         {% include "partials/reading-list.html" %}
         {% include "partials/scripts.html" %}
+        {% include "partials/translation-notice-script.html" %}
     </body>
 </html>

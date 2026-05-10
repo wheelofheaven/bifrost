@@ -153,10 +153,8 @@
     }
 
     function isAnyModalOpen() {
-        // Check for search modal, ask-ai panel, or other modals
         const searchModal = document.querySelector('.search-modal--open, .search-modal.is-open');
-        const askAiPanel = document.querySelector('.ask-ai__panel--open');
-        return searchModal || askAiPanel || isModalOpen();
+        return searchModal || isModalOpen();
     }
 
     // Open search modal

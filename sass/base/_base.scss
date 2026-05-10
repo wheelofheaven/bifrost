@@ -5,12 +5,45 @@
 @use "typography" as typo;
 @use "../abstracts/variables" as vars;
 
+// `--font-family-body` (reading text, Jost for Latin) and
+// `--font-family-lead` (display/headings, Space Grotesk for Latin) are
+// declared at :root in `themes/_init.scss`. The `:lang()` blocks below
+// override them per-script so that the display font swaps correctly on
+// CJK and Korean pages without every component selector needing to be
+// aware of which language it's in.
+
 body {
-    font-family: typo.$font-family-body;
+    font-family: var(--font-family-body);
     font-size: typo.$font-size-sd;
     line-height: 1.6;
     color: var(--color-text);
     background-color: var(--color-background);
+}
+
+// Per-language font stacks for inline language-tagged elements.
+//
+// CSS custom properties cascade as variables, but `font-family` inherits
+// as a resolved value — so an inline `<li lang="zh">简体中文</li>` on an
+// English page would otherwise inherit body's already-resolved Latin
+// stack even though `:lang(zh)` overrides `--font-family-body` on the
+// <li>. The attribute selectors below pin each language-tagged element
+// directly to its own font stack so the right script-specific glyphs
+// resolve regardless of the page's primary language. Used by the
+// language switcher and any inline `<span lang="...">` in prose.
+[lang="ja"] {
+    font-family: typo.$font-family-ja-body;
+}
+[lang="zh"],
+[lang="zh-Hans"],
+[lang="zh-CN"] {
+    font-family: typo.$font-family-zh-body;
+}
+[lang="zh-Hant"],
+[lang="zh-TW"] {
+    font-family: typo.$font-family-zh-hant-body;
+}
+[lang="ko"] {
+    font-family: typo.$font-family-ko-body;
 }
 
 h1,
@@ -235,69 +268,52 @@ textarea {
 // Language-specific typography optimizations
 // =============================================================================
 
-// Japanese - optimized font stack and slightly increased line-height for readability
+// Japanese — Zen Kaku Gothic New (humanist body, Jost analog) +
+// M PLUS 1p (geometric display, Space Grotesk analog).
 :lang(ja) {
-    font-family:
-        "Jost",
-        "Hiragino Kaku Gothic ProN",
-        "Hiragino Sans",
-        "Yu Gothic UI",
-        "Yu Gothic",
-        "Meiryo",
-        "Noto Sans JP",
-        sans-serif;
+    --font-family-body: #{typo.$font-family-ja-body};
+    --font-family-lead: #{typo.$font-family-ja-display};
+    --font-family-quote: #{typo.$font-family-ja-display};
     line-height: 1.8;
     word-break: normal;
     overflow-wrap: anywhere;
 }
 
-// Chinese Simplified
+// Simplified Chinese — Noto Sans SC + Noto Serif SC.
 :lang(zh),
 :lang(zh-Hans),
 :lang(zh-CN) {
-    font-family:
-        "Jost",
-        "PingFang SC",
-        "Hiragino Sans GB",
-        "Microsoft YaHei",
-        "Noto Sans SC",
-        sans-serif;
+    --font-family-body: #{typo.$font-family-zh-body};
+    --font-family-lead: #{typo.$font-family-zh-display};
+    --font-family-quote: #{typo.$font-family-zh-display};
     line-height: 1.8;
 }
 
-// Chinese Traditional
+// Traditional Chinese — Noto Sans TC + Noto Serif TC.
 :lang(zh-Hant),
 :lang(zh-TW) {
-    font-family:
-        "Jost",
-        "PingFang TC",
-        "Microsoft JhengHei",
-        "Noto Sans TC",
-        sans-serif;
+    --font-family-body: #{typo.$font-family-zh-hant-body};
+    --font-family-lead: #{typo.$font-family-zh-hant-display};
+    --font-family-quote: #{typo.$font-family-zh-hant-display};
     line-height: 1.8;
 }
 
-// Russian/Cyrillic - Jost already supports Cyrillic, just ensure proper rendering
+// Russian/Cyrillic — Jost already covers Cyrillic body. For headings
+// we override `--font-family-lead` to use Google Fonts' "Space Grotesk"
+// (two-word family name with Cyrillic glyphs); the project's local
+// "SpaceGrotesk" (one-word) is Latin-only.
 :lang(ru) {
-    font-family:
-        "Jost",
-        "Segoe UI",
-        "Roboto",
-        "Noto Sans",
-        sans-serif;
-    // Cyrillic often benefits from slightly more spacing
+    --font-family-lead: #{typo.$font-family-ru-display};
+    --font-family-quote: #{typo.$font-family-ru-display};
     letter-spacing: 0.01em;
 }
 
-// Korean
+// Korean — Pretendard (body, Jost-like) + IBM Plex Sans KR (display,
+// matches the project's existing IBM Plex Mono code font).
 :lang(ko) {
-    font-family:
-        "Jost",
-        "Apple SD Gothic Neo",
-        "Malgun Gothic",
-        "Nanum Gothic",
-        "Noto Sans KR",
-        sans-serif;
+    --font-family-body: #{typo.$font-family-ko-body};
+    --font-family-lead: #{typo.$font-family-ko-display};
+    --font-family-quote: #{typo.$font-family-ko-display};
     line-height: 1.8;
     word-break: keep-all; // Prevent breaking within words
 }

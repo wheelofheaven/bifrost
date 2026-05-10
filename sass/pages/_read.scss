@@ -12,7 +12,7 @@
     }
 
     &__title {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: clamp(2rem, 5vw, 3rem);
         font-weight: 700;
         margin: 0 0 v.$spacing-md;
@@ -136,7 +136,7 @@
     }
 
     &__card-title {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: v.$font-size-2xl;
         font-weight: 700;
         margin: 0;
@@ -229,7 +229,7 @@
     &__sublink-meta {
         font-size: v.$font-size-xs;
         color: var(--color-text-muted);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
     }
 
     &__card-cta {

@@ -117,7 +117,7 @@
     }
 
     &__nav-dot-title {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.75rem;
         white-space: nowrap;
         opacity: 0;
@@ -190,7 +190,7 @@
     }
 
     &__heading {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: clamp(1.875rem, 4.2vw, 3.25rem);
         font-weight: 700;
         line-height: 1.15;
@@ -231,7 +231,7 @@
         .landing-translit {
             display: inline-block;
             margin: 0 0.1em 0 0.3em;
-            font-family: typo.$font-family-body;
+            font-family: var(--font-family-body);
             font-size: 0.75em;
             // Inherit color and posture from .landing-section__sub so the
             // transliteration matches the surrounding subline in any
@@ -500,7 +500,7 @@
     }
 
     &__label {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.75rem;
         color: var(--color-text-muted);
     }
@@ -704,14 +704,14 @@
 }
 
 .landing-method__badge-rest {
-    font-family: typo.$font-family-body;
+    font-family: var(--font-family-body);
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--color-text);
 }
 
 .landing-method__badge-note {
-    font-family: typo.$font-family-body;
+    font-family: var(--font-family-body);
     font-size: 0.75rem;
     color: var(--color-text-muted);
     text-align: center;
@@ -773,7 +773,7 @@
     }
 
     &__title {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-size: 1.25rem;
         font-weight: 700;
         line-height: 1.2;
@@ -782,7 +782,7 @@
     }
 
     &__desc {
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.875rem;
         line-height: 1.55;
         color: var(--color-text-muted);
@@ -794,7 +794,7 @@
         display: inline-flex;
         align-items: center;
         gap: 0.4375rem;
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.8125rem;
         font-weight: 600;
         color: var(--color-text-muted);
@@ -806,7 +806,7 @@
 // ---- §8 — Coda ----
 .landing-coda {
     &__quote {
-        font-family: typo.$font-family-lead;
+        font-family: var(--font-family-lead);
         font-style: italic;
         font-size: clamp(1.25rem, 2.4vw, 1.75rem);
         line-height: 1.4;
@@ -855,7 +855,7 @@
         align-items: center;
         gap: 0.5rem;
         color: var(--color-text-muted);
-        font-family: typo.$font-family-body;
+        font-family: var(--font-family-body);
         font-size: 0.875rem;
         font-weight: 500;
         text-decoration: none;
