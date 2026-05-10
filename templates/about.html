@@ -1,134 +1,58 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
-<div class="about-page">
-    <!-- Breadcrumb Navigation -->
+{% include "partials/schema/organization.html" %}
+
+<div class="about">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
-    <!-- Hero Section with Gradient -->
-    <header class="about-hero">
-        <div class="about-hero__bg"></div>
-        <div class="about-hero__content">
-            <div class="about-hero__icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"></path>
-                    <path d="M2 12h20"></path>
-                </svg>
-            </div>
-            <h1 class="about-hero__title">{{ page.title }}</h1>
-            {% if page.description %}
-            <p class="about-hero__description">{{ page.description }}</p>
-            {% endif %}
-        </div>
-    </header>
 
-    <div class="about-container">
-        <!-- Mission Statement -->
-        <section class="about-mission">
-            <div class="about-mission__content">
-                <p class="about-mission__text">
-                    Wheel of Heaven began as one reader's long working-out of a single question: what would the ancient creation traditions look like if you read them not as symbol or metaphor, but as testimony? What if the beings the Hebrew Bible calls <em>Elohim</em> really were what the text calls them &mdash; a group, plural, with bodies and tools and decisions?
-                </p>
-                <p class="about-mission__text">
-                    The project that emerged from fifteen years of those notes is a specific framework for reading: the Raëlian source material as the primary interpretive lens, the precessional cycle as the organizing calendar, and the cross-cultural religious traditions as the body of evidence to be read through that lens. The framework is a working hypothesis. It is offered to be tried, evaluated, and tested against alternatives.
-                </p>
-                <p class="about-mission__highlight">
-                    The site exists to make the work public, source-aware, and open to correction. It is not a movement, not a creed, and not a finished synthesis. It is a long reading, in progress, written by Zara Zinsfuss, open to collaborators, and free for any reader to walk through and check.
-                </p>
-            </div>
-        </section>
+    <div class="about__container">
+        <article class="about__article" role="article" aria-labelledby="about-title">
+            <header class="about__header">
+                <h1 class="about__title" id="about-title">{{ page.title }}</h1>
 
-        <!-- Values Section -->
-        <section class="about-values">
-            <div class="about-values__intro">
-                <h2 class="about-values__title">How the Project Works</h2>
-                <p class="about-values__subtitle">Four commitments shape how the site is built and how the corpus is written.</p>
-            </div>
+                {% if page.description %}
+                <p class="about__description">{{ page.description }}</p>
+                {% endif %}
 
-            <div class="about-values__grid">
-                <article class="about-value-card">
-                    <div class="about-value-card__icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                        </svg>
-                    </div>
-                    <h3 class="about-value-card__title">The work should be free to read and free to check</h3>
-                    <p class="about-value-card__description">
-                        Every page of the corpus, every primary source the corpus reads, and every piece of project infrastructure is publicly available, in multiple languages, at no cost. The reader who wants to evaluate a claim should not encounter a paywall between themselves and the evidence.
-                    </p>
-                </article>
-
-                <article class="about-value-card">
-                    <div class="about-value-card__icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="9" cy="7" r="4"></circle>
-                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                        </svg>
-                    </div>
-                    <h3 class="about-value-card__title">A working hypothesis, not a creed</h3>
-                    <p class="about-value-card__description">
-                        The project's central reading &mdash; that the Elohim were a civilization &mdash; is held as a hypothesis to be tried, not a doctrine to be defended. Every page carries a small badge labeling its main claim as direct, inferred, or speculative. Where the evidence shifts, the reading shifts.
-                    </p>
-                </article>
-
-                <article class="about-value-card">
-                    <div class="about-value-card__icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="16" y1="13" x2="8" y2="13"></line>
-                            <line x1="16" y1="17" x2="8" y2="17"></line>
-                            <polyline points="10 9 9 9 8 9"></polyline>
-                        </svg>
-                    </div>
-                    <h3 class="about-value-card__title">Read close to the sources</h3>
-                    <p class="about-value-card__description">
-                        The corpus is built around the primary texts it reads from. Where a claim depends on a specific passage, the passage is available. Where a translation choice matters, the original is named. Discussion happens around lines of text, not around summaries of summaries.
-                    </p>
-                </article>
-
-                <article class="about-value-card">
-                    <div class="about-value-card__icon">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                    </div>
-                    <h3 class="about-value-card__title">Compare boldly, but never lazily</h3>
-                    <p class="about-value-card__description">
-                        The corpus reads many traditions alongside each other, but it does not flatten them into a single story. Mesopotamian, biblical, Vedic, Mesoamerican, and Raëlian sources are read in dialogue, with their differences preserved. A shared motif is not a proof of common origin; a parallel is not an identity.
-                    </p>
-                </article>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="about-cta">
-            <div class="about-cta__content">
-                <div class="about-cta__icon">
-                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                    </svg>
+                {% if page.extra.claim_type %}
+                <div class="about__badge">
+                    {{ claim_badge::render(claim_type=page.extra.claim_type) }}
                 </div>
-                <h2 class="about-cta__title">Join the Discussion</h2>
-                <p class="about-cta__description">
-                    The site is open. The text is public. Questions, corrections, and counter-readings are welcome &mdash; every chapter is in dialogue with its sources, and the dialogue extends to its readers.
+                {% endif %}
+            </header>
+
+            {% if page.content %}
+            <div class="about__content">{{ page.content | safe }}</div>
+            {% endif %}
+
+            {% if page.extra.commitments %}
+            <section class="about__commitments" aria-labelledby="commitments-title">
+                <h2 class="about__group-title" id="commitments-title">How the project works</h2>
+                <p class="about__commitments-intro">Four commitments shape how the corpus is written.</p>
+                <ol class="about__commitment-list">
+                    {% for c in page.extra.commitments %}
+                    <li class="about__commitment" id="{{ c.slug }}">
+                        <h3 class="about__commitment-title">{{ c.title }}</h3>
+                        <p class="about__commitment-body">{{ c.body }}</p>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </section>
+            {% endif %}
+
+            <footer class="about__footer">
+                <h2 class="about__footer-title">Join the discussion</h2>
+                <p class="about__footer-text">
+                    The site is open. The text is public. Questions, corrections, and counter-readings are welcome — every chapter is in dialogue with its sources, and the dialogue extends to its readers.
                 </p>
-                <a href="https://github.com/orgs/wheelofheaven/discussions" class="about-cta__button" target="_blank" rel="noopener">
-                    <span>Open the GitHub discussions</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <line x1="10" y1="14" x2="21" y2="3"></line>
-                    </svg>
-                </a>
-            </div>
-        </section>
+                <p class="about__footer-cta">
+                    <a href="https://github.com/orgs/wheelofheaven/discussions" target="_blank" rel="noopener">Open the GitHub discussions →</a>
+                </p>
+            </footer>
+        </article>
     </div>
 </div>
 {% endblock content %}

@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/claim-badge.html" as claim_badge %}
+
+{% block content %}
+{% include "partials/schema/person.html" %}
+
+<div class="author">
+    {{ breadcrumbs::generic_page(
+        title=page.title,
+        parent_title="About",
+        parent_path="/about/",
+        lang=detected_lang
+    ) }}
+
+    <div class="author__container">
+        <article class="author__article" role="article" aria-labelledby="author-title">
+            <header class="author__header">
+                {% if page.extra.role %}
+                <p class="author__role">{{ page.extra.role }}</p>
+                {% endif %}
+
+                <h1 class="author__title" id="author-title">{{ page.title }}</h1>
+
+                {% if page.description %}
+                <p class="author__description">{{ page.description }}</p>
+                {% endif %}
+
+                {% if page.extra.claim_type %}
+                <div class="author__badge">
+                    {{ claim_badge::render(claim_type=page.extra.claim_type) }}
+                </div>
+                {% endif %}
+            </header>
+
+            {% set has_card = page.extra.location or page.extra.profession or page.extra.languages_read or page.extra.on_the_corpus %}
+            {% if has_card %}
+            <aside class="author__card" aria-label="At a glance">
+                <h2 class="author__card-title">At a glance</h2>
+                <dl class="author__card-list">
+                    {% if page.extra.location %}
+                    <dt>Location</dt>
+                    <dd>{{ page.extra.location }}</dd>
+                    {% endif %}
+                    {% if page.extra.profession %}
+                    <dt>Profession</dt>
+                    <dd>{{ page.extra.profession }}</dd>
+                    {% endif %}
+                    {% if page.extra.languages_read %}
+                    <dt>Languages read</dt>
+                    <dd>{{ page.extra.languages_read | join(sep=", ") }}</dd>
+                    {% endif %}
+                    {% if page.extra.on_the_corpus %}
+                    <dt>On the corpus</dt>
+                    <dd>{{ page.extra.on_the_corpus }}</dd>
+                    {% endif %}
+                </dl>
+            </aside>
+            {% endif %}
+
+            {% if page.content %}
+            <div class="author__content">{{ page.content | safe }}</div>
+            {% endif %}
+
+            <footer class="author__footer">
+                <p class="author__signature">
+                    — {{ page.title }}<br>
+                    {% if page.extra.signature_location %}{{ page.extra.signature_location }}, {% endif %}{% if page.extra.signature_year %}{{ page.extra.signature_year }}{% endif %}{% if page.extra.signature_year_alt %} <em>({{ page.extra.signature_year_alt }})</em>{% endif %}
+                </p>
+            </footer>
+        </article>
+    </div>
+</div>
+{% endblock content %}
