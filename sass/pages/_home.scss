@@ -215,23 +215,16 @@
         max-width: 36rem;
 
         .hebrew {
-            font-family:
-                "Karantina",
-                "Rubik",
-                "Heebo",
-                "Arial Hebrew",
-                "Noto Sans Hebrew",
-                sans-serif;
-            // Karantina renders visually large at 1em — 1.1em with light
-            // weight (300) gives parity with the surrounding English body
-            // without looking small.
-            font-weight: 300;
-            font-size: 1.3em;
+            // Inherits Frank Ruhl Libre from the global .hebrew rule. As a
+            // serif it renders close to body-size at 1em, so we lean on a
+            // medium weight + a modest size bump to give the term presence
+            // alongside the surrounding English copy.
+            font-weight: 500;
+            font-size: 1.15em;
             font-style: normal;
             color: var(--color-text);
             line-height: 1;
             margin: 0 0.15em 0 0;
-            letter-spacing: 0.08em;
             vertical-align: baseline;
         }
 
@@ -240,8 +233,10 @@
             margin: 0 0.1em 0 0.3em;
             font-family: typo.$font-family-body;
             font-size: 0.75em;
-            font-style: italic;
-            color: var(--color-text-muted);
+            // Inherit color and posture from .landing-section__sub so the
+            // transliteration matches the surrounding subline in any
+            // context (including the white-overlay §1 video hero).
+            color: inherit;
             letter-spacing: 0.02em;
             vertical-align: 0.05em;
         }
@@ -362,7 +357,7 @@
     opacity: 0.95;
 
     svg {
-        width: clamp(8rem, 18vw, 12rem);
+        width: clamp(9.5rem, 21vw, 14rem);
         height: auto;
         display: block;
     }

@@ -27,16 +27,18 @@ $font-family-cjk-ko:
     "Nanum Gothic",
     "Noto Sans KR";
 
-// Hebrew font stack — Rubik is a modern geometric Hebrew sans with good
-// nikud (vowel-mark) positioning and multiple weights, including display
-// weights for landing-page treatments.
+// Hebrew font stack — Frank Ruhl Libre is the classic Hebrew text serif
+// (originally cut by Raphael Frank in 1908, modernized for the web by
+// Yanek Iontef). It pairs with the project's scholarly register and gives
+// Hebrew terms the gravitas of biblical/scriptural typography. Used
+// site-wide for both inline Hebrew (.hebrew, [lang="he"]) and any block
+// Hebrew passages.
 $font-family-hebrew:
-    "Rubik",
-    "Heebo",
-    "Arial Hebrew",
-    "Noto Sans Hebrew",
-    "Segoe UI",
-    "Tahoma";
+    "Frank Ruhl Libre",
+    "David Libre",
+    "Noto Serif Hebrew",
+    "Times New Roman",
+    serif;
 
 // Main font stacks with comprehensive fallbacks
 $font-family-sans:

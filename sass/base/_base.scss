@@ -302,15 +302,12 @@ textarea {
     word-break: keep-all; // Prevent breaking within words
 }
 
-// Hebrew text styling (for inline Hebrew words throughout the site)
+// Hebrew text styling — single font stack (typo.$font-family-hebrew, which
+// leads with Frank Ruhl Libre) used everywhere Hebrew renders, so terms
+// stay typographically consistent across the site.
 [lang="he"],
 :lang(he) {
-    font-family:
-        "Arial Hebrew",
-        "Noto Sans Hebrew",
-        "Segoe UI",
-        "Tahoma",
-        sans-serif;
+    font-family: typo.$font-family-hebrew;
     direction: rtl;
     unicode-bidi: isolate;
 }
@@ -318,14 +315,7 @@ textarea {
 // For inline Hebrew within LTR content (e.g., Hebrew words in English text)
 .hebrew,
 .text-hebrew {
-    font-family:
-        "Rubik",
-        "Heebo",
-        "Arial Hebrew",
-        "Noto Sans Hebrew",
-        "Segoe UI",
-        "Tahoma",
-        sans-serif;
+    font-family: typo.$font-family-hebrew;
     font-weight: 500;
     direction: rtl;
     unicode-bidi: isolate;
