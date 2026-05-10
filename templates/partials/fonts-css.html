@@ -79,10 +79,9 @@
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 
-<!-- Stylesheets. Critical CSS (above-the-fold + theme + navbar) is
-     inlined so the page can paint without a CSS roundtrip; the full
-     sheet is preloaded and swapped in once it arrives. -->
-{% set critical_css = load_data(path="public/critical.css", format="plain", required=false) %}
-{% if critical_css %}<style>{{ critical_css | safe }}</style>{% endif %}
-<link rel="preload" href="{{ get_url(path='main.css') }}" as="style" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"></noscript>
+<!-- Stylesheet. Loaded synchronously to avoid FOUC on below-the-fold
+     page-specific styles (wiki, library, articles, etc.) that aren't
+     in critical.css. The sheet is aggressively cached (see _headers),
+     so the render-blocking cost only applies to uncached first
+     visits. -->
+<link rel="stylesheet" href="{{ get_url(path='main.css') }}">
