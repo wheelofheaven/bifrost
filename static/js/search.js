@@ -5,6 +5,7 @@ let searchIndex = null;
 let fuse = null;
 let currentLanguage = "en";
 let activeFilters = new Set();
+let searchInitPromise = null;
 const RECENT_SEARCHES_KEY = 'woh-recent-searches';
 const MAX_RECENT_SEARCHES = 5;
 
@@ -59,8 +60,12 @@ const SUGGESTIONS = [
     { term: 'intelligent design', section: 'Wiki' }
 ];
 
-// Initialize search functionality
-async function initSearch() {
+// Initialize search functionality (lazy — fetches the multi-MB index
+// only when the user first interacts with search). Idempotent: repeat
+// calls return the in-flight or completed promise.
+function initSearch() {
+    if (searchInitPromise) return searchInitPromise;
+    searchInitPromise = (async () => {
     try {
         currentLanguage = document.documentElement.lang || "en";
 
@@ -101,7 +106,10 @@ async function initSearch() {
         console.log("Search initialized successfully with", searchIndex.length, "items");
     } catch (error) {
         console.error("Error initializing search:", error);
+        searchInitPromise = null; // allow a retry on the next interaction
     }
+    })();
+    return searchInitPromise;
 }
 
 // Get section icon
@@ -624,22 +632,44 @@ function hideSearchModal() {
     }
 }
 
-// Initialize when DOM is ready
-document.addEventListener("DOMContentLoaded", async () => {
-    await initSearch();
+// This bundle is lazy-loaded by `search-loader.js` after first user
+// intent. By the time we run, DOM is already complete, so init runs
+// immediately rather than waiting on DOMContentLoaded. If for some
+// reason the bundle is loaded synchronously before DOM is ready, fall
+// back to the event.
+function initSearchUI() {
     const modal = createSearchModal();
     const navbarSearchInput = document.querySelector(".navbar__search-input");
 
+    // Wrap performSearch so a query typed before the index has loaded
+    // re-runs once it does.
+    const runQuery = (query) => {
+        debouncedSearch(query);
+        if (!fuse) {
+            initSearch().then(() => {
+                if (navbarSearchInput && navbarSearchInput.value === query) {
+                    debouncedSearch(query);
+                }
+            });
+        }
+    };
+
     if (navbarSearchInput) {
-        navbarSearchInput.addEventListener("focus", showSearchModal);
-        navbarSearchInput.addEventListener("click", showSearchModal);
+        navbarSearchInput.addEventListener("focus", () => {
+            initSearch();
+            showSearchModal();
+        });
+        navbarSearchInput.addEventListener("click", () => {
+            initSearch();
+            showSearchModal();
+        });
 
         navbarSearchInput.addEventListener("input", e => {
             const query = e.target.value;
             if (query.trim() && !modal.classList.contains("search-modal--active")) {
                 showSearchModal();
             }
-            debouncedSearch(query);
+            runQuery(query);
             if (!query.trim() && modal.classList.contains("search-modal--active")) {
                 renderSearchResults([]);
             }
@@ -650,6 +680,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 e.preventDefault();
             }
         });
+    }
+
+    // Opportunistically prefetch the index when the browser is idle, so
+    // the first query feels instant without blocking initial paint.
+    if ("requestIdleCallback" in window) {
+        requestIdleCallback(() => initSearch(), { timeout: 4000 });
+    } else {
+        setTimeout(() => initSearch(), 3000);
     }
 
     const closeButton = modal.querySelector(".search-modal__close");
@@ -680,7 +718,13 @@ document.addEventListener("DOMContentLoaded", async () => {
             }
         }
     });
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initSearchUI);
+} else {
+    initSearchUI();
+}
 
 // Keyboard navigation in results
 document.addEventListener("keydown", e => {

@@ -20,16 +20,22 @@ const OUT_DIR = path.join(__dirname, '../static/js/dist');
 // Bundle configurations
 // Files prefixed with 'vendor/' are treated specially - concatenated without module wrapping
 const bundles = {
+  // Loaded on every page (deferred). Tiny stub for search loads the
+  // real search bundle on first interaction — see search-loader.js.
   'core.bundle.js': [
-    'vendor/fuse.min.js',  // Fuse.js search library (self-hosted, already minified)
     'navbar.js',
     'navbar-mobile-toggle.js',
-    'search.js',
+    'search-loader.js',
     'reading-list.js',
     'pwa.js',
     'toc-scroll-spy.js',
     'to-top.js',
-    'prefetch.js',  // Prefetch links on hover for instant navigation
+    'prefetch.js',
+  ],
+  // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.
+  'search.bundle.js': [
+    'vendor/fuse.min.js',
+    'search.js',
   ],
   'library.bundle.js': [
     'library-storage.js',
