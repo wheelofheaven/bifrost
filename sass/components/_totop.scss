@@ -94,3 +94,27 @@
     bottom: 5rem;
 }
 
+// When the PWA install banner is visible, lift the to-top button (and the
+// search FAB, which stacks above it) clear of the banner so the Install
+// button isn't covered.
+body:has(.pwa-install-banner--visible) {
+    .to-top {
+        bottom: 6rem;
+    }
+
+    .to-top--visible ~ .search-fab {
+        bottom: 9.5rem;
+    }
+
+    @media (max-width: 640px) {
+        // Banner stacks into a column on narrow screens, so it's taller.
+        .to-top {
+            bottom: 10rem;
+        }
+
+        .to-top--visible ~ .search-fab {
+            bottom: 13.5rem;
+        }
+    }
+}
+
