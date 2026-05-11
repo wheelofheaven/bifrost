@@ -29,6 +29,10 @@
                 {% endif %}
             </header>
 
+            {% if page.content and not page.extra.faq_groups %}
+            <div class="faq__content">{{ page.content | safe }}</div>
+            {% endif %}
+
             {% if page.extra.faq_groups %}
             <nav class="faq__toc" aria-label="On this page">
                 <h2 class="faq__toc-title">On this page</h2>

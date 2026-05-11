@@ -70,6 +70,80 @@
         letter-spacing: 0.04em;
     }
 
+    // Fallback body rendering when faq_groups is not provided
+    // (used by translation pages with markdown bodies)
+    &__content {
+        font-size: v.$font-size-base;
+        line-height: 1.75;
+        color: var(--color-text);
+
+        h2 {
+            position: relative;
+            margin: v.$spacing-2xl 0 v.$spacing-md;
+            padding-top: v.$spacing-md;
+            font-family: typo.$font-family-tech;
+            font-size: v.$font-size-sm;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--color-text-subtle);
+
+            &::before {
+                content: "";
+                position: absolute;
+                top: 0;
+                left: 0;
+                width: 2.5rem;
+                height: 2px;
+                background-color: var(--color-accent-primary);
+            }
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+
+        h3 {
+            margin: v.$spacing-lg 0 v.$spacing-xs;
+            font-family: typo.$font-family-lead;
+            font-size: v.$font-size-lg;
+            font-weight: 600;
+            color: var(--color-text);
+        }
+
+        p {
+            margin: 0 0 v.$spacing-md;
+        }
+
+        ul,
+        ol {
+            margin: 0 0 v.$spacing-md;
+            padding-left: 1.5rem;
+
+            li {
+                margin-bottom: v.$spacing-xs;
+                line-height: 1.65;
+            }
+        }
+
+        a {
+            color: var(--color-link);
+            text-decoration: none;
+
+            &:hover {
+                text-decoration: underline;
+            }
+        }
+
+        em {
+            font-style: italic;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+    }
+
     // Table of contents
     &__toc {
         margin: 0 0 v.$spacing-2xl;
