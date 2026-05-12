@@ -61,11 +61,11 @@
             {% endif %}
 
             <footer class="faq__footer">
-                <h2 class="faq__footer-title">Still have questions?</h2>
+                <h2 class="faq__footer-title">{{ trans(key="faqFooterTitle", lang=detected_lang) }}</h2>
                 <p class="faq__footer-text">
-                    If your question isn't answered here, the
-                    <a href="https://github.com/orgs/wheelofheaven/discussions" target="_blank" rel="noopener">GitHub Discussions</a>
-                    are the right place to ask. Substantive questions may end up added to this page.
+                    {{ trans(key="faqFooterIntro", lang=detected_lang) }}
+                    <a href="https://github.com/orgs/wheelofheaven/discussions" target="_blank" rel="noopener">{{ trans(key="faqFooterLink", lang=detected_lang) }}</a>
+                    {{ trans(key="faqFooterTail", lang=detected_lang) }}
                 </p>
             </footer>
         </article>

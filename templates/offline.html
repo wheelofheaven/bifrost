@@ -15,10 +15,10 @@
             </svg>
         </div>
 
-        <h1 class="offline-page__title">You're Offline</h1>
+        <h1 class="offline-page__title">{{ trans(key="offlineTitle", lang=detected_lang) }}</h1>
 
         <p class="offline-page__description">
-            It looks like you've lost your internet connection. Don't worry, you can still access pages you've previously visited.
+            {{ trans(key="offlineDescription", lang=detected_lang) }}
         </p>
 
         <div class="offline-page__actions">
@@ -28,7 +28,7 @@
                     <polyline points="1 20 1 14 7 14"></polyline>
                     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
                 </svg>
-                Try Again
+                {{ trans(key="offlineTryAgain", lang=detected_lang) }}
             </button>
 
             <button class="offline-page__btn offline-page__btn--secondary" id="view-cached-btn">
@@ -37,23 +37,22 @@
                     <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
-                View Cached Pages
+                {{ trans(key="offlineViewCached", lang=detected_lang) }}
             </button>
         </div>
 
         <div class="offline-page__cached" id="cached-pages" style="display: none;">
-            <h2 class="offline-page__cached-title">Available Offline</h2>
+            <h2 class="offline-page__cached-title">{{ trans(key="offlineCachedTitle", lang=detected_lang) }}</h2>
             <ul class="offline-page__cached-list" id="cached-list">
                 <!-- Populated by JavaScript -->
             </ul>
         </div>
 
         <div class="offline-page__tips">
-            <h3 class="offline-page__tips-title">Tips for Offline Reading</h3>
+            <h3 class="offline-page__tips-title">{{ trans(key="offlineTipsTitle", lang=detected_lang) }}</h3>
             <ul class="offline-page__tips-list">
-                <li>Visit pages while online to cache them automatically</li>
-                <li>Use the "Save for Offline" button on articles</li>
-                <li>Cached pages remain available until you clear browser data</li>
+                <li>{{ trans(key="offlineTip1", lang=detected_lang) }}</li>
+                <li>{{ trans(key="offlineTip2", lang=detected_lang) }}</li>
             </ul>
         </div>
     </div>
@@ -81,7 +80,7 @@
                 );
 
                 if (urls.length === 0) {
-                    cachedList.innerHTML = '<li class="offline-page__cached-empty">No pages cached yet. Visit some pages while online!</li>';
+                    cachedList.innerHTML = '<li class="offline-page__cached-empty">{{ trans(key="offlineCachedEmpty", lang=detected_lang) }}</li>';
                 } else {
                     cachedList.innerHTML = urls.map(url =>
                         `<li><a href="${url}">${formatUrl(url)}</a></li>`
