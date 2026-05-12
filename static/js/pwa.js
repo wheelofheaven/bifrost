@@ -239,7 +239,13 @@
         if (!('caches' in window)) return;
 
         try {
-            const cache = await caches.open('woh-pages-v1');
+            // Look up the active pages cache by prefix so this stays
+            // correct when sw.js bumps CACHE_VERSION.
+            const cacheNames = await caches.keys();
+            const pagesCacheName = cacheNames.find(name => name.startsWith('woh-pages-'));
+            if (!pagesCacheName) return;
+
+            const cache = await caches.open(pagesCacheName);
             const response = await cache.match(window.location.pathname);
 
             if (response) {
