@@ -14,7 +14,12 @@
 {# Rail filter — claim-type breakdown. Parallel arrays keep Tera happy
    (no inline object literals in array form). #}
 {% set claim_keys   = ["direct", "framework", "inferred", "speculative"] %}
-{% set claim_labels = ["Direct", "Framework", "Inferred", "Speculative"] %}
+{% set claim_labels = [
+    trans(key="claimTypeDirect", lang=detected_lang),
+    trans(key="claimTypeFramework", lang=detected_lang),
+    trans(key="claimTypeInferred", lang=detected_lang),
+    trans(key="claimTypeSpeculative", lang=detected_lang)
+] %}
 
 <div class="articles-feed">
     <div class="articles-feed__container">
@@ -40,19 +45,19 @@
                 {% endif %}
 
                 {% if paginator and paginator.number_pagers > 1 %}
-                <nav class="articles-feed__pagination" aria-label="Articles pagination">
+                <nav class="articles-feed__pagination" aria-label="{{ trans(key='articlesPaginationLabel', lang=detected_lang) }}">
                     {% if paginator.previous %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.previous }}" rel="prev">← Newer</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.previous }}" rel="prev">{{ trans(key="articlesPrev", lang=detected_lang) }}</a>
                     {% endif %}
-                    <span class="articles-feed__pagination-info">Page {{ paginator.current_index }} of {{ paginator.number_pagers }}</span>
+                    <span class="articles-feed__pagination-info">{{ paginator.current_index }} / {{ paginator.number_pagers }}</span>
                     {% if paginator.next %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.next }}" rel="next">Older →</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.next }}" rel="next">{{ trans(key="articlesNext", lang=detected_lang) }}</a>
                     {% endif %}
                 </nav>
                 {% endif %}
             </main>
 
-            <aside class="articles-feed__rail" aria-label="Articles sidebar">
+            <aside class="articles-feed__rail" aria-label="{{ trans(key='articlesSidebarLabel', lang=detected_lang) }}">
                 {# Filed under — categories with counts. #}
                 {% set seen_cats = [] %}
                 {% set cats = [] %}
@@ -64,7 +69,7 @@
                 {% endfor %}
                 {% if cats | length > 0 %}
                 <section class="articles-feed__rail-module">
-                    <h3 class="articles-feed__rail-heading">Filed under</h3>
+                    <h3 class="articles-feed__rail-heading">{{ trans(key="articlesFiledUnder", lang=detected_lang) }}</h3>
                     <ul class="articles-feed__filter-list">
                         {% for cat in cats %}
                         {% set matches = all_pages | filter(attribute="extra.category", value=cat) %}
@@ -74,7 +79,7 @@
                         </li>
                         {% endfor %}
                         <li class="articles-feed__filter-item articles-feed__filter-item--total">
-                            <span class="articles-feed__filter-label">All articles</span>
+                            <span class="articles-feed__filter-label">{{ trans(key="articlesAllArticles", lang=detected_lang) }}</span>
                             <span class="articles-feed__filter-count">{{ total }}</span>
                         </li>
                     </ul>
@@ -82,17 +87,17 @@
                 {% endif %}
 
                 <section class="articles-feed__rail-module articles-feed__rail-module--subscribe">
-                    <h3 class="articles-feed__rail-heading">Stay close to the argument</h3>
-                    <p class="articles-feed__rail-text">Articles are evergreen Explainers — long-form, thesis-driven analyses. Subscribe to see new pieces as they're published.</p>
+                    <h3 class="articles-feed__rail-heading">{{ trans(key="articlesSubscribeHeading", lang=detected_lang) }}</h3>
+                    <p class="articles-feed__rail-text">{{ trans(key="articlesSubscribeText", lang=detected_lang) }}</p>
                     <a class="articles-feed__feed-link"
                        href="{{ get_url(path='articles/atom.xml', lang=detected_lang) }}"
-                       aria-label="Articles Atom feed">
+                       aria-label="{{ trans(key='articlesAtomLabel', lang=detected_lang) }}">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M4 11a9 9 0 0 1 9 9"></path>
                             <path d="M4 4a16 16 0 0 1 16 16"></path>
                             <circle cx="5" cy="19" r="1"></circle>
                         </svg>
-                        <span>Subscribe via Atom</span>
+                        <span>{{ trans(key="articlesSubscribeBtn", lang=detected_lang) }}</span>
                     </a>
                 </section>
 
@@ -107,7 +112,7 @@
                 {% endfor %}
                 {% if claim_total > 0 %}
                 <section class="articles-feed__rail-module">
-                    <h3 class="articles-feed__rail-heading">By claim type</h3>
+                    <h3 class="articles-feed__rail-heading">{{ trans(key="articlesByClaimType", lang=detected_lang) }}</h3>
                     <ul class="articles-feed__claim-list">
                         {% for key in claim_keys %}
                         {% set matches = all_pages | filter(attribute="extra.claim_type", value=key) %}
@@ -125,12 +130,12 @@
             </aside>
         </div>
         {% else %}
-        <p class="articles-feed__empty">No articles yet. Check back soon, or follow the <a href="{{ get_url(path='articles/atom.xml', lang=detected_lang) }}">Atom feed</a>.</p>
+        <p class="articles-feed__empty">{{ trans(key="articlesEmptyBefore", lang=detected_lang) }} <a href="{{ get_url(path='articles/atom.xml', lang=detected_lang) }}">{{ trans(key="articlesEmptyLink", lang=detected_lang) }}</a>.</p>
         {% endif %}
 
         <footer class="articles-feed__footer">
             <p class="articles-feed__cross-link">
-                Looking for time-anchored readings of current events? See the <a href="{{ get_url(path='news', lang=detected_lang) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a>.
+                {{ trans(key="articlesCrossLinkBefore", lang=detected_lang) }} <a href="{{ get_url(path='news', lang=detected_lang) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a>.
             </p>
         </footer>
     </div>
