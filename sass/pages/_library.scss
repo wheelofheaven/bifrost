@@ -2,6 +2,35 @@
 @use "../abstracts/variables" as vars;
 @use "../base/typography" as typo;
 
+// Shared category-group header used by /library/ (grouping by tradition)
+// and /wiki/ (grouping by category). Mirrors the wiki section card style
+// but adds a structural section header above each group.
+.category-group {
+    margin-bottom: 3rem;
+
+    &__header {
+        margin-bottom: 1rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__title {
+        margin: 0 0 0.25rem 0;
+        font-family: var(--font-family-lead);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    &__description {
+        margin: 0;
+        font-size: 0.95rem;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+        max-width: 70ch;
+    }
+}
+
 // Minimal Library Header
 .library-header {
     display: flex;
