@@ -3241,3 +3241,666 @@
         --reader-font-size: 1.25rem;
     }
 }
+
+// =====================================================================
+// Library Detail Page — wiki-style two-column layout overrides.
+//
+// Mirrors the visual treatment from _wiki.scss (.wiki / .wiki__container
+// / .wiki__sidebar / .wiki__lede / etc.) so /library/{slug}/ pages feel
+// like the rest of the site. Keeps all .library-book__* class names so
+// the existing JS (library-reader.js, share/bookmark behavior) stays
+// intact.
+//
+// Appended at the end of the file so source-order beats the older
+// card-on-card chrome above.
+// =====================================================================
+
+.library-book {
+    min-height: 100vh;
+    background: var(--color-background);
+    padding: 0;
+    max-width: none;
+    margin: 0;
+
+    &__container {
+        max-width: vars.$viewport-max-width;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 280px;
+        grid-template-areas: "main sidebar";
+        gap: 0;
+        align-items: stretch;
+        min-height: 100vh;
+        background: var(--color-background);
+
+        @media (max-width: 1100px) {
+            grid-template-columns: minmax(0, 1fr) 240px;
+        }
+
+        @media (max-width: 900px) {
+            grid-template-columns: 1fr;
+            grid-template-areas:
+                "main"
+                "sidebar";
+        }
+    }
+
+    &__main {
+        grid-area: main;
+        min-width: 0;
+        background: var(--color-background);
+        margin: 0;
+        padding: 0;
+    }
+
+    &__article {
+        background: var(--color-background);
+        min-height: 100vh;
+        margin: 0;
+        max-width: 64rem;
+        padding: 0 2rem 3rem;
+
+        @media (max-width: 900px) {
+            padding: 0 1.25rem 2rem;
+        }
+    }
+
+    // Page header (title + claim badge) — same compact treatment as wiki-page.
+    &__page-header {
+        padding: 0.5rem 0 1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    &__title {
+        margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: 2.25rem;
+        font-weight: 700;
+        color: var(--color-text);
+        line-height: 1.15;
+        word-wrap: break-word;
+
+        @media (max-width: 900px) {
+            font-size: 1.875rem;
+        }
+    }
+
+    // Lede paragraph — same treatment as .wiki__lede
+    &__lede {
+        margin: 0 0 1.5rem;
+        padding: 0;
+        font-family: var(--font-family-lead);
+        font-size: 1.1875rem;
+        line-height: 1.55;
+        color: var(--color-text);
+
+        p {
+            margin: 0;
+        }
+    }
+
+    // Slim reading-controls strip — replaces the old floating toolbar.
+    // Stays in the main column near the top so it's easy to reach.
+    &__controls {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.625rem 0;
+        margin: 0 0 1.5rem;
+        border-top: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+        background: var(--color-background);
+
+        @media (max-width: 600px) {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+    }
+
+    &__progress {
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__progress-sep {
+        opacity: 0.4;
+    }
+
+    &__actions {
+        display: inline-flex;
+        gap: 0.375rem;
+    }
+
+    // Ghost buttons — minimal chrome, used in the controls strip
+    &__btn--ghost {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.375rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        background: transparent;
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        &.library-book__btn--active {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+            background: var(--color-background-secondary);
+        }
+
+        svg { flex-shrink: 0; }
+    }
+
+    // Chapter content — clean text flow, no card chrome
+    &__content {
+        margin: 0;
+        background: var(--color-background);
+        padding: 0;
+    }
+
+    &__chapter {
+        margin: 0 0 3rem;
+        padding: 0;
+        border: none;
+        background: var(--color-background);
+        box-shadow: none;
+    }
+
+    &__chapter-header {
+        margin: 0 0 1.25rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__chapter-number {
+        display: block;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        margin-bottom: 0.25rem;
+    }
+
+    &__chapter-title {
+        margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-text);
+        line-height: 1.3;
+    }
+
+    // Edit-footer — match wiki-page
+    &__edit-footer {
+        margin: 2.5rem 0 0;
+        padding: 1rem 0 0;
+        border-top: 1px solid var(--color-hairline);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    &__history-link,
+    &__edit-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        padding: 0.375rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+    }
+
+    // Related books — link-list, no card hierarchy
+    &__related {
+        margin: 2.5rem 0 0;
+        padding: 1.5rem 0 0;
+        border-top: 1px solid var(--color-hairline);
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    &__related-title,
+    &__section-title {
+        font-family: var(--font-family-lead);
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--color-text);
+        margin: 0 0 1rem;
+        display: block;
+
+        svg { display: none; } // hide the legacy book icon
+    }
+
+    &__link-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__link-item {
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 1rem;
+
+        &:last-child { border-bottom: none; }
+    }
+
+    &__link {
+        color: var(--color-text);
+        text-decoration: none;
+        font-weight: 500;
+
+        &:hover { color: var(--color-accent-primary); }
+    }
+
+    &__link-meta {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-subtle);
+        white-space: nowrap;
+    }
+
+    // Hide the older grid-based related-books rendering when the new one is present
+    &__related-grid { display: none; }
+
+    // -----------------------------
+    //  Right Sidebar (mirrors .wiki__sidebar)
+    // -----------------------------
+    &__sidebar {
+        grid-area: sidebar;
+        background: var(--color-background);
+        display: flex;
+        flex-direction: column;
+        position: static;
+        width: auto;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        box-shadow: none;
+        z-index: auto;
+    }
+
+    &__sidebar-header {
+        padding: 1.5rem 1.5rem 1.25rem;
+        position: relative;
+        background: var(--color-background);
+    }
+
+    // Shared sidebar label typography — same as .wiki__meta-label
+    &__meta-label {
+        display: block;
+        color: var(--color-text-muted);
+        margin: 0 0 0.375rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    &__original-title {
+        margin: 0 0 1.25rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__original-text {
+        display: block;
+        font-family: var(--font-family-lead);
+        font-style: italic;
+        color: var(--color-text);
+        font-size: 0.9375rem;
+        line-height: 1.4;
+    }
+
+    &__meta {
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+        margin: 0 0 1.5rem;
+    }
+
+    &__meta-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 0.75rem;
+        font-family: var(--font-family-body);
+        font-size: 0.875rem;
+
+        .library-book__meta-label {
+            margin: 0;
+            flex-shrink: 0;
+        }
+    }
+
+    &__meta-value {
+        color: var(--color-text);
+        font-size: 0.875rem;
+        text-align: right;
+
+        code {
+            font-family: typo.$font-family-tech;
+            font-size: 0.8125rem;
+            padding: 0.125rem 0.375rem;
+            border: 1px solid var(--color-hairline);
+            border-radius: 0.25rem;
+            background: var(--color-background-secondary);
+        }
+    }
+
+    &__share-section,
+    &__agent-section {
+        margin: 0 0 1.5rem;
+    }
+
+    &__agent-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+
+    &__agent-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        background: var(--color-background);
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        text-align: left;
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+    }
+
+    // Reader settings as a collapsible — mirrors wiki .wiki__infobox pattern
+    &__settings {
+        margin: 0 0 1.5rem;
+
+        &[open] .library-book__settings-chevron {
+            transform: rotate(180deg);
+        }
+    }
+
+    &__settings-summary {
+        list-style: none;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        user-select: none;
+
+        &::-webkit-details-marker { display: none; }
+
+        .library-book__meta-label {
+            margin: 0;
+        }
+    }
+
+    &__settings-chevron {
+        color: var(--color-text-muted);
+        transition: transform 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    &__settings-panel {
+        position: static;
+        background: transparent;
+        border: none;
+        border-radius: 0;
+        padding: 0.75rem 0 0;
+        margin: 0;
+        box-shadow: none;
+        max-width: none;
+        display: block;
+
+        &.hidden { display: block; } // override the old positioning hide
+    }
+
+    &__settings-section {
+        margin: 0 0 0.875rem;
+
+        &:last-child { margin-bottom: 0; }
+    }
+
+    &__settings-title {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+        margin: 0 0 0.375rem;
+    }
+
+    &__settings-options {
+        display: flex;
+        gap: 0.25rem;
+        flex-wrap: wrap;
+    }
+
+    &__settings-btn {
+        flex: 1;
+        min-width: 0;
+        padding: 0.375rem 0.5rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.25rem;
+        background: var(--color-background);
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+            color: var(--color-text);
+        }
+
+        &.active {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+            background: var(--color-background-secondary);
+        }
+    }
+
+    &__settings-hint {
+        font-size: 0.75rem;
+        color: var(--color-text-subtle);
+        margin: 0;
+
+        kbd {
+            font-family: typo.$font-family-tech;
+            font-size: 0.6875rem;
+            padding: 0.125rem 0.375rem;
+            border: 1px solid var(--color-hairline);
+            border-radius: 0.25rem;
+            background: var(--color-background-secondary);
+        }
+    }
+
+    // -----------------------------
+    //  Sticky chapter TOC (mirrors .wiki__toc)
+    // -----------------------------
+    &__toc {
+        position: sticky;
+        top: 6rem;
+        background: var(--color-background);
+        padding: 0 1.5rem 2rem;
+        max-height: calc(100vh - 6rem);
+        overflow-y: auto;
+        display: block;
+        width: auto;
+        border-right: none;
+
+        @media (max-width: 900px) {
+            position: relative;
+            top: auto;
+            max-height: none;
+            padding: 1rem 1.5rem 1.5rem;
+        }
+    }
+
+    &__toc-header {
+        margin-bottom: 0.5rem;
+        padding: 0;
+        background: transparent;
+        border-bottom: none;
+    }
+
+    &__toc-title {
+        color: var(--color-text-muted);
+        margin: 0 0 0.5rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    &__toc-nav { font-family: var(--font-family-body); }
+
+    &__toc-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__toc-item {
+        margin: 0;
+        padding: 0;
+    }
+
+    &__toc-link {
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+        padding: 0.25rem 0;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 0.875rem;
+        line-height: 1.4;
+        transition: color 0.15s ease;
+
+        &:hover { color: var(--color-text); }
+    }
+
+    &__toc-chapter-number {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-subtle);
+        min-width: 1.5rem;
+        flex-shrink: 0;
+    }
+
+    &__toc-chapter-title {
+        flex: 1;
+    }
+
+    &__toc-item--active &__toc-link {
+        color: var(--color-accent-primary);
+        font-weight: 600;
+    }
+
+    &__toc-item--active &__toc-chapter-number {
+        color: var(--color-accent-primary);
+    }
+
+    // -----------------------------
+    //  Chapter navigation strip
+    // -----------------------------
+    &__nav {
+        margin: 2.5rem 0 0;
+        padding: 1rem 0;
+        border-top: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        background: transparent;
+    }
+
+    &__nav-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        padding: 0.5rem 0.75rem;
+        background: transparent;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        color: var(--color-text);
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        &:hover:not(.library-book__nav-btn--disabled) {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+
+        &--disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+
+    &__nav-info {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+}
