@@ -8,7 +8,7 @@
 <div class="author">
     {{ breadcrumbs::generic_page(
         title=page.title,
-        parent_title="About",
+        parent_title=trans(key="navbarAbout", lang=detected_lang),
         parent_path="/about/",
         lang=detected_lang
     ) }}
