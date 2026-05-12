@@ -88,7 +88,7 @@
 
         {% if page.extra.summary or page.description %}
         <div class="wiki-card__summary">
-            {{ page.extra.summary | default(value=page.description) }}
+            {{ page.extra.summary | default(value=page.description) | markdown(inline=true) | safe }}
         </div>
         {% endif %}
 

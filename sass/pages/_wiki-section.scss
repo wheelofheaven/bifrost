@@ -1033,11 +1033,13 @@
     }
 }
 
-// Letter Anchors
+// Letter Anchors — positioned absolutely so they don't participate in
+// the parent card's flex/grid layout. scroll-margin-top handles the
+// sticky-header offset for fragment navigation.
 .wiki-letter-anchor {
-    position: relative;
-    margin-top: -6rem; // Account for sticky header
-    padding-top: 6rem;
+    position: absolute;
+    top: 0;
+    scroll-margin-top: 6rem;
 }
 
 // No Results State
