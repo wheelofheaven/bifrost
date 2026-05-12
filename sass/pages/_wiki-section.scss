@@ -479,6 +479,9 @@
 
 // Wiki Card Component
 .wiki-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
     background: var(--color-background);
     padding: 1.5rem 0;
     transition: all 0.2s ease;
@@ -553,6 +556,11 @@
         font-size: 0.95rem;
         line-height: 1.6;
         color: var(--color-text-muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
     }
 
     &__meta {
@@ -561,7 +569,7 @@
         align-items: center;
         gap: 1rem;
         padding-top: 1rem;
-        margin-top: 1rem;
+        margin-top: auto;
         position: relative;
 
         &::before {
@@ -1065,11 +1073,20 @@
 
 // List View Styles
 .wiki-section__grid[data-view="list"] {
+    grid-template-columns: 1fr;
+    gap: 0;
+
     .wiki-card {
         display: grid;
         grid-template-columns: 1fr auto;
         align-items: center;
-        padding: 1rem 0;
+        gap: 1rem;
+        height: auto;
+        padding: 0.875rem 0;
+
+        &:hover {
+            padding-left: 0.5rem;
+        }
 
         &__header {
             margin-bottom: 0;
