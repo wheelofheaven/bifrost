@@ -26,7 +26,7 @@
                    prominently points at the canonical entry. Wikipedia-style. #}
                 {% if page.extra.redirect_to %}
                 <aside class="wiki__redirect" role="note" aria-label="This entry redirects to another page">
-                    <span class="wiki__redirect-label">Redirects to</span>
+                    <span class="wiki__redirect-label">{{ trans(key="wikiRedirectsTo", lang=detected_lang) }}</span>
                     <a class="wiki__redirect-link"
                        href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url }}{% else %}{{ get_url(path=page.extra.redirect_to.path, lang=detected_lang) }}{% endif %}">
                         {{ page.extra.redirect_to.title }}
@@ -58,7 +58,7 @@
                 <!-- See Also Section -->
                 {% if page.extra.see_also %}
                 <section class="wiki__see-also" role="complementary" aria-label="Related topics">
-                    <h2 class="wiki__section-title" id="see-also-heading">See also</h2>
+                    <h2 class="wiki__section-title" id="see-also-heading">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
                     <ul class="wiki__link-list">
                         {% for item in page.extra.see_also %}
                         <li class="wiki__link-item">
@@ -79,7 +79,7 @@
                 <!-- External Links Section -->
                 {% if page.extra.external_links %}
                 <section class="wiki__external-links">
-                    <h2 class="wiki__section-title">External links</h2>
+                    <h2 class="wiki__section-title">{{ trans(key="sectionExternalLinks", lang=detected_lang) }}</h2>
                     <ul class="wiki__link-list">
                         {% for link in page.extra.external_links %}
                         <li class="wiki__link-item">
@@ -103,7 +103,7 @@
                 <!-- References Section -->
                 {% if page.extra.references %}
                 <section class="wiki__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
-                    <h2 class="wiki__section-title" id="references-heading">References</h2>
+                    <h2 class="wiki__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
                         {% for ref in page.extra.references %}
                         <li class="wiki__reference-item" id="ref-{{ loop.index }}">
@@ -112,7 +112,7 @@
                             {% else %}
                             <span class="wiki__reference-title">{{ ref.title }}</span>
                             {% endif %}
-                            {% if ref.author %}<span class="wiki__reference-author">by {{ ref.author }}</span>{% endif %}
+                            {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
                             {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
                             {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
                             {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
@@ -139,7 +139,7 @@
                 <div class="wiki__edit-footer">
                     <div class="wiki__history" data-history-path="{{ page.relative_path }}">
                         <span class="wiki__history-meta" hidden>
-                            <span class="wiki__history-label">Last edited:</span>
+                            <span class="wiki__history-label">{{ trans(key="pageLastEdited", lang=detected_lang) }}</span>
                             <time class="wiki__history-date" datetime=""></time>
                             <span class="wiki__history-author"></span>
                             <span class="wiki__history-sep" aria-hidden="true">·</span>
@@ -154,7 +154,7 @@
                                 <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
                                 <polyline points="12 7 12 12 15 14"></polyline>
                             </svg>
-                            <span>View edit history</span>
+                            <span>{{ trans(key="pageViewHistory", lang=detected_lang) }}</span>
                         </a>
                     </div>
                     <a class="wiki__edit-btn"
@@ -166,7 +166,7 @@
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
-                        <span>Edit this page</span>
+                        <span>{{ trans(key="pageEditThis", lang=detected_lang) }}</span>
                     </a>
                 </div>
             </article>
@@ -181,7 +181,7 @@
                 {% if page.extra.infobox %}
                 <details class="wiki__infobox">
                     <summary class="wiki__infobox-summary">
-                        <span class="wiki__infobox-title">At a glance</span>
+                        <span class="wiki__infobox-title">{{ trans(key="wikiAtAGlance", lang=detected_lang) }}</span>
                         <svg class="wiki__infobox-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
@@ -199,14 +199,14 @@
 
                 <!-- Reading-status / claim-type cluster -->
                 <div class="wiki__claim-section">
-                    <div class="wiki__claim-label">Reading this as:</div>
+                    <div class="wiki__claim-label">{{ trans(key="wikiReadingThisAs", lang=detected_lang) }}</div>
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
                 </div>
 
                 <!-- Alternative Names/Spellings — stacked-paper chips that fan out on hover/click -->
                 {% if page.extra.alternative_names %}
                 <div class="wiki__alternative-names">
-                    <div class="wiki__alternative-label">Also known as:</div>
+                    <div class="wiki__alternative-label">{{ trans(key="wikiAlsoKnownAs", lang=detected_lang) }}</div>
                     <div class="wiki__alternative-list" role="button" tabindex="0" aria-label="Show all alternative names">
                         {% for name in page.extra.alternative_names %}
                         <span class="wiki__alternative-name">{{ name }}</span>
@@ -220,37 +220,37 @@
                     <div class="wiki__meta-row wiki__meta-row--split">
                         {% if page.reading_time %}
                         <div class="wiki__meta-pair wiki__meta-pair--start">
-                            <span class="wiki__meta-label">Reading time:</span>
+                            <span class="wiki__meta-label">{{ trans(key="pageReadingTime", lang=detected_lang) }}</span>
                             <span class="wiki__meta-value wiki__reading-time">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                {{ page.reading_time }} min
+                                {{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}
                             </span>
                         </div>
                         {% endif %}
 
                         <div class="wiki__meta-pair wiki__meta-pair--end">
-                            <span class="wiki__meta-label">Listen:</span>
+                            <span class="wiki__meta-label">{{ trans(key="pageListen", lang=detected_lang) }}</span>
                             <span class="wiki__meta-value">{% include "partials/listen-button.html" %}</span>
                         </div>
                     </div>
 
                     {% if page.date %}
                     <div class="wiki__meta-row">
-                        <span class="wiki__meta-label">Last updated:</span>
+                        <span class="wiki__meta-label">{{ trans(key="pageLastUpdated", lang=detected_lang) }}</span>
                         <span class="wiki__meta-value"><time>{{ page.date | date(format="%B %d, %Y") }}</time></span>
                     </div>
                     {% endif %}
 
                     {% if page.extra.category %}
                     <div class="wiki__meta-row">
-                        <span class="wiki__meta-label">Part of the series:</span>
+                        <span class="wiki__meta-label">{{ trans(key="wikiPartOfSeries", lang=detected_lang) }}</span>
                         <span class="wiki__meta-value">
                             <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
                                class="wiki__category"
-                               title="Browse all {{ page.extra.category }} entries">{{ page.extra.category }}</a>
+                               title="{{ trans(key='wikiBrowseCategory', lang=detected_lang) }}">{{ page.extra.category }}</a>
                         </span>
                     </div>
                     {% endif %}
@@ -258,14 +258,14 @@
 
                 <!-- Share -->
                 <div class="wiki__share-section">
-                    <div class="wiki__meta-label">Share this page:</div>
+                    <div class="wiki__meta-label">{{ trans(key="shareThisPage", lang=detected_lang) }}</div>
                     {% include "partials/social-share.html" %}
                 </div>
 
                 <!-- Read as Agent — copy/view raw markdown for LLM use -->
                 {% set md_url = "https://raw.githubusercontent.com/wheelofheaven/data-content/main/" ~ page.relative_path %}
                 <div class="wiki__agent-section">
-                    <div class="wiki__meta-label">Read as Agent:</div>
+                    <div class="wiki__meta-label">{{ trans(key="agentReadAs", lang=detected_lang) }}</div>
                     <div class="wiki__agent-buttons">
                         <button type="button"
                                 class="wiki__agent-btn"
@@ -276,7 +276,7 @@
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            <span class="wiki__agent-btn-label">Copy for LLMs</span>
+                            <span class="wiki__agent-btn-label">{{ trans(key="agentCopyForLLMs", lang=detected_lang) }}</span>
                         </button>
                         <a class="wiki__agent-btn"
                            href="{{ md_url | safe }}"
@@ -287,7 +287,7 @@
                                 <rect x="5" y="5" width="198" height="118" rx="10" ry="10" stroke="currentColor" stroke-width="10" fill="none"></rect>
                                 <path fill="currentColor" d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"></path>
                             </svg>
-                            <span class="wiki__agent-btn-label">View as Markdown</span>
+                            <span class="wiki__agent-btn-label">{{ trans(key="agentViewMarkdown", lang=detected_lang) }}</span>
                         </a>
                     </div>
                 </div>
@@ -297,7 +297,7 @@
             {% if page.toc %}
             <div class="wiki__toc">
                 <div class="wiki__toc-header">
-                    <h3 class="wiki__toc-title" id="toc-heading">Contents</h3>
+                    <h3 class="wiki__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h3>
                 </div>
                 <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
                     <ul class="wiki__toc-list">
