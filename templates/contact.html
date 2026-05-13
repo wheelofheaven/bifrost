@@ -34,32 +34,32 @@
                     </svg>
                 </div>
                 <div class="contact-support__content">
-                    <h2 class="contact-support__title">Support Our Work</h2>
+                    <h2 class="contact-support__title">{{ trans(key="contactSupportTitle", lang=detected_lang) }}</h2>
                     <p class="contact-support__description">
-                        Wheel of Heaven is a community-driven project. Your contributions help us maintain the website, fund research, and keep all content freely accessible to everyone.
+                        {{ trans(key="contactSupportDescription", lang=detected_lang) }}
                     </p>
                     <div class="contact-support__features">
                         <span class="contact-support__feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Transparent finances
+                            {{ trans(key="contactSupportFeatureTransparent", lang=detected_lang) }}
                         </span>
                         <span class="contact-support__feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Community-governed
+                            {{ trans(key="contactSupportFeatureCommunity", lang=detected_lang) }}
                         </span>
                         <span class="contact-support__feature">
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="20 6 9 17 4 12"></polyline>
                             </svg>
-                            Tax-deductible
+                            {{ trans(key="contactSupportFeatureTaxDeductible", lang=detected_lang) }}
                         </span>
                     </div>
                     <a href="https://opencollective.com/wheelofheaven" class="contact-support__button" target="_blank" rel="noopener">
-                        <span>Contribute on Open Collective</span>
+                        <span>{{ trans(key="contactOpenCollectiveBtn", lang=detected_lang) }}</span>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
                             <polyline points="15 3 21 3 21 9"></polyline>
@@ -79,7 +79,7 @@
                 GitHub
             </h2>
             <p class="contact-section__description">
-                All our work is open source. Explore our repositories, join discussions, or contribute to the project.
+                {{ trans(key="contactGithubDescription", lang=detected_lang) }}
             </p>
             <div class="contact-links">
                 <a href="https://github.com/wheelofheaven" class="contact-link-card" target="_blank" rel="noopener">
@@ -90,8 +90,8 @@
                         </svg>
                     </div>
                     <div class="contact-link-card__content">
-                        <h3 class="contact-link-card__title">Organization</h3>
-                        <p class="contact-link-card__description">Browse all our repositories</p>
+                        <h3 class="contact-link-card__title">{{ trans(key="contactGithubOrgTitle", lang=detected_lang) }}</h3>
+                        <p class="contact-link-card__description">{{ trans(key="contactGithubOrgDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -106,8 +106,8 @@
                         </svg>
                     </div>
                     <div class="contact-link-card__content">
-                        <h3 class="contact-link-card__title">Source Code</h3>
-                        <p class="contact-link-card__description">Website repository</p>
+                        <h3 class="contact-link-card__title">{{ trans(key="contactGithubSourceTitle", lang=detected_lang) }}</h3>
+                        <p class="contact-link-card__description">{{ trans(key="contactGithubSourceDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -121,8 +121,8 @@
                         </svg>
                     </div>
                     <div class="contact-link-card__content">
-                        <h3 class="contact-link-card__title">Discussions</h3>
-                        <p class="contact-link-card__description">Join the conversation</p>
+                        <h3 class="contact-link-card__title">{{ trans(key="contactGithubDiscussionsTitle", lang=detected_lang) }}</h3>
+                        <p class="contact-link-card__description">{{ trans(key="contactGithubDiscussionsDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -138,8 +138,8 @@
                         </svg>
                     </div>
                     <div class="contact-link-card__content">
-                        <h3 class="contact-link-card__title">Report Issues</h3>
-                        <p class="contact-link-card__description">Found a bug? Let us know</p>
+                        <h3 class="contact-link-card__title">{{ trans(key="contactGithubIssuesTitle", lang=detected_lang) }}</h3>
+                        <p class="contact-link-card__description">{{ trans(key="contactGithubIssuesDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -158,10 +158,10 @@
                     <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
                     <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
                 </svg>
-                Social Media
+                {{ trans(key="contactSocialTitle", lang=detected_lang) }}
             </h2>
             <p class="contact-section__description">
-                Follow us for updates, insights, and community highlights.
+                {{ trans(key="contactSocialDescription", lang=detected_lang) }}
             </p>
             <div class="contact-links contact-links--social">
                 <a href="https://x.com/wheelofheaven" class="contact-link-card contact-link-card--x" target="_blank" rel="noopener">
@@ -187,7 +187,7 @@
                     </div>
                     <div class="contact-link-card__content">
                         <h3 class="contact-link-card__title">Telegram</h3>
-                        <p class="contact-link-card__description">Join our channel</p>
+                        <p class="contact-link-card__description">{{ trans(key="contactTelegramDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
@@ -202,7 +202,7 @@
                     </div>
                     <div class="contact-link-card__content">
                         <h3 class="contact-link-card__title">YouTube</h3>
-                        <p class="contact-link-card__description">Watch our videos</p>
+                        <p class="contact-link-card__description">{{ trans(key="contactYoutubeDesc", lang=detected_lang) }}</p>
                     </div>
                     <svg class="contact-link-card__arrow" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <polyline points="9 18 15 12 9 6"></polyline>
