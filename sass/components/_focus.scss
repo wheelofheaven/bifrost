@@ -38,7 +38,6 @@ textarea {
 
 // Links within text content - subtle underline focus
 .wiki__content,
-.resources__content,
 .article__content,
 .essentials__content,
 .library-book__content {
@@ -54,7 +53,6 @@ textarea {
 .search-result,
 .related-content__card,
 .wiki-section__card,
-.resources-section__card,
 .articles-section__card,
 .essentials-section__card {
     &:focus-visible {
@@ -88,7 +86,6 @@ textarea {
 
 // TOC links
 .wiki__toc-link,
-.resources__toc-link,
 .article__toc-link,
 .library-book__toc-link {
     &:focus-visible {

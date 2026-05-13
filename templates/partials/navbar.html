@@ -56,7 +56,7 @@
                     <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='resources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='sources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
                 </div>
             </div>
 
@@ -804,7 +804,7 @@
                             <div class="navbar-dropdown__link-description" data-navbar-key="wikiDesc">{{ trans(key="navbarWikiDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
-                    <a href="{{ get_url(path='resources', lang=detected_lang) }}" class="navbar-dropdown__link">
+                    <a href="{{ get_url(path='sources', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
                             {% include "partials/icons/feather-archive.html" %}
                         </span>
