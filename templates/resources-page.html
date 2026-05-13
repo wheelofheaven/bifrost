@@ -10,7 +10,7 @@
         <!-- Table of Contents Sidebar -->
         <aside class="resources__toc" role="complementary" aria-label="Table of contents">
             <div class="resources__toc-header">
-                <h3 class="resources__toc-title" id="toc-heading">Contents</h3>
+                <h3 class="resources__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h3>
             </div>
             <nav class="resources__toc-nav" aria-labelledby="toc-heading">
                 {% if page.toc %}
@@ -50,7 +50,7 @@
                             <polyline points="15 3 21 3 21 9"></polyline>
                             <line x1="10" y1="14" x2="21" y2="3"></line>
                         </svg>
-                        Visit Source
+                        {{ trans(key="resourcesVisitSource", lang=detected_lang) }}
                     </a>
                     {% endif %}
                 </div>
@@ -70,7 +70,7 @@
 
                     {% if page.extra.original_title %}
                     <p class="resources__original-title">
-                        <span class="resources__label">Original title:</span>
+                        <span class="resources__label">{{ trans(key="resourcesOriginalTitle", lang=detected_lang) }}</span>
                         {{ page.extra.original_title }}
                     </p>
                     {% endif %}
@@ -78,7 +78,7 @@
                     <!-- Summary -->
                     {% if page.description %}
                     <div class="resources__summary" data-ai-summary="true" aria-label="Quick summary">
-                        <div class="resources__summary-label">Summary</div>
+                        <div class="resources__summary-label">{{ trans(key="resourcesSummary", lang=detected_lang) }}</div>
                         <div class="resources__summary-content">
                             {{ page.description | markdown | safe }}
                         </div>
@@ -94,7 +94,7 @@
                                     <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                     <circle cx="12" cy="7" r="4"></circle>
                                 </svg>
-                                Authored by
+                                {{ trans(key="resourcesAuthoredBy", lang=detected_lang) }}
                             </div>
                             <div class="resources__meta-value">
                                 {% for author in page.extra.authored_by %}
@@ -113,7 +113,7 @@
                                     <line x1="8" y1="2" x2="8" y2="6"></line>
                                     <line x1="3" y1="10" x2="21" y2="10"></line>
                                 </svg>
-                                Published
+                                {{ trans(key="resourcesPublished", lang=detected_lang) }}
                             </div>
                             <div class="resources__meta-value">{{ page.extra.publish_date }}</div>
                         </div>
@@ -125,7 +125,7 @@
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
                                 </svg>
-                                Medium
+                                {{ trans(key="resourcesMedium", lang=detected_lang) }}
                             </div>
                             <div class="resources__meta-value">{{ page.extra.medium | replace(from="-", to=" ") | title }}</div>
                         </div>
@@ -138,9 +138,9 @@
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                Reading time
+                                {{ trans(key="resourcesReadingTime", lang=detected_lang) }}
                             </div>
-                            <div class="resources__meta-value">{{ page.reading_time }} min</div>
+                            <div class="resources__meta-value">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</div>
                         </div>
                         {% endif %}
                     </div>
@@ -148,7 +148,7 @@
                     <!-- Topics -->
                     {% if page.extra.topics %}
                     <div class="resources__topics">
-                        <span class="resources__topics-label">Topics:</span>
+                        <span class="resources__topics-label">{{ trans(key="resourcesTopics", lang=detected_lang) }}</span>
                         <div class="resources__topics-list">
                             {% for topic in page.extra.topics %}
                             <span class="resources__topic-tag">{{ topic }}</span>
@@ -171,7 +171,7 @@
                                 <polyline points="15 3 21 3 21 9"></polyline>
                                 <line x1="10" y1="14" x2="21" y2="3"></line>
                             </svg>
-                            Visit External Resource
+                            {{ trans(key="resourcesExternalLink", lang=detected_lang) }}
                         </a>
                     </div>
                     {% endif %}
@@ -188,7 +188,7 @@
                 <!-- See Also Section -->
                 {% if page.extra.see_also %}
                 <section class="resources__see-also" role="complementary" aria-label="Related topics">
-                    <h2 class="resources__section-title" id="see-also-heading">See also</h2>
+                    <h2 class="resources__section-title" id="see-also-heading">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
                     <ul class="resources__link-list">
                         {% for item in page.extra.see_also %}
                         <li class="resources__link-item">
@@ -209,7 +209,7 @@
                 <!-- External Links Section -->
                 {% if page.extra.external_links %}
                 <section class="resources__external-links">
-                    <h2 class="resources__section-title">External links</h2>
+                    <h2 class="resources__section-title">{{ trans(key="sectionExternalLinks", lang=detected_lang) }}</h2>
                     <ul class="resources__link-list">
                         {% for link in page.extra.external_links %}
                         <li class="resources__link-item">
@@ -233,7 +233,7 @@
                 <!-- References Section -->
                 {% if page.extra.references %}
                 <section class="resources__references" role="doc-endnotes" aria-label="References and citations">
-                    <h2 class="resources__section-title" id="references-heading">References</h2>
+                    <h2 class="resources__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                     <ol class="resources__reference-list">
                         {% for ref in page.extra.references %}
                         <li class="resources__reference-item" id="ref-{{ loop.index }}">
@@ -245,7 +245,7 @@
                             <span class="resources__reference-title">{{ ref.title }}</span>
                             {% endif %}
                             {% if ref.author %}
-                            <span class="resources__reference-author">by {{ ref.author }}</span>
+                            <span class="resources__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>
                             {% endif %}
                             {% if ref.publication %}
                             <span class="resources__reference-publication">{{ ref.publication }}</span>
