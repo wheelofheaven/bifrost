@@ -7,7 +7,7 @@ block content %}
             <div class="wiki-header__left">
                 <h1 class="wiki-header__title">{{ section.title }}</h1>
                 {% if section.pages %}
-                <span class="wiki-header__count">{{ section.pages | length }} articles</span>
+                <span class="wiki-header__count">{{ section.pages | length }} {{ trans(key="wikiCountSuffix", lang=detected_lang) }}</span>
                 {% endif %}
             </div>
             <div class="wiki-header__search">
@@ -17,7 +17,7 @@ block content %}
                 </svg>
                 <input type="text"
                        class="wiki-header__search-input"
-                       placeholder="Search articles..."
+                       placeholder="{{ trans(key='wikiSearchPlaceholder', lang=detected_lang) }}"
                        id="wiki-search"
                        aria-label="Search wiki articles"
                        autocomplete="off">
@@ -32,7 +32,7 @@ block content %}
                 {% set all_categories = section.pages | map(attribute="extra.category") | unique | sort %}
                 {% if all_categories %}
                 <select class="wiki-filters__select" id="wiki-category-filter">
-                    <option value="">All Topics</option>
+                    <option value="">{{ trans(key="wikiFilterAllTopics", lang=detected_lang) }}</option>
                     {% for category in all_categories %}
                     {% if category %}
                     <option value="{{ category }}">{{ category }}</option>
@@ -43,9 +43,9 @@ block content %}
 
                 <!-- Group By -->
                 <select class="wiki-filters__select" id="wiki-group-by">
-                    <option value="alpha" selected>Group A-Z</option>
-                    <option value="topics">Group by topic</option>
-                    <option value="date">Group by date</option>
+                    <option value="alpha" selected>{{ trans(key="wikiFilterGroupAlpha", lang=detected_lang) }}</option>
+                    <option value="topics">{{ trans(key="wikiFilterGroupTopic", lang=detected_lang) }}</option>
+                    <option value="date">{{ trans(key="wikiFilterGroupDate", lang=detected_lang) }}</option>
                 </select>
 
             </div>
@@ -60,7 +60,7 @@ block content %}
                         <path d="M15 15l6 6"></path>
                         <path d="M4 4l5 5"></path>
                     </svg>
-                    <span class="wiki-filters__random-text">Random</span>
+                    <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
                 </button>
 
                 <!-- View Toggle -->
@@ -157,12 +157,12 @@ block content %}
 
                             {% if page.extra.alternative_names %}
                             <div class="wiki-card__alternatives">
-                                <span class="wiki-card__alternatives-label">Also:</span>
+                                <span class="wiki-card__alternatives-label">{{ trans(key="wikiCardAlsoLabel", lang=detected_lang) }}</span>
                                 {% for name in page.extra.alternative_names | slice(end=3) %}
                                 <span class="wiki-card__alternative-name">{{ name }}</span>{% if not loop.last %}, {% endif %}
                                 {% endfor %}
                                 {% if page.extra.alternative_names | length > 3 %}
-                                <span class="wiki-card__alternatives-more">+{{ page.extra.alternative_names | length - 3 }} more</span>
+                                <span class="wiki-card__alternatives-more">+{{ page.extra.alternative_names | length - 3 }} {{ trans(key="wikiCardMore", lang=detected_lang) }}</span>
                                 {% endif %}
                             </div>
                             {% endif %}
@@ -170,12 +170,12 @@ block content %}
                             <div class="wiki-card__meta">
                                 {% if page.date %}
                                 <time class="wiki-card__date">
-                                    Updated {{ page.date | date(format="%b %d, %Y") }}
+                                    {{ trans(key="wikiCardUpdated", lang=detected_lang) }} {{ page.date | date(format="%b %d, %Y") }}
                                 </time>
                                 {% endif %}
                                 <span class="wiki-card__read-more">
                                     <a href="{{ page.permalink }}" class="wiki-card__read-link">
-                                        Read more
+                                        {{ trans(key="readMore", lang=detected_lang) }}
                                         <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M5 12h14"></path>
                                             <path d="M12 5l7 7-7 7"></path>
@@ -197,8 +197,8 @@ block content %}
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <h3 class="wiki-no-results__title">No articles found</h3>
-                    <p class="wiki-no-results__message">Try adjusting your search terms or topic filter.</p>
+                    <h3 class="wiki-no-results__title">{{ trans(key="wikiNoResultsTitle", lang=detected_lang) }}</h3>
+                    <p class="wiki-no-results__message">{{ trans(key="wikiNoResultsMessage", lang=detected_lang) }}</p>
                 </div>
             </div>
         </div>
@@ -206,7 +206,7 @@ block content %}
 
         {% if section.subsections %}
         <div class="wiki-section__subsections">
-            <h2 class="wiki-section__subsections-title">Categories</h2>
+            <h2 class="wiki-section__subsections-title">{{ trans(key="wikiCategoriesHeading", lang=detected_lang) }}</h2>
             <div class="wiki-section__subsection-grid">
                 {% for subsection_path in section.subsections %} {% set
                 subsection = get_section(path=subsection_path) %}
@@ -225,8 +225,7 @@ block content %}
                     </p>
                     {% endif %} {% if subsection.pages %}
                     <div class="wiki-subsection-card__count">
-                        {{ subsection.pages | length }} {% if subsection.pages |
-                        length == 1 %}page{% else %}pages{% endif %}
+                        {{ subsection.pages | length }} {{ trans(key="pagesLabel", lang=detected_lang) }}
                     </div>
                     {% endif %}
                 </div>
@@ -247,7 +246,7 @@ block content %}
                     <path d="M8 15h6"></path>
                 </svg>
             </div>
-            <h2 class="wiki-footer__title">About This Encyclopedia</h2>
+            <h2 class="wiki-footer__title">{{ trans(key="wikiFooterAboutTitle", lang=detected_lang) }}</h2>
             {% if section.description %}
             <p class="wiki-footer__description">{{ section.description }}</p>
             {% endif %}
@@ -256,7 +255,7 @@ block content %}
             <div class="wiki-footer__stats">
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ section.pages | length }}</span>
-                    <span class="wiki-footer__stat-label">Articles</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="wikiStatArticles", lang=detected_lang) }}</span>
                 </div>
                 {% set categories = section.pages | map(attribute="extra.category") | unique %}
                 {% set category_count = 0 %}
@@ -264,7 +263,7 @@ block content %}
                 {% if category_count > 0 %}
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ category_count }}</span>
-                    <span class="wiki-footer__stat-label">Topics</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="wikiStatTopics", lang=detected_lang) }}</span>
                 </div>
                 {% endif %}
                 {% set total_words = 0 %}
@@ -273,7 +272,7 @@ block content %}
                 {% endfor %}
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ (total_words / 1000) | round }}k</span>
-                    <span class="wiki-footer__stat-label">Words</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="wikiStatWords", lang=detected_lang) }}</span>
                 </div>
             </div>
 
@@ -282,7 +281,7 @@ block content %}
             {% if pages_with_dates | length > 0 %}
             {% set recent_pages = pages_with_dates | sort(attribute="date") | reverse | slice(end=4) %}
             <div class="wiki-footer__recent">
-                <h3 class="wiki-footer__recent-title">Recently Updated</h3>
+                <h3 class="wiki-footer__recent-title">{{ trans(key="wikiRecentlyUpdated", lang=detected_lang) }}</h3>
                 <div class="wiki-footer__recent-grid">
                     {% for page in recent_pages %}
                     <a href="{{ page.permalink }}" class="wiki-footer__recent-link">
