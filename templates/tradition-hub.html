@@ -50,31 +50,30 @@
 
             <aside class="tradition-hub__aside" role="complementary" aria-label="Related metadata">
 
-                {# --- Sources from this family (auto-filtered from resources) --- #}
+                {# --- Sources from this family (auto-filtered from the
+                       data-bibliography manifest) --- #}
                 {% if page.extra.source_family %}
-                    {% set lang_prefix = "" %}
-                    {% if detected_lang != "en" %}
-                        {% set_global lang_prefix = detected_lang ~ "/" %}
-                    {% endif %}
-                    {% set resources = get_section(path=lang_prefix ~ "resources/_index.md") %}
-                    {% set family_pages = resources.pages | filter(attribute="extra.source_family", value=page.extra.source_family) %}
-                    {% if family_pages | length > 0 %}
-                    <section class="tradition-hub__aside-block">
-                        <h2 class="tradition-hub__aside-title">All sources in this family</h2>
-                        <p class="tradition-hub__aside-note">{{ family_pages | length }} entries</p>
-                        <ul class="tradition-hub__source-list">
-                        {% for source_page in family_pages | sort(attribute="title") %}
-                            <li class="tradition-hub__source-item">
-                                <a href="{{ source_page.permalink }}" class="tradition-hub__source-link">
-                                    <span class="tradition-hub__source-title">{{ source_page.title }}</span>
-                                    {% if source_page.extra.authority_tier %}
-                                    <span class="tradition-hub__source-tier">{{ source_page.extra.authority_tier | title }}</span>
-                                    {% endif %}
-                                </a>
-                            </li>
-                        {% endfor %}
-                        </ul>
-                    </section>
+                    {% set manifest = load_data(path="data/sources/index.json", required=false) %}
+                    {% if manifest and manifest.sources %}
+                        {% set family_sources = manifest.sources | filter(attribute="source_family", value=page.extra.source_family) %}
+                        {% if family_sources | length > 0 %}
+                        <section class="tradition-hub__aside-block">
+                            <h2 class="tradition-hub__aside-title">All sources in this family</h2>
+                            <p class="tradition-hub__aside-note">{{ family_sources | length }} entries</p>
+                            <ul class="tradition-hub__source-list">
+                            {% for src in family_sources | sort(attribute="title") %}
+                                <li class="tradition-hub__source-item">
+                                    <a href="{{ get_url(path='sources/' ~ src.id, lang=detected_lang) }}" class="tradition-hub__source-link">
+                                        <span class="tradition-hub__source-title">{{ src.title }}</span>
+                                        {% if src.authority_tier %}
+                                        <span class="tradition-hub__source-tier">{{ src.authority_tier | title }}</span>
+                                        {% endif %}
+                                    </a>
+                                </li>
+                            {% endfor %}
+                            </ul>
+                        </section>
+                        {% endif %}
                     {% endif %}
                 {% endif %}
 
@@ -90,12 +89,14 @@
                     </p>
                     <ul class="tradition-hub__source-list">
                     {% for source_slug in page.extra.cited_sources %}
-                        {% set source_page = get_page(path="resources/" ~ source_slug ~ ".md") %}
+                        {% set src_record = load_data(path="data/sources/sources/" ~ source_slug ~ ".json", required=false) %}
+                        {% if src_record %}
                         <li class="tradition-hub__source-item">
-                            <a href="{{ source_page.permalink }}" class="tradition-hub__source-link">
-                                <span class="tradition-hub__source-title">{{ source_page.title }}</span>
+                            <a href="{{ get_url(path='sources/' ~ source_slug, lang=detected_lang) }}" class="tradition-hub__source-link">
+                                <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             </a>
                         </li>
+                        {% endif %}
                     {% endfor %}
                     </ul>
                 </section>
