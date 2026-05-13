@@ -33,13 +33,13 @@
         {% if entries %}
         <div class="articles-feed__grid">
             <main class="articles-feed__main">
-                {{ article::card_lead(page=entries | first) }}
+                {{ article::card_lead(page=entries | first, lang=detected_lang) }}
 
                 {% set rest = entries | slice(start=1) %}
                 {% if rest | length > 0 %}
                 <div class="articles-feed__feed">
                     {% for page in rest %}
-                    {{ article::card(page=page) }}
+                    {{ article::card(page=page, lang=detected_lang) }}
                     {% endfor %}
                 </div>
                 {% endif %}

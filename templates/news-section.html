@@ -36,13 +36,13 @@
         {% if entries %}
         <div class="newsroom__grid">
             <main class="newsroom__main">
-                {{ dispatch::card_lead(page=entries | first) }}
+                {{ dispatch::card_lead(page=entries | first, lang=detected_lang) }}
 
                 {% set rest = entries | slice(start=1) %}
                 {% if rest | length > 0 %}
                 <div class="newsroom__feed">
                     {% for page in rest %}
-                    {{ dispatch::card(page=page) }}
+                    {{ dispatch::card(page=page, lang=detected_lang) }}
                     {% endfor %}
                 </div>
                 {% endif %}

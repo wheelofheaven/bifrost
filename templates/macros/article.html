@@ -14,7 +14,7 @@
 {# Chip — small pill labeling the page as an Articles Explainer. The
    section-type sibling of the Dispatch chip. Tonally consistent so the
    two sections feel like part of one publication. #}
-{% macro chip() %}
+{% macro chip(lang="en") %}
 <span class="article-chip"
       role="note"
       aria-label="Content type: Explainer"
@@ -25,22 +25,28 @@
         <line x1="16" y1="13" x2="8" y2="13"></line>
         <line x1="16" y1="17" x2="8" y2="17"></line>
     </svg>
-    <span class="article-chip__label">Explainer</span>
+    <span class="article-chip__label">{{ trans(key="articleChipLabel", lang=lang) }}</span>
 </span>
 {% endmacro chip %}
 
 {# Compact claim-type pill — a tiny color-tinted chip for the card meta
    row. Use the full `claim-badge.html` macro on the article page itself;
    this one trades the affordances for density. #}
-{% macro claim_pill(claim_type="") %}
+{% macro claim_pill(claim_type="", lang="en") %}
 {% if claim_type %}
+{% if claim_type == "direct" %}{% set label = trans(key="claimTypeDirect", lang=lang) %}
+{% elif claim_type == "framework" %}{% set label = trans(key="claimTypeFramework", lang=lang) %}
+{% elif claim_type == "inferred" %}{% set label = trans(key="claimTypeInferred", lang=lang) %}
+{% elif claim_type == "speculative" %}{% set label = trans(key="claimTypeSpeculative", lang=lang) %}
+{% else %}{% set label = claim_type | title %}
+{% endif %}
 <span class="article-card__claim article-card__claim--{{ claim_type }}"
-      title="Claim type: {{ claim_type | title }}">{{ claim_type | title }}</span>
+      title="{{ label }}">{{ label }}</span>
 {% endif %}
 {% endmacro claim_pill %}
 
 {# Card — feed-view entry for an article. #}
-{% macro card(page) %}
+{% macro card(page, lang="en") %}
 <article class="article-card"
          data-title="{{ page.title | lower }}"
          data-category="{{ page.extra.category | default(value='') | lower }}"
@@ -50,14 +56,14 @@
         {% if page.extra.category %}
         <span class="article-card__category">{{ page.extra.category }}</span>
         {% endif %}
-        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value='')) }}
+        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value=''), lang=lang) }}
         {% if page.date %}
         <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
             {{ page.date | date(format="%b %d, %Y") }}
         </time>
         {% endif %}
         {% if page.word_count %}
-        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} min read</span>
+        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} {{ trans(key="readingTimeUnit", lang=lang) }}</span>
         {% endif %}
     </div>
     <h2 class="article-card__title">
@@ -75,25 +81,25 @@
    article at the top of the section index. Same data, heavier visual
    weight: "Featured Explainer" kicker, larger headline, longer lede.
    The `--lead` modifier on the card root drives the size differences. #}
-{% macro card_lead(page) %}
+{% macro card_lead(page, lang="en") %}
 <article class="article-card article-card--lead"
          data-title="{{ page.title | lower }}"
          data-category="{{ page.extra.category | default(value='') | lower }}"
          data-claim-type="{{ page.extra.claim_type | default(value='') }}"
          data-date="{{ page.date | default(value='') }}">
     <div class="article-card__meta">
-        <span class="article-card__lead-kicker">Featured Explainer</span>
+        <span class="article-card__lead-kicker">{{ trans(key="articleFeaturedKicker", lang=lang) }}</span>
         {% if page.extra.category %}
         <span class="article-card__category">{{ page.extra.category }}</span>
         {% endif %}
-        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value='')) }}
+        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value=''), lang=lang) }}
         {% if page.date %}
         <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
             {{ page.date | date(format="%b %d, %Y") }}
         </time>
         {% endif %}
         {% if page.word_count %}
-        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} min read</span>
+        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} {{ trans(key="readingTimeUnit", lang=lang) }}</span>
         {% endif %}
     </div>
     <h2 class="article-card__title">

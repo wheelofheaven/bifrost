@@ -13,7 +13,7 @@
         <article class="dispatch__article" role="article" aria-labelledby="dispatch-title">
             <header class="dispatch__header">
                 <div class="dispatch__meta" aria-label="Dispatch metadata">
-                    {{ dispatch::chip(event_type=page.extra.event_type | default(value="")) }}
+                    {{ dispatch::chip(event_type=page.extra.event_type | default(value=""), lang=detected_lang) }}
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.event_date %}
                     <span class="dispatch__event-date">
