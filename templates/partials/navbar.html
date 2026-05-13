@@ -93,7 +93,7 @@
             <button
                 id="mobile-theme-toggle"
                 class="navbar__bar-btn"
-                aria-label="Toggle dark/light mode"
+                aria-label="{{ trans(key='navbarToggleTheme', lang=detected_lang) }}"
             >
                 <span class="navbar__theme-icon">
                     <span class="icon icon--moon">{% include "partials/icons/feather-moon.html" %}</span>
@@ -107,11 +107,11 @@
                     id="mobile-lang-trigger"
                     aria-expanded="false"
                     aria-haspopup="listbox"
-                    aria-label="Select language"
+                    aria-label="{{ trans(key='navbarSelectLanguage', lang=detected_lang) }}"
                 >
                     <span class="navbar__lang-current" id="mobile-lang-current">EN</span>
                 </button>
-                <ul class="navbar__lang-menu" id="mobile-lang-menu" role="listbox" aria-label="Available languages">
+                <ul class="navbar__lang-menu" id="mobile-lang-menu" role="listbox" aria-label="{{ trans(key='navbarAvailableLanguages', lang=detected_lang) }}">
                     <li class="navbar__lang-option" data-lang="en" role="option" lang="en">English</li>
                     <li class="navbar__lang-option" data-lang="de" role="option" lang="de">Deutsch</li>
                     <li class="navbar__lang-option" data-lang="es" role="option" lang="es">Español</li>
@@ -143,7 +143,7 @@
         <button
             class="navbar__mobile-toggle mobile-only"
             id="mobileNavToggle"
-            aria-label="Toggle mobile navigation"
+            aria-label="{{ trans(key='navbarToggleMobile', lang=detected_lang) }}"
         >
             <span class="navbar__menu-icon">
                 <span class="navbar__menu-icon--menu">{% include "partials/icons/feather-menu.html" %}</span>
@@ -158,13 +158,13 @@
             <input
                 type="search"
                 class="navbar__search-input"
-                placeholder="Search..."
-                aria-label="Search site"
+                placeholder="{{ trans(key='navbarSearchPlaceholder', lang=detected_lang) }}"
+                aria-label="{{ trans(key='navbarSearchSite', lang=detected_lang) }}"
             />
         </div>
 
         <!-- Read split-button CtA (desktop) -->
-        <div class="navbar__dropdown navbar__cta-split desktop-only" data-dropdown="read" role="navigation" aria-label="Read section">
+        <div class="navbar__dropdown navbar__cta-split desktop-only" data-dropdown="read" role="navigation" aria-label="{{ trans(key='navbarReadSection', lang=detected_lang) }}">
             <a
                 href="{{ get_url(path='read', lang=detected_lang) }}"
                 class="navbar__cta-split__main{% if current_path and current_path is starting_with('/read') %} navbar__cta-split__main--active{% endif %}"
@@ -178,7 +178,7 @@
                 aria-expanded="false"
                 aria-haspopup="true"
                 aria-controls="read-dropdown"
-                aria-label="Open Read menu"
+                aria-label="{{ trans(key='navbarOpenReadMenu', lang=detected_lang) }}"
             >
                 <span class="navbar__dropdown-trigger__caret">
                     {% include "partials/icons/chevron-down.html" %}
@@ -191,7 +191,7 @@
             type="button"
             class="navbar__search-btn desktop-only"
             data-search-toggle
-            aria-label="Search"
+            aria-label="{{ trans(key='navbarSearch', lang=detected_lang) }}"
         >
             <span class="navbar__search-btn__icon" aria-hidden="true">
                 {% include "partials/icons/feather-search.html" %}
