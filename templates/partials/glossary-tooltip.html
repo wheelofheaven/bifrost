@@ -1,12 +1,14 @@
 <!-- Glossary Tooltip - Shows wiki definitions on hover -->
-<div class="glossary-tooltip" id="glossaryTooltip" role="tooltip" aria-hidden="true">
+<div class="glossary-tooltip" id="glossaryTooltip" role="tooltip" aria-hidden="true"
+     data-label-loading="{{ trans(key='glossaryLoading', lang=detected_lang) }}"
+     data-label-none="{{ trans(key='glossaryNoDefinition', lang=detected_lang) }}">
     <div class="glossary-tooltip__content">
         <div class="glossary-tooltip__header">
             <span class="glossary-tooltip__term" id="glossaryTerm"></span>
-            <span class="glossary-tooltip__badge">Wiki</span>
+            <span class="glossary-tooltip__badge">{{ trans(key="navbarWiki", lang=detected_lang) }}</span>
         </div>
         <p class="glossary-tooltip__definition" id="glossaryDefinition"></p>
-        <span class="glossary-tooltip__hint">Click to read more</span>
+        <span class="glossary-tooltip__hint">{{ trans(key="glossaryClickHint", lang=detected_lang) }}</span>
     </div>
     <div class="glossary-tooltip__arrow"></div>
 </div>
@@ -70,7 +72,7 @@
 
         // Show loading state
         termEl.textContent = term;
-        defEl.textContent = 'Loading...';
+        defEl.textContent = tooltip.dataset.labelLoading || 'Loading...';
         positionTooltip(link);
         showTooltip();
 
@@ -79,7 +81,7 @@
 
         // Only update if still hovering same link
         if (currentLink === link) {
-            defEl.textContent = definition || 'No definition available.';
+            defEl.textContent = definition || tooltip.dataset.labelNone || 'No definition available.';
         }
     }
 

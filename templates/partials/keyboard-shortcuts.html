@@ -3,8 +3,8 @@
     <div class="keyboard-shortcuts-modal__backdrop"></div>
     <div class="keyboard-shortcuts-modal__content">
         <header class="keyboard-shortcuts-modal__header">
-            <h2 class="keyboard-shortcuts-modal__title" id="shortcutsTitle">{{ trans(key="keyboardShortcuts", default="Keyboard Shortcuts") }}</h2>
-            <button class="keyboard-shortcuts-modal__close" aria-label="Close" data-close-shortcuts>
+            <h2 class="keyboard-shortcuts-modal__title" id="shortcutsTitle">{{ trans(key="keyboardShortcuts", lang=detected_lang) }}</h2>
+            <button class="keyboard-shortcuts-modal__close" aria-label="{{ trans(key='close', lang=detected_lang) }}" data-close-shortcuts>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line>
                     <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -13,66 +13,66 @@
         </header>
         <div class="keyboard-shortcuts-modal__body">
             <section class="keyboard-shortcuts-modal__section">
-                <h3 class="keyboard-shortcuts-modal__section-title">{{ trans(key="shortcutsNavigation", default="Navigation") }}</h3>
+                <h3 class="keyboard-shortcuts-modal__section-title">{{ trans(key="shortcutsNavigation", lang=detected_lang) }}</h3>
                 <ul class="keyboard-shortcuts-modal__list">
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>j</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsNextArticle", default="Next article") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsNextArticle", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>k</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsPrevArticle", default="Previous article") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsPrevArticle", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>h</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsHome", default="Go to home") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsHome", lang=detected_lang) }}</span>
                     </li>
                 </ul>
             </section>
             <section class="keyboard-shortcuts-modal__section">
-                <h3 class="keyboard-shortcuts-modal__section-title">{{ trans(key="shortcutsActions", default="Actions") }}</h3>
+                <h3 class="keyboard-shortcuts-modal__section-title">{{ trans(key="shortcutsActions", lang=detected_lang) }}</h3>
                 <ul class="keyboard-shortcuts-modal__list">
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>/</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsSearch", default="Open search") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsSearch", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>Esc</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsClose", default="Close modal / panel") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsClose", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>?</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsHelp", default="Show this help") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsHelp", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>b</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsBookmark", default="Bookmark page") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsBookmark", lang=detected_lang) }}</span>
                     </li>
                     <li class="keyboard-shortcuts-modal__item">
                         <span class="keyboard-shortcuts-modal__keys">
                             <kbd>B</kbd>
                         </span>
-                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsReadingList", default="Open reading list") }}</span>
+                        <span class="keyboard-shortcuts-modal__desc">{{ trans(key="shortcutsReadingList", lang=detected_lang) }}</span>
                     </li>
                 </ul>
             </section>
         </div>
         <footer class="keyboard-shortcuts-modal__footer">
-            <p class="keyboard-shortcuts-modal__hint">{{ trans(key="shortcutsHint", default="Press any key to close") }}</p>
+            <p class="keyboard-shortcuts-modal__hint">{{ trans(key="shortcutsHint", lang=detected_lang) }}</p>
         </footer>
     </div>
 </div>

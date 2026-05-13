@@ -2,20 +2,23 @@
 <button
     class="listen-trigger"
     id="listenTrigger"
-    aria-label="Listen to this page"
-    title="Listen to this page"
+    aria-label="{{ trans(key='listenToPage', lang=detected_lang) }}"
+    title="{{ trans(key='listenToPage', lang=detected_lang) }}"
 >
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <polygon points="5 3 19 12 5 21 5 3"/>
     </svg>
-    <span>Listen</span>
+    <span>{{ trans(key="listenLabel", lang=detected_lang) }}</span>
 </button>
 
 <!-- Audio Player Bar - Fixed at bottom (SoundCloud style) -->
-<div class="audio-player" id="audioPlayer" aria-hidden="true">
+<div class="audio-player" id="audioPlayer" aria-hidden="true"
+     data-label-play="{{ trans(key='audioPlay', lang=detected_lang) }}"
+     data-label-pause="{{ trans(key='audioPause', lang=detected_lang) }}"
+     data-label-this-page="{{ trans(key='audioThisPage', lang=detected_lang) }}">
     <div class="audio-player__container">
         <!-- Play/Pause -->
-        <button class="audio-player__play" id="audioPlayPause" aria-label="Play">
+        <button class="audio-player__play" id="audioPlayPause" aria-label="{{ trans(key='audioPlay', lang=detected_lang) }}">
             <span class="audio-player__icon audio-player__icon--play">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
                     <polygon points="5 3 19 12 5 21 5 3"/>
@@ -46,7 +49,7 @@
         </div>
 
         <!-- Close -->
-        <button class="audio-player__close" id="audioClose" aria-label="Stop and close">
+        <button class="audio-player__close" id="audioClose" aria-label="{{ trans(key='audioStop', lang=detected_lang) }}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="18" y1="6" x2="6" y2="18"></line>
                 <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -149,15 +152,19 @@
         document.body.classList.remove('has-audio-player');
     }
 
+    const labelPlay = player.dataset.labelPlay || 'Play';
+    const labelPause = player.dataset.labelPause || 'Pause';
+    const labelThisPage = player.dataset.labelThisPage || 'This page';
+
     function updatePlayState(playing) {
         if (playing) {
             player.classList.add('audio-player--playing');
             player.classList.remove('audio-player--paused');
-            playPauseBtn.setAttribute('aria-label', 'Pause');
+            playPauseBtn.setAttribute('aria-label', labelPause);
         } else {
             player.classList.remove('audio-player--playing');
             player.classList.add('audio-player--paused');
-            playPauseBtn.setAttribute('aria-label', 'Play');
+            playPauseBtn.setAttribute('aria-label', labelPlay);
         }
     }
 
@@ -173,7 +180,7 @@
         pausedAt = 0;
 
         // Set title
-        const pageTitle = document.title.split('|')[0].trim() || 'This page';
+        const pageTitle = document.title.split('|')[0].trim() || labelThisPage;
         titleEl.textContent = pageTitle;
         timeTotal.textContent = formatTime(estimatedDuration);
 

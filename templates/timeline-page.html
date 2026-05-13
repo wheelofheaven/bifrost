@@ -119,7 +119,7 @@
                 {% if neighbors | length > 0 %}
                 <aside class="related-content" role="complementary" aria-labelledby="read-next-title">
                     <h2 class="related-content__title" id="read-next-title">
-                        {{ trans(key="readNext", default="Read Next") }}
+                        {{ trans(key="readNext", lang=detected_lang) }}
                     </h2>
                     <div class="related-content__grid">
                         {% for related in neighbors %}
@@ -132,7 +132,7 @@
                             <p class="related-content__card-desc">{{ related.description | truncate(length=120) }}</p>
                             {% endif %}
                             <span class="related-content__card-link">
-                                {{ trans(key="readMore", default="Read more") }}
+                                {{ trans(key="readMore", lang=detected_lang) }}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                     <polyline points="12 5 19 12 12 19"></polyline>
@@ -177,7 +177,7 @@
                 {% if also_pages | length > 0 %}
                 <aside class="related-content" role="complementary" aria-labelledby="read-also-title">
                     <h2 class="related-content__title" id="read-also-title">
-                        {{ trans(key="readAlso", default="Read Also") }}
+                        {{ trans(key="readAlso", lang=detected_lang) }}
                     </h2>
                     <div class="related-content__grid">
                         {% for related in also_pages %}
@@ -190,7 +190,7 @@
                             <p class="related-content__card-desc">{{ related.description | truncate(length=120) }}</p>
                             {% endif %}
                             <span class="related-content__card-link">
-                                {{ trans(key="readMore", default="Read more") }}
+                                {{ trans(key="readMore", lang=detected_lang) }}
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                     <line x1="5" y1="12" x2="19" y2="12"></line>
                                     <polyline points="12 5 19 12 12 19"></polyline>
@@ -363,10 +363,10 @@
                         {# Mirror the Read Next + Read Also discovery blocks
                            in the TOC so the reader sees the full reading flow. #}
                         <li class="timeline-page__toc-item timeline-page__toc-item--level-1 timeline-page__toc-item--read-next">
-                            <a href="#read-next-title" class="timeline-page__toc-link">{{ trans(key="readNext", default="Read Next") }}</a>
+                            <a href="#read-next-title" class="timeline-page__toc-link">{{ trans(key="readNext", lang=detected_lang) }}</a>
                         </li>
                         <li class="timeline-page__toc-item timeline-page__toc-item--level-1 timeline-page__toc-item--read-also">
-                            <a href="#read-also-title" class="timeline-page__toc-link">{{ trans(key="readAlso", default="Read Also") }}</a>
+                            <a href="#read-also-title" class="timeline-page__toc-link">{{ trans(key="readAlso", lang=detected_lang) }}</a>
                         </li>
                     </ul>
                 </nav>

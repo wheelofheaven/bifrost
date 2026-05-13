@@ -24,6 +24,7 @@ showSnackbar(message, type, duration) from JavaScript to display notifications.
             error: "{{ trans(key='snackbarError', lang=detected_lang) }}",
             info: "{{ trans(key='snackbarInfo', lang=detected_lang) }}",
             warning: "{{ trans(key='snackbarWarning', lang=detected_lang) }}",
+            closeNotification: "{{ trans(key='closeNotification', lang=detected_lang) }}",
         };
 
         let snackbarCounter = 0;
@@ -83,7 +84,7 @@ showSnackbar(message, type, duration) from JavaScript to display notifications.
                 <div class="snackbar__content">
                     <div class="snackbar__icon">${icon}</div>
                     <div class="snackbar__message">${message}</div>
-                    <button class="snackbar__close" onclick="window.hideSnackbar('${snackbarId}')" aria-label="Close notification">
+                    <button class="snackbar__close" onclick="window.hideSnackbar('${snackbarId}')" aria-label="${window.snackbarTranslations.closeNotification}">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>
