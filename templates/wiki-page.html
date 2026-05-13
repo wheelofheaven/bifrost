@@ -199,7 +199,7 @@
 
                 <!-- Reading-status / claim-type cluster -->
                 <div class="wiki__claim-section">
-                    <div class="wiki__claim-label">{{ trans(key="wikiReadingThisAs", lang=detected_lang) }}</div>
+                    <div class="wiki__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
                 </div>
 
@@ -246,7 +246,7 @@
 
                     {% if page.extra.category %}
                     <div class="wiki__meta-row">
-                        <span class="wiki__meta-label">{{ trans(key="wikiPartOfSeries", lang=detected_lang) }}</span>
+                        <span class="wiki__meta-label">{{ trans(key="pagePartOfSeries", lang=detected_lang) }}</span>
                         <span class="wiki__meta-value">
                             <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
                                class="wiki__category"

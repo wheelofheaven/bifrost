@@ -27,7 +27,7 @@
                         <span class="timeline-page__dates">{{ page.extra.start_year }} — {{ page.extra.end_year }}</span>
                         {% endif %}
                         {% if page.extra.genesis_day %}
-                        <span class="timeline-page__day">Day {{ page.extra.genesis_day }}</span>
+                        <span class="timeline-page__day">{{ trans(key="timelineDay", lang=detected_lang) }} {{ page.extra.genesis_day }}</span>
                         {% endif %}
                     </div>
 
@@ -64,7 +64,7 @@
                                 <polyline points="15,18 9,12 15,6"></polyline>
                             </svg>
                             <div class="timeline-page__nav-content">
-                                <span class="timeline-page__nav-label">Previous</span>
+                                <span class="timeline-page__nav-label">{{ trans(key="timelinePrev", lang=detected_lang) }}</span>
                                 <span class="timeline-page__nav-title">
                                     <span class="timeline-page__nav-glyph" aria-hidden="true">{{ zodiac::icon(name=prev_zodiac, size=18) }}</span>
                                     {{ page.extra.prev_age[0].name }}
@@ -77,7 +77,7 @@
                         {% set next_zodiac = page.extra.next_age[0].link | split(pat="/") | nth(n=2) | replace(from="age-of-", to="") %}
                         <a href="{{ page.extra.next_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
-                                <span class="timeline-page__nav-label">Next</span>
+                                <span class="timeline-page__nav-label">{{ trans(key="timelineNext", lang=detected_lang) }}</span>
                                 <span class="timeline-page__nav-title">
                                     <span class="timeline-page__nav-glyph" aria-hidden="true">{{ zodiac::icon(name=next_zodiac, size=18) }}</span>
                                     {{ page.extra.next_age[0].name }}
@@ -97,7 +97,7 @@
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 8 12 12 14 14"></polyline>
                             </svg>
-                            Back to Timeline
+                            {{ trans(key="timelineBackToHub", lang=detected_lang) }}
                         </a>
                     </div>
                 </nav>
@@ -208,7 +208,7 @@
                 <div class="timeline-page__edit-footer">
                     <div class="timeline-page__history" data-history-path="{{ page.relative_path }}">
                         <span class="timeline-page__history-meta" hidden>
-                            <span class="timeline-page__history-label">Last edited:</span>
+                            <span class="timeline-page__history-label">{{ trans(key="pageLastEdited", lang=detected_lang) }}</span>
                             <time class="timeline-page__history-date" datetime=""></time>
                             <span class="timeline-page__history-author"></span>
                             <span class="timeline-page__history-sep" aria-hidden="true">·</span>
@@ -223,7 +223,7 @@
                                 <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
                                 <polyline points="12 7 12 12 15 14"></polyline>
                             </svg>
-                            <span>View edit history</span>
+                            <span>{{ trans(key="pageViewHistory", lang=detected_lang) }}</span>
                         </a>
                     </div>
                     <a class="timeline-page__edit-btn"
@@ -235,7 +235,7 @@
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
-                        <span>Edit this page</span>
+                        <span>{{ trans(key="pageEditThis", lang=detected_lang) }}</span>
                     </a>
                 </div>
             </article>
@@ -248,7 +248,7 @@
             <header class="timeline-page__header">
                 <!-- Reading-status / claim-type cluster -->
                 <div class="timeline-page__claim-section">
-                    <div class="timeline-page__claim-label">Reading this as:</div>
+                    <div class="timeline-page__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
                 </div>
 
@@ -257,50 +257,50 @@
                     <div class="timeline-page__meta-row timeline-page__meta-row--split">
                         {% if page.reading_time %}
                         <div class="timeline-page__meta-pair timeline-page__meta-pair--start">
-                            <span class="timeline-page__meta-label">Reading time:</span>
+                            <span class="timeline-page__meta-label">{{ trans(key="pageReadingTime", lang=detected_lang) }}</span>
                             <span class="timeline-page__meta-value timeline-page__reading-time">
                                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <circle cx="12" cy="12" r="10"></circle>
                                     <polyline points="12 6 12 12 16 14"></polyline>
                                 </svg>
-                                {{ page.reading_time }} min
+                                {{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}
                             </span>
                         </div>
                         {% endif %}
 
                         <div class="timeline-page__meta-pair timeline-page__meta-pair--end">
-                            <span class="timeline-page__meta-label">Listen:</span>
+                            <span class="timeline-page__meta-label">{{ trans(key="pageListen", lang=detected_lang) }}</span>
                             <span class="timeline-page__meta-value">{% include "partials/listen-button.html" %}</span>
                         </div>
                     </div>
 
                     {% if page.date %}
                     <div class="timeline-page__meta-row">
-                        <span class="timeline-page__meta-label">Last updated:</span>
+                        <span class="timeline-page__meta-label">{{ trans(key="pageLastUpdated", lang=detected_lang) }}</span>
                         <span class="timeline-page__meta-value"><time>{{ page.date | date(format="%B %d, %Y") }}</time></span>
                     </div>
                     {% endif %}
 
                     <div class="timeline-page__meta-row">
-                        <span class="timeline-page__meta-label">Part of the series:</span>
+                        <span class="timeline-page__meta-label">{{ trans(key="pagePartOfSeries", lang=detected_lang) }}</span>
                         <span class="timeline-page__meta-value">
                             <a href="{{ get_url(path='timeline', lang=detected_lang) }}"
                                class="timeline-page__category"
-                               title="Browse the Great Year">The Great Year</a>
+                               title="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</a>
                         </span>
                     </div>
                 </div>
 
                 <!-- Share -->
                 <div class="timeline-page__share-section">
-                    <div class="timeline-page__meta-label">Share this page:</div>
+                    <div class="timeline-page__meta-label">{{ trans(key="shareThisPage", lang=detected_lang) }}</div>
                     {% include "partials/social-share.html" %}
                 </div>
 
                 <!-- Read as Agent — copy/view raw markdown for LLM use -->
                 {% set md_url = "https://raw.githubusercontent.com/wheelofheaven/data-content/main/" ~ page.relative_path %}
                 <div class="timeline-page__agent-section">
-                    <div class="timeline-page__meta-label">Read as Agent:</div>
+                    <div class="timeline-page__meta-label">{{ trans(key="agentReadAs", lang=detected_lang) }}</div>
                     <div class="timeline-page__agent-buttons">
                         <button type="button"
                                 class="timeline-page__agent-btn"
@@ -311,7 +311,7 @@
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            <span class="timeline-page__agent-btn-label">Copy for LLMs</span>
+                            <span class="timeline-page__agent-btn-label">{{ trans(key="agentCopyForLLMs", lang=detected_lang) }}</span>
                         </button>
                         <a class="timeline-page__agent-btn"
                            href="{{ md_url | safe }}"
@@ -322,7 +322,7 @@
                                 <rect x="5" y="5" width="198" height="118" rx="10" ry="10" stroke="currentColor" stroke-width="10" fill="none"></rect>
                                 <path fill="currentColor" d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"></path>
                             </svg>
-                            <span class="timeline-page__agent-btn-label">View as Markdown</span>
+                            <span class="timeline-page__agent-btn-label">{{ trans(key="agentViewMarkdown", lang=detected_lang) }}</span>
                         </a>
                     </div>
                 </div>
@@ -332,7 +332,7 @@
             {% if page.toc %}
             <div class="timeline-page__toc">
                 <div class="timeline-page__toc-header">
-                    <h3 class="timeline-page__toc-title" id="toc-heading">Contents</h3>
+                    <h3 class="timeline-page__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h3>
                 </div>
                 <nav class="timeline-page__toc-nav" aria-labelledby="toc-heading">
                     <ul class="timeline-page__toc-list">
