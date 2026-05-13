@@ -47,11 +47,11 @@
                 {% if paginator and paginator.number_pagers > 1 %}
                 <nav class="articles-feed__pagination" aria-label="{{ trans(key='articlesPaginationLabel', lang=detected_lang) }}">
                     {% if paginator.previous %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.previous }}" rel="prev">{{ trans(key="articlesPrev", lang=detected_lang) }}</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.previous }}" rel="prev">{{ trans(key="paginationPrev", lang=detected_lang) }}</a>
                     {% endif %}
                     <span class="articles-feed__pagination-info">{{ paginator.current_index }} / {{ paginator.number_pagers }}</span>
                     {% if paginator.next %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.next }}" rel="next">{{ trans(key="articlesNext", lang=detected_lang) }}</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.next }}" rel="next">{{ trans(key="paginationNext", lang=detected_lang) }}</a>
                     {% endif %}
                 </nav>
                 {% endif %}
@@ -97,7 +97,7 @@
                             <path d="M4 4a16 16 0 0 1 16 16"></path>
                             <circle cx="5" cy="19" r="1"></circle>
                         </svg>
-                        <span>{{ trans(key="articlesSubscribeBtn", lang=detected_lang) }}</span>
+                        <span>{{ trans(key="subscribeViaAtom", lang=detected_lang) }}</span>
                     </a>
                 </section>
 
@@ -130,7 +130,7 @@
             </aside>
         </div>
         {% else %}
-        <p class="articles-feed__empty">{{ trans(key="articlesEmptyBefore", lang=detected_lang) }} <a href="{{ get_url(path='articles/atom.xml', lang=detected_lang) }}">{{ trans(key="articlesEmptyLink", lang=detected_lang) }}</a>.</p>
+        <p class="articles-feed__empty">{{ trans(key="articlesEmptyBefore", lang=detected_lang) }} <a href="{{ get_url(path='articles/atom.xml', lang=detected_lang) }}">{{ trans(key="atomFeedLink", lang=detected_lang) }}</a>.</p>
         {% endif %}
 
         <footer class="articles-feed__footer">
