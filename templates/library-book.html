@@ -268,6 +268,19 @@
                         <span class="library-book__meta-value"><time>{{ book_data.updated | date(format="%B %d, %Y") }}</time></span>
                     </div>
                     {% endif %}
+
+                    {# Cross-link to the bibliography record. Set by
+                       data-library/catalog.json's source_id field; resolves
+                       the title via data-bibliography for nicer display. #}
+                    {% if current_book_entry and current_book_entry.source_id %}
+                    {% set src_record = load_data(path="data/sources/sources/" ~ current_book_entry.source_id ~ ".json", required=false) %}
+                    <div class="library-book__meta-row">
+                        <span class="library-book__meta-label">Source:</span>
+                        <span class="library-book__meta-value">
+                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang=detected_lang) }}">{% if src_record %}{{ src_record.title }}{% else %}{{ current_book_entry.source_id }}{% endif %}</a>
+                        </span>
+                    </div>
+                    {% endif %}
                 </div>
 
                 <!-- Reading progress + view toggles. Moved out of the main
