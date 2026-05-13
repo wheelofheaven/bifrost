@@ -5,24 +5,17 @@
 
 // =====================================================
 // Paragraph Toolbar (bookmark/note buttons)
+//
+// Lives inside .library-book__para-actions (the dedicated right
+// gutter column on each paragraph), so the buttons stack vertically
+// with the share button and never overlap the paragraph text.
+// Visibility is handled by the parent .library-book__para-actions
+// (opacity 0 → 1 on hover/selected; always visible on touch).
 // =====================================================
 .study-tools__para-toolbar {
-    position: absolute;
-    top: 0.5rem;
-    right: 2.5rem;
     display: flex;
+    flex-direction: column;
     gap: 0.25rem;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    z-index: 5;
-
-    .library-book__paragraph:hover & {
-        opacity: 1;
-    }
-
-    .library-book__paragraph--selected & {
-        opacity: 1;
-    }
 }
 
 .study-tools__btn {
@@ -31,12 +24,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-background-secondary);
+    background: transparent;
     border: 1px solid var(--color-hairline);
     border-radius: 0.25rem;
-    color: var(--color-text-muted);
+    color: var(--color-text-subtle);
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
 
     &:hover {
         background: var(--color-background);
@@ -58,6 +51,11 @@
     svg {
         width: 14px;
         height: 14px;
+    }
+
+    @media (max-width: 600px) {
+        width: 1.5rem;
+        height: 1.5rem;
     }
 }
 

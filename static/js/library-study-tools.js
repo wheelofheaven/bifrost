@@ -92,7 +92,11 @@ const LibraryStudyTools = (function() {
     }
 
     /**
-     * Add bookmark/note buttons to a paragraph
+     * Add bookmark/note buttons to a paragraph. Buttons are inserted
+     * into the dedicated .library-book__para-actions column (alongside
+     * the share button) so they stack vertically in their own gutter
+     * and never overlap the paragraph text. Falls back to appending to
+     * the paragraph itself if no actions column is present.
      */
     function addParagraphTools(para) {
         const refId = para.dataset.refId || para.id;
@@ -105,7 +109,8 @@ const LibraryStudyTools = (function() {
             <button class="study-tools__btn study-tools__btn--bookmark"
                     data-action="bookmark"
                     data-ref="${refId}"
-                    title="Bookmark (b)">
+                    title="Bookmark (b)"
+                    aria-label="Bookmark this paragraph">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
                 </svg>
@@ -113,7 +118,8 @@ const LibraryStudyTools = (function() {
             <button class="study-tools__btn study-tools__btn--note"
                     data-action="note"
                     data-ref="${refId}"
-                    title="Add note">
+                    title="Add note"
+                    aria-label="Add note to this paragraph">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                     <polyline points="14 2 14 8 20 8"></polyline>
@@ -124,7 +130,12 @@ const LibraryStudyTools = (function() {
             </button>
         `;
 
-        para.appendChild(toolbar);
+        const actions = para.querySelector('.library-book__para-actions');
+        if (actions) {
+            actions.appendChild(toolbar);
+        } else {
+            para.appendChild(toolbar);
+        }
 
         // Check if already bookmarked
         if (window.LibraryStorage.isBookmarked(state.bookSlug, refId)) {
