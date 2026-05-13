@@ -20,11 +20,11 @@
                     {% endif %}
                     {% if page.date %}
                     <time class="article__published" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
-                        Published: {{ page.date | date(format="%B %d, %Y") }}
+                        {{ trans(key="pagePublished", lang=detected_lang) }} {{ page.date | date(format="%B %d, %Y") }}
                     </time>
                     {% endif %}
                     {% if page.reading_time %}
-                    <span class="article__reading-time">{{ page.reading_time }} min read</span>
+                    <span class="article__reading-time">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>
                     {% endif %}
                     {% include "partials/listen-button.html" %}
                 </div>
@@ -47,7 +47,7 @@
 
             {% if page.extra.see_also %}
             <section class="article__see-also" role="complementary" aria-label="Related articles">
-                <h2 class="article__section-title">See also</h2>
+                <h2 class="article__section-title">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
                 <ul class="article__link-list">
                     {% for item in page.extra.see_also %}
                     <li class="article__link-item">
@@ -67,7 +67,7 @@
 
             {% if page.extra.external_links %}
             <section class="article__external-links" aria-label="External links">
-                <h2 class="article__section-title">External links</h2>
+                <h2 class="article__section-title">{{ trans(key="sectionExternalLinks", lang=detected_lang) }}</h2>
                 <ul class="article__link-list">
                     {% for link in page.extra.external_links %}
                     <li class="article__link-item">
@@ -83,7 +83,7 @@
 
             {% if page.extra.references %}
             <section class="article__references" role="doc-bibliography" aria-label="References and citations">
-                <h2 class="article__section-title">References</h2>
+                <h2 class="article__section-title">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                 <ol class="article__source-list">
                     {% for ref in page.extra.references %}
                     <li class="article__source-item" id="ref-{{ loop.index }}">
@@ -118,7 +118,7 @@
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    Back to Articles
+                    {{ trans(key="articleBackToHub", lang=detected_lang) }}
                 </a>
             </footer>
         </article>
