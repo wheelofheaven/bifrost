@@ -14,7 +14,7 @@
             <header class="article__header">
                 <div class="article__meta" aria-label="Article metadata">
                     {{ article::chip() }}
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.category %}
                     <span class="article__category">{{ page.extra.category }}</span>
                     {% endif %}

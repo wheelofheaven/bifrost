@@ -19,7 +19,7 @@
 
                 {% if page.extra.claim_type %}
                 <div class="about__badge">
-                    {{ claim_badge::render(claim_type=page.extra.claim_type) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type, lang=detected_lang) }}
                 </div>
                 {% endif %}
             </header>

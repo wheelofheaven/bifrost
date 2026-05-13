@@ -249,7 +249,7 @@
                 <!-- Reading-status / claim-type cluster -->
                 <div class="timeline-page__claim-section">
                     <div class="timeline-page__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </div>
 
                 <!-- Metadata — each item on its own labeled row -->

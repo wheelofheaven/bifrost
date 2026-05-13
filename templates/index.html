@@ -270,7 +270,7 @@
             <p class="landing-section__body">
                 {{ trans(key="landingS6Body", lang=detected_lang) | safe }}
             </p>
-            {{ claim_badge::render(legend=true) }}
+            {{ claim_badge::render(legend=true, lang=detected_lang) }}
         </div>
         <a href="#section-7" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>

@@ -14,7 +14,7 @@
             <header class="dispatch__header">
                 <div class="dispatch__meta" aria-label="Dispatch metadata">
                     {{ dispatch::chip(event_type=page.extra.event_type | default(value="")) }}
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.event_date %}
                     <span class="dispatch__event-date">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

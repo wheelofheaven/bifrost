@@ -20,40 +20,40 @@
 
    See .claude/rules/content.md and .claude/plans/strategy-decisions.md (#11). #}
 
-{% macro render(claim_type="", legend=false) %}
+{% macro render(claim_type="", legend=false, lang="en") %}
 {# Descriptions shared by both modes — single source of truth so the
    tooltip body (interactive entry pages) and the inline legend
    description (landing §6) can never drift apart. #}
-{% set direct_desc = "Established or uncontested across mainstream sources, or a direct description of the project itself." %}
-{% set framework_desc = "Foundational premise of the Wheel of Heaven framework. Explicit in the Raëlian canon; not endorsed by mainstream scholarship." %}
-{% set inferred_desc = "A reasonable reading of comparative material — not stated literally, but consistent with the source." %}
-{% set speculative_desc = "Interpretive synthesis or hypothesis that goes beyond what any single source states." %}
+{% set direct_desc = trans(key="claimBadgeDirectDesc", lang=lang) %}
+{% set framework_desc = trans(key="claimBadgeFrameworkDesc", lang=lang) %}
+{% set inferred_desc = trans(key="claimBadgeInferredDesc", lang=lang) %}
+{% set speculative_desc = trans(key="claimBadgeSpeculativeDesc", lang=lang) %}
 {% if legend %}
 {# Legend mode — static educational key (landing §6 "The Method").
    Each row is a colored, fully-expanded pill paired with its meaning
    inline. No tooltip, no interactive state. #}
 <ul class="claim-badges claim-badges--legend" role="list" aria-label="Claim types used across this site">
     <li class="claim-badges__legend-item">
-        <span class="claim-badge claim-badge--direct claim-badge--active" aria-label="Direct">
-            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">D</span><span class="claim-badge__rest">irect</span></span>
+        <span class="claim-badge claim-badge--direct claim-badge--active" aria-label="{{ trans(key='claimTypeDirect', lang=lang) }}">
+            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeDirectChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeDirectRest", lang=lang) }}</span></span>
         </span>
         <span class="claim-badges__legend-desc">{{ direct_desc }}</span>
     </li>
     <li class="claim-badges__legend-item">
-        <span class="claim-badge claim-badge--framework claim-badge--active" aria-label="Framework">
-            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">F</span><span class="claim-badge__rest">ramework</span></span>
+        <span class="claim-badge claim-badge--framework claim-badge--active" aria-label="{{ trans(key='claimTypeFramework', lang=lang) }}">
+            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeFrameworkChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeFrameworkRest", lang=lang) }}</span></span>
         </span>
         <span class="claim-badges__legend-desc">{{ framework_desc }}</span>
     </li>
     <li class="claim-badges__legend-item">
-        <span class="claim-badge claim-badge--inferred claim-badge--active" aria-label="Inferred">
-            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">I</span><span class="claim-badge__rest">nferred</span></span>
+        <span class="claim-badge claim-badge--inferred claim-badge--active" aria-label="{{ trans(key='claimTypeInferred', lang=lang) }}">
+            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeInferredChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeInferredRest", lang=lang) }}</span></span>
         </span>
         <span class="claim-badges__legend-desc">{{ inferred_desc }}</span>
     </li>
     <li class="claim-badges__legend-item">
-        <span class="claim-badge claim-badge--speculative claim-badge--active" aria-label="Speculative">
-            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">S</span><span class="claim-badge__rest">peculative</span></span>
+        <span class="claim-badge claim-badge--speculative claim-badge--active" aria-label="{{ trans(key='claimTypeSpeculative', lang=lang) }}">
+            <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeSpeculativeChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeSpeculativeRest", lang=lang) }}</span></span>
         </span>
         <span class="claim-badges__legend-desc">{{ speculative_desc }}</span>
     </li>
@@ -66,37 +66,37 @@
 <div class="claim-badges" role="group" aria-label="Claim type for this entry">
     <span class="claim-badge claim-badge--direct{% if claim_type == 'direct' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Direct{% if claim_type == 'direct' %} — this entry{% endif %}">
-        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">D</span><span class="claim-badge__rest">irect</span></span>
+          aria-label="{{ trans(key='claimTypeDirect', lang=lang) }}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeDirectChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeDirectRest", lang=lang) }}</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
-            <span class="claim-badge__tooltip-title">Direct</span>
+            <span class="claim-badge__tooltip-title">{{ trans(key="claimTypeDirect", lang=lang) }}</span>
             <span class="claim-badge__tooltip-body">{{ direct_desc }}</span>
         </span>
     </span>
     <span class="claim-badge claim-badge--framework{% if claim_type == 'framework' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Framework{% if claim_type == 'framework' %} — this entry{% endif %}">
-        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">F</span><span class="claim-badge__rest">ramework</span></span>
+          aria-label="{{ trans(key='claimTypeFramework', lang=lang) }}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeFrameworkChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeFrameworkRest", lang=lang) }}</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
-            <span class="claim-badge__tooltip-title">Framework</span>
+            <span class="claim-badge__tooltip-title">{{ trans(key="claimTypeFramework", lang=lang) }}</span>
             <span class="claim-badge__tooltip-body">{{ framework_desc }}</span>
         </span>
     </span>
     <span class="claim-badge claim-badge--inferred{% if claim_type == 'inferred' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Inferred{% if claim_type == 'inferred' %} — this entry{% endif %}">
-        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">I</span><span class="claim-badge__rest">nferred</span></span>
+          aria-label="{{ trans(key='claimTypeInferred', lang=lang) }}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeInferredChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeInferredRest", lang=lang) }}</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
-            <span class="claim-badge__tooltip-title">Inferred</span>
+            <span class="claim-badge__tooltip-title">{{ trans(key="claimTypeInferred", lang=lang) }}</span>
             <span class="claim-badge__tooltip-body">{{ inferred_desc }}</span>
         </span>
     </span>
     <span class="claim-badge claim-badge--speculative{% if claim_type == 'speculative' %} claim-badge--active{% endif %}"
           role="button" tabindex="0"
-          aria-label="Claim type: Speculative{% if claim_type == 'speculative' %} — this entry{% endif %}">
-        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">S</span><span class="claim-badge__rest">peculative</span></span>
+          aria-label="{{ trans(key='claimTypeSpeculative', lang=lang) }}">
+        <span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key="claimBadgeSpeculativeChar", lang=lang) }}</span><span class="claim-badge__rest">{{ trans(key="claimBadgeSpeculativeRest", lang=lang) }}</span></span>
         <span class="claim-badge__tooltip" role="tooltip" aria-hidden="true">
-            <span class="claim-badge__tooltip-title">Speculative</span>
+            <span class="claim-badge__tooltip-title">{{ trans(key="claimTypeSpeculative", lang=lang) }}</span>
             <span class="claim-badge__tooltip-body">{{ speculative_desc }}</span>
         </span>
     </span>

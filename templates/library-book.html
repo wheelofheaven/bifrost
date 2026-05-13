@@ -64,7 +64,7 @@
                 <!-- Page Header (title + claim badge), mirroring wiki-page layout. -->
                 <header class="library-book__page-header">
                     <h1 class="library-book__title" id="book-title">{{ book_title }}</h1>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </header>
 
                 {# Lede paragraph — same treatment as wiki entries. Uses the

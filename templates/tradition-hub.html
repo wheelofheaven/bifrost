@@ -30,7 +30,7 @@
         <header class="tradition-hub__header">
             <div class="tradition-hub__kind-row">
                 <span class="tradition-hub__kind">Tradition Hub</span>
-                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value="")) }}
+                {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
             </div>
             <h1 class="tradition-hub__title" id="page-title">{{ page.title }}</h1>
             {% if page.extra.summary or page.description %}
