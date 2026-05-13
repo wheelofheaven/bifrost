@@ -39,7 +39,7 @@
         <header class="wiki-header">
             <div class="wiki-header__left">
                 <h1 class="wiki-header__title">{{ section.title }}</h1>
-                <span class="wiki-header__count">{{ available_count }} texts</span>
+                <span class="wiki-header__count">{{ available_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
             </div>
             <div class="wiki-header__search">
                 <svg class="wiki-header__search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -48,7 +48,7 @@
                 </svg>
                 <input type="text"
                        class="wiki-header__search-input"
-                       placeholder="Search texts..."
+                       placeholder="{{ trans(key='librarySearchPlaceholder', lang=detected_lang) }}"
                        id="library-search"
                        aria-label="Search library"
                        autocomplete="off">
@@ -61,7 +61,7 @@
             <div class="wiki-filters__left">
                 <!-- Tradition Filter -->
                 <select class="wiki-filters__select" id="library-tradition-filter">
-                    <option value="">All Traditions</option>
+                    <option value="">{{ trans(key="libraryFilterAllTraditions", lang=detected_lang) }}</option>
                     {% for tradition in catalog.traditions %}
                     <option value="{{ tradition.id }}">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</option>
                     {% endfor %}
@@ -78,7 +78,7 @@
                         <path d="M15 15l6 6"></path>
                         <path d="M4 4l5 5"></path>
                     </svg>
-                    <span class="wiki-filters__random-text">Random</span>
+                    <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
                 </button>
 
                 <!-- View Toggle -->
@@ -168,23 +168,23 @@
 
                                 {% if book_entry.availableLangs %}
                                 <div class="wiki-card__alternatives">
-                                    <span class="wiki-card__alternatives-label">Languages:</span>
+                                    <span class="wiki-card__alternatives-label">{{ trans(key="libraryLanguages", lang=detected_lang) }}</span>
                                     {% for lang_code in book_entry.availableLangs | slice(end=6) %}
                                     <span class="wiki-card__alternative-name">{{ lang_code | upper }}</span>{% if not loop.last %}, {% endif %}
                                     {% endfor %}
                                     {% if book_entry.availableLangs | length > 6 %}
-                                    <span class="wiki-card__alternatives-more">+{{ book_entry.availableLangs | length - 6 }} more</span>
+                                    <span class="wiki-card__alternatives-more">+{{ book_entry.availableLangs | length - 6 }} {{ trans(key="wikiCardMore", lang=detected_lang) }}</span>
                                     {% endif %}
                                 </div>
                                 {% endif %}
 
                                 <div class="wiki-card__meta">
                                     <span class="wiki-card__date">
-                                        {{ book_entry.chapters }} ch · {{ book_entry.paragraphs }} ¶{% if book_entry.publicationYear %} · {{ book_entry.publicationYear }}{% endif %}{% if book_entry.status == "partial" %} · In Progress{% endif %}
+                                        {{ book_entry.chapters }} {{ trans(key="libraryChAbbrev", lang=detected_lang) }} · {{ book_entry.paragraphs }} ¶{% if book_entry.publicationYear %} · {{ book_entry.publicationYear }}{% endif %}{% if book_entry.status == "partial" %} · {{ trans(key="libraryStatusInProgress", lang=detected_lang) }}{% endif %}
                                     </span>
                                     <span class="wiki-card__read-more">
                                         <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}" class="wiki-card__read-link">
-                                            Start reading
+                                            {{ trans(key="libraryStartReading", lang=detected_lang) }}
                                             <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                                 <path d="M5 12h14"></path>
                                                 <path d="M12 5l7 7-7 7"></path>
@@ -208,8 +208,8 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <h3 class="wiki-no-results__title">No texts found</h3>
-                    <p class="wiki-no-results__message">Try adjusting your search terms or tradition filter.</p>
+                    <h3 class="wiki-no-results__title">{{ trans(key="libraryNoResultsTitle", lang=detected_lang) }}</h3>
+                    <p class="wiki-no-results__message">{{ trans(key="libraryNoResultsMessage", lang=detected_lang) }}</p>
                 </div>
             </div>
         </div>
@@ -218,7 +218,7 @@
         {# Planned (Coming Soon) section preserved as a smaller block below the main grid #}
         {% if planned_books %}
         <section class="wiki-section__subsections">
-            <h2 class="wiki-section__subsections-title">Coming Soon</h2>
+            <h2 class="wiki-section__subsections-title">{{ trans(key="libraryComingSoon", lang=detected_lang) }}</h2>
             <div class="wiki-section__grid" data-view="grid">
                 {% for entry in planned_books %}
                 {% set tradition_name = "" %}
@@ -254,7 +254,7 @@
                     <path d="M8 15h6"></path>
                 </svg>
             </div>
-            <h2 class="wiki-footer__title">About the Library</h2>
+            <h2 class="wiki-footer__title">{{ trans(key="libraryFooterAboutTitle", lang=detected_lang) }}</h2>
             {% if section.description %}
             <p class="wiki-footer__description">{{ section.description }}</p>
             {% endif %}
@@ -263,28 +263,27 @@
             <div class="wiki-footer__stats">
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ available_count }}</span>
-                    <span class="wiki-footer__stat-label">{% if available_count == 1 %}Text{% else %}Texts{% endif %}</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="libraryStatTexts", lang=detected_lang) }}</span>
                 </div>
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ all_languages | length }}+</span>
-                    <span class="wiki-footer__stat-label">Languages</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="libraryStatLanguages", lang=detected_lang) }}</span>
                 </div>
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ total_chapters }}</span>
-                    <span class="wiki-footer__stat-label">Chapters</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="libraryStatChapters", lang=detected_lang) }}</span>
                 </div>
                 <div class="wiki-footer__stat">
                     <span class="wiki-footer__stat-number">{{ (total_paragraphs / 1000) | round }}k</span>
-                    <span class="wiki-footer__stat-label">Paragraphs</span>
+                    <span class="wiki-footer__stat-label">{{ trans(key="libraryStatParagraphs", lang=detected_lang) }}</span>
                 </div>
             </div>
 
             <!-- Reference Format Guide -->
             <div class="wiki-footer__reference">
-                <h3 class="wiki-footer__reference-title">Reference Format</h3>
+                <h3 class="wiki-footer__reference-title">{{ trans(key="libraryReferenceFormatHeading", lang=detected_lang) }}</h3>
                 <p class="wiki-footer__reference-text">
-                    Use canonical references like <code>TBWTT 1:5</code> to cite specific passages.
-                    Format: <code>[Book Code] [Chapter]:[Paragraph]</code>
+                    {{ trans(key="libraryReferenceFormatBody", lang=detected_lang) | safe }}
                 </p>
             </div>
         </footer>

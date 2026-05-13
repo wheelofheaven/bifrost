@@ -7,7 +7,7 @@
             <div class="resources-header__left">
                 <h1 class="resources-header__title">{{ section.title }}</h1>
                 {% if section.pages %}
-                <span class="resources-header__count">{{ section.pages | length }} resources</span>
+                <span class="resources-header__count">{{ section.pages | length }} {{ trans(key="resourcesItems", lang=detected_lang) }}</span>
                 {% endif %}
             </div>
             <div class="resources-header__search">
@@ -17,7 +17,7 @@
                 </svg>
                 <input type="text"
                        class="resources-header__search-input"
-                       placeholder="Search resources..."
+                       placeholder="{{ trans(key='resourcesSearchPlaceholder', lang=detected_lang) }}"
                        id="resources-search"
                        aria-label="Search resources"
                        autocomplete="off">
@@ -32,7 +32,7 @@
                 {% set all_mediums = section.pages | map(attribute="extra.medium") | unique | sort %}
                 {% if all_mediums %}
                 <select class="resources-filters__select" id="resources-medium-filter">
-                    <option value="">All Media Types</option>
+                    <option value="">{{ trans(key="resourcesAllMediums", lang=detected_lang) }}</option>
                     {% for medium in all_mediums %}
                     {% if medium %}
                     <option value="{{ medium }}">{{ medium | replace(from="-", to=" ") | title }}</option>
@@ -43,9 +43,9 @@
 
                 <!-- Sort Options -->
                 <select class="resources-filters__select" id="resources-sort">
-                    <option value="title">A-Z</option>
-                    <option value="date">Recent</option>
-                    <option value="medium">Medium</option>
+                    <option value="title">A–Z</option>
+                    <option value="date">{{ trans(key="resourcesSortRecent", lang=detected_lang) }}</option>
+                    <option value="medium">{{ trans(key="resourcesSortMedium", lang=detected_lang) }}</option>
                 </select>
             </div>
 
@@ -59,7 +59,7 @@
                         <path d="M15 15l6 6"></path>
                         <path d="M4 4l5 5"></path>
                     </svg>
-                    <span class="resources-filters__random-text">Random</span>
+                    <span class="resources-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
                 </button>
 
                 <!-- View Toggle -->
@@ -244,7 +244,7 @@
 
                     <div class="resources-card__footer">
                         <a href="{{ page.permalink }}" class="resources-card__read-btn">
-                            <span>View Details</span>
+                            <span>{{ trans(key="resourcesViewDetails", lang=detected_lang) }}</span>
                             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M5 12h14"></path>
                                 <path d="M12 5l7 7-7 7"></path>
@@ -262,8 +262,8 @@
                         <circle cx="11" cy="11" r="8"></circle>
                         <path d="m21 21-4.35-4.35"></path>
                     </svg>
-                    <h3 class="resources-no-results__title">No resources found</h3>
-                    <p class="resources-no-results__message">Try adjusting your search terms or media type filter.</p>
+                    <h3 class="resources-no-results__title">{{ trans(key="resourcesNoResultsTitle", lang=detected_lang) }}</h3>
+                    <p class="resources-no-results__message">{{ trans(key="resourcesNoResultsMessage", lang=detected_lang) }}</p>
                 </div>
             </div>
         </div>
@@ -279,7 +279,7 @@
                     <line x1="12" y1="22.08" x2="12" y2="12"></line>
                 </svg>
             </div>
-            <h2 class="resources-footer__title">About Our Resources</h2>
+            <h2 class="resources-footer__title">{{ trans(key="resourcesAboutTitle", lang=detected_lang) }}</h2>
             {% if section.description %}
             <p class="resources-footer__description">{{ section.description }}</p>
             {% endif %}
@@ -288,7 +288,7 @@
             <div class="resources-footer__stats">
                 <div class="resources-footer__stat">
                     <span class="resources-footer__stat-number">{{ section.pages | length }}</span>
-                    <span class="resources-footer__stat-label">Resources</span>
+                    <span class="resources-footer__stat-label">{{ trans(key="resourcesItems", lang=detected_lang) }}</span>
                 </div>
                 {% set mediums = section.pages | map(attribute="extra.medium") | unique %}
                 {% set medium_count = 0 %}
@@ -296,7 +296,7 @@
                 {% if medium_count > 0 %}
                 <div class="resources-footer__stat">
                     <span class="resources-footer__stat-number">{{ medium_count }}</span>
-                    <span class="resources-footer__stat-label">Media Types</span>
+                    <span class="resources-footer__stat-label">{{ trans(key="resourcesMediaTypes", lang=detected_lang) }}</span>
                 </div>
                 {% endif %}
             </div>
