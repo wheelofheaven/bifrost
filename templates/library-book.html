@@ -80,7 +80,7 @@
                     {% for chapter in book_chapters %}
                     <section class="library-book__chapter" id="chapter-{{ chapter.n }}">
                         <header class="library-book__chapter-header">
-                            <span class="library-book__chapter-number">Chapter {{ chapter.n }}</span>
+                            <span class="library-book__chapter-number">{{ trans(key="libraryChapter", lang=detected_lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=detected_lang) }}</span>
                             {% if chapter.title %}
                             <h2 class="library-book__chapter-title">{{ chapter.title }}</h2>
                             {% endif %}
@@ -117,15 +117,15 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M15 18l-6-6 6-6"></path>
                         </svg>
-                        <span>Previous chapter</span>
+                        <span>{{ trans(key="libraryPrevChapter", lang=detected_lang) }}</span>
                     </button>
 
                     <div class="library-book__nav-info" aria-live="polite">
-                        <span id="current-chapter-display">Chapter 1 of {{ book_chapters | length }}</span>
+                        <span id="current-chapter-display">1 / {{ book_chapters | length }}</span>
                     </div>
 
                     <button class="library-book__nav-btn library-book__nav-btn--next" onclick="nextChapter()" id="next-chapter" aria-label="Go to next chapter">
-                        <span>Next chapter</span>
+                        <span>{{ trans(key="libraryNextChapter", lang=detected_lang) }}</span>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M9 18l6-6-6-6"></path>
                         </svg>
@@ -145,7 +145,7 @@
 
                 {% if related_books | length > 0 %}
                 <section class="library-book__related" role="complementary" aria-label="Related books">
-                    <h2 class="library-book__section-title">Related books</h2>
+                    <h2 class="library-book__section-title">{{ trans(key="libraryRelatedBooks", lang=detected_lang) }}</h2>
                     <ul class="library-book__link-list">
                         {% for related in related_books | slice(end=6) %}
                         {% set related_book_data = load_data(path="data/library/" ~ related.slug ~ ".json", required=false) %}
@@ -184,7 +184,7 @@
                             <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
                             <polyline points="12 7 12 12 15 14"></polyline>
                         </svg>
-                        <span>View edit history</span>
+                        <span>{{ trans(key="pageViewHistory", lang=detected_lang) }}</span>
                     </a>
                     <a class="library-book__edit-btn"
                        href="{{ edit_url | safe }}"
@@ -195,7 +195,7 @@
                             <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                             <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
                         </svg>
-                        <span>Edit source</span>
+                        <span>{{ trans(key="pageEditSource", lang=detected_lang) }}</span>
                     </a>
                 </div>
             </article>
@@ -207,7 +207,7 @@
             <header class="library-book__sidebar-header">
                 {% if original_title_differs %}
                 <div class="library-book__original-title">
-                    <span class="library-book__meta-label">Original title:</span>
+                    <span class="library-book__meta-label">{{ trans(key="libraryOriginalTitle", lang=detected_lang) }}</span>
                     <span class="library-book__original-text">{{ book_data.titles[original_lang] }}</span>
                 </div>
                 {% endif %}
@@ -215,56 +215,56 @@
                 <div class="library-book__meta">
                     {% if tradition_name %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Tradition:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryTradition", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ tradition_name }}</span>
                     </div>
                     {% endif %}
 
                     {% if current_book_entry and current_book_entry.code %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Reference code:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryReferenceCode", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value"><code>{{ current_book_entry.code }}</code></span>
                     </div>
                     {% endif %}
 
                     {% if book_chapters %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Chapters:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryChapters", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ book_chapters | length }}</span>
                     </div>
                     {% endif %}
 
                     {% if current_book_entry and current_book_entry.paragraphs %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Paragraphs:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryParagraphs", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ current_book_entry.paragraphs }}</span>
                     </div>
                     {% endif %}
 
                     {% if book_data.titles %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Languages:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryLanguages", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ book_data.titles | length }}</span>
                     </div>
                     {% endif %}
 
                     {% if current_book_entry and current_book_entry.publicationYear %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Published:</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryPublished", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ current_book_entry.publicationYear }}</span>
                     </div>
                     {% endif %}
 
                     {% if current_book_entry and current_book_entry.status == "partial" %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Status:</span>
-                        <span class="library-book__meta-value">In progress</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryStatus", lang=detected_lang) }}</span>
+                        <span class="library-book__meta-value">{{ trans(key="libraryStatusInProgress", lang=detected_lang) }}</span>
                     </div>
                     {% endif %}
 
                     {% if book_data.updated %}
                     <div class="library-book__meta-row">
-                        <span class="library-book__meta-label">Last updated:</span>
+                        <span class="library-book__meta-label">{{ trans(key="pageLastUpdated", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value"><time>{{ book_data.updated | date(format="%B %d, %Y") }}</time></span>
                     </div>
                     {% endif %}
@@ -274,9 +274,9 @@
                      column into the sidebar so the article body reads
                      clean; values update on scroll via library-reader.js. -->
                 <div class="library-book__reading-section">
-                    <div class="library-book__meta-label">Reading:</div>
+                    <div class="library-book__meta-label">{{ trans(key="libraryReading", lang=detected_lang) }}</div>
                     <div class="library-book__progress" aria-live="polite">
-                        <span id="chapter-progress">Chapter 1</span>
+                        <span id="chapter-progress">{{ trans(key="libraryChapter", lang=detected_lang) }} 1</span>
                         <span class="library-book__progress-sep">·</span>
                         <span id="paragraph-progress">¶ 1</span>
                     </div>
@@ -288,21 +288,21 @@
                                 <line x1="16" y1="13" x2="8" y2="13"></line>
                                 <line x1="16" y1="17" x2="8" y2="17"></line>
                             </svg>
-                            <span>Original</span>
+                            <span>{{ trans(key="libraryToggleOriginal", lang=detected_lang) }}</span>
                         </button>
                         <button onclick="toggleSideBySide()" id="side-by-side-toggle" class="library-book__btn library-book__btn--ghost hidden" title="Toggle Side-by-Side" aria-pressed="false" aria-label="Toggle side-by-side view">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                                 <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
                                 <line x1="12" y1="3" x2="12" y2="21"></line>
                             </svg>
-                            <span>Split</span>
+                            <span>{{ trans(key="libraryToggleSplit", lang=detected_lang) }}</span>
                         </button>
                     </div>
                 </div>
 
                 <!-- Share -->
                 <div class="library-book__share-section">
-                    <div class="library-book__meta-label">Share this page:</div>
+                    <div class="library-book__meta-label">{{ trans(key="shareThisPage", lang=detected_lang) }}</div>
                     {% include "partials/social-share.html" %}
                 </div>
 
@@ -311,14 +311,14 @@
                      toolbar. -->
                 <details class="library-book__settings">
                     <summary class="library-book__settings-summary">
-                        <span class="library-book__meta-label">Reader settings</span>
+                        <span class="library-book__meta-label">{{ trans(key="libraryReaderSettings", lang=detected_lang) }}</span>
                         <svg class="library-book__settings-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <polyline points="6 9 12 15 18 9"></polyline>
                         </svg>
                     </summary>
                     <div id="reader-settings-panel" class="library-book__settings-panel">
                         <div class="library-book__settings-section">
-                            <h4 class="library-book__settings-title">Font size</h4>
+                            <h4 class="library-book__settings-title">{{ trans(key="libraryFontSize", lang=detected_lang) }}</h4>
                             <div class="library-book__settings-options">
                                 <button data-font-size="small" class="library-book__settings-btn">A</button>
                                 <button data-font-size="medium" class="library-book__settings-btn active">A</button>
@@ -327,7 +327,7 @@
                             </div>
                         </div>
                         <div class="library-book__settings-section">
-                            <h4 class="library-book__settings-title">Reader theme</h4>
+                            <h4 class="library-book__settings-title">{{ trans(key="libraryReaderTheme", lang=detected_lang) }}</h4>
                             <div class="library-book__settings-options">
                                 <button data-reader-theme="auto" class="library-book__settings-btn active">Auto</button>
                                 <button data-reader-theme="light" class="library-book__settings-btn">Light</button>
@@ -345,7 +345,7 @@
                    the raw JSON in data-library. #}
                 {% set raw_url = "https://raw.githubusercontent.com/wheelofheaven/data-library/main/" ~ book_slug ~ ".json" %}
                 <div class="library-book__agent-section">
-                    <div class="library-book__meta-label">Read as Agent:</div>
+                    <div class="library-book__meta-label">{{ trans(key="agentReadAs", lang=detected_lang) }}</div>
                     <div class="library-book__agent-buttons">
                         <button type="button"
                                 class="library-book__agent-btn"
@@ -356,7 +356,7 @@
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            <span class="library-book__agent-btn-label">Copy for LLMs</span>
+                            <span class="library-book__agent-btn-label">{{ trans(key="agentCopyForLLMs", lang=detected_lang) }}</span>
                         </button>
                         <a class="library-book__agent-btn"
                            href="{{ raw_url | safe }}"
@@ -367,7 +367,7 @@
                                 <polyline points="16 18 22 12 16 6"></polyline>
                                 <polyline points="8 6 2 12 8 18"></polyline>
                             </svg>
-                            <span class="library-book__agent-btn-label">View as JSON</span>
+                            <span class="library-book__agent-btn-label">{{ trans(key="agentViewJSON", lang=detected_lang) }}</span>
                         </a>
                     </div>
                 </div>
@@ -377,7 +377,7 @@
                  sticky TOC pattern. -->
             <div class="library-book__toc">
                 <div class="library-book__toc-header">
-                    <h3 class="library-book__toc-title" id="book-toc-heading">Contents</h3>
+                    <h3 class="library-book__toc-title" id="book-toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h3>
                 </div>
                 <nav class="library-book__toc-nav" aria-labelledby="book-toc-heading">
                     <ul class="library-book__toc-list">
@@ -386,7 +386,7 @@
                             <a href="#chapter-{{ chapter.n }}" class="library-book__toc-link" onclick="scrollToChapter({{ chapter.n }})">
                                 <span class="library-book__toc-chapter-number">{{ chapter.n }}</span>
                                 <span class="library-book__toc-chapter-title">
-                                    {% if chapter.title %}{{ chapter.title }}{% else %}Chapter {{ chapter.n }}{% endif %}
+                                    {% if chapter.title %}{{ chapter.title }}{% else %}{{ trans(key="libraryChapter", lang=detected_lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=detected_lang) }}{% endif %}
                                 </span>
                             </a>
                         </li>
@@ -571,7 +571,9 @@ function updateProgressIndicator(activeChapter, activeParagraphId) {
 
     if (!activeChapter || !chapterProgress || !paragraphProgress) return;
 
-    chapterProgress.textContent = `Chapter ${activeChapter}`;
+    // Preserve the localized "Chapter" prefix rendered by the template;
+    // only substitute the chapter number.
+    chapterProgress.textContent = chapterProgress.textContent.replace(/\d+/, activeChapter);
 
     if (activeParagraphId) {
         const match = activeParagraphId.match(/^c(\d+)p(\d+)$/);
@@ -593,7 +595,7 @@ function updateChapterNavigation() {
 
     if (prevButton) prevButton.classList.toggle('library-book__nav-btn--disabled', currentChapter <= 1);
     if (nextButton) nextButton.classList.toggle('library-book__nav-btn--disabled', currentChapter >= totalChapters);
-    if (currentDisplay) currentDisplay.textContent = `Chapter ${currentChapter} of ${totalChapters}`;
+    if (currentDisplay) currentDisplay.textContent = `${currentChapter} / ${totalChapters}`;
 }
 
 function previousChapter() {
