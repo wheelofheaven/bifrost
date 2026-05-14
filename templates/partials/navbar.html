@@ -8,6 +8,13 @@
         {% include "partials/brand/logomark.html" %}
     </a>
     <div class="navbar__content">
+        <!-- Two-pane container for the mobile burger menu. Pane A is the
+             main nav + theme/lang/reading-list controls; Pane B is the
+             full-height language picker, slid in horizontally when the
+             globe button is tapped. On desktop the panes wrapper is
+             effectively a no-op (overflow visible, no transform). -->
+        <div class="navbar__panes">
+        <div class="navbar__pane navbar__pane--main">
         <div class="navbar__links">
             <!-- Mobile-only Read CTA inside the burger menu -->
             <a
@@ -101,28 +108,21 @@
                 </span>
             </button>
 
-            <div class="navbar__lang-dropdown" id="mobile-lang-switcher">
-                <button
-                    class="navbar__bar-btn navbar__lang-trigger"
-                    id="mobile-lang-trigger"
-                    aria-expanded="false"
-                    aria-haspopup="listbox"
-                    aria-label="{{ trans(key='navbarSelectLanguage', lang=detected_lang) }}"
-                >
-                    <span class="navbar__lang-current" id="mobile-lang-current">EN</span>
-                </button>
-                <ul class="navbar__lang-menu" id="mobile-lang-menu" role="listbox" aria-label="{{ trans(key='navbarAvailableLanguages', lang=detected_lang) }}">
-                    <li class="navbar__lang-option" data-lang="en" role="option" lang="en">English</li>
-                    <li class="navbar__lang-option" data-lang="de" role="option" lang="de">Deutsch</li>
-                    <li class="navbar__lang-option" data-lang="es" role="option" lang="es">Español</li>
-                    <li class="navbar__lang-option" data-lang="fr" role="option" lang="fr">Français</li>
-                    <li class="navbar__lang-option" data-lang="ja" role="option" lang="ja">日本語</li>
-                    <li class="navbar__lang-option" data-lang="ko" role="option" lang="ko">한국어</li>
-                    <li class="navbar__lang-option" data-lang="ru" role="option" lang="ru">Русский</li>
-                    <li class="navbar__lang-option" data-lang="zh" role="option" lang="zh">简体中文</li>
-                    <li class="navbar__lang-option" data-lang="zh-Hant" role="option" lang="zh-Hant">繁體中文</li>
-                </ul>
-            </div>
+            <!-- Mobile lang trigger: globe icon that slides the burger
+                 menu to a dedicated language pane (see .navbar__pane--lang
+                 below). Replaces the previous popup dropdown so we don't
+                 stack a second overlay inside the burger overlay. -->
+            <button
+                type="button"
+                class="navbar__bar-btn navbar__lang-trigger"
+                id="mobile-lang-trigger"
+                aria-controls="mobile-lang-pane"
+                aria-label="{{ trans(key='navbarSelectLanguage', lang=detected_lang) }}"
+            >
+                <span class="navbar__lang-trigger__icon" aria-hidden="true">
+                    {% include "partials/icons/feather-globe.html" %}
+                </span>
+            </button>
 
             <button
                 type="button"
@@ -136,6 +136,48 @@
                 <span class="reading-list-toggle__badge">0</span>
             </button>
         </div>
+        </div><!-- /.navbar__pane--main -->
+
+        <!-- Language pane (mobile only): slides in over the main pane when
+             the globe button is tapped. Contains a back affordance, a
+             title, and the same nine language options as the footer. -->
+        <div
+            class="navbar__pane navbar__pane--lang mobile-only"
+            id="mobile-lang-pane"
+            aria-hidden="true"
+        >
+            <div class="navbar__pane-header">
+                <button
+                    type="button"
+                    class="navbar__pane-back"
+                    id="mobile-lang-back"
+                    aria-label="{{ trans(key='navbarBack', lang=detected_lang) }}"
+                >
+                    <span class="navbar__pane-back-icon" aria-hidden="true">
+                        {% include "partials/icons/arrow-left.html" %}
+                    </span>
+                    <span class="navbar__pane-back-label">{{ trans(key="navbarBack", lang=detected_lang) }}</span>
+                </button>
+                <h3 class="navbar__pane-title">{{ trans(key="navbarSelectLanguage", lang=detected_lang) }}</h3>
+            </div>
+            <ul
+                class="navbar__lang-list"
+                id="mobile-lang-list"
+                role="listbox"
+                aria-label="{{ trans(key='navbarAvailableLanguages', lang=detected_lang) }}"
+            >
+                <li class="navbar__lang-option" data-lang="en" role="option" lang="en">English</li>
+                <li class="navbar__lang-option" data-lang="de" role="option" lang="de">Deutsch</li>
+                <li class="navbar__lang-option" data-lang="es" role="option" lang="es">Español</li>
+                <li class="navbar__lang-option" data-lang="fr" role="option" lang="fr">Français</li>
+                <li class="navbar__lang-option" data-lang="ja" role="option" lang="ja">日本語</li>
+                <li class="navbar__lang-option" data-lang="ko" role="option" lang="ko">한국어</li>
+                <li class="navbar__lang-option" data-lang="ru" role="option" lang="ru">Русский</li>
+                <li class="navbar__lang-option" data-lang="zh" role="option" lang="zh">简体中文</li>
+                <li class="navbar__lang-option" data-lang="zh-Hant" role="option" lang="zh-Hant">繁體中文</li>
+            </ul>
+        </div><!-- /.navbar__pane--lang -->
+        </div><!-- /.navbar__panes -->
     </div>
 
     <div class="navbar__controls">
@@ -345,29 +387,67 @@
                         });
                     }
 
-                    // Mobile dropdown
+                    // Mobile lang picker: globe button slides the burger
+                    // menu to its language pane via a state class on
+                    // .navbar__content. Back button slides it back.
+                    // Tapping a language navigates as on desktop.
                     const mobileTrigger = document.getElementById("mobile-lang-trigger");
-                    const mobileMenu = document.getElementById("mobile-lang-menu");
+                    const mobileLangPane = document.getElementById("mobile-lang-pane");
+                    const mobileLangBack = document.getElementById("mobile-lang-back");
+                    const mobileLangList = document.getElementById("mobile-lang-list");
+                    const navbarContent = document.querySelector(".navbar__content");
 
-                    if (mobileTrigger && mobileMenu) {
+                    function openMobileLangPane() {
+                        if (!navbarContent || !mobileLangPane) return;
+                        navbarContent.classList.add("navbar__content--lang-open");
+                        mobileLangPane.setAttribute("aria-hidden", "false");
+                    }
+
+                    function closeMobileLangPane() {
+                        if (!navbarContent || !mobileLangPane) return;
+                        navbarContent.classList.remove("navbar__content--lang-open");
+                        mobileLangPane.setAttribute("aria-hidden", "true");
+                    }
+
+                    if (mobileTrigger) {
                         mobileTrigger.addEventListener("click", (e) => {
                             e.stopPropagation();
-                            const isCurrentlyOpen = mobileMenu.classList.contains("navbar__lang-menu--open");
-                            closeAllLangDropdowns();
-                            if (!isCurrentlyOpen) {
-                                toggleLangDropdown(mobileTrigger, mobileMenu, true);
-                            }
+                            openMobileLangPane();
                         });
+                    }
 
-                        mobileMenu.querySelectorAll(".navbar__lang-option").forEach(option => {
+                    if (mobileLangBack) {
+                        mobileLangBack.addEventListener("click", (e) => {
+                            e.stopPropagation();
+                            closeMobileLangPane();
+                        });
+                    }
+
+                    if (mobileLangList) {
+                        mobileLangList.querySelectorAll(".navbar__lang-option").forEach(option => {
                             option.addEventListener("click", () => {
                                 const targetLang = option.dataset.lang;
                                 const currentLang = getCurrentLanguage();
-                                closeAllLangDropdowns();
                                 if (targetLang !== currentLang) {
                                     switchLanguage(targetLang);
+                                } else {
+                                    closeMobileLangPane();
                                 }
                             });
+                        });
+                    }
+
+                    // Reset the lang pane whenever the burger collapses
+                    // so reopening the burger lands on the main pane.
+                    const navbarEl = document.querySelector(".navbar");
+                    if (navbarEl) {
+                        new MutationObserver(() => {
+                            if (!navbarEl.classList.contains("navbar--mobile-expanded")) {
+                                closeMobileLangPane();
+                            }
+                        }).observe(navbarEl, {
+                            attributes: true,
+                            attributeFilter: ["class"],
                         });
                     }
 

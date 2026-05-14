@@ -1147,10 +1147,24 @@ body.mobile-nav-open {
                     outline: none;
                 }
 
-                // Lang trigger holds a 2-letter code, so it needs to be wider.
+                // Mobile lang trigger is an icon-only button — same
+                // dimensions as the theme toggle so the bar-controls row
+                // reads as a uniform set of pills.
                 &.navbar__lang-trigger {
-                    width: auto;
-                    min-width: 56px;
+                    width: 44px;
+                    min-width: 44px;
+                    padding: 0;
+
+                    .navbar__lang-trigger__icon {
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                    }
+
+                    .navbar__lang-trigger__icon svg {
+                        width: 22px;
+                        height: 22px;
+                    }
                 }
 
                 // Right-aligned button (e.g. reading list).
@@ -1305,6 +1319,115 @@ body.mobile-nav-open {
                             .navbar__dropdown-trigger__caret {
                                 transform: rotate(180deg);
                             }
+                        }
+                    }
+                }
+
+                // Two-pane horizontal slider. Main pane is the existing
+                // burger menu; lang pane (mobile-only) sits to its right
+                // and is slid into view when the globe button adds the
+                // `--lang-open` state class on `.navbar__content`.
+                .navbar__panes {
+                    display: flex;
+                    width: 200%;
+                    transition: transform 0.3s ease;
+                }
+
+                .navbar__pane {
+                    flex: 0 0 50%;
+                    min-width: 0;
+                }
+
+                &.navbar__content--lang-open .navbar__panes {
+                    transform: translateX(-50%);
+                }
+
+                // Language picker pane: back affordance + title row, then
+                // a flat list of all nine languages styled to match the
+                // burger menu's harmonized entry layout (44px hit area,
+                // 0.75rem 1rem padding, full-width).
+                .navbar__pane--lang {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 0.75rem;
+
+                    .navbar__pane-header {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.5rem;
+                        padding-bottom: 0.5rem;
+                        border-bottom: 1px solid var(--color-border);
+                    }
+
+                    .navbar__pane-back {
+                        display: inline-flex;
+                        align-items: center;
+                        gap: 0.5rem;
+                        align-self: flex-start;
+                        min-height: 44px;
+                        padding: 0.5rem 0.75rem;
+                        background: transparent;
+                        border: 1px solid transparent;
+                        border-radius: 0.5rem;
+                        color: var(--color-text);
+                        font-family: var(--font-family-body);
+                        font-size: 0.95rem;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: background-color 0.2s ease, color 0.2s ease;
+
+                        &:hover,
+                        &:focus {
+                            background-color: var(--color-hover);
+                            color: var(--color-accent-primary);
+                            outline: none;
+                        }
+                    }
+
+                    .navbar__pane-title {
+                        margin: 0;
+                        padding: 0 1rem;
+                        font-size: 0.8rem;
+                        font-weight: 600;
+                        text-transform: uppercase;
+                        letter-spacing: 0.05em;
+                        color: var(--color-text-muted);
+                    }
+
+                    .navbar__lang-list {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 0.125rem;
+                        margin: 0;
+                        padding: 0;
+                        list-style: none;
+                    }
+
+                    .navbar__lang-option {
+                        display: flex;
+                        align-items: center;
+                        width: 100%;
+                        min-height: 44px;
+                        padding: 0.75rem 1rem;
+                        border-radius: 0.5rem;
+                        color: var(--color-text);
+                        font-size: 1rem;
+                        font-weight: 500;
+                        cursor: pointer;
+                        transition: background-color 0.2s ease, color 0.2s ease;
+
+                        &:hover,
+                        &:active,
+                        &:focus {
+                            background-color: var(--color-hover);
+                            color: var(--color-accent-primary);
+                            outline: none;
+                        }
+
+                        &--active {
+                            background-color: var(--color-hover);
+                            color: var(--color-accent-primary);
+                            font-weight: 600;
                         }
                     }
                 }
