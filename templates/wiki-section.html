@@ -116,7 +116,10 @@ block content %}
              grouping mode. -->
         <div class="wiki-section__pages" id="wiki-articles">
             {% for letter in first_letters %}
-                {% set letter_pages = [] %}
+                {# Use set_global so the inner-loop append (also set_global) can
+                   read back the accumulated list. A local `set` here would shadow
+                   the global on read, leaving the `if` below always falsy. #}
+                {% set_global letter_pages = [] %}
                 {% for page in section.pages %}
                     {% set page_letter = page.title | truncate(length=1, end="") | upper %}
                     {% if page_letter == letter %}

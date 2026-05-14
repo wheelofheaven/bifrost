@@ -16,12 +16,23 @@ body {
     font-family: sans-serif;
 }
 
+html {
+    // Offset for the fixed navbar (~5rem tall, sitting at top: 0.5rem) so
+    // fragment navigation (#anchor) doesn't land content under the navbar.
+    // Landing/timeline overview override this in _home.scss.
+    scroll-padding-top: 5.5rem;
+}
+
 // Pin the footer to the bottom of the viewport on short pages.
 // Without this, body stops at viewport height and any extra space below the
 // last in-flow element (the footer) reveals body's background color.
 body {
     display: flex;
     flex-direction: column;
+    // Clip stray horizontal overflow from wide children (long pre blocks,
+    // tables, embedded media, fixed-width SVGs) without breaking
+    // position: sticky the way `overflow-x: hidden` would.
+    overflow-x: clip;
 }
 
 body > main {

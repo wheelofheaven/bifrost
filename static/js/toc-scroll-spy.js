@@ -87,12 +87,15 @@
       const linkRect = activeLink.getBoundingClientRect();
       const containerRect = tocContainer.getBoundingClientRect();
 
-      // Check if link is outside visible area of TOC
+      // Only scroll within the TOC container itself. `scrollIntoView` would
+      // bubble up to the document and yank the page during normal reading
+      // — especially on mobile where the TOC is in document flow rather
+      // than a sticky sidebar.
       if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
-        activeLink.scrollIntoView({
-          behavior: "smooth",
-          block: "center",
-        });
+        const delta =
+          (linkRect.top + linkRect.height / 2) -
+          (containerRect.top + containerRect.height / 2);
+        tocContainer.scrollBy({ top: delta, behavior: "smooth" });
       }
     }
 
