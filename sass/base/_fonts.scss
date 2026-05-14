@@ -205,3 +205,19 @@
         U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
         U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
+
+// ─── Noto Sans IPA (self-hosted latin-ext subset) ─────────────────
+//
+// IPA Extensions, Spacing Modifier Letters, and Phonetic Extensions
+// glyphs for pronunciation guides (e.g. /əˈpɒkəlɪpsɪs/). The .woff2
+// is Google's Noto Sans `latin-ext` subset; the unicode-range here
+// is narrowed to IPA-only codepoints so this @font-face is never
+// consulted for Latin Extended A or anything Jost already covers.
+@font-face {
+    font-family: "Noto Sans IPA";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-sans-ipa/noto-sans-ipa.woff2") format("woff2");
+    unicode-range: U+0250-02AF, U+02B0-02FF, U+1D00-1DBF;
+}

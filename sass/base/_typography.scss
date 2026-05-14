@@ -124,9 +124,22 @@ $font-family-greek:
     "Times New Roman",
     serif;
 
-// Main font stacks with comprehensive fallbacks
+// Main font stacks with comprehensive fallbacks.
+//
+// "GFS Didot" and "Noto Sans IPA" sit right after the primary Latin
+// font in every stack. Both @font-face declarations are bounded by
+// `unicode-range` (Greek codepoints for GFS Didot, IPA/Phonetic blocks
+// for Noto Sans IPA), so the browser only consults them when a glyph
+// in the corresponding range appears — inline Greek terms
+// (ἀποκάλυψις) and IPA pronunciations (/əˈpɒkəlɪpsɪs/) thus get the
+// right typeface automatically, without requiring `lang="grc"` or a
+// `.greek` class on every span. Latin text continues to come from the
+// primary font (Jost / SpaceGrotesk) because it appears first in the
+// stack and has the matching glyphs.
 $font-family-sans:
     "Jost",
+    "GFS Didot",
+    "Noto Sans IPA",
     // CJK fallbacks (order: Japanese, Simplified Chinese)
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
@@ -150,6 +163,8 @@ $font-family-sans:
 
 $font-family-serif:
     "SpaceGrotesk",
+    "GFS Didot",
+    "Noto Sans IPA",
     // CJK serif/display fallbacks
     "Hiragino Mincho ProN",
     "Yu Mincho",
@@ -179,6 +194,8 @@ $font-family-mono:
 
 $font-family-quote:
     "SpaceGrotesk",
+    "GFS Didot",
+    "Noto Sans IPA",
     // CJK - use mincho/serif for quotes (more literary feel)
     "Hiragino Mincho ProN",
     "Yu Mincho",
