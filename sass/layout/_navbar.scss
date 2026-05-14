@@ -864,6 +864,15 @@ body.mobile-nav-open {
             display: none;
         }
 
+        // Language picker pane is the slide-in second face of the burger
+        // menu; on a fresh load (burger collapsed) it must be hidden too,
+        // otherwise it renders inline inside the navbar bar. The
+        // .navbar--mobile-expanded block below overrides this back to
+        // `display: flex` when the burger opens.
+        &__pane--lang {
+            display: none;
+        }
+
         // .navbar__search keeps its desktop default (offscreen but focusable)
         // so the in-menu search button can still hand it focus on mobile.
 
