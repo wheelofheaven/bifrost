@@ -21,6 +21,13 @@ html {
     // fragment navigation (#anchor) doesn't land content under the navbar.
     // Landing/timeline overview override this in _home.scss.
     scroll-padding-top: 5.5rem;
+    // Clip horizontal overflow at the document level — the body-level
+    // `overflow-x: clip` below alone is not enough because the page
+    // scrolls on <html>, not <body>. Without this, off-canvas
+    // elements like .reading-list-panel__content (transformed off the
+    // right edge) make the page horizontally scrollable on iOS Safari
+    // and cause "page wider than device" auto-zoom-out.
+    overflow-x: clip;
 }
 
 // Pin the footer to the bottom of the viewport on short pages.

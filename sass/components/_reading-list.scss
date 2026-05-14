@@ -106,6 +106,13 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity v.$transition-base ease, visibility v.$transition-base ease;
+    // Defensive clip: the inner content sits at `transform: translateX(100%)`
+    // when closed, which Chrome and iOS Safari count toward
+    // `document.scrollWidth` even though it's visually off-canvas. The
+    // primary fix is `overflow-x: clip` on <html> (in _reset.scss), but
+    // clipping here too keeps the off-canvas box from leaking into any
+    // ancestor that lacks the document-level clip.
+    overflow: hidden;
 
     &--open {
         opacity: 1;

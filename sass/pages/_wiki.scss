@@ -26,7 +26,13 @@
         }
 
         @media (max-width: 900px) {
-            grid-template-columns: 1fr;
+            // Use `minmax(0, 1fr)` (not bare `1fr`) so any descendant
+            // with a wide min-content size (long URLs, code spans,
+            // unbreakable words) cannot blow out the column past the
+            // viewport. Bare `1fr` defaults to `minmax(auto, 1fr)`,
+            // where `auto` resolves to min-content and forces the
+            // column to expand to fit.
+            grid-template-columns: minmax(0, 1fr);
             grid-template-areas:
                 "main"
                 "sidebar";
