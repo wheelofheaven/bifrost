@@ -1,26 +1,13 @@
 <script>
-    // Theme initialization - runs immediately to prevent flash of incorrect theme
+    // Theme initialization — runs immediately to prevent flash of incorrect
+    // theme. Dark is the project's canonical default; the OS
+    // `prefers-color-scheme` hint is intentionally ignored on first visit.
+    // Users who toggle to light get their choice persisted in localStorage
+    // and respected on return.
     (function () {
         const html = document.documentElement;
         const savedTheme = localStorage.getItem("theme");
-        const prefersLight = window.matchMedia(
-            "(prefers-color-scheme: light)",
-        ).matches;
-
-        // Determine effective theme
-        let effectiveTheme;
-        if (savedTheme === "light" || savedTheme === "dark") {
-            effectiveTheme = savedTheme;
-        } else {
-            effectiveTheme = prefersLight ? "light" : "dark";
-        }
-
-        // Apply theme immediately
-        if (effectiveTheme === "light") {
-            html.setAttribute("data-theme", "light");
-        } else {
-            // Explicitly set dark theme to prevent fallback to media query
-            html.setAttribute("data-theme", "dark");
-        }
+        const effectiveTheme = savedTheme === "light" ? "light" : "dark";
+        html.setAttribute("data-theme", effectiveTheme);
     })();
 </script>
