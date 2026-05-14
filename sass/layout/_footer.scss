@@ -143,6 +143,15 @@
         align-items: center;
         gap: 0.5rem;
 
+        // Mobile gets the language and theme controls inside the burger
+        // menu (globe icon → lang pane, mobile-theme-toggle in the bar
+        // controls). Hide the footer duplicates there so users don't see
+        // a second "Select language" + theme row at the bottom of the
+        // page when the burger is collapsed.
+        @media (max-width: 999px) {
+            display: none;
+        }
+
         // Open the language menu upward so it doesn't escape the footer.
         .navbar__lang-menu {
             top: auto;
