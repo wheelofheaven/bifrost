@@ -1,0 +1,46 @@
+{# translation-badge macro
+
+   Surfaces the per-entry `[extra].translation_status` field as a small
+   pill in the wiki sidebar. Renders only when:
+
+     - the page is being viewed in a non-English language, AND
+     - `translation_status` is set to a known value
+
+   Values map to:
+     - "metadata_only" → yellow pill (title/description only)
+     - "machine"       → mauve pill  (auto-translated body)
+     - "human"         → mint pill   (fully translated)
+     - "en_only"       → grey pill   (English fallback)
+
+   Usage:
+     {% import "macros/translation-badge.html" as translation_badge %}
+     {{ translation_badge::render(status=page.extra.translation_status | default(value=""), lang=detected_lang) }}
+#}
+{% macro render(status="", lang="en") %}
+{% if lang != "en" and status %}
+    {% set label = "" %}
+    {% set desc = "" %}
+    {% if status == "metadata_only" %}
+        {% set label = trans(key="translationStatusMetadataOnly", lang=lang) %}
+        {% set desc = trans(key="translationStatusMetadataOnlyDesc", lang=lang) %}
+    {% elif status == "machine" %}
+        {% set label = trans(key="translationStatusMachine", lang=lang) %}
+        {% set desc = trans(key="translationStatusMachineDesc", lang=lang) %}
+    {% elif status == "human" %}
+        {% set label = trans(key="translationStatusHuman", lang=lang) %}
+        {% set desc = trans(key="translationStatusHumanDesc", lang=lang) %}
+    {% elif status == "en_only" %}
+        {% set label = trans(key="translationStatusEnOnly", lang=lang) %}
+        {% set desc = trans(key="translationStatusEnOnlyDesc", lang=lang) %}
+    {% endif %}
+    {% if label %}
+    <span class="translation-badge translation-badge--{{ status | replace(from='_', to='-') }}"
+          role="status"
+          aria-label="{{ trans(key='translationStatusLabel', lang=lang) }}: {{ label }}"
+          title="{{ desc }}">
+        <span class="translation-badge__dot" aria-hidden="true"></span>
+        <span class="translation-badge__label">{{ label }}</span>
+    </span>
+    {% endif %}
+{% endif %}
+{% endmacro render %}

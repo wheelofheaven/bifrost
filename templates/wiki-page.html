@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
+{% import "macros/translation-badge.html" as translation_badge %}
 
 {% block content %}
 <!-- DefinedTerm Schema for Wiki Pages -->
@@ -205,6 +206,14 @@
                     <div class="wiki__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </div>
+
+                {# Translation-status pill — non-English pages only. #}
+                {% if detected_lang != "en" and page.extra.translation_status %}
+                <div class="wiki__claim-section wiki__translation-section">
+                    <div class="wiki__claim-label">{{ trans(key="translationStatusLabel", lang=detected_lang) }}</div>
+                    {{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang) }}
+                </div>
+                {% endif %}
 
                 <!-- Alternative Names/Spellings — stacked-paper chips that fan out on hover/click -->
                 {% if page.extra.alternative_names %}
