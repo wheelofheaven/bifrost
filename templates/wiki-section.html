@@ -91,7 +91,6 @@ block content %}
         {# Compute the set of first letters present in pages, in document
            scope so both the alphabet bar and the article-groups loop below
            can iterate it. #}
-        {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" | split(pat="") %}
         {% set_global first_letters_raw = [] %}
         {% for page in section.pages %}
             {% set page_letter = page.title | truncate(length=1, end="") | upper %}
@@ -99,13 +98,32 @@ block content %}
         {% endfor %}
         {% set first_letters = first_letters_raw | unique | sort %}
 
+        {# Pick a canonical alphabet for the quick-nav bar based on the
+           page language. Scripts without a stable letter inventory in
+           this corpus (CJK) fall through to a *dynamic* alphabet built
+           from the first letters actually present, so we don't ship a
+           bar full of inactive placeholders that match nothing. #}
+        {% set show_inactive = true %}
+        {% if detected_lang == "de" %}
+            {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÄÖÜ" | split(pat="") %}
+        {% elif detected_lang == "es" %}
+            {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZÑ" | split(pat="") %}
+        {% elif detected_lang == "ru" %}
+            {% set alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФХЦЧШЩЪЫЬЭЮЯ" | split(pat="") %}
+        {% elif detected_lang == "ja" or detected_lang == "ko" or detected_lang == "zh" or detected_lang == "zh-Hant" %}
+            {% set alphabet = first_letters %}
+            {% set show_inactive = false %}
+        {% else %}
+            {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" | split(pat="") %}
+        {% endif %}
+
         <!-- Alphabetical Quick Navigation — shown only when the Group-by
              selector is set to "alpha" (the default). -->
         <div class="wiki-alphabet" id="wiki-alphabet">
             {% for letter in alphabet %}
             {% if letter in first_letters %}
             <a href="#letter-{{ letter }}" class="wiki-alphabet__link wiki-alphabet__link--active" data-letter="{{ letter }}">{{ letter }}</a>
-            {% else %}
+            {% elif show_inactive %}
             <span class="wiki-alphabet__link wiki-alphabet__link--inactive">{{ letter }}</span>
             {% endif %}
             {% endfor %}
@@ -467,12 +485,16 @@ document.addEventListener('DOMContentLoaded', function() {
     viewToggle.forEach(btn => btn.addEventListener('click', () => toggleView(btn.dataset.view)));
 
     // Smooth-scroll for alphabet bar (active in Group A-Z mode only).
+    // Use getElementById so the lookup is safe for non-ASCII letters
+    // (Cyrillic, CJK, accented Latin) — querySelector would need CSS
+    // escaping for the same characters.
     if (alphabetBar) {
         alphabetBar.addEventListener('click', function(e) {
             const link = e.target.closest('.wiki-alphabet__link--active');
             if (!link) return;
             e.preventDefault();
-            const target = document.querySelector(link.getAttribute('href'));
+            const id = link.getAttribute('href').slice(1);
+            const target = id ? document.getElementById(id) : null;
             if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
         });
     }
