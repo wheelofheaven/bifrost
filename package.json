@@ -5,7 +5,8 @@
   "scripts": {
     "bundle": "node scripts/bundle.js",
     "bundle:watch": "node scripts/bundle.js --watch",
-    "purgecss": "node scripts/purgecss.js"
+    "purgecss": "node scripts/purgecss.js",
+    "inline-critical": "node scripts/inline-critical.js"
   },
   "devDependencies": {
     "esbuild": "^0.24.2",
