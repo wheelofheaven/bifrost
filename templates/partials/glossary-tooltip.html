@@ -62,26 +62,48 @@
     let hideTimeout;
     let currentLink = null;
 
+    // Resolve the best-available term label for a wiki link. The link text
+    // itself is often "Read more" (on wiki cards) or a clipped phrase, so
+    // we walk up to a nearby titled container and use its title instead.
+    // Falls back to link.textContent when no better label is available.
+    function resolveTerm(link) {
+        const card = link.closest(
+            '.wiki-card, .explainer-card, .timeline-card, .library-card, .news-card, article'
+        );
+        if (card) {
+            const titleEl = card.querySelector(
+                '.wiki-card__title, .wiki-card__link, .explainer-card__title, ' +
+                '.timeline-card__title, .library-card__title, .news-card__title, ' +
+                'h1, h2, h3'
+            );
+            if (titleEl) {
+                const t = titleEl.textContent.trim();
+                if (t) return t;
+            }
+        }
+        return link.textContent.trim();
+    }
+
     async function handleMouseEnter(e) {
         clearTimeout(hideTimeout);
         const link = e.currentTarget;
         currentLink = link;
 
         const href = link.getAttribute('href');
-        const term = link.textContent.trim();
 
-        // Show loading state
-        termEl.textContent = term;
+        // Show loading state with the best label we have locally.
+        termEl.textContent = resolveTerm(link);
         defEl.textContent = tooltip.dataset.labelLoading || 'Loading...';
         positionTooltip(link);
         showTooltip();
 
-        // Get definition
-        const definition = await getDefinition(href);
+        // Fetch canonical title + definition from the target page.
+        const entry = await getEntry(href);
 
         // Only update if still hovering same link
         if (currentLink === link) {
-            defEl.textContent = definition || tooltip.dataset.labelNone || 'No definition available.';
+            if (entry && entry.title) termEl.textContent = entry.title;
+            defEl.textContent = (entry && entry.definition) || tooltip.dataset.labelNone || 'No definition available.';
         }
     }
 
@@ -104,7 +126,7 @@
         }, 150);
     });
 
-    async function getDefinition(href) {
+    async function getEntry(href) {
         // Normalize href
         const url = new URL(href, window.location.origin);
         let path = url.pathname;
@@ -127,39 +149,38 @@
             const parser = new DOMParser();
             const doc = parser.parseFromString(html, 'text/html');
 
-            // Try to get definition from various sources
-            let definition = '';
-
-            // 1. Try meta description
-            const metaDesc = doc.querySelector('meta[name="description"]');
-            if (metaDesc) {
-                definition = metaDesc.getAttribute('content');
+            // Title: prefer og:title (clean), then the page h1, then <title>.
+            let title = '';
+            const ogTitle = doc.querySelector('meta[property="og:title"]');
+            if (ogTitle) title = (ogTitle.getAttribute('content') || '').trim();
+            if (!title) {
+                const h1 = doc.querySelector('h1');
+                if (h1) title = h1.textContent.trim();
+            }
+            if (!title && doc.title) {
+                // Strip trailing " | Site Name" / " — Site Name" suffix.
+                title = doc.title.replace(/\s*[|—–-]\s*[^|—–-]+$/, '').trim();
             }
 
-            // 2. Try ai.summary meta tag
+            // Definition
+            let definition = '';
+            const metaDesc = doc.querySelector('meta[name="description"]');
+            if (metaDesc) definition = metaDesc.getAttribute('content');
             if (!definition) {
                 const aiSummary = doc.querySelector('meta[name="ai.summary"]');
-                if (aiSummary) {
-                    definition = aiSummary.getAttribute('content');
-                }
+                if (aiSummary) definition = aiSummary.getAttribute('content');
             }
-
-            // 3. Try the wiki summary element
             if (!definition) {
                 const summary = doc.querySelector('.wiki__summary-content, .wiki__tldr, [data-ai-summary]');
-                if (summary) {
-                    definition = summary.textContent.trim();
-                }
+                if (summary) definition = summary.textContent.trim();
             }
-
-            // Truncate if too long
             if (definition && definition.length > 200) {
                 definition = definition.substring(0, 197) + '...';
             }
 
-            // Cache the result
-            definitionCache.set(path, definition);
-            return definition;
+            const entry = { title, definition };
+            definitionCache.set(path, entry);
+            return entry;
 
         } catch (err) {
             console.warn('Failed to fetch definition:', err);
