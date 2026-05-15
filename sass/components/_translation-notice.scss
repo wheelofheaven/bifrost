@@ -146,11 +146,28 @@
 // the navbar's `top` based on `window.scrollY`. This SCSS only sets
 // the *starting* (top-of-page) position — the JS handles the rest.
 //
-// `main`'s padding-top and the landing scroll-padding-top stay at
-// their English defaults (6rem / 4rem); the banner is purely a
-// floating overlay and does not push any content down.
+// `main`'s padding-top is bumped by the same offset so the first
+// piece of content (typically a breadcrumb) clears the docked navbar
+// on initial load. Without this, the navbar's bottom edge ends up
+// below the default 6rem padding and the breadcrumb sits behind it.
 body:has(> .translation-notice) {
     .navbar {
         top: calc(var(--translation-notice-h) + 1rem);
+    }
+
+    // Bump main's padding-top by exactly the banner offset so the
+    // breadcrumb starts just below the docked navbar. The English
+    // padding-top (6rem desktop, 5.5rem mobile) already includes a
+    // small clearance below the navbar; we add only the banner's
+    // height — not extra buffer — to avoid an enormous gap above
+    // the page title on i18n pages.
+    main {
+        padding-top: calc(6rem + var(--translation-notice-h));
+    }
+
+    @media (max-width: 768px) {
+        main {
+            padding-top: calc(5.5rem + var(--translation-notice-h));
+        }
     }
 }
