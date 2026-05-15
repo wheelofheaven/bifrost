@@ -1093,10 +1093,40 @@
         min-width: 0;
     }
 
+    // Scripture prose — Layer 3 (citation / scholarly serif). The
+    // book reader is one long quoted source, so the entire reading
+    // surface sits in IBM Plex Serif (Latin) / Noto Serif {JP, SC, TC,
+    // KR} / Frank Ruhl Libre / GFS Didot via the citation stack. See
+    // docs/typography.md.
+    //
+    // Reading ergonomics for long-form serif: slightly larger than
+    // body sans (serifs read smaller per-glyph), book-leading at 1.75,
+    // legibility-tuned rendering, soft hyphens so long Latin words
+    // don't punch through the measure on narrow viewports.
+    &__para-original,
+    &__para-translation {
+        font-family: var(--font-family-citation);
+        font-size: 1.0625rem;
+        line-height: 1.75;
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+        text-rendering: optimizeLegibility;
+        hyphens: auto;
+        -webkit-hyphens: auto;
+        // CJK + Hebrew don't benefit from Latin hyphenation rules.
+        // Falling back to none on those scripts keeps line-breaking on
+        // the language's own conventions.
+        :lang(ja) &,
+        :lang(ko) &,
+        :lang(zh) &,
+        :lang(zh-Hant) &,
+        :lang(he) & {
+            hyphens: manual;
+            -webkit-hyphens: manual;
+        }
+    }
+
     &__para-original {
         display: none;
-        font-size: 0.95rem;
-        line-height: 1.7;
         color: var(--color-text-muted);
         margin-bottom: 0.5rem;
         padding-bottom: 0.5rem;
@@ -1104,9 +1134,6 @@
     }
 
     &__para-translation {
-        font-family: var(--font-family-body);
-        font-size: 0.95rem;
-        line-height: 1.7;
         color: var(--color-text);
     }
 
@@ -3078,7 +3105,13 @@
 // Variable Font Size Support
 // =====================================================
 .library-book__content {
-    --reader-font-size: 1rem;
+    // Reader font-size scale, bumped up one notch from the original
+    // 0.875 / 1 / 1.125 / 1.25 set so IBM Plex Serif (layer 3) reads
+    // at proper book size — serifs need ~1px more than the equivalent
+    // sans to feel comparable in weight. The user-facing labels
+    // (small / medium / large / x-large) keep their meaning; only the
+    // baseline shifts.
+    --reader-font-size: 1.0625rem;
 
     .library-book__para-translation,
     .library-book__para-original {
@@ -3086,15 +3119,15 @@
     }
 
     &[data-font-size="small"] {
-        --reader-font-size: 0.875rem;
+        --reader-font-size: 0.9375rem;
     }
 
     &[data-font-size="large"] {
-        --reader-font-size: 1.125rem;
+        --reader-font-size: 1.1875rem;
     }
 
     &[data-font-size="x-large"] {
-        --reader-font-size: 1.25rem;
+        --reader-font-size: 1.3125rem;
     }
 }
 
