@@ -108,10 +108,13 @@
                 </span>
             </button>
 
-            <!-- Mobile lang trigger: globe icon that slides the burger
-                 menu to a dedicated language pane (see .navbar__pane--lang
-                 below). Replaces the previous popup dropdown so we don't
-                 stack a second overlay inside the burger overlay. -->
+            <!-- Mobile lang trigger: language icon (A + 文 motif from
+                 Tabler, styled to match Feather strokes) that slides
+                 the burger menu to a dedicated language pane (see
+                 .navbar__pane--lang below). Replaces the previous popup
+                 dropdown so we don't stack a second overlay inside the
+                 burger overlay. Globe was misleading because it reads
+                 as "international/world" rather than "language." -->
             <button
                 type="button"
                 class="navbar__bar-btn navbar__lang-trigger"
@@ -120,7 +123,7 @@
                 aria-label="{{ trans(key='navbarSelectLanguage', lang=detected_lang) }}"
             >
                 <span class="navbar__lang-trigger__icon" aria-hidden="true">
-                    {% include "partials/icons/feather-globe.html" %}
+                    {% include "partials/icons/language.html" %}
                 </span>
             </button>
 

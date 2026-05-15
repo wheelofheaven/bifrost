@@ -1196,6 +1196,15 @@ body.mobile-nav-open {
                 }
             }
 
+            // Theme toggle uses a swap-layered icon container sized via
+            // .navbar__theme-icon (1.5rem default). Pin it to the same
+            // 22px the lang and bookmark SVGs use here so all three
+            // bar-controls icons read as visually equal-weight pills.
+            #mobile-theme-toggle .navbar__theme-icon {
+                width: 22px;
+                height: 22px;
+            }
+
             .navbar__content {
                 display: block;
                 position: absolute;
