@@ -88,7 +88,10 @@
         }
 
         &.claim-badge--inferred {
-            color: c.$yellow-800;
+            // $yellow-800 (#8e8337) on $yellow-100 only hits ~3.7:1 — the
+            // yellow ramp is uniquely light at the 800 step compared to the
+            // other accent palettes, so we drop to 900 for AA on this pill.
+            color: c.$yellow-900;
             background: c.$yellow-100;
             border-color: c.$yellow-300;
         }

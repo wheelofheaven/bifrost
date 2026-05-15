@@ -113,7 +113,7 @@
 
                 <!-- Chapter Navigation -->
                 <nav class="library-book__nav" role="navigation" aria-label="Chapter navigation">
-                    <button class="library-book__nav-btn library-book__nav-btn--prev" onclick="previousChapter()" id="prev-chapter" aria-label="Go to previous chapter">
+                    <button class="library-book__nav-btn library-book__nav-btn--prev library-book__nav-btn--disabled" onclick="previousChapter()" id="prev-chapter" aria-label="Go to previous chapter" disabled>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
                             <path d="M15 18l-6-6 6-6"></path>
                         </svg>
@@ -390,7 +390,7 @@
                  sticky TOC pattern. -->
             <div class="library-book__toc">
                 <div class="library-book__toc-header">
-                    <h3 class="library-book__toc-title" id="book-toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h3>
+                    <h2 class="library-book__toc-title" id="book-toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
                 </div>
                 <nav class="library-book__toc-nav" aria-labelledby="book-toc-heading">
                     <ul class="library-book__toc-list">
@@ -606,8 +606,16 @@ function updateChapterNavigation() {
     const nextButton = document.getElementById('next-chapter');
     const currentDisplay = document.getElementById('current-chapter-display');
 
-    if (prevButton) prevButton.classList.toggle('library-book__nav-btn--disabled', currentChapter <= 1);
-    if (nextButton) nextButton.classList.toggle('library-book__nav-btn--disabled', currentChapter >= totalChapters);
+    if (prevButton) {
+        const dis = currentChapter <= 1;
+        prevButton.classList.toggle('library-book__nav-btn--disabled', dis);
+        prevButton.disabled = dis;
+    }
+    if (nextButton) {
+        const dis = currentChapter >= totalChapters;
+        nextButton.classList.toggle('library-book__nav-btn--disabled', dis);
+        nextButton.disabled = dis;
+    }
     if (currentDisplay) currentDisplay.textContent = `${currentChapter} / ${totalChapters}`;
 }
 

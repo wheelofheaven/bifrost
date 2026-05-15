@@ -769,13 +769,19 @@
         }
 
         a {
+            // Always-visible underline so inline links stay distinguishable
+            // from the surrounding body text without relying on hue alone.
+            // The accent (mint/mauve) doesn't reach 3:1 contrast against
+            // body text, so WCAG 1.4.1 requires a non-colour indicator.
             color: var(--color-accent-primary);
-            text-decoration: none;
-            border-bottom: 1px solid transparent;
-            transition: all 0.2s ease;
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+            transition: text-decoration-thickness 0.15s ease, color 0.15s ease;
 
-            &:hover {
-                border-bottom-color: var(--color-accent-primary);
+            &:hover,
+            &:focus {
+                text-decoration-thickness: 2px;
             }
         }
 

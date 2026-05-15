@@ -31,7 +31,7 @@ block content %}
                 <!-- Category Filter -->
                 {% set all_categories = section.pages | map(attribute="extra.category") | unique | sort %}
                 {% if all_categories %}
-                <select class="wiki-filters__select" id="wiki-category-filter">
+                <select class="wiki-filters__select" id="wiki-category-filter" aria-label="{{ trans(key='wikiFilterAllTopics', lang=detected_lang) }}">
                     <option value="">{{ trans(key="wikiFilterAllTopics", lang=detected_lang) }}</option>
                     {% for category in all_categories %}
                     {% if category %}
@@ -42,7 +42,8 @@ block content %}
                 {% endif %}
 
                 <!-- Group By -->
-                <select class="wiki-filters__select" id="wiki-group-by">
+                <select class="wiki-filters__select" id="wiki-group-by" aria-label="{{ trans(key='wikiFilterGroupBy', lang=detected_lang) }}">
+
                     <option value="alpha" selected>{{ trans(key="wikiFilterGroupAlpha", lang=detected_lang) }}</option>
                     <option value="topics">{{ trans(key="wikiFilterGroupTopic", lang=detected_lang) }}</option>
                     <option value="date">{{ trans(key="wikiFilterGroupDate", lang=detected_lang) }}</option>
@@ -177,7 +178,7 @@ block content %}
                                 </time>
                                 {% endif %}
                                 <span class="wiki-card__read-more">
-                                    <a href="{{ page.permalink }}" class="wiki-card__read-link">
+                                    <a href="{{ page.permalink }}" class="wiki-card__read-link" aria-label="{{ trans(key='readMore', lang=detected_lang) }}: {{ page.title }}">
                                         {{ trans(key="readMore", lang=detected_lang) }}
                                         <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M5 12h14"></path>

@@ -60,7 +60,7 @@
         <div class="wiki-filters">
             <div class="wiki-filters__left">
                 <!-- Tradition Filter -->
-                <select class="wiki-filters__select" id="library-tradition-filter">
+                <select class="wiki-filters__select" id="library-tradition-filter" aria-label="{{ trans(key='libraryFilterAllTraditions', lang=detected_lang) }}">
                     <option value="">{{ trans(key="libraryFilterAllTraditions", lang=detected_lang) }}</option>
                     {% for tradition in catalog.traditions %}
                     <option value="{{ tradition.id }}">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</option>

@@ -3464,6 +3464,12 @@
         font-size: 0.875rem;
         text-align: right;
 
+        a {
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
         code {
             font-family: typo.$font-family-tech;
             font-size: 0.8125rem;
