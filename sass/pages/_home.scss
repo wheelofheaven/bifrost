@@ -673,11 +673,19 @@
 
 // ---- §8 — Coda ----
 .landing-coda {
+    // The closing line of the landing scroll. Layer 3 (citation
+    // serif) — the corpus is framing itself as something *quoted*,
+    // not asserted. Italic Plex Serif against the surrounding
+    // modernist sans signals "this is the source speaking, not us."
+    // Slightly opener leading than the article/library blockquotes
+    // (1.5 vs 1.7) because this quote is hero-sized and benefits
+    // from a tighter, more declarative rhythm. See
+    // docs/typography.md.
     &__quote {
-        font-family: var(--font-family-lead);
+        font-family: var(--font-family-citation);
         font-style: italic;
         font-size: clamp(1.25rem, 2.4vw, 1.75rem);
-        line-height: 1.4;
+        line-height: 1.5;
         max-width: 38rem;
         color: var(--color-text);
         margin: 0;
@@ -685,6 +693,8 @@
         padding: 0 0 0 1.25rem;
         border-left: 3px solid var(--color-accent-primary);
         text-align: left;
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
 
         p {
             margin: 0 0 1rem;
