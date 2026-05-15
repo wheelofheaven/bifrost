@@ -543,10 +543,30 @@
         padding-left: 1.25rem;
     }
 
-    &__link-item,
-    &__source-item {
+    &__link-item {
         margin-bottom: v.$spacing-xs;
         line-height: 1.6;
+    }
+
+    // Source entries — layer 3 (citation serif). These are
+    // bibliographic references to news sources, structurally the
+    // same as the wiki references list. Outlet name italic in the
+    // same serif; date in mono (layer 4) so it reads as catalogue
+    // metadata.
+    &__source-item {
+        margin-bottom: v.$spacing-xs;
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text);
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
+
+        &::marker {
+            font-family: typo.$font-family-tech;
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
     }
 
     &__link {
@@ -564,11 +584,14 @@
     }
 
     &__source-link {
-        color: var(--color-link);
+        color: var(--color-text);
         text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.15s ease, color 0.15s ease;
 
         &:hover {
-            text-decoration: underline;
+            color: var(--color-accent-primary);
+            border-bottom-color: var(--color-accent-primary);
         }
     }
 
@@ -580,8 +603,10 @@
 
     &__source-date {
         margin-left: v.$spacing-2xs;
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
         color: var(--color-text-subtle);
-        font-size: v.$font-size-sm;
+        letter-spacing: 0.02em;
     }
 
     &__footer {

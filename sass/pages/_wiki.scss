@@ -963,11 +963,82 @@
         border-top: 1px solid var(--color-hairline);
     }
 
-    // References Section
+    // References Section — bibliographic entries, layer 3 (citation
+    // serif). Numbers stay in mono (layer 4) via ::marker so the
+    // catalogue feel survives even when individual references wrap
+    // across multiple lines.
     &__references {
         padding: 2rem;
         background: var(--color-background);
         border-top: 1px solid var(--color-hairline);
+    }
+
+    &__reference-list {
+        margin: 0;
+        padding-left: 1.75rem;
+        list-style: decimal;
+    }
+
+    &__reference-item {
+        margin-bottom: 0.875rem;
+        padding-left: 0.25rem;
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text);
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
+
+        &::marker {
+            font-family: var(--font-family-tech);
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__reference-link,
+    &__reference-title {
+        color: var(--color-text);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.15s ease, color 0.15s ease;
+    }
+
+    &__reference-link:hover {
+        color: var(--color-accent-primary);
+        border-bottom-color: var(--color-accent-primary);
+    }
+
+    &__reference-author {
+        margin-left: 0.375rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+    }
+
+    &__reference-publication {
+        margin-left: 0.375rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+    }
+
+    &__reference-date {
+        margin-left: 0.375rem;
+        font-family: var(--font-family-tech);
+        font-size: 0.8125rem;
+        color: var(--color-text-subtle);
+        letter-spacing: 0.02em;
+    }
+
+    &__reference-description {
+        margin: 0.375rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.55;
+        color: var(--color-text-muted);
+        font-style: italic;
     }
 
     // Link Lists

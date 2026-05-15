@@ -216,30 +216,40 @@ CSS variables in component SCSS so per-lang switches propagate.
   `static/fonts/vendor/ibm-plex-mono/` but not yet wired into the
   `$font-family-mono` stack — that's the next step.
 
-## Where layer 3 should land (rollout list)
+## Layer 3 surfaces — current state
 
-Direct quotation surfaces (already migrated as of step 1, since they
-consumed `--font-family-quote`):
+Wired up and rendering Plex Serif (Latin) / Noto Serif fallback (non-Latin):
 
-- `.library-quote` (scripture-excerpt shortcode body)
-- inline `<blockquote>` inside wiki entries
+| Surface | Selector | Files affected |
+|---|---|---|
+| Wiki entry blockquotes | `.wiki__content blockquote` | ~670 wiki entries across 9 languages |
+| Library book reader prose | `.library-book__para-original`, `.library-book__para-translation` | 96 library books |
+| Article blockquotes | `.article__content blockquote` | rule in place; activates per article |
+| Timeline genesis verses | `.timeline-page__verse` | 9 timeline-age pages |
+| Timeline body blockquotes | `.timeline-page__content blockquote` | same set as above |
+| Landing coda hero quote | `.landing-coda__quote` | `/` |
+| Newsroom dispatch sources | `.dispatch__source-item` (+ link/outlet/date) | each dispatch |
+| Wiki references list | `.wiki__reference-item` (+ link/title/author/publication/date/description) | rule in place; activates per entry once `[extra] references = [...]` is populated |
 
-Still to migrate:
+Per-surface ergonomic tuning is intentional (size, leading, italic,
+border treatment) — different reading contexts justify slightly
+different treatments while sharing the same citation stack via
+`--font-family-citation`. See each component's SCSS comment for
+the reasoning behind its specific tuning.
 
-- `templates/shortcodes/author.html` — author blockquote citations
-- `templates/macros/author.html` — `author_cite` macro
-- `templates/shortcodes/definition.html` — when the definition body
-  quotes a source
-- generic `<blockquote>` and `<cite>` in `_base.scss` (no font override
-  today — they fall through to body sans)
-- `sass/components/_wiki-cite.scss` — the reference list at the bottom
-  of wiki entries (the `[1]` number stays mono / layer 4, but the
-  expanded reference text is layer 3)
-- `sass/pages/_library.scss` `.library-book__paragraph` — book-reader
-  body text; this is *literally* scripture excerpts and the highest-
-  impact layer-3 site on the entire project
-- wiki / article `<section class="*__references">` blocks
-- Newsroom Dispatch `sources[]` excerpts
+Dormant scaffolding — fully styled, activates when first used in
+content:
+
+- `templates/shortcodes/library.html` (`.library-quote`)
+- `templates/shortcodes/author.html` / `templates/macros/author.html`
+  (`.author-profile`, author blockquote citations)
+- `[extra] references` field on wiki entries
+
+The remaining edge cases (generic `<blockquote>` and `<cite>` in
+`_base.scss`, the definition shortcode body) are intentionally left
+on body sans — `<cite>` is short attribution metadata (layer 4
+territory) and a bare unscoped `<blockquote>` is rare enough on this
+site that the section-specific rules cover the real cases.
 
 ## When to introduce a new layer
 
