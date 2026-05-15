@@ -279,12 +279,19 @@ textarea {
 // Language-specific typography optimizations
 // =============================================================================
 
+// Per-script body + display overrides. Citation (layer 3) is not
+// overridden per-language — the root `--font-family-citation` stack
+// (IBM Plex Serif → Noto Serif {JP, SC, TC, KR} → Frank Ruhl Libre →
+// GFS Didot → ...) handles every script via font-family fallback and
+// unicode-range, so a quoted Japanese passage automatically lands on
+// Noto Serif JP, a Hebrew citation on Frank Ruhl Libre, etc. See
+// docs/typography.md.
+
 // Japanese — Zen Kaku Gothic New (humanist body, Jost analog) +
 // M PLUS 1p (geometric display, Space Grotesk analog).
 :lang(ja) {
     --font-family-body: #{typo.$font-family-ja-body};
     --font-family-lead: #{typo.$font-family-ja-display};
-    --font-family-quote: #{typo.$font-family-ja-display};
     line-height: 1.8;
     word-break: normal;
     overflow-wrap: anywhere;
@@ -296,7 +303,6 @@ textarea {
 :lang(zh-CN) {
     --font-family-body: #{typo.$font-family-zh-body};
     --font-family-lead: #{typo.$font-family-zh-display};
-    --font-family-quote: #{typo.$font-family-zh-display};
     line-height: 1.8;
 }
 
@@ -305,7 +311,6 @@ textarea {
 :lang(zh-TW) {
     --font-family-body: #{typo.$font-family-zh-hant-body};
     --font-family-lead: #{typo.$font-family-zh-hant-display};
-    --font-family-quote: #{typo.$font-family-zh-hant-display};
     line-height: 1.8;
 }
 
@@ -315,7 +320,6 @@ textarea {
 // "SpaceGrotesk" (one-word) is Latin-only.
 :lang(ru) {
     --font-family-lead: #{typo.$font-family-ru-display};
-    --font-family-quote: #{typo.$font-family-ru-display};
     letter-spacing: 0.01em;
 }
 
@@ -324,7 +328,6 @@ textarea {
 :lang(ko) {
     --font-family-body: #{typo.$font-family-ko-body};
     --font-family-lead: #{typo.$font-family-ko-display};
-    --font-family-quote: #{typo.$font-family-ko-display};
     line-height: 1.8;
     word-break: keep-all; // Prevent breaking within words
 }

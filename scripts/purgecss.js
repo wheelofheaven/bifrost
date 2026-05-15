@@ -101,10 +101,17 @@ async function purge() {
           deep: SAFELIST.filter(s => s instanceof RegExp),
           greedy: SAFELIST.filter(s => s instanceof RegExp),
         },
-        // Preserve CSS variables and keyframes
+        // Preserve CSS variables and keyframes. `fontFace: false` keeps
+        // every @font-face declaration — PurgeCSS can't trace font
+        // references through CSS custom properties (e.g. families used
+        // only via `var(--font-family-citation)`), so the "unused
+        // @font-face" detection silently drops fonts that *are* used
+        // via variables. We curate the @font-face set deliberately in
+        // sass/base/_fonts.scss; the bytes saved by pruning don't
+        // justify the fragility.
         variables: true,
         keyframes: true,
-        fontFace: true,
+        fontFace: false,
       });
 
       if (result.length > 0) {

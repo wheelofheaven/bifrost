@@ -192,20 +192,30 @@ $font-family-mono:
     sfmono-regular, menlo, monaco, consolas, "Liberation Mono",
     "Courier New", monospace;
 
-$font-family-quote:
-    "SpaceGrotesk",
+// Layer 3 — citation / scholarly serif (see docs/typography.md).
+// IBM Plex Serif carries the layer; non-Latin scripts fall through to
+// their own scholarly serif (Frank Ruhl Libre for Hebrew, GFS Didot
+// for Greek) which take over via unicode-range on inline citation
+// spans. CJK citation passages drop into Noto Serif / Songti / Mincho.
+$font-family-citation:
+    "IBM Plex Serif",
+    "Frank Ruhl Libre",
     "GFS Didot",
     "Noto Sans IPA",
-    // CJK - use mincho/serif for quotes (more literary feel)
+    // CJK serif for scriptural / classical passages
+    "Noto Serif JP",
     "Hiragino Mincho ProN",
     "Yu Mincho",
-    "Noto Serif JP",
-    "Songti SC",
     "Noto Serif SC",
-    // Hebrew
+    "Songti SC",
+    "Noto Serif TC",
+    "Noto Serif KR",
+    // Hebrew + Greek already covered above via Frank Ruhl Libre / GFS
+    // Didot at unicode-range level. Arial Hebrew is a final safety net.
     "Arial Hebrew",
     "Noto Serif Hebrew",
-    // Standard serif
+    "Noto Serif",
+    // Standard serif system fallback
     Georgia, Times, "Times New Roman", serif;
 
 $font-family-body: $font-family-sans;
