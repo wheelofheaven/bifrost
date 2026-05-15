@@ -829,9 +829,7 @@ body.mobile-nav-open {
     .navbar {
         width: 95%;
         padding: 0.5rem 1rem;
-        transition:
-            transform 0.3s ease,
-            opacity 0.3s ease;
+        transition: transform 0.3s ease;
 
         // Prevent logo from shrinking on mobile
         &__logo {
@@ -842,10 +840,11 @@ body.mobile-nav-open {
             }
         }
 
-        // Hide on scroll down
+        // Hide on scroll down — slide off the top edge, no fade.
+        // (Earlier `opacity: 0` made the pill dissolve in place
+        // instead of scrolling away with the page.)
         &--hidden {
             transform: translateX(-50%) translateY(-100%);
-            opacity: 0;
         }
 
         &__content {
