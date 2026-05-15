@@ -124,15 +124,21 @@
     }
 }
 
-// `--translation-notice-h` is the budgeted banner height. The desktop
-// banner is one line (~2.5rem with padding); on narrow viewports the
-// banner can wrap to two lines so the budget grows.
+// `--translation-notice-h` is the rendered banner height and
+// `--navbar-h` is the rendered navbar height. Both are written by
+// `partials/translation-notice-script.html` from their actual
+// `offsetHeight` so the layout adapts to wrapped translation strings
+// AND to the mobile navbar's taller burger/control row. The default
+// values below are pessimistic estimates used for the first paint
+// before JS has a chance to measure.
 :root {
     --translation-notice-h: 2.5rem;
+    --navbar-h: 4.5rem;
 }
 @media (max-width: 767px) {
     :root {
         --translation-notice-h: 4rem;
+        --navbar-h: 4rem;
     }
 }
 
@@ -146,28 +152,19 @@
 // the navbar's `top` based on `window.scrollY`. This SCSS only sets
 // the *starting* (top-of-page) position — the JS handles the rest.
 //
-// `main`'s padding-top is bumped by the same offset so the first
-// piece of content (typically a breadcrumb) clears the docked navbar
-// on initial load. Without this, the navbar's bottom edge ends up
-// below the default 6rem padding and the breadcrumb sits behind it.
+// `main`'s padding-top clears the actual stack of fixed chrome
+// (banner + 1rem gap + navbar) plus a small breathing buffer so the
+// breadcrumb has a clean offset from the navbar's bottom edge.
+// Computed from measured CSS vars so it stays correct across
+// viewports and even when long translation strings wrap.
 body:has(> .translation-notice) {
     .navbar {
         top: calc(var(--translation-notice-h) + 1rem);
     }
 
-    // Bump main's padding-top by exactly the banner offset so the
-    // breadcrumb starts just below the docked navbar. The English
-    // padding-top (6rem desktop, 5.5rem mobile) already includes a
-    // small clearance below the navbar; we add only the banner's
-    // height — not extra buffer — to avoid an enormous gap above
-    // the page title on i18n pages.
     main {
-        padding-top: calc(6rem + var(--translation-notice-h));
-    }
-
-    @media (max-width: 768px) {
-        main {
-            padding-top: calc(5.5rem + var(--translation-notice-h));
-        }
+        padding-top: calc(
+            var(--translation-notice-h) + 1rem + var(--navbar-h) + 1rem
+        );
     }
 }
