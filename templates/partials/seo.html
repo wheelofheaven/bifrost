@@ -320,5 +320,5 @@
    most likely LCP candidate above the fold. Preloading it shaves
    FCP/LCP on slow networks. #}
 {% if (current_path == "/" or current_path == "") and config.extra.cdn_url %}
-<link rel="preload" as="image" href="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.jpg" fetchpriority="high" crossorigin>
+<link rel="preload" as="image" href="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp" fetchpriority="high" crossorigin type="image/webp">
 {% endif %}
