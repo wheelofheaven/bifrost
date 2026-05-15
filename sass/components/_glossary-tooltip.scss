@@ -1,6 +1,8 @@
 // Glossary Tooltip
 // Shows wiki definitions on hover over wiki links
 
+@use "../abstracts/colors";
+
 .glossary-term {
     text-decoration-style: dotted;
     text-decoration-color: var(--color-accent-primary);
@@ -74,15 +76,52 @@
         color: var(--color-text);
     }
 
+    // Mirrors the navbar's `.navbar__cta-split` brand mark: mint→mauve
+    // gradient body, gradient hairline ring (mask trick), and a soft
+    // inset highlight. Sized down for inline badge use.
     &__badge {
+        position: relative;
         font-size: 0.625rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        padding: 0.125rem 0.375rem;
-        background-color: var(--color-accent-primary);
-        color: var(--color-background);
-        border-radius: 0.25rem;
+        padding: 0.125rem 0.5rem;
+        border-radius: 0.375rem;
+        color: var(--color-on-accent, #fff);
+        background-image: linear-gradient(
+            135deg,
+            #{rgba(colors.$mint, 0.25)},
+            #{rgba(colors.$mauve-500, 0.25)}
+        );
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(
+                135deg,
+                #{rgba(colors.$mint, 0.6)},
+                #{rgba(colors.$mauve-500, 0.6)}
+            );
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        // Light theme: switch the label to the accent color so it reads
+        // against the same gradient body (parallels the navbar CTA).
+        [data-theme="light"] & {
+            color: var(--color-accent-primary);
+        }
     }
 
     &__definition {
@@ -93,9 +132,21 @@
     }
 
     &__hint {
+        display: inline-block;
         font-size: 0.6875rem;
-        color: var(--color-text-muted);
-        opacity: 0.7;
+        font-weight: 500;
+        color: var(--color-accent-primary);
+        text-decoration: underline;
+        text-decoration-color: var(--color-accent-primary);
+        text-underline-offset: 2px;
+        text-decoration-thickness: 1px;
+        transition: opacity 0.2s ease, color 0.2s ease;
+
+        &:hover,
+        &:focus-visible {
+            opacity: 0.8;
+            text-decoration-thickness: 2px;
+        }
     }
 
     &__arrow {
