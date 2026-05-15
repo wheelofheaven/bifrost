@@ -110,6 +110,41 @@
             margin: 0 0 v.$spacing-md;
         }
 
+        // Pulled quotes / source-material excerpts. Layer 3 (see
+        // docs/typography.md). Quoted prose sits in the citation
+        // serif (IBM Plex Serif on Latin pages), framed with an
+        // accent rule and a tinted card so the eye registers it as
+        // *quoted* rather than authorial. Slightly tighter leading
+        // than the library reader because article blockquotes are
+        // typically short — 1–3 paragraphs pulled from a source.
+        blockquote {
+            margin: v.$spacing-lg 0;
+            padding: v.$spacing-md v.$spacing-lg;
+            border-left: 3px solid var(--color-accent-primary);
+            background: var(--color-background-secondary);
+            border-radius: 0 v.$border-radius-sm v.$border-radius-sm 0;
+            font-family: var(--font-family-citation);
+            font-size: 1.0625rem;
+            line-height: 1.7;
+            color: var(--color-text);
+            font-feature-settings: "kern" 1, "liga" 1;
+            text-rendering: optimizeLegibility;
+
+            p:last-child {
+                margin-bottom: 0;
+            }
+
+            cite {
+                display: block;
+                margin-top: v.$spacing-sm;
+                font-family: typo.$font-family-tech;
+                font-size: v.$font-size-sm;
+                font-style: normal;
+                color: var(--color-text-muted);
+                letter-spacing: 0.02em;
+            }
+        }
+
         a {
             color: var(--color-link);
         }

@@ -129,21 +129,28 @@
         white-space: nowrap;
     }
 
-    // Genesis Verse — canonical scripture for the age (sits between title and lede)
+    // Genesis Verse — canonical scripture for the age (sits between
+    // title and lede). Layer 3 (citation serif). The italic
+    // treatment is intentional: every timeline age opens with a
+    // verse, and the running italic Plex Serif marks it as ancient
+    // source material against the surrounding modernist sans.
     &__verse {
         margin: 0.25rem 0 0;
         padding: 1rem 1.25rem;
         border-left: 3px solid var(--color-accent-primary);
         background: var(--color-surface);
         border-radius: 0 vars.$border-radius-sm vars.$border-radius-sm 0;
+        font-family: var(--font-family-citation);
         font-style: italic;
         color: var(--color-text-muted);
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
         align-self: stretch;
 
         p {
             margin: 0;
             font-size: 0.9375rem;
-            line-height: 1.6;
+            line-height: 1.65;
         }
     }
 
@@ -472,14 +479,24 @@
             margin-bottom: 1.25rem;
         }
 
+        // Inline source-material quote. Layer 3 (see
+        // docs/typography.md). Same shape as the article blockquote
+        // — accent rule + tinted card + citation serif — but keeps
+        // the muted color from the surrounding timeline aesthetic
+        // (timeline pages already run cooler than articles).
         blockquote {
             margin: 1.5rem 0;
             padding: 1rem 1.25rem;
             border-left: 3px solid var(--color-border);
             background: var(--color-surface);
             border-radius: 0 vars.$border-radius-sm vars.$border-radius-sm 0;
+            font-family: var(--font-family-citation);
+            font-size: 1.0625rem;
+            line-height: 1.7;
             font-style: italic;
             color: var(--color-text-muted);
+            font-feature-settings: "kern" 1, "liga" 1;
+            text-rendering: optimizeLegibility;
         }
 
         hr {
