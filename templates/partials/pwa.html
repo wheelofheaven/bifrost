@@ -15,3 +15,15 @@
 <meta name="application-name" content="Wheel of Heaven">
 <meta name="msapplication-TileColor" content="#1b1f22">
 <meta name="msapplication-config" content="{{ get_url(path="browserconfig.xml") }}">
+
+<!-- i18n bridge for the PWA install banner (built in JS, see pwa.js). -->
+<script>
+    window.WOHPwaStrings = {
+        install: {
+            title: {{ trans(key="installAppTitle", lang=detected_lang) | json_encode() | safe }},
+            description: {{ trans(key="installAppDescription", lang=detected_lang) | json_encode() | safe }},
+            install: {{ trans(key="installApp", lang=detected_lang) | json_encode() | safe }},
+            dismiss: {{ trans(key="installAppDismiss", lang=detected_lang) | json_encode() | safe }}
+        }
+    };
+</script>
