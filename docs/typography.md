@@ -217,9 +217,6 @@ CSS variables in component SCSS so per-lang switches propagate.
 - ✅ Layer 4 (iA Writer Quattro mono) — in place. The duospace warmth
   is deliberate (see "Layer 4" above for the reasoning); the project
   doesn't want a cold developer-terminal feel for its metadata pills.
-  IBM Plex Mono woff2 is sitting unused in
-  `static/fonts/vendor/ibm-plex-mono/` from an earlier evaluation
-  and can be removed in a separate cleanup commit.
 
 ## Layer 3 surfaces — current state
 
