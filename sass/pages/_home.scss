@@ -378,7 +378,12 @@
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.7s ease-in-out;
-    will-change: opacity;
+    // No `will-change: opacity` here. Five landing sections × full-
+    // viewport fixed layer = ~1.44M px², which overruns Firefox's
+    // will-change budget (3 × viewport surface area) — the browser
+    // logs a warning and *ignores every will-change on the page*.
+    // Modern browsers auto-composite position:fixed elements that
+    // run an opacity transition, so the hint adds nothing here.
 }
 
 .landing-section.is-active .landing-section__media {

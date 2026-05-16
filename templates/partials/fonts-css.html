@@ -1,16 +1,16 @@
-<!-- Preload critical fonts (always-on Latin/Cyrillic body + display) -->
+<!-- Preload critical fonts. Two ground rules:
+     1. Preload only what the LCP-relevant element actually uses. The
+        landing hero heading + every site h2/h3 use Space Grotesk
+        *bold* (700), not regular. Preloading the wrong weight gets
+        flagged ("resource preloaded but not used") and wastes a
+        request slot. Body prose uses Jost regular.
+     2. Don't preload fonts whose first paint is inside a hidden
+        element (e.g. the navbar language dropdown). The browser
+        counts those as unused until the dropdown opens. The CJK
+        switcher subsets used to live here — they now load on demand
+        via @font-face + unicode-range when the dropdown opens. -->
 <link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
-<!-- Language-switcher CJK subsets (12 glyphs total, ~9 KB). Always
-     loaded so the navbar `<li lang="...">` labels render correctly
-     even on Latin-language pages where the user's system may not have
-     PingFang / Hiragino / Apple SD Gothic. Each subset is bound to
-     its precise unicode-range in `_fonts.scss` so it never shadows
-     other CJK content. -->
-<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-sc-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-tc-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-jp-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
-<link rel="preload" href="{{ get_url(path='fonts/vendor/noto-cjk-switcher/noto-sans-kr-switcher.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-700.woff2') }}" as="font" type="font/woff2" crossorigin>
 
 <!-- Web fonts. Frank Ruhl Libre (Hebrew) and GFS Didot (Greek) are
      always loaded because inline citations in those scripts (e.g.
