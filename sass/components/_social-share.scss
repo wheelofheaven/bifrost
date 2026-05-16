@@ -107,19 +107,47 @@
                 color: var(--color-accent-secondary);
             }
 
-            // Saved state (applied by pwa.js). Tinted background +
-            // matching border so the row's "is-saved" icon reads as
-            // an active state at a glance, not a faint outline tweak.
+            // Saved state (applied by pwa.js). The download icon stays
+            // put — we signal "available offline" with a rainbow stroke
+            // ring drawn over the default border via the navbar's
+            // gradient-ring mask trick. No background fill, so the
+            // button still reads as part of the share row.
             &.is-saved {
-                border-color: var(--color-success, #10b981);
-                color: var(--color-success, #10b981);
-                background-color: rgba(16, 185, 129, 0.12);
+                border-color: transparent;
+                background-color: transparent;
                 cursor: default;
 
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    border-radius: inherit;
+                    padding: 1.5px;
+                    background: linear-gradient(
+                        135deg,
+                        #f38ba8 0%,
+                        #fab387 18%,
+                        #f9e2af 36%,
+                        #a6e3a1 54%,
+                        #74c7ec 72%,
+                        #b4befe 90%,
+                        #cba6f7 100%
+                    );
+                    -webkit-mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    -webkit-mask-composite: xor;
+                    mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    mask-composite: exclude;
+                    pointer-events: none;
+                    animation: social-share-rainbow-rotate 6s linear infinite;
+                }
+
                 &:hover {
-                    border-color: var(--color-success, #10b981);
-                    color: var(--color-success, #10b981);
-                    background-color: rgba(16, 185, 129, 0.16);
+                    border-color: transparent;
+                    background-color: transparent;
                 }
             }
         }
@@ -146,4 +174,11 @@
     .social-share {
         display: none !important;
     }
+}
+
+// Subtle hue rotation on the saved-offline rainbow stroke so the ring
+// reads as alive without being distracting.
+@keyframes social-share-rainbow-rotate {
+    from { filter: hue-rotate(0deg); }
+    to   { filter: hue-rotate(360deg); }
 }
