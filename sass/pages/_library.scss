@@ -1091,7 +1091,12 @@
         text-align: right;
         padding-right: 0.75rem;
         flex-shrink: 0;
-        line-height: 1.7;
+        // Match the body text's line-box height (font-size × line-height)
+        // so the number glyph centers on the first line of the paragraph
+        // body. Both children top-align via align-items: flex-start on the
+        // wrapper, so equal line-box heights produce vertical baselines
+        // that read as aligned regardless of reader-font-size changes.
+        line-height: calc(1.8 * var(--reader-font-size, 1.125rem));
     }
 
     &__para-content {
@@ -1112,8 +1117,8 @@
     &__para-original,
     &__para-translation {
         font-family: var(--font-family-citation);
-        font-size: 1.0625rem;
-        line-height: 1.75;
+        font-size: var(--reader-font-size, 1.3125rem);
+        line-height: 1.8;
         font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
         text-rendering: optimizeLegibility;
         hyphens: auto;
@@ -3179,13 +3184,13 @@
 // Variable Font Size Support
 // =====================================================
 .library-book__content {
-    // Reader font-size scale, bumped up one notch from the original
-    // 0.875 / 1 / 1.125 / 1.25 set so IBM Plex Serif (layer 3) reads
-    // at proper book size — serifs need ~1px more than the equivalent
-    // sans to feel comparable in weight. The user-facing labels
+    // Reader font-size scale. Bumped up two notches from the previous
+    // 0.9375 / 1.0625 / 1.1875 / 1.3125 set so the IBM Plex Serif body
+    // reads at proper book size by default — long-form scripture wants
+    // larger glyphs than a navigation surface. The user-facing labels
     // (small / medium / large / x-large) keep their meaning; only the
     // baseline shifts.
-    --reader-font-size: 1.0625rem;
+    --reader-font-size: 1.125rem;
 
     .library-book__para-translation,
     .library-book__para-original {
@@ -3197,11 +3202,11 @@
     }
 
     &[data-font-size="large"] {
-        --reader-font-size: 1.1875rem;
+        --reader-font-size: 1.25rem;
     }
 
     &[data-font-size="x-large"] {
-        --reader-font-size: 1.3125rem;
+        --reader-font-size: 1.375rem;
     }
 }
 
@@ -3291,14 +3296,16 @@
         }
     }
 
-    // Subtitle — localized, rendered below the title. Slightly lighter
-    // weight and color than the title, but heavier than the lede.
+    // Subtitle — localized, rendered below the title. Same Space Grotesk
+    // family as the title; distinguished from it by lighter weight + size
+    // and a muted color. Avoids italic because the local SpaceGrotesk
+    // @font-face ships only regular + 700 weights, so italic gets
+    // synthetically slanted by the browser instead of using true italics.
     &__subtitle {
         margin: 0;
         font-family: var(--font-family-lead);
         font-size: 1.25rem;
         font-weight: 400;
-        font-style: italic;
         color: var(--color-text-muted);
         line-height: 1.3;
         word-wrap: break-word;
@@ -3308,11 +3315,14 @@
         }
     }
 
-    // Lede paragraph — same treatment as .wiki__lede
+    // Lede paragraph — body family (Jost) at a slightly larger size, so
+    // the orientation copy reads as continuous prose rather than display
+    // type. The title + subtitle above carry the Space Grotesk display
+    // hierarchy; the lede then settles the reader into body voice.
     &__lede {
         margin: 0 0 1.5rem;
         padding: 0;
-        font-family: var(--font-family-lead);
+        font-family: var(--font-family-body);
         font-size: 1.1875rem;
         line-height: 1.55;
         color: var(--color-text);
