@@ -57,8 +57,11 @@
 
     <div class="library-book__container">
         <!-- Main column comes first so mobile readers see title + body before
-             the sidebar's metadata. Grid areas preserve visual order on desktop. -->
-        <main class="library-book__main">
+             the sidebar's metadata. Grid areas preserve visual order on desktop.
+             Plain <div> (not <main>) since base.html already provides the
+             page-level <main> landmark — nested mains are invalid HTML and
+             inherit the global navbar-offset padding-top. -->
+        <div class="library-book__main">
             <article class="library-book__article" role="article" aria-labelledby="book-title">
 
                 <!-- Page Header (title + claim badge), mirroring wiki-page layout. -->
@@ -199,7 +202,7 @@
                     </a>
                 </div>
             </article>
-        </main>
+        </div>
 
         <!-- Sidebar: meta, share, reader settings, agent buttons, sticky chapter TOC.
              Mirrors the wiki-page sidebar layout. -->
@@ -282,6 +285,40 @@
                     </div>
                     {% endif %}
                 </div>
+
+                {# Translation provenance — surfaces Wheel of Heaven's
+                   AI-assisted translation practice when the reader is
+                   viewing a language other than the book's original.
+                   Each translated chapter declares its own `translation`
+                   block, so the model name and coverage count come from
+                   the data, not the template. #}
+                {% set_global translation_model_label = "" %}
+                {% set_global translated_chapter_count = 0 %}
+                {% for ch in book_chapters %}
+                    {% if ch.translation and ch.translation.modelLabel %}
+                        {% set_global translated_chapter_count = translated_chapter_count + 1 %}
+                        {% if not translation_model_label %}
+                            {% set_global translation_model_label = ch.translation.modelLabel %}
+                        {% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% set is_translated_view = book_data.primaryLang and detected_lang and book_data.primaryLang != detected_lang %}
+                {% if is_translated_view and translation_model_label %}
+                <div class="library-book__translation-section">
+                    <span class="library-book__translation-chip" tabindex="0" role="note" aria-label="{{ trans(key='libraryTranslationNote', lang=detected_lang) }}">
+                        <span class="library-book__translation-credit">{{ trans(key="libraryTranslationMethodAI", lang=detected_lang) }} · {{ translation_model_label }}</span>
+                        <svg class="library-book__translation-info" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="16" x2="12" y2="12"></line>
+                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                        </svg>
+                        <span class="library-book__translation-tooltip" role="tooltip">{{ trans(key="libraryTranslationNote", lang=detected_lang) }}</span>
+                    </span>
+                    {% if translated_chapter_count < book_chapters | length %}
+                    <p class="library-book__translation-coverage">{{ translated_chapter_count }} / {{ book_chapters | length }} {{ trans(key="libraryTranslationCoverage", lang=detected_lang) }}</p>
+                    {% endif %}
+                </div>
+                {% endif %}
 
                 <!-- Reading progress + view toggles. Moved out of the main
                      column into the sidebar so the article body reads

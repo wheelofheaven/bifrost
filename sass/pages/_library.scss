@@ -994,13 +994,19 @@
         // Default view
     }
 
+    // Split view: current-language translation on the left (primary
+    // reading surface), original on the right (reference). Achieved
+    // with flex-direction: row-reverse so the DOM order
+    // (original → translation) doesn't need to change. On mobile the
+    // columns stack with translation on top, original below.
     &__text--split {
         .library-book__para-content {
             display: flex;
+            flex-direction: row-reverse;
             gap: 1.5rem;
 
             @media (max-width: 768px) {
-                flex-direction: column;
+                flex-direction: column-reverse;
                 gap: 0.75rem;
             }
         }
@@ -1011,25 +1017,25 @@
             margin-bottom: 0;
             border-bottom: none;
             padding-bottom: 0;
-            padding-right: 1.5rem;
-            border-right: 1px solid var(--color-hairline);
+            padding-left: 1.5rem;
             font-style: normal;
             color: var(--color-text);
 
             @media (max-width: 768px) {
-                border-right: none;
-                padding-right: 0;
-                border-bottom: 1px solid var(--color-hairline);
-                padding-bottom: 0.75rem;
+                padding-left: 0;
             }
         }
 
         .library-book__para-translation {
             flex: 1;
-            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+            border-right: 1px solid var(--color-hairline);
 
             @media (max-width: 768px) {
-                padding-left: 0;
+                padding-right: 0;
+                border-right: none;
+                padding-bottom: 0.75rem;
+                border-bottom: 1px solid var(--color-hairline);
             }
         }
     }
@@ -3391,6 +3397,20 @@
             }
         }
 
+        // The global `[class*="__btn"]:focus-visible` rule in
+        // components/_focus.scss paints a 2px outline 2px outside the
+        // box, which reads as a redundant second border on top of the
+        // gradient ring. Drop the outline and use the ring itself
+        // (brightened + a thin focus tint) as the keyboard indicator.
+        &:focus-visible {
+            outline: none;
+            color: var(--color-accent-primary);
+
+            &::before {
+                filter: brightness(1.35) saturate(1.25);
+            }
+        }
+
         svg { flex-shrink: 0; }
     }
 
@@ -3620,6 +3640,86 @@
     &__share-section,
     &__agent-section {
         margin: 0 0 1.5rem;
+    }
+
+    // Translation provenance — sidebar chip + hover/focus tooltip.
+    // The chip carries the credit ("AI-assisted · Claude Opus 4.7"); the
+    // longer explanation of Wheel of Heaven's practice lives in the
+    // tooltip so it doesn't crowd the sidebar.
+    &__translation-section {
+        margin: 0 0 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+    }
+
+    &__translation-chip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        color: var(--color-text);
+        cursor: help;
+        align-self: flex-start;
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+            border-radius: 0.25rem;
+        }
+    }
+
+    &__translation-credit {
+        color: var(--color-text);
+    }
+
+    &__translation-info {
+        color: var(--color-text-muted);
+        flex-shrink: 0;
+    }
+
+    &__translation-tooltip {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 0;
+        z-index: 100;
+        width: max-content;
+        max-width: 18rem;
+        padding: 0.75rem 0.875rem;
+        border-radius: vars.$border-radius-md;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-hairline);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        color: var(--color-text-muted);
+        font-family: var(--font-family-body);
+        font-size: 0.8125rem;
+        line-height: 1.5;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-4px);
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
+        pointer-events: none;
+    }
+
+    &__translation-chip:hover &__translation-tooltip,
+    &__translation-chip:focus-visible &__translation-tooltip,
+    &__translation-chip:focus-within &__translation-tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    &__translation-coverage {
+        margin: 0;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+        opacity: 0.85;
     }
 
     &__agent-buttons {
