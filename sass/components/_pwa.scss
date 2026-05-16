@@ -494,7 +494,7 @@
 // Body offline state
 body.is-offline {
     // Dim external links when offline
-    a[href^="http"]:not([href*="wheelofheaven.io"]) {
+    a[href^="http"]:not([href*="wheelofheaven."]) {
         opacity: 0.5;
         pointer-events: none;
     }

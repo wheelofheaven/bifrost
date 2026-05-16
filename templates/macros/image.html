@@ -21,14 +21,14 @@
 #}
 
 {# CDN base URL from config #}
-{% macro cdn_base() %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") }}{% endmacro %}
+{% macro cdn_base() %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") }}{% endmacro %}
 
 {#
   Main CDN image macro
   Generates a <picture> element with AVIF and WebP sources
 #}
 {% macro cdn(path, alt, class="", lazy=false, sizes="100vw", width="", height="") %}
-{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <picture>
   <source
@@ -57,7 +57,7 @@
   Shows low-res thumbnail initially, loads full image on scroll
 #}
 {% macro cdn_lazy(path, alt, class="", sizes="100vw", width="", height="") %}
-{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <picture>
   <source
@@ -88,7 +88,7 @@
   No lazy loading, preload hint suggested
 #}
 {% macro hero(path, alt, class="", sizes="100vw") %}
-{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <picture>
   <source
@@ -115,7 +115,7 @@
   Thumbnail only - for cards, grids, previews
 #}
 {% macro thumb(path, alt, class="", width="", height="") %}
-{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <picture>
   <source type="image/avif" srcset="{{ base }}{{ img_path }}_thumb.avif">
@@ -136,14 +136,14 @@
   Background image helper - returns URL for use in CSS/inline styles
   Returns WebP URL (best browser support for backgrounds)
 #}
-{% macro bg_url(path) %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") }}/images/{{ path }}.webp{% endmacro bg_url %}
+{% macro bg_url(path) %}{{ config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") }}/images/{{ path }}.webp{% endmacro bg_url %}
 
 {#
   Preload link for critical images (use in <head>)
   Call from seo.html or base.html for hero images
 #}
 {% macro preload(path) %}
-{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.io") %}
+{% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <link rel="preload" as="image" type="image/avif" href="{{ base }}{{ img_path }}.avif">
 {% endmacro preload %}

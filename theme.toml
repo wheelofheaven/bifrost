@@ -3,11 +3,11 @@ description = "A multilingual knowledge base theme for Zola"
 license = "CC0-1.0"
 homepage = "https://github.com/wheelofheaven/bifrost"
 min_version = "0.19.0"
-demo = "https://www.wheelofheaven.io"
+demo = "https://www.wheelofheaven.world"
 
 [author]
 name = "Wheel of Heaven"
-homepage = "https://www.wheelofheaven.io"
+homepage = "https://www.wheelofheaven.world"
 
 [extra]
 # Theme features

@@ -4,7 +4,7 @@
 
   {# Check if URL starts with http/https and doesn't contain our domain #}
   {% if url is starting_with("http://") or url is starting_with("https://") %}
-    {% if not (url is containing("beta.wheelofheaven.io")) %}
+    {% if not (url is containing("beta.wheelofheaven.")) %}
       {% set_global is_external = true %}
     {% endif %}
   {% endif %}
@@ -24,7 +24,7 @@
 
   {# Check if URL is external #}
   {% if url is starting_with("http://") or url is starting_with("https://") %}
-    {% if not (url is containing("beta.wheelofheaven.io")) %}
+    {% if not (url is containing("beta.wheelofheaven.")) %}
       {% set_global is_external = true %}
     {% endif %}
   {% else %}

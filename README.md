@@ -69,4 +69,4 @@ CC0-1.0 (Public Domain)
 
 ## Credits
 
-Part of the [Wheel of Heaven](https://www.wheelofheaven.io) project.
+Part of the [Wheel of Heaven](https://www.wheelofheaven.world) project.
