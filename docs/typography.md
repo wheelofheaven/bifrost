@@ -16,7 +16,7 @@ element. When in doubt, consult it before introducing new styles.
 | 1. Primary reading | Body prose, essays, explanations | Jost | interpretation, narrative voice |
 | 2. Structural / conceptual | Titles, section headings, framing concepts | Space Grotesk | conceptual framing, geometric modernism |
 | 3. Citation / scholarly | Quotations, scripture, citations, epigraphs | IBM Plex Serif | source material, documentary gravitas |
-| 4. Technical / metadata | Badges, timestamps, IDs, taxonomies | IBM Plex Mono | systemization, machine mediation, archival cataloguing |
+| 4. Technical / metadata | Badges, timestamps, IDs, taxonomies | iA Writer Quattro | systemization, archival cataloguing — warmer / more editorial than a developer-terminal mono |
 
 The semantic intent is what matters, not the font name.
 Readers subconsciously learn the mapping:
@@ -24,7 +24,7 @@ Readers subconsciously learn the mapping:
 - **sans (Jost)** → "this is interpretation"
 - **grotesk display (Space Grotesk)** → "this is framing"
 - **serif (Plex Serif)** → "this is source material"
-- **mono (Plex Mono)** → "this is system / meta"
+- **mono (iA Writer Quattro)** → "this is system / meta"
 
 That mapping is the project's cognitive navigation.
 Mixing layers arbitrarily — body in mono, scripture in sans, metadata
@@ -82,9 +82,6 @@ Why a serif here, and why this serif:
   those directions and are explicitly avoided.
 - **Pairs cleanly with Space Grotesk** — both come from the
   geometric-modernist family of the early 21st century.
-- **Pairs cleanly with IBM Plex Mono** — same designer (Mike Abbink),
-  same metrics, same project. Headings, citations, and metadata feel
-  like one system.
 
 Multiscript fallback: **Noto Serif** family for non-Latin scripts
 (Noto Serif SC / TC / JP / KR / Hebrew / Greek). This preserves the
@@ -113,30 +110,38 @@ Use for:
 - glossary IDs and hover annotations
 - code samples and inline `<code>` / `<pre>`
 
-Latin target: **IBM Plex Mono**.
+Latin: **iA Writer Quattro** (the duospace `iAWriterQuattroS`).
 
-Why a mono here:
+Why this mono, deliberately not IBM Plex Mono:
 
 - The project catalogues things — books, references, ages,
-  precessional positions, codes. Monospace says "this is a record in
-  a system."
-- Plex Mono in particular carries an "archival computing" feel —
-  research instrumentation, not VS Code. The aesthetic the user wants
-  is closer to a NASA mission log than a developer terminal.
-- It anchors the entire family — Plex Serif (layer 3) and Plex Mono
-  (layer 4) reinforce each other.
+  precessional positions, codes. A monospaced face says "this is
+  a record in a system."
+- Plex Mono was the obvious "system anchor" pick (same designer
+  / metrics as Plex Serif), but it reads as technical instrumentation
+  — closer to a developer terminal than to an editorial archive.
+  Quattro's slight warmth — a duospace, not a strict mono — fits
+  this project better. The site already runs on the warm side
+  (Jost body, italic Plex Serif citations, accent-gradient
+  hairlines), and a colder Plex Mono fights that.
+- Quattro pairs well with Jost: both have humanist warmth and a
+  similar x-height profile. Reading from body sans into a mono pill
+  on the same page doesn't feel like crossing into a different
+  tooling layer — which is exactly the contrast we don't want for
+  metadata that lives *alongside* prose.
 
 What to **avoid** in this layer:
 
 - Overly programmer-centric monospace (Fira Code with ligatures,
   Cascadia, JetBrains Mono with high contrast). They tip the page
   toward "developer dashboard."
-- Slab-mono / duospace fonts like iA Writer Quattro for metadata.
-  Those are warm and editorial — good for body, wrong for archival
-  pills.
 
-Multiscript fallback: **Sarasa Mono** (CJK-aware, harmonizes
-with Plex Mono), then **Noto Sans Mono** as the universal safety net.
+Multiscript fallback: the `$font-family-mono` stack drops into
+system CJK gothic faces (Hiragino, Yu Gothic, PingFang, Microsoft
+YaHei, Noto Sans JP/SC) for any monospaced metadata that contains
+CJK glyphs — there's no widely-deployed "duospace" CJK face that
+preserves Quattro's tone, so we lean on the system gothic stack
+rather than force a visual mismatch.
 
 ## Per-script overrides
 
@@ -192,7 +197,7 @@ scripts and trying to force it makes everything look mediocre.
 | `$font-family-body` (alias of `$font-family-sans`) | 1 | Body prose, Jost |
 | `$font-family-lead` (alias of `$font-family-serif`) | 2 | Display/headlines. Name "serif" is historical; the actual font is Space Grotesk (sans). |
 | `$font-family-citation` | 3 | IBM Plex Serif → CJK serifs → Hebrew / Greek serifs → system serif |
-| `$font-family-tech` (alias of `$font-family-mono`) | 4 | Currently iA Writer Quattro, target IBM Plex Mono |
+| `$font-family-tech` (alias of `$font-family-mono`) | 4 | iA Writer Quattro (`iAWriterQuattroS`) |
 
 CSS custom properties (`var(--font-family-lead)` etc.) are set in
 `sass/themes/_init.scss` and resolved per `:lang(...)`. Prefer the
@@ -209,12 +214,12 @@ CSS variables in component SCSS so per-lang switches propagate.
   `unicode-range`. Consumers (`var(--font-family-citation)`) live in
   `_wiki-shortcodes.scss`, `_wiki-quotes.scss`, and `_wiki.scss` today;
   more surfaces will follow (see "Where layer 3 should land" below).
-- ⚠ Layer 4 (technical mono) — present but using iA Writer Quattro.
-  The face is competent and readable, but its warm/editorial tone
-  blurs the boundary between "metadata" (layer 4) and "body" (layer 1).
-  IBM Plex Mono woff2 is already self-hosted in
-  `static/fonts/vendor/ibm-plex-mono/` but not yet wired into the
-  `$font-family-mono` stack — that's the next step.
+- ✅ Layer 4 (iA Writer Quattro mono) — in place. The duospace warmth
+  is deliberate (see "Layer 4" above for the reasoning); the project
+  doesn't want a cold developer-terminal feel for its metadata pills.
+  IBM Plex Mono woff2 is sitting unused in
+  `static/fonts/vendor/ibm-plex-mono/` from an earlier evaluation
+  and can be removed in a separate cleanup commit.
 
 ## Layer 3 surfaces — current state
 
