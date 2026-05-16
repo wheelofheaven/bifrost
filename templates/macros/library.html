@@ -9,6 +9,26 @@
     {%- endif -%}
 {% endmacro %}
 
+{# Macro to get the subtitle of a book in the current language.
+   Returns empty string if no subtitles dict or no usable entry. #}
+{% macro get_book_subtitle(book_data, lang) %}
+    {%- if book_data.subtitles and book_data.subtitles[lang] -%}
+        {{ book_data.subtitles[lang] }}
+    {%- elif book_data.subtitles and book_data.subtitles.en -%}
+        {{ book_data.subtitles.en }}
+    {%- endif -%}
+{% endmacro %}
+
+{# Macro to get the description of a book in the current language.
+   Returns empty string if no descriptions dict or no usable entry. #}
+{% macro get_book_description(book_data, lang) %}
+    {%- if book_data.descriptions and book_data.descriptions[lang] -%}
+        {{ book_data.descriptions[lang] }}
+    {%- elif book_data.descriptions and book_data.descriptions.en -%}
+        {{ book_data.descriptions.en }}
+    {%- endif -%}
+{% endmacro %}
+
 {# Macro to get the text of a paragraph in the specified language #}
 {% macro get_paragraph_text(paragraph, lang) %}
     {%- if paragraph.i18n and paragraph.i18n[lang] -%}

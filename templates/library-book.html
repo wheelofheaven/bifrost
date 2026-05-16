@@ -31,6 +31,8 @@
 
 {# Pre-resolve a few values to keep the template body tidy. #}
 {% set book_title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
+{% set book_subtitle = library_macros::get_book_subtitle(book_data=book_data, lang=detected_lang) | trim %}
+{% set book_description = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
 {% set original_lang = book_data.originalLang | default(value=book_data.primaryLang) %}
 {% set original_title_differs = original_lang != detected_lang and book_data.titles and book_data.titles[original_lang] %}
 
@@ -64,17 +66,20 @@
         <div class="library-book__main">
             <article class="library-book__article" role="article" aria-labelledby="book-title">
 
-                <!-- Page Header (title + claim badge), mirroring wiki-page layout. -->
+                <!-- Page Header (title + subtitle + claim badge), mirroring wiki-page layout. -->
                 <header class="library-book__page-header">
                     <h1 class="library-book__title" id="book-title">{{ book_title }}</h1>
+                    {% if book_subtitle %}
+                    <p class="library-book__subtitle">{{ book_subtitle }}</p>
+                    {% endif %}
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </header>
 
-                {# Lede paragraph — same treatment as wiki entries. Uses the
-                   book description if present. #}
-                {% if book_data.description %}
+                {# Lede paragraph — localized description from _meta.json. Always
+                   rendered in main body, never collapsed. #}
+                {% if book_description %}
                 <div class="library-book__lede" data-ai-summary="true">
-                    <p>{{ book_data.description }}</p>
+                    <p>{{ book_description }}</p>
                 </div>
                 {% endif %}
 

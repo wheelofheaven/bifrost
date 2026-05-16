@@ -3291,6 +3291,23 @@
         }
     }
 
+    // Subtitle — localized, rendered below the title. Slightly lighter
+    // weight and color than the title, but heavier than the lede.
+    &__subtitle {
+        margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: 1.25rem;
+        font-weight: 400;
+        font-style: italic;
+        color: var(--color-text-muted);
+        line-height: 1.3;
+        word-wrap: break-word;
+
+        @media (max-width: 900px) {
+            font-size: 1.0625rem;
+        }
+    }
+
     // Lede paragraph — same treatment as .wiki__lede
     &__lede {
         margin: 0 0 1.5rem;
