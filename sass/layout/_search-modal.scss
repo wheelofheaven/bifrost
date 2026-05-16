@@ -297,13 +297,13 @@
 
         // Smaller font on mobile
         @media (max-width: 999px) {
-            font-size: 0.65rem;
+            font-size: 0.75rem;
         }
     }
 
     &__section {
         font-family: typo.$font-family-tech;
-        font-size: 0.7rem;
+        font-size: 0.75rem;
         font-weight: 500;
         color: var(--color-accent-primary);
         background-color: rgba(var(--color-accent-primary), 0.1);
@@ -776,7 +776,7 @@
 
     &__section {
         font-family: typo.$font-family-tech;
-        font-size: 0.65rem;
+        font-size: 0.75rem;
         font-weight: 600;
         color: var(--color-accent-primary);
         background: rgba(102, 126, 234, 0.1);

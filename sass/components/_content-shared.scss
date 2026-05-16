@@ -153,11 +153,15 @@
         }
     }
 
+    // Inline code — iA Writer Quattro (mono) reads ~5-10% smaller per
+    // em than the surrounding Jost sans, so we hold inline code at
+    // 0.95em rather than the more typical 0.875em-0.9em so it doesn't
+    // visually shrink against body text.
     code {
         background: var(--color-background-tertiary);
         padding: 0.2rem 0.4rem;
         border-radius: 4px;
-        font-size: 0.9em;
+        font-size: 0.95em;
     }
 
     pre {
@@ -166,10 +170,13 @@
         border-radius: 8px;
         overflow-x: auto;
         margin: 1.5rem 0;
+        font-size: 0.9375rem;
+        line-height: 1.6;
 
         code {
             background: none;
             padding: 0;
+            font-size: inherit;
         }
     }
 
@@ -395,7 +402,8 @@
         border-radius: 8px;
         background: var(--color-background);
         color: var(--color-text-primary);
-        font-size: 0.9rem;
+        // 1rem ≥ 16px keeps iOS Safari from auto-zooming on focus.
+        font-size: 1rem;
         transition: all 0.2s ease;
 
         &:focus {

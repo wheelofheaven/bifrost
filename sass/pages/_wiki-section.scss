@@ -76,7 +76,8 @@
         background: var(--color-background-secondary);
         color: var(--color-text);
         font-family: var(--font-family-body);
-        font-size: 0.9rem;
+        // 1rem ≥ 16px keeps iOS Safari from auto-zooming on focus.
+        font-size: 1rem;
         transition: all 0.2s ease;
 
         &::placeholder {
@@ -786,7 +787,8 @@
         background: var(--color-background-secondary);
         color: var(--color-text);
         font-family: var(--font-family-body);
-        font-size: 0.875rem;
+        // 1rem ≥ 16px keeps iOS Safari from auto-zooming on focus.
+        font-size: 1rem;
         transition: all 0.2s ease;
 
         &::placeholder {

@@ -892,7 +892,8 @@ body.mobile-nav-open {
                 background-color: var(--color-input-bg);
                 border-radius: 0.5rem;
                 color: var(--color-text);
-                font-size: 0.9rem;
+                // 1rem ≥ 16px keeps iOS Safari from auto-zooming on focus.
+                font-size: 1rem;
                 font-family: inherit;
                 opacity: 0;
                 pointer-events: none;
