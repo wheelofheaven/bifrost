@@ -256,7 +256,12 @@
                 if (navbarSearchInput) {
                     document.querySelectorAll("[data-search-toggle]").forEach((btn) => {
                         btn.addEventListener("click", () => {
-                            navbarSearchInput.focus();
+                            // `preventScroll` keeps the page anchored
+                            // where the user was — without it, focusing
+                            // the initially zero-sized hidden input
+                            // scrolls the viewport to the top to "bring
+                            // it into view".
+                            navbarSearchInput.focus({ preventScroll: true });
                         });
                     });
                 }

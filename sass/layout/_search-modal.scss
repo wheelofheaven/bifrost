@@ -381,6 +381,28 @@
     line-height: normal;
 }
 
+// Page-blur overlay. Sits between page content and the navbar so the
+// blur reads visually identical to the old `filter: blur()` on <main>
+// — but without making <main> a containing block for its fixed
+// descendants (which broke the landing hero's `.landing-section__media`,
+// re-anchoring it to main's box and zooming the cover crop into the
+// top-left). Z-index intentionally below the navbar (50) and modal
+// (60) so both stay sharp.
+.search-modal-blur {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    pointer-events: none;
+    backdrop-filter: blur(0);
+    -webkit-backdrop-filter: blur(0);
+    transition: backdrop-filter 0.3s ease, -webkit-backdrop-filter 0.3s ease;
+}
+
+.search-modal-open .search-modal-blur {
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+}
+
 // Body class when modal is open. The modal owns the page; the navbar
 // recedes. We dim *and* disable pointer events on the navbar so that
 // even if a navbar child (e.g. the CTA, which uses backdrop-filter
