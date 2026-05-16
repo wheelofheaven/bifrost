@@ -17,6 +17,18 @@ body {
 }
 
 html {
+    // Rebase the rem unit from the 16px browser default to 17px (106.25%).
+    // Our body font is Jost — a geometric sans with a smaller x-height
+    // than the system fonts that Wikipedia, Substack, and Medium fall
+    // back to. At nominally identical sizes our text *looks* ~15-20%
+    // smaller because the brain reads x-height, not em-square. Bumping
+    // the root by one notch brings our perceived size in line with those
+    // peers without invalidating the spacing scale (everything in rem
+    // scales together, hairlines in px stay 1px). Percentages respect
+    // users who've raised their browser default, so accessibility
+    // preferences continue to compound on top.
+    font-size: 106.25%;
+
     // Offset for the fixed navbar (~5rem tall, sitting at top: 0.5rem) so
     // fragment navigation (#anchor) doesn't land content under the navbar.
     // Landing/timeline overview override this in _home.scss.

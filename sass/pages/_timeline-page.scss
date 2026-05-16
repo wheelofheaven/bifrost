@@ -149,8 +149,8 @@
 
         p {
             margin: 0;
-            font-size: 0.9375rem;
-            line-height: 1.65;
+            font-size: 1rem;
+            line-height: 1.7;
         }
     }
 
@@ -491,7 +491,7 @@
             background: var(--color-surface);
             border-radius: 0 vars.$border-radius-sm vars.$border-radius-sm 0;
             font-family: var(--font-family-citation);
-            font-size: 1.0625rem;
+            font-size: 1.125rem;
             line-height: 1.7;
             font-style: italic;
             color: var(--color-text-muted);

@@ -188,6 +188,46 @@ The goal of the multiscript stack is *tonal consistency of role*
 not *visual identity of glyph shape*. The latter is impossible across
 scripts and trying to force it makes everything look mediocre.
 
+## Base size — why 17px, not 16px
+
+The root font-size is set to `106.25%` in `_reset.scss`, which rebases
+the rem unit from the 16px browser default to **17px**. All sizing in
+the codebase is `rem`-based and scales with this root.
+
+The decision is driven by Jost itself. Jost is a humanist geometric
+sans in the Futura / Avenir / Spartan family. Like all geometric sans,
+it has a **notably smaller x-height** than the humanist system fonts
+(San Francisco, Segoe UI, Roboto, Arial) that sites like Wikipedia,
+Substack, and Medium fall back to in their body stacks. At literally
+identical pixel sizes:
+
+| Font | `x` height at 16px | Relative |
+|---|---|---|
+| Inter / SF Pro / Segoe UI | ~9px | 100% |
+| Jost | ~7-7.5px | ~80% |
+
+The brain reads x-height, not em-square. So 16px Jost reads like
+13-14px Inter would. Our pages with a 16px body looked ~15-20%
+smaller than peer reading sites at the same nominal size.
+
+The 106.25% root rebase brings perceived body size into line with
+those peers without changing any component sizes, while keeping
+spacing scaled proportionally (everything in rem grows together) and
+preserving hairlines (pixel-defined borders stay 1px crisp). Users
+who've raised their browser default font-size still get proportional
+scaling on top — the percentage compounds rather than overrides.
+
+If you find yourself wanting to bump a single component's text-size
+because it "feels small," check x-height first:
+- the body font is Jost (small x-height)
+- the citation/quote font is IBM Plex Serif (also slightly smaller
+  x-height than the surrounding Jost)
+Citations and quotes therefore sit at `1.0625rem` – `1.125rem` rather
+than `1rem` — they need a small bump to read at visual parity (or
+slightly above) the body, even though they're nominally the same
+text. See the sizes listed in "Layer 3 surfaces — current state"
+below for the per-component values.
+
 ## Token names in SCSS
 
 `sass/base/_typography.scss` exposes these SCSS variables:
