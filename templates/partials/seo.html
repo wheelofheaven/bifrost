@@ -5,14 +5,35 @@
         (rendered by data-images/og/scripts/generate_og.py, deployed via
          sync_og_to_cdn.py to assets.wheelofheaven.io)
      3. section.extra.image (section-level override)
-     4. brand fallback #}
+     4. brand fallback
+
+   Zola's page.components includes the language prefix for non-default
+   languages, so we strip it before reading section/slug. Top-level pages
+   (no section dir) map to section="section" matching the manifest layout. #}
 {% set _og_lang = detected_lang | default(value="en") %}
 {% if page %}
-    {% set _og_section = page.components | first | default(value="default") %}
-    {% set _og_slug = page.slug %}
+    {% set _og_comps = page.components %}
+    {% if _og_comps | length > 0 and _og_comps | first == _og_lang %}
+        {% set _og_comps = _og_comps | slice(start=1) %}
+    {% endif %}
+    {% if _og_comps | length > 1 %}
+        {% set _og_section = _og_comps | first %}
+        {% set _og_slug = page.slug %}
+    {% elif _og_comps | length == 1 %}
+        {# Top-level page (e.g. /about/, /faq/) — rendered under section/. #}
+        {% set _og_section = "section" %}
+        {% set _og_slug = _og_comps | first %}
+    {% else %}
+        {% set _og_section = "default" %}
+        {% set _og_slug = "index" %}
+    {% endif %}
 {% elif section %}
-    {% if section.components | length > 0 %}
-        {% set _og_section = section.components | first %}
+    {% set _og_comps = section.components %}
+    {% if _og_comps | length > 0 and _og_comps | first == _og_lang %}
+        {% set _og_comps = _og_comps | slice(start=1) %}
+    {% endif %}
+    {% if _og_comps | length > 0 %}
+        {% set _og_section = _og_comps | first %}
     {% else %}
         {% set _og_section = "default" %}
     {% endif %}
