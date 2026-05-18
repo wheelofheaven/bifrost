@@ -3,6 +3,7 @@
 // BEM-based styling for wiki section pages with card grid layout
 
 @use "../abstracts/variables" as vars;
+@use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
 // Minimal Wiki Header
@@ -558,6 +559,44 @@
         white-space: nowrap;
     }
 
+    // Version / translation label — used for library cards where two
+    // editions of the same canonical text appear in the listing
+    // (Genesis ASV vs Genesis WoH, etc). Sits below the title in
+    // small-caps mono, same register as the page-header version label.
+    &__version {
+        margin: -0.25rem 0 0.5rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.7rem;
+        font-weight: 500;
+        letter-spacing: 0.06em;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        line-height: 1.3;
+    }
+
+    // Wheel-of-Heaven mark rendered next to a preferred-edition card's
+    // title — wraps the shared brand logomark partial. Used in the
+    // library listing alongside the rainbow left stroke
+    // (`.wiki-card--preferred`).
+    &__preferred-mark {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        top: -0.05em;
+        margin-left: 0.45rem;
+        width: 16px;
+        height: 16px;
+        color: var(--color-text);
+        transition: transform 0.25s ease;
+        line-height: 0;
+
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+    }
+
     &__summary {
         margin-bottom: 1.5rem;
         font-size: 0.95rem;
@@ -630,6 +669,50 @@
 
         .wiki-card__read-link:hover & {
             transform: translateX(2px);
+        }
+    }
+}
+
+// Preferred-edition modifier — used on /library/ to mark in-house
+// Wheel of Heaven translations as the recommended primary edition
+// in a listing that contains multiple versions of the same canonical
+// text. Bifrost rainbow stripe on the left edge + sparkle next to
+// the title; lifts to full intensity on hover.
+.wiki-card--preferred {
+    padding-left: 1rem;
+
+    &::before {
+        content: "";
+        position: absolute;
+        top: 1.5rem;
+        bottom: 1.5rem;
+        left: 0;
+        width: 3px;
+        border-radius: 2px;
+        background: linear-gradient(
+            to bottom,
+            colors.$yellow-500 0%,
+            colors.$pink-500 18%,
+            colors.$lavender-500 34%,
+            colors.$blue-500 52%,
+            colors.$cyan-500 70%,
+            colors.$mint-500 86%,
+            colors.$green-500 100%
+        );
+        opacity: 0.85;
+        transition: opacity 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    &:hover {
+        padding-left: 1.5rem;
+
+        &::before {
+            opacity: 1;
+            box-shadow: 0 0 12px 0 rgba(216, 139, 201, 0.35);
+        }
+
+        .wiki-card__preferred-mark {
+            transform: scale(1.12);
         }
     }
 }

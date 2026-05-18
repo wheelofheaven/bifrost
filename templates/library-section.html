@@ -107,96 +107,138 @@
 
         <!-- Books grouped by tradition. Within each tradition the books
              render as wiki-cards in the same flat grid used on /wiki/.
-             Tradition sections are shown/hidden by the filter dropdown. -->
+             Tradition sections are shown/hidden by the filter dropdown,
+             and each tradition is a collapsible <details> with state
+             persisted to localStorage. -->
         <div class="wiki-section__pages" id="library-books">
             {% for tradition in catalog.traditions %}
-                {% set complete_count = catalog.books | filter(attribute="tradition", value=tradition.id) | filter(attribute="status", value="complete") | length %}
-                {% set partial_count = catalog.books | filter(attribute="tradition", value=tradition.id) | filter(attribute="status", value="partial") | length %}
+                {% set tradition_all = catalog.books | filter(attribute="tradition", value=tradition.id) %}
+                {% set complete_count = tradition_all | filter(attribute="status", value="complete") | length %}
+                {% set partial_count = tradition_all | filter(attribute="status", value="partial") | length %}
                 {% if complete_count + partial_count > 0 %}
+
+                {# Per-tradition ordering:
+                   • raelian  → chronological by publicationYear (TBWTT first)
+                   • biblical → WoH (in-house) editions pinned to top, others alphabetical
+                   • others   → alphabetical by slug #}
+                {% if tradition.id == "raelian" %}
+                    {% set ordered_books = tradition_all | sort(attribute="publicationYear") %}
+                {% elif tradition.id == "biblical" %}
+                    {% set preferred_books = tradition_all | filter(attribute="collection", value="woh-translations") | sort(attribute="slug") %}
+                    {% set tradition_sorted = tradition_all | sort(attribute="slug") %}
+                    {# set_global is required so the accumulator survives the inner-for scope #}
+                    {% set_global rest_books = [] %}
+                    {% for b in tradition_sorted %}
+                        {% if not b.collection or b.collection != "woh-translations" %}
+                            {% set_global rest_books = rest_books | concat(with=b) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% set ordered_books = preferred_books | concat(with=rest_books) %}
+                {% else %}
+                    {% set ordered_books = tradition_all | sort(attribute="slug") %}
+                {% endif %}
+
                 <section class="category-group" data-tradition="{{ tradition.id }}">
-                    <header class="category-group__header">
-                        <h2 class="category-group__title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h2>
-                        {% if tradition.description %}
-                        <p class="category-group__description">{{ tradition.description[detected_lang] | default(value=tradition.description.en) }}</p>
-                        {% endif %}
-                    </header>
+                    <details class="category-group__details" data-tradition="{{ tradition.id }}" open>
+                        <summary class="category-group__summary">
+                            <div class="category-group__header">
+                                <h2 class="category-group__title">
+                                    <span class="category-group__title-text">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</span>
+                                    <span class="category-group__count">{{ complete_count + partial_count }}</span>
+                                    <svg class="category-group__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </h2>
+                                {% if tradition.description %}
+                                <p class="category-group__description">{{ tradition.description[detected_lang] | default(value=tradition.description.en) }}</p>
+                                {% endif %}
+                            </div>
+                        </summary>
 
-                    <div class="wiki-section__grid" data-view="grid">
-                        {% for book_entry in sorted_catalog %}
-                        {% if book_entry.tradition == tradition.id and (book_entry.status == "complete" or book_entry.status == "partial") %}
+                        <div class="wiki-section__grid" data-view="grid">
+                            {% for book_entry in ordered_books %}
+                            {% if book_entry.status == "complete" or book_entry.status == "partial" %}
 
-                            {# Try split format first, fall back to single file. #}
-                            {% set book_meta = load_data(path="data/library/" ~ book_entry.slug ~ "/_meta.json", required=false) %}
-                            {% set_global first_chapter = false %}
-                            {% set_global book_data = false %}
-                            {% if book_meta %}
-                                {% set_global book_data = book_meta %}
-                                {% set_global first_chapter = load_data(path="data/library/" ~ book_entry.slug ~ "/chapter-1.json", required=false) %}
-                            {% else %}
-                                {% set_global book_data = load_data(path="data/library/" ~ book_entry.slug ~ ".json", required=false) %}
-                                {% if book_data and book_data.chapters %}
-                                    {% set_global first_chapter = book_data.chapters | first %}
+                                {# Try split format first, fall back to single file. #}
+                                {% set book_meta = load_data(path="data/library/" ~ book_entry.slug ~ "/_meta.json", required=false) %}
+                                {% set_global first_chapter = false %}
+                                {% set_global book_data = false %}
+                                {% if book_meta %}
+                                    {% set_global book_data = book_meta %}
+                                    {% set_global first_chapter = load_data(path="data/library/" ~ book_entry.slug ~ "/chapter-1.json", required=false) %}
+                                {% else %}
+                                    {% set_global book_data = load_data(path="data/library/" ~ book_entry.slug ~ ".json", required=false) %}
+                                    {% if book_data and book_data.chapters %}
+                                        {% set_global first_chapter = book_data.chapters | first %}
+                                    {% endif %}
+                                {% endif %}
+
+                                {% if book_data %}
+                                {% set title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
+                                {% set tradition_name = tradition.name[detected_lang] | default(value=tradition.name.en) %}
+                                {% set is_preferred = book_entry.collection is defined and book_entry.collection == "woh-translations" %}
+
+                                <article class="wiki-card{% if is_preferred %} wiki-card--preferred{% endif %}"
+                                         data-title="{{ title | lower }}"
+                                         data-tradition="{{ book_entry.tradition }}"
+                                         data-tradition-name="{{ tradition_name | lower }}"
+                                         data-code="{{ book_entry.code | lower }}"
+                                         data-year="{{ book_entry.publicationYear | default(value='') }}"
+                                         data-tags="{{ book_entry.tags | join(sep=',') | lower }}"
+                                         {% if is_preferred %}data-preferred="true"{% endif %}>
+
+                                    <div class="wiki-card__header">
+                                        <h3 class="wiki-card__title">
+                                            <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}" class="wiki-card__link">{{ title }}{% if is_preferred %}<span class="wiki-card__preferred-mark" role="img" aria-label="Wheel of Heaven preferred edition" title="Wheel of Heaven preferred edition">{% include "partials/brand/logomark.html" %}</span>{% endif %}</a>
+                                        </h3>
+                                        {% if book_entry.code %}
+                                        <span class="wiki-card__category">{{ book_entry.code }}</span>
+                                        {% endif %}
+                                    </div>
+
+                                    {% set card_version = library_macros::get_book_short_version_title(book_data=book_data, lang=detected_lang) | trim %}
+                                    {% if card_version %}
+                                    <div class="wiki-card__version" aria-label="Translation / edition">{{ card_version }}</div>
+                                    {% endif %}
+
+                                    {% if first_chapter and first_chapter.paragraphs and first_chapter.paragraphs[0] %}
+                                    <div class="wiki-card__summary">
+                                        {{ library_macros::get_paragraph_text(paragraph=first_chapter.paragraphs[0], lang=detected_lang) | truncate(length=400) }}
+                                    </div>
+                                    {% endif %}
+
+                                    {% if book_entry.availableLangs %}
+                                    <div class="wiki-card__alternatives">
+                                        <span class="wiki-card__alternatives-label">{{ trans(key="libraryLanguages", lang=detected_lang) }}</span>
+                                        {% for lang_code in book_entry.availableLangs | slice(end=6) %}
+                                        <span class="wiki-card__alternative-name">{{ lang_code | upper }}</span>{% if not loop.last %}, {% endif %}
+                                        {% endfor %}
+                                        {% if book_entry.availableLangs | length > 6 %}
+                                        <span class="wiki-card__alternatives-more">+{{ book_entry.availableLangs | length - 6 }} {{ trans(key="wikiCardMore", lang=detected_lang) }}</span>
+                                        {% endif %}
+                                    </div>
+                                    {% endif %}
+
+                                    <div class="wiki-card__meta">
+                                        <span class="wiki-card__date">
+                                            {{ book_entry.chapters }} {{ trans(key="libraryChAbbrev", lang=detected_lang) }} · {{ book_entry.paragraphs }} ¶{% if book_entry.publicationYear %} · {{ book_entry.publicationYear }}{% endif %}{% if book_entry.status == "partial" %} · {{ trans(key="libraryStatusInProgress", lang=detected_lang) }}{% endif %}
+                                        </span>
+                                        <span class="wiki-card__read-more">
+                                            <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}" class="wiki-card__read-link">
+                                                {{ trans(key="libraryStartReading", lang=detected_lang) }}
+                                                <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                                    <path d="M5 12h14"></path>
+                                                    <path d="M12 5l7 7-7 7"></path>
+                                                </svg>
+                                            </a>
+                                        </span>
+                                    </div>
+                                </article>
                                 {% endif %}
                             {% endif %}
-
-                            {% if book_data %}
-                            {% set title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
-                            {% set tradition_name = tradition.name[detected_lang] | default(value=tradition.name.en) %}
-
-                            <article class="wiki-card"
-                                     data-title="{{ title | lower }}"
-                                     data-tradition="{{ book_entry.tradition }}"
-                                     data-tradition-name="{{ tradition_name | lower }}"
-                                     data-code="{{ book_entry.code | lower }}"
-                                     data-year="{{ book_entry.publicationYear | default(value='') }}"
-                                     data-tags="{{ book_entry.tags | join(sep=',') | lower }}">
-
-                                <div class="wiki-card__header">
-                                    <h3 class="wiki-card__title">
-                                        <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}" class="wiki-card__link">{{ title }}</a>
-                                    </h3>
-                                    {% if book_entry.code %}
-                                    <span class="wiki-card__category">{{ book_entry.code }}</span>
-                                    {% endif %}
-                                </div>
-
-                                {% if first_chapter and first_chapter.paragraphs and first_chapter.paragraphs[0] %}
-                                <div class="wiki-card__summary">
-                                    {{ library_macros::get_paragraph_text(paragraph=first_chapter.paragraphs[0], lang=detected_lang) | truncate(length=400) }}
-                                </div>
-                                {% endif %}
-
-                                {% if book_entry.availableLangs %}
-                                <div class="wiki-card__alternatives">
-                                    <span class="wiki-card__alternatives-label">{{ trans(key="libraryLanguages", lang=detected_lang) }}</span>
-                                    {% for lang_code in book_entry.availableLangs | slice(end=6) %}
-                                    <span class="wiki-card__alternative-name">{{ lang_code | upper }}</span>{% if not loop.last %}, {% endif %}
-                                    {% endfor %}
-                                    {% if book_entry.availableLangs | length > 6 %}
-                                    <span class="wiki-card__alternatives-more">+{{ book_entry.availableLangs | length - 6 }} {{ trans(key="wikiCardMore", lang=detected_lang) }}</span>
-                                    {% endif %}
-                                </div>
-                                {% endif %}
-
-                                <div class="wiki-card__meta">
-                                    <span class="wiki-card__date">
-                                        {{ book_entry.chapters }} {{ trans(key="libraryChAbbrev", lang=detected_lang) }} · {{ book_entry.paragraphs }} ¶{% if book_entry.publicationYear %} · {{ book_entry.publicationYear }}{% endif %}{% if book_entry.status == "partial" %} · {{ trans(key="libraryStatusInProgress", lang=detected_lang) }}{% endif %}
-                                    </span>
-                                    <span class="wiki-card__read-more">
-                                        <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}" class="wiki-card__read-link">
-                                            {{ trans(key="libraryStartReading", lang=detected_lang) }}
-                                            <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                                <path d="M5 12h14"></path>
-                                                <path d="M12 5l7 7-7 7"></path>
-                                            </svg>
-                                        </a>
-                                    </span>
-                                </div>
-                            </article>
-                            {% endif %}
-                        {% endif %}
-                        {% endfor %}
-                    </div>
+                            {% endfor %}
+                        </div>
+                    </details>
                 </section>
                 {% endif %}
             {% endfor %}
@@ -300,8 +342,30 @@ document.addEventListener('DOMContentLoaded', function() {
     const noResults = document.getElementById('library-no-results');
     const books = Array.from(document.querySelectorAll('#library-books .wiki-card'));
     const traditionGroups = Array.from(document.querySelectorAll('.category-group'));
+    const groupDetails = Array.from(document.querySelectorAll('.category-group__details'));
     const grids = Array.from(document.querySelectorAll('#library-books .wiki-section__grid'));
     const randomBtn = document.getElementById('random-book-btn');
+
+    const STORAGE_KEY_PREFIX = 'woh.library.group.';
+
+    // Restore collapsed/expanded state from localStorage.
+    groupDetails.forEach(d => {
+        const id = d.dataset.tradition;
+        if (!id) return;
+        let stored = null;
+        try { stored = localStorage.getItem(STORAGE_KEY_PREFIX + id); } catch (e) {}
+        if (stored === 'closed') {
+            d.removeAttribute('open');
+        } else if (stored === 'open') {
+            d.setAttribute('open', '');
+        }
+        // Save on user-toggle.
+        d.addEventListener('toggle', () => {
+            try {
+                localStorage.setItem(STORAGE_KEY_PREFIX + id, d.open ? 'open' : 'closed');
+            } catch (e) {}
+        });
+    });
 
     // Random book
     if (randomBtn && books.length > 0) {
@@ -342,11 +406,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // Hide tradition groups with no visible books left.
+        const filtersActive = !!(searchTerm || selectedTradition);
+
+        // Hide tradition groups with no visible books left; auto-open
+        // any group that has matches while a filter is active so users
+        // can see the results without manually expanding.
         traditionGroups.forEach(group => {
             const hasVisible = Array.from(group.querySelectorAll('.wiki-card'))
                 .some(b => b.style.display !== 'none');
             group.style.display = hasVisible ? '' : 'none';
+
+            if (filtersActive && hasVisible) {
+                const details = group.querySelector('.category-group__details');
+                if (details && !details.open) details.setAttribute('open', '');
+            }
         });
 
         if (noResults) {
