@@ -19,8 +19,7 @@ const sectionLabel = (key) => (I18N.sectionLabels && I18N.sectionLabels[key]) ||
 
 // Section definitions with icons. Order matches the navbar IA:
 // Timeline, Newsroom, then the Knowledge group (Articles, Library,
-// Wiki, Resources — the `/sources/` section the navbar labels
-// "Resources").
+// Wiki, Sources).
 const SECTIONS = {
     Timeline: {
         icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -52,7 +51,7 @@ const SECTIONS = {
             <path d="M8 7h8"/><path d="M8 11h8"/><path d="M8 15h6"/>
         </svg>`
     },
-    Resources: {
+    Sources: {
         icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
             <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
@@ -140,17 +139,17 @@ function extractSection(url) {
     if (segments.length === 0) return "Home";
 
     const section = segments[0];
-    // URL-segment → SECTIONS key. The Knowledge group's "Resources"
+    // URL-segment → SECTIONS key. The Knowledge group's "Sources"
     // chip points at the `/sources/` content section — the URL was
     // renamed in the 2026-05 IA pass but the public label stayed as
-    // "Resources" in the navbar, and we mirror that here.
+    // "Sources" in the navbar, and we mirror that here.
     const sectionMap = {
         wiki: "Wiki",
         library: "Library",
         timeline: "Timeline",
         articles: "Articles",
         news: "Newsroom",
-        sources: "Resources"
+        sources: "Sources"
     };
 
     return sectionMap[section] || section.charAt(0).toUpperCase() + section.slice(1);
@@ -168,7 +167,7 @@ function extractUri(url) {
 
 // Get navigation links. Order and URLs mirror the current navbar IA:
 // Timeline + Newsroom as top-level, then the Knowledge dropdown
-// (Articles, Library, Wiki, Resources → /sources/).
+// (Articles, Library, Wiki, Sources).
 function getNavigationLinks() {
     const baseUrl = currentLanguage === "en" ? "" : `/${currentLanguage}`;
     return [
@@ -177,7 +176,7 @@ function getNavigationLinks() {
         { title: sectionLabel("Articles"), url: `${baseUrl}/articles/`, section: "Articles" },
         { title: sectionLabel("Library"), url: `${baseUrl}/library/`, section: "Library" },
         { title: sectionLabel("Wiki"), url: `${baseUrl}/wiki/`, section: "Wiki" },
-        { title: sectionLabel("Resources"), url: `${baseUrl}/sources/`, section: "Resources" }
+        { title: sectionLabel("Sources"), url: `${baseUrl}/sources/`, section: "Sources" }
     ];
 }
 
