@@ -1,0 +1,29 @@
+{# Exposes search-modal translations to JS. Read by static/js/search.js
+   via window.__searchI18n. Kept as a separate partial so the JSON blob
+   is easy to audit and doesn't bloat base.html. #}
+<script>
+window.__searchI18n = {
+    modalTitle: {{ trans(key="searchModalTitle", lang=detected_lang) | json_encode() | safe }},
+    closeHint: {{ trans(key="searchModalCloseHint", lang=detected_lang) | json_encode() | safe }},
+    closeLabel: {{ trans(key="searchModalCloseLabel", lang=detected_lang) | json_encode() | safe }},
+    filterLabel: {{ trans(key="searchFilterLabel", lang=detected_lang) | json_encode() | safe }},
+    filterClearAll: {{ trans(key="searchFilterClearAll", lang=detected_lang) | json_encode() | safe }},
+    recentLabel: {{ trans(key="searchRecentLabel", lang=detected_lang) | json_encode() | safe }},
+    recentClear: {{ trans(key="searchRecentClear", lang=detected_lang) | json_encode() | safe }},
+    popularLabel: {{ trans(key="searchPopularLabel", lang=detected_lang) | json_encode() | safe }},
+    browseTitle: {{ trans(key="searchBrowseTitle", lang=detected_lang) | json_encode() | safe }},
+    emptyTitle: {{ trans(key="searchEmptyTitle", lang=detected_lang) | json_encode() | safe }},
+    emptyBody: {{ trans(key="searchEmptyBody", lang=detected_lang) | json_encode() | safe }},
+    emptyBodyFiltered: {{ trans(key="searchEmptyBodyFiltered", lang=detected_lang) | json_encode() | safe }},
+    resultsForOne: {{ trans(key="searchResultsForOne", lang=detected_lang) | json_encode() | safe }},
+    resultsForMany: {{ trans(key="searchResultsForMany", lang=detected_lang) | json_encode() | safe }},
+    sectionLabels: {
+        Wiki: {{ trans(key="navbarWiki", lang=detected_lang) | json_encode() | safe }},
+        Timeline: {{ trans(key="navbarTimeline", lang=detected_lang) | json_encode() | safe }},
+        Newsroom: {{ trans(key="navbarNews", lang=detected_lang) | json_encode() | safe }},
+        Articles: {{ trans(key="navbarArticles", lang=detected_lang) | json_encode() | safe }},
+        Library: {{ trans(key="navbarLibrary", lang=detected_lang) | json_encode() | safe }},
+        Resources: {{ trans(key="navbarResourcesNav", lang=detected_lang) | json_encode() | safe }}
+    }
+};
+</script>
