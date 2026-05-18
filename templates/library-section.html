@@ -66,6 +66,18 @@
                     <option value="{{ tradition.id }}">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</option>
                     {% endfor %}
                 </select>
+
+                <!-- WoH curation toggle: filters the listing down to in-house
+                     Wheel of Heaven translations/editions (cards flagged with
+                     data-preferred="true"). -->
+                <button type="button"
+                        class="library-curation-toggle"
+                        id="library-curation-toggle"
+                        aria-pressed="false"
+                        title="Show only Wheel of Heaven editions">
+                    <span class="library-curation-toggle__icon" aria-hidden="true">{% include "partials/brand/logomark.html" %}</span>
+                    <span class="library-curation-toggle__label">Wheel of Heaven curation</span>
+                </button>
             </div>
 
             <div class="wiki-filters__right">
@@ -124,12 +136,12 @@
                 {% if tradition.id == "raelian" %}
                     {% set ordered_books = tradition_all | sort(attribute="publicationYear") %}
                 {% elif tradition.id == "biblical" %}
-                    {% set preferred_books = tradition_all | filter(attribute="collection", value="woh-translations") | sort(attribute="slug") %}
+                    {% set preferred_books = tradition_all | filter(attribute="wohCurated", value=true) | sort(attribute="slug") %}
                     {% set tradition_sorted = tradition_all | sort(attribute="slug") %}
                     {# set_global is required so the accumulator survives the inner-for scope #}
                     {% set_global rest_books = [] %}
                     {% for b in tradition_sorted %}
-                        {% if not b.collection or b.collection != "woh-translations" %}
+                        {% if not b.wohCurated | default(value=false) %}
                             {% set_global rest_books = rest_books | concat(with=b) %}
                         {% endif %}
                     {% endfor %}
@@ -176,7 +188,7 @@
                                 {% if book_data %}
                                 {% set title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
                                 {% set tradition_name = tradition.name[detected_lang] | default(value=tradition.name.en) %}
-                                {% set is_preferred = book_entry.collection is defined and book_entry.collection == "woh-translations" %}
+                                {% set is_preferred = book_entry.wohCurated | default(value=false) %}
 
                                 <article class="wiki-card{% if is_preferred %} wiki-card--preferred{% endif %}"
                                          data-title="{{ title | lower }}"
@@ -337,6 +349,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('library-search');
     const traditionFilter = document.getElementById('library-tradition-filter');
+    const curationToggle = document.getElementById('library-curation-toggle');
     const viewToggle = document.querySelectorAll('.wiki-view-toggle__btn');
     const booksContainer = document.getElementById('library-books');
     const noResults = document.getElementById('library-no-results');
@@ -381,6 +394,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function filterBooks() {
         const searchTerm = searchInput?.value.toLowerCase() || '';
         const selectedTradition = traditionFilter?.value || '';
+        const curationOnly = curationToggle?.getAttribute('aria-pressed') === 'true';
         let visibleCount = 0;
 
         books.forEach(book => {
@@ -389,6 +403,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const traditionName = book.dataset.traditionName || '';
             const code = book.dataset.code || '';
             const tags = book.dataset.tags || '';
+            const isPreferred = book.dataset.preferred === 'true';
 
             const matchesSearch = !searchTerm ||
                 title.includes(searchTerm) ||
@@ -397,8 +412,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 tags.includes(searchTerm);
 
             const matchesTradition = !selectedTradition || tradition === selectedTradition;
+            const matchesCuration = !curationOnly || isPreferred;
 
-            if (matchesSearch && matchesTradition) {
+            if (matchesSearch && matchesTradition && matchesCuration) {
                 book.style.display = '';
                 visibleCount++;
             } else {
@@ -406,7 +422,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        const filtersActive = !!(searchTerm || selectedTradition);
+        const filtersActive = !!(searchTerm || selectedTradition || curationOnly);
 
         // Hide tradition groups with no visible books left; auto-open
         // any group that has matches while a filter is active so users
@@ -436,6 +452,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     if (searchInput) searchInput.addEventListener('input', filterBooks);
     if (traditionFilter) traditionFilter.addEventListener('change', filterBooks);
+    if (curationToggle) {
+        curationToggle.addEventListener('click', () => {
+            const next = curationToggle.getAttribute('aria-pressed') !== 'true';
+            curationToggle.setAttribute('aria-pressed', String(next));
+            filterBooks();
+        });
+    }
     viewToggle.forEach(btn => btn.addEventListener('click', () => toggleView(btn.dataset.view)));
 });
 </script>
