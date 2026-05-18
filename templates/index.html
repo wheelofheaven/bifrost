@@ -261,7 +261,21 @@
     </section>
 
     {# §6 — How the Project Reads #}
-    <section id="section-6" class="landing-section landing-section--method" data-section="6">
+    <section id="section-6" class="landing-section landing-section--method landing-section--video" data-section="6">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                muted
+                loop
+                playsinline
+                preload="none"
+                poster="{{ config.extra.cdn_url }}/videos/landing/06-method-poster.webp"
+                onloadedmetadata="this.playbackRate = 0.5;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/landing/06-method.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner">
             <p class="landing-section__eyebrow">{{ trans(key="landingS6Eyebrow", lang=detected_lang) }}</p>
             <h2 class="landing-section__heading">
