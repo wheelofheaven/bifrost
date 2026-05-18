@@ -63,7 +63,21 @@
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:site_name" content="{{ config.title }}">
-<meta property="og:locale" content="{{ detected_lang | default(value='en') | replace(from="-", to="_") }}">
+{# Open Graph locale wants `language_TERRITORY`. Facebook silently accepts
+   bare language codes, but the spec wants region. Map each supported
+   locale to its primary territory. #}
+{% if detected_lang == "de" %}{% set og_locale = "de_DE" %}
+{% elif detected_lang == "fr" %}{% set og_locale = "fr_FR" %}
+{% elif detected_lang == "es" %}{% set og_locale = "es_ES" %}
+{% elif detected_lang == "ru" %}{% set og_locale = "ru_RU" %}
+{% elif detected_lang == "ja" %}{% set og_locale = "ja_JP" %}
+{% elif detected_lang == "zh" %}{% set og_locale = "zh_CN" %}
+{% elif detected_lang == "zh-Hant" %}{% set og_locale = "zh_TW" %}
+{% elif detected_lang == "ko" %}{% set og_locale = "ko_KR" %}
+{% elif detected_lang == "he" %}{% set og_locale = "he_IL" %}
+{% else %}{% set og_locale = "en_US" %}
+{% endif %}
+<meta property="og:locale" content="{{ og_locale }}">
 {% if page and page.date %}
 <meta property="article:published_time" content="{{ page.date | date(format="%Y-%m-%dT%H:%M:%S") }}+00:00">
 {% endif %}

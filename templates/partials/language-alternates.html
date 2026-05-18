@@ -36,8 +36,20 @@
             {% if translation %}
         <link rel="alternate" hreflang="{{ lang_code }}" href="{{ translation.permalink }}">
             {% else %}
-                {# Fallback: construct URL for sections that exist in all languages #}
-        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path=section.path, lang=lang_code) }}">
+                {# Fallback: construct URL for sections that exist in all
+                   languages. Two pre-existing quirks to work around:
+                   (1) `section.path` starts with `/` and `get_url(lang=...)`
+                       also prepends a slash, so naive concatenation produces
+                       `/ko//wiki/`.
+                   (2) `section.path` on a non-English section already
+                       includes the locale prefix (`/de/wiki/`), so without
+                       stripping we get `/ko//de/wiki/`.
+                   Split on `/`, drop the leading empty segment plus the
+                   current-locale segment if any, then rejoin. #}
+                {% if detected_lang == "en" %}{% set_global skip_n = 1 %}{% else %}{% set_global skip_n = 2 %}{% endif %}
+                {% set segments = section.path | split(pat="/") | slice(start=skip_n) %}
+                {% set raw_path = segments | join(sep="/") %}
+        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path=raw_path, lang=lang_code) }}">
             {% endif %}
         {% else %}
         <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path='/', lang=lang_code) }}">

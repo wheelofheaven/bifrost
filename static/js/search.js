@@ -120,7 +120,7 @@ function getSectionIcon(section) {
 // Extract section from URL
 function extractSection(url) {
     const uri = extractUri(url);
-    const pathWithoutLang = uri.replace(/^\/(?:de|fr|es|ru|ja|zh|zh-Hant|ko)\//, "/");
+    const pathWithoutLang = uri.replace(/^\/(?:de|fr|es|he|ru|ja|zh|zh-Hant|ko)\//, "/");
     const segments = pathWithoutLang.split("/").filter(Boolean);
     if (segments.length === 0) return "Home";
 
@@ -452,7 +452,7 @@ function filterResults(results) {
         // Language filter
         let langMatch = false;
         if (currentLanguage === "en") {
-            langMatch = !urlPath.match(/^\/(?:de|fr|es|ru|ja|zh|zh-Hant|ko)\//);
+            langMatch = !urlPath.match(/^\/(?:de|fr|es|he|ru|ja|zh|zh-Hant|ko)\//);
         } else {
             langMatch = urlPath.startsWith(`/${currentLanguage}/`);
         }
