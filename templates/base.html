@@ -9,9 +9,12 @@
 {% elif _p is starting_with("/ru/") %}{% set_global detected_lang = "ru" %}
 {% elif _p is starting_with("/ja/") %}{% set_global detected_lang = "ja" %}
 {% elif _p is starting_with("/ko/") %}{% set_global detected_lang = "ko" %}
+{% elif _p is starting_with("/he/") %}{% set_global detected_lang = "he" %}
 {% endif %}
+{% set page_dir = "ltr" %}
+{% if detected_lang == "he" %}{% set_global page_dir = "rtl" %}{% endif %}
 <!doctype html>
-<html lang="{{ detected_lang }}">
+<html lang="{{ detected_lang }}" dir="{{ page_dir }}">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />

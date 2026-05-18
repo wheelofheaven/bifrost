@@ -65,7 +65,7 @@
         <script>
         (function () {
             // All locale strings rendered server-side so JS can pick by URL.
-            {% set langs = ["en", "de", "fr", "es", "ru", "ja", "zh", "zh-Hant", "ko"] %}
+            {% set langs = ["en", "de", "fr", "es", "ru", "ja", "zh", "zh-Hant", "ko", "he"] %}
             const I18N = {
                 {% for l in langs %}
                 "{{ l }}": {

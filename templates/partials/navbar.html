@@ -178,6 +178,7 @@
                 <li class="navbar__lang-option" data-lang="ru" role="option" lang="ru">Русский</li>
                 <li class="navbar__lang-option" data-lang="zh" role="option" lang="zh">简体中文</li>
                 <li class="navbar__lang-option" data-lang="zh-Hant" role="option" lang="zh-Hant">繁體中文</li>
+                <li class="navbar__lang-option" data-lang="he" role="option" lang="he" dir="rtl">עברית</li>
             </ul>
         </div><!-- /.navbar__pane--lang -->
         </div><!-- /.navbar__panes -->
@@ -289,7 +290,7 @@
                 function getCurrentLanguage() {
                     const path = window.location.pathname;
                     const defaultLang = "en";
-                    const supportedLangs = ["de", "es", "fr", "ja", "ko", "ru", "zh", "zh-Hant"];
+                    const supportedLangs = ["de", "es", "fr", "he", "ja", "ko", "ru", "zh", "zh-Hant"];
 
                     // Check if path starts with a language code (handle zh-Hant first)
                     const pathParts = path
@@ -320,13 +321,15 @@
                     ko: "한국어",
                     ru: "Русский",
                     zh: "简体中文",
-                    "zh-Hant": "繁體中文"
+                    "zh-Hant": "繁體中文",
+                    he: "עברית"
                 };
 
                 // Short codes for mobile bar display
                 const langShortCodes = {
                     en: "EN", de: "DE", es: "ES", fr: "FR",
-                    ja: "JA", ko: "KO", ru: "RU", zh: "ZH", "zh-Hant": "ZH"
+                    ja: "JA", ko: "KO", ru: "RU", zh: "ZH", "zh-Hant": "ZH",
+                    he: "HE"
                 };
 
                 // Update language dropdown to show current language
@@ -749,6 +752,30 @@
                             forums: "토론",
                             faq: "자주 묻는 질문",
                             followX: "X에서 팔로우",
+                        },
+                        he: {
+                            timeline: "ציר זמן",
+                            news: "חדר חדשות",
+                            map: "מפה",
+                            knowledge: "ידע",
+                            community: "קהילה",
+                            articles: "מאמרים",
+                            articlesDesc: "מאמרים מעמיקים עם הסבר מפורט של המושגים המרכזיים",
+                            revelations: "התגלויות",
+                            revelationsDesc: "טקסטים מקודשים ופרשנותם המודרנית",
+                            wiki: "ויקי",
+                            wikiDesc: "מאגר מקיף של ערכים ותיעוד",
+                            resourcesNav: "משאבים",
+                            resourcesNavDesc: "ספרים, סרטים וחומרי עיון חיצוניים שנבחרו בקפידה",
+                            org: "ארגון",
+                            about: "אודות",
+                            codeOfConduct: "קוד התנהגות",
+                            contributing: "תרומה",
+                            forums: "דיונים",
+                            faq: "שאלות נפוצות",
+                            sources: "מקורות",
+                            sourcesDesc: "מקורות מסודרים לפי דרגת סמכות ומסורת",
+                            followX: "עקבו אחרינו ב‑X",
                         },
                     };
 

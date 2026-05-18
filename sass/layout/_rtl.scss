@@ -1,0 +1,96 @@
+// RTL adjustments. Hebrew (`:lang(he)`) already sets `direction: rtl` and
+// the Hebrew font stack in `_base.scss`; flexbox row direction, default
+// text alignment, and CSS logical properties flip automatically on the
+// strength of that. This sheet covers the residue: physical properties
+// (margin-left, padding-left, border-radius corners) and visual assets
+// (chevrons, arrows, breadcrumb separators) that don't flip on their own.
+//
+// Scoped under `[dir="rtl"]` rather than `:lang(he)` so the rules apply
+// to any future RTL language we add without touching this file.
+
+[dir="rtl"] {
+    // Text alignment — physical `left`/`right` doesn't flip; `start`/`end`
+    // does. Global default is `start` for prose, but a handful of
+    // components hardcode `text-align: left`. Force them to behave.
+    .navbar__lang-option,
+    .navbar-dropdown__link-title,
+    .navbar-dropdown__link-description,
+    .footer__column,
+    .card__content,
+    .wiki__summary,
+    .article__summary,
+    .essentials__summary {
+        text-align: start;
+    }
+
+    // Directional icons — chevrons, arrows, back-links visually point to
+    // a side. In RTL they point the wrong way unless mirrored. Restrict
+    // to icons inside interactive controls so inline-prose iconography
+    // (e.g. emoji, illustrative SVGs) is left alone.
+    .navbar__dropdown-trigger__caret svg,
+    .navbar-dropdown__link-arrow svg,
+    .navbar__pane-back-icon svg,
+    .navbar__lang-chevron,
+    .breadcrumb__separator,
+    .pagination__arrow,
+    .timeline__nav-arrow,
+    .library__chapter-arrow {
+        transform: scaleX(-1);
+    }
+
+    // Breadcrumbs — the chevron-style separator between crumbs reads
+    // left-to-right by default. Flipping it makes the trail follow the
+    // RTL reading direction.
+    .breadcrumb__list {
+        flex-direction: row;
+    }
+
+    // Asymmetric border-radius — a few components round only one side
+    // (chip-style buttons, side panels, dispatch chips). Swap the corners
+    // so the rounded edge stays on the visually-leading side.
+    .dispatch-chip,
+    .claim-badge,
+    .article-chip {
+        border-radius: 0 var(--radius-full, 999px) var(--radius-full, 999px) 0;
+    }
+
+    // Reading list / sliding panels that come in from a screen edge —
+    // come in from the opposite edge in RTL so they enter from the side
+    // the eye expects.
+    .reading-list-panel {
+        right: auto;
+        left: 0;
+
+        &--closed {
+            transform: translateX(-100%);
+        }
+    }
+
+    // Snackbar / toast positioning — default is bottom-right; mirror it.
+    .snackbar {
+        right: auto;
+        left: var(--spacing-md, 1rem);
+    }
+
+    // Code blocks stay LTR — code is universally read left-to-right
+    // regardless of surrounding language. Re-anchor them.
+    pre,
+    code,
+    kbd,
+    samp,
+    .wiki__cite__bracket,
+    .footnote-ref,
+    .footnote-backref {
+        direction: ltr;
+        unicode-bidi: isolate;
+    }
+
+    // Inline brand wordmarks and tokens that contain Latin letters mixed
+    // with Hebrew text — keep the Latin run readable.
+    .brand-wordmark,
+    [data-ltr] {
+        direction: ltr;
+        unicode-bidi: isolate;
+        display: inline-block;
+    }
+}
