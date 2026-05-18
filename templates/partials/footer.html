@@ -11,7 +11,6 @@
         <h4 class="footer__col-title">{{ trans(key="footerGetStarted", lang=detected_lang) }}</h4>
         <ul>
           <li><a href="{{ get_url(path='about', lang=detected_lang) }}">{{ trans(key="footerAbout", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='press', lang=detected_lang) }}">{{ trans(key="footerPress", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='contact', lang=detected_lang) }}">{{ trans(key="footerContact", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='read', lang=detected_lang) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='map', lang=detected_lang) }}">{{ trans(key="footerMap", lang=detected_lang) }}</a></li>
@@ -37,6 +36,13 @@
           <li><a href="{{ get_url(path='sources', lang=detected_lang) }}">{{ trans(key="navbarSources", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='articles', lang=detected_lang) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='news', lang=detected_lang) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a></li>
+        </ul>
+
+        <h4 class="footer__col-title">{{ trans(key="footerPress", lang=detected_lang) }}</h4>
+        <ul>
+          <li><a href="{{ get_url(path='press', lang=detected_lang) }}">{{ trans(key="footerPressKit", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='press/wheel-of-heaven-brand.zip') }}" download>{{ trans(key="footerBrandAssets", lang=detected_lang) }}</a></li>
+          <li><a href="mailto:press@wheelofheaven.world">{{ trans(key="footerEmailPress", lang=detected_lang) }}</a></li>
         </ul>
       </div>
 
