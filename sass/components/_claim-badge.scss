@@ -49,7 +49,6 @@
     background: transparent;
     color: var(--color-text-muted);
     cursor: pointer;
-    user-select: none;
     vertical-align: middle;
     transition:
         background-color 0.25s ease,
@@ -71,20 +70,24 @@
         }
     }
 
-    // Active variant — colored, expanded by default
+    // Active variant — colored, expanded by default.
+    // Backgrounds use rgba + backdrop-filter so the pill reads as a tinted
+    // glass plate over photographic / video backdrops (e.g. landing §6).
     &--active {
         cursor: help;
+        backdrop-filter: blur(12px) saturate(160%);
+        -webkit-backdrop-filter: blur(12px) saturate(160%);
 
         &.claim-badge--direct {
             color: c.$cyan-800;
-            background: c.$cyan-100;
-            border-color: c.$cyan-300;
+            background: rgba(c.$cyan-200, 0.55);
+            border-color: rgba(c.$cyan-400, 0.7);
         }
 
         &.claim-badge--framework {
             color: c.$mauve-800;
-            background: c.$mauve-100;
-            border-color: c.$mauve-300;
+            background: rgba(c.$mauve-200, 0.55);
+            border-color: rgba(c.$mauve-400, 0.7);
         }
 
         &.claim-badge--inferred {
@@ -92,27 +95,30 @@
             // yellow ramp is uniquely light at the 800 step compared to the
             // other accent palettes, so we drop to 900 for AA on this pill.
             color: c.$yellow-900;
-            background: c.$yellow-100;
-            border-color: c.$yellow-300;
+            background: rgba(c.$yellow-200, 0.6);
+            border-color: rgba(c.$yellow-400, 0.7);
         }
 
         &.claim-badge--speculative {
             color: c.$lavender-800;
-            background: c.$lavender-100;
-            border-color: c.$lavender-300;
+            background: rgba(c.$lavender-200, 0.55);
+            border-color: rgba(c.$lavender-400, 0.7);
         }
     }
 
     // ---- Label structure ----
+    // Label is plain inline so `__char` ("D") and `__rest` ("IRECT") read
+    // as a single word for double-click selection / copy. Using inline-flex
+    // here would turn each child into a flex item and browsers insert a
+    // word boundary between flex items, breaking copy of "DIRECT".
     &__label {
-        display: inline-flex;
-        align-items: baseline;
-        overflow: hidden;
+        display: inline;
         white-space: nowrap;
+        user-select: text;
     }
 
     &__char {
-        flex-shrink: 0;
+        // No layout role — just inherits inline flow next to __rest.
     }
 
     // The "rest" of the word: hidden when collapsed; expands smoothly when
@@ -209,30 +215,32 @@
     opacity: 0;
 }
 
-// Dark theme — lighter text on subtle tinted backgrounds for active variants
+// Dark theme — lighter text on subtle tinted glass for active variants.
+// Backdrop-filter from the base .claim-badge--active rule still applies;
+// these only retint the background and border to suit the dark surface.
 [data-theme="dark"] .claim-badge {
     &--active.claim-badge--direct {
         color: c.$cyan-200;
-        background: rgba(c.$cyan-600, 0.15);
-        border-color: rgba(c.$cyan-500, 0.35);
+        background: rgba(c.$cyan-600, 0.25);
+        border-color: rgba(c.$cyan-500, 0.5);
     }
 
     &--active.claim-badge--framework {
         color: c.$mauve-200;
-        background: rgba(c.$mauve-600, 0.15);
-        border-color: rgba(c.$mauve-500, 0.35);
+        background: rgba(c.$mauve-600, 0.25);
+        border-color: rgba(c.$mauve-500, 0.5);
     }
 
     &--active.claim-badge--inferred {
         color: c.$yellow-200;
-        background: rgba(c.$yellow-600, 0.15);
-        border-color: rgba(c.$yellow-500, 0.35);
+        background: rgba(c.$yellow-600, 0.25);
+        border-color: rgba(c.$yellow-500, 0.5);
     }
 
     &--active.claim-badge--speculative {
         color: c.$lavender-200;
-        background: rgba(c.$lavender-600, 0.15);
-        border-color: rgba(c.$lavender-500, 0.35);
+        background: rgba(c.$lavender-600, 0.25);
+        border-color: rgba(c.$lavender-500, 0.5);
     }
 
     .claim-badge__tooltip {
