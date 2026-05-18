@@ -76,7 +76,21 @@
        The hint targets the first age's slug (in-the-beginning). #}
     {% set first_age = ages_data | first %}
     {% set first_slug = first_age.link | split(pat="/") | nth(n=2) %}
-    <section id="start" class="landing-section landing-section--timeline-opening" data-section="1">
+    <section id="start" class="landing-section landing-section--timeline-opening landing-section--video" data-section="1">
+        <div class="landing-section__media" aria-hidden="true">
+            <video
+                class="landing-section__video"
+                muted
+                loop
+                playsinline
+                preload="none"
+                poster="{{ config.extra.cdn_url }}/videos/timeline/timeline-hero-poster.webp"
+                onloadedmetadata="this.playbackRate = 0.5;"
+            >
+                <source src="{{ config.extra.cdn_url }}/videos/timeline/timeline-hero.webm" type="video/webm">
+            </video>
+            <div class="landing-section__overlay"></div>
+        </div>
         <div class="landing-section__inner">
             <span class="landing-section__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
             <h1 class="landing-section__heading landing-section__heading--question">{{ section.title }}</h1>

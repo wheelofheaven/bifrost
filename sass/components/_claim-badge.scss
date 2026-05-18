@@ -123,12 +123,19 @@
 
     // The "rest" of the word: hidden when collapsed; expands smoothly when
     // the badge is interactively (or actively) expanded.
+    //
+    // `vertical-align: bottom` compensates for the inline-block baseline
+    // quirk — per spec, an inline-block whose overflow is non-visible has
+    // its baseline set to the bottom margin edge, which leaves __rest's
+    // text rendering ~0.3em above __char's baseline. Aligning __rest's
+    // bottom edge to the line bottom restores the visual baseline match.
     &__rest {
         display: inline-block;
         overflow: hidden;
         white-space: nowrap;
         max-width: 0;
         opacity: 0;
+        vertical-align: bottom;
         transition:
             max-width 0.45s cubic-bezier(0.65, 0, 0.35, 1),
             opacity 0.3s ease 0.05s;
