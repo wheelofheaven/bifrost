@@ -213,21 +213,22 @@
                                     <div class="wiki-card__version" aria-label="Translation / edition">{{ card_version }}</div>
                                     {% endif %}
 
-                                    {% if first_chapter and first_chapter.paragraphs and first_chapter.paragraphs[0] %}
+                                    {% set card_text = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
+                                    {% if not card_text and first_chapter and first_chapter.paragraphs and first_chapter.paragraphs[0] %}
+                                        {% set card_text = library_macros::get_paragraph_text(paragraph=first_chapter.paragraphs[0], lang=detected_lang) %}
+                                    {% endif %}
+                                    {% if card_text %}
                                     <div class="wiki-card__summary">
-                                        {{ library_macros::get_paragraph_text(paragraph=first_chapter.paragraphs[0], lang=detected_lang) | truncate(length=400) }}
+                                        {{ card_text | truncate(length=400, end="...") }}
                                     </div>
                                     {% endif %}
 
                                     {% if book_entry.availableLangs %}
                                     <div class="wiki-card__alternatives">
                                         <span class="wiki-card__alternatives-label">{{ trans(key="libraryLanguages", lang=detected_lang) }}</span>
-                                        {% for lang_code in book_entry.availableLangs | slice(end=6) %}
+                                        {% for lang_code in book_entry.availableLangs %}
                                         <span class="wiki-card__alternative-name">{{ lang_code | upper }}</span>{% if not loop.last %}, {% endif %}
                                         {% endfor %}
-                                        {% if book_entry.availableLangs | length > 6 %}
-                                        <span class="wiki-card__alternatives-more">+{{ book_entry.availableLangs | length - 6 }} {{ trans(key="wikiCardMore", lang=detected_lang) }}</span>
-                                        {% endif %}
                                     </div>
                                     {% endif %}
 

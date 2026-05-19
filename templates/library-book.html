@@ -33,6 +33,8 @@
 {% set book_title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
 {% set book_subtitle = library_macros::get_book_subtitle(book_data=book_data, lang=detected_lang) | trim %}
 {% set book_description = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
+{% set book_version_title = library_macros::get_book_version_title(book_data=book_data, lang=detected_lang) | trim %}
+{% set book_short_version_title = library_macros::get_book_short_version_title(book_data=book_data, lang=detected_lang) | trim %}
 {% set original_lang = book_data.originalLang | default(value=book_data.primaryLang) %}
 {% set original_title_differs = original_lang != detected_lang and book_data.titles and book_data.titles[original_lang] %}
 
@@ -66,9 +68,12 @@
         <div class="library-book__main">
             <article class="library-book__article" role="article" aria-labelledby="book-title">
 
-                <!-- Page Header (title + subtitle + claim badge), mirroring wiki-page layout. -->
+                <!-- Page Header (title + version + subtitle + claim badge), mirroring wiki-page layout. -->
                 <header class="library-book__page-header">
                     <h1 class="library-book__title" id="book-title">{{ book_title }}</h1>
+                    {% if book_version_title %}
+                    <p class="library-book__version" aria-label="Translation / edition">{{ book_version_title }}</p>
+                    {% endif %}
                     {% if book_subtitle %}
                     <p class="library-book__subtitle">{{ book_subtitle }}</p>
                     {% endif %}
@@ -96,12 +101,18 @@
 
                         <div class="library-book__text" id="text-content-{{ chapter.n }}">
                             {% for paragraph in chapter.paragraphs %}
-                            <div class="library-book__paragraph" id="c{{ chapter.n }}p{{ paragraph.n }}" data-ref-id="{{ paragraph.refId | default(value='') }}" onclick="selectParagraph('c{{ chapter.n }}p{{ paragraph.n }}')">
+                            {% set has_commentary = paragraph.commentary | default(value="") | trim != "" %}
+                            <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
+                                 id="c{{ chapter.n }}p{{ paragraph.n }}"
+                                 data-ref-id="{{ paragraph.refId | default(value='') }}"
+                                 onclick="selectParagraph('c{{ chapter.n }}p{{ paragraph.n }}')">
                                 <div class="library-book__para-num">{{ paragraph.n }}</div>
                                 <div class="library-book__para-content">
                                     {% set has_translation = paragraph.i18n and paragraph.i18n[detected_lang] %}
                                     <div class="library-book__para-original">{{ paragraph.text }}</div>
-                                    <div class="library-book__para-translation">{% if has_translation %}{{ paragraph.i18n[detected_lang] }}{% else %}{{ paragraph.text }}{% endif %}</div>
+                                    <div class="library-book__para-translation">
+                                        {% if has_translation %}{{ paragraph.i18n[detected_lang] }}{% else %}{{ paragraph.text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter.n }}p{{ paragraph.n }}', this)" aria-label="Open commentary for verse {{ paragraph.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
+                                    </div>
                                 </div>
                                 <div class="library-book__para-actions">
                                     <button class="library-book__share-btn" onclick="event.stopPropagation(); shareParagraph('c{{ chapter.n }}p{{ paragraph.n }}')" title="Share this paragraph" aria-label="Share this paragraph">
@@ -112,6 +123,33 @@
                                         </svg>
                                     </button>
                                 </div>
+                                {% if has_commentary %}
+                                <div class="library-book__commentary-popover"
+                                     id="commentary-c{{ chapter.n }}p{{ paragraph.n }}"
+                                     role="dialog"
+                                     aria-label="Commentary on verse {{ paragraph.n }}"
+                                     aria-hidden="true"
+                                     onclick="event.stopPropagation()">
+                                    <header class="library-book__commentary-popover-header">
+                                        <div class="library-book__commentary-popover-heading">
+                                            <span class="library-book__commentary-popover-title">Translation Commentary</span>
+                                            <span class="library-book__commentary-popover-ref">Verse {{ paragraph.n }}</span>
+                                        </div>
+                                        <button class="library-book__commentary-popover-close"
+                                                type="button"
+                                                onclick="closeCommentary('c{{ chapter.n }}p{{ paragraph.n }}')"
+                                                aria-label="Close commentary">
+                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                                            </svg>
+                                        </button>
+                                    </header>
+                                    <div class="library-book__commentary-popover-body">
+                                        {{ paragraph.commentary | markdown | safe }}
+                                    </div>
+                                </div>
+                                {% endif %}
                             </div>
                             {% endfor %}
                         </div>
@@ -211,6 +249,13 @@
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">{{ trans(key="libraryReferenceCode", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value"><code>{{ current_book_entry.code }}</code></span>
+                    </div>
+                    {% endif %}
+
+                    {% if book_version_title %}
+                    <div class="library-book__meta-row">
+                        <span class="library-book__meta-label">Version</span>
+                        <span class="library-book__meta-value">{{ book_version_title }}</span>
                     </div>
                     {% endif %}
 
@@ -453,6 +498,7 @@
 </div>
 {% endif %}
 
+
 <script>
 let currentChapter = 1;
 const totalChapters = {% if book_chapters %}{{ book_chapters | length }}{% else %}0{% endif %};
@@ -524,6 +570,56 @@ function deselectParagraph() {
     selectedParagraph = null;
     // Strip the paragraph fragment from the URL so reloads don't re-select.
     history.replaceState(null, null, window.location.pathname + window.location.search);
+}
+
+// Commentary popover: each verse with commentary has its own
+// `.library-book__commentary-popover` rendered inline by the template
+// (markdown already converted server-side). Open by toggling
+// `is-open` on the popover and `--commentary-open` on the paragraph,
+// which lifts the popover into view and brightens the marker. Only
+// one popover is open at a time; opening a new one closes any other.
+function toggleCommentary(paragraphId, triggerEl) {
+    const popover = document.getElementById('commentary-' + paragraphId);
+    if (!popover) return;
+    const isOpen = popover.classList.contains('is-open');
+    closeAllCommentaries();
+    if (!isOpen) openCommentary(paragraphId, triggerEl);
+}
+
+function openCommentary(paragraphId, triggerEl) {
+    const popover = document.getElementById('commentary-' + paragraphId);
+    const paragraph = document.getElementById(paragraphId);
+    if (!popover || !paragraph) return;
+    popover.classList.add('is-open');
+    popover.setAttribute('aria-hidden', 'false');
+    paragraph.classList.add('library-book__paragraph--commentary-open');
+    if (triggerEl) triggerEl.setAttribute('aria-expanded', 'true');
+    // Visual anchor + URL fragment, same as a manual selection.
+    selectParagraph(paragraphId);
+    // Reset internal scroll on open.
+    const body = popover.querySelector('.library-book__commentary-popover-body');
+    if (body) body.scrollTop = 0;
+}
+
+function closeCommentary(paragraphId) {
+    const popover = document.getElementById('commentary-' + paragraphId);
+    const paragraph = document.getElementById(paragraphId);
+    if (popover) {
+        popover.classList.remove('is-open');
+        popover.setAttribute('aria-hidden', 'true');
+    }
+    if (paragraph) {
+        paragraph.classList.remove('library-book__paragraph--commentary-open');
+        const trigger = paragraph.querySelector('.library-book__commentary-link');
+        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    }
+}
+
+function closeAllCommentaries() {
+    document.querySelectorAll('.library-book__commentary-popover.is-open').forEach(p => {
+        const m = p.id.match(/^commentary-(c\d+p\d+)$/);
+        if (m) closeCommentary(m[1]);
+    });
 }
 
 function shareParagraph(paragraphId) {
@@ -712,20 +808,38 @@ document.addEventListener('DOMContentLoaded', function() {
 
     setTimeout(updateTocHighlight, 100);
 
-    // Click outside a paragraph to deselect. Paragraph onclick handlers
-    // call event.stopPropagation()-equivalent indirectly (selectParagraph
-    // runs first and resets state), and action buttons inside the
-    // paragraph already stopPropagation, so this only fires for real
-    // outside clicks.
+    // Click outside a paragraph to deselect — and also close any open
+    // commentary popover. Paragraph onclick handlers call selectParagraph
+    // which keeps that paragraph selected; action buttons inside the
+    // paragraph already stopPropagation; the popover stops propagation
+    // on its own onclick handler so clicks inside it don't dismiss.
     document.addEventListener('click', function(event) {
-        if (!selectedParagraph) return;
-        if (event.target.closest('.library-book__paragraph')) return;
-        deselectParagraph();
+        const insideParagraph = event.target.closest('.library-book__paragraph');
+        if (!insideParagraph) {
+            closeAllCommentaries();
+            if (selectedParagraph) deselectParagraph();
+            return;
+        }
+        // Click landed inside a paragraph — if it's a DIFFERENT
+        // paragraph than the one with an open commentary, close that
+        // popover. (The fresh paragraph's own onclick handles its own
+        // selection state.)
+        const openPopover = document.querySelector('.library-book__commentary-popover.is-open');
+        if (openPopover && openPopover.parentElement !== insideParagraph) {
+            closeAllCommentaries();
+        }
     });
 
-    // Esc also deselects — keyboard-friendly.
+    // Esc also deselects — keyboard-friendly. If any commentary popover
+    // is open, close that first (one Esc = one dismissal); a second Esc
+    // then deselects the verse.
     document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && selectedParagraph) {
+        if (event.key !== 'Escape') return;
+        if (document.querySelector('.library-book__commentary-popover.is-open')) {
+            closeAllCommentaries();
+            return;
+        }
+        if (selectedParagraph) {
             deselectParagraph();
         }
     });

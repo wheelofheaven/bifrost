@@ -29,6 +29,33 @@
     {%- endif -%}
 {% endmacro %}
 
+{# Version title (translation / edition label) of a book in the current
+   language. Distinct from book.titles — the title is the canonical work
+   ("Genesis"), the version is the translation/edition ("American Standard
+   Version (1901)", "Wheel of Heaven Translation"). See Sefaria's
+   `versionTitle` / `shortVersionTitle` field convention. #}
+{% macro get_book_version_title(book_data, lang) %}
+    {%- if book_data.versionTitles and book_data.versionTitles[lang] -%}
+        {{ book_data.versionTitles[lang] }}
+    {%- elif book_data.versionTitles and book_data.versionTitles.en -%}
+        {{ book_data.versionTitles.en }}
+    {%- endif -%}
+{% endmacro %}
+
+{# Short version label — for compact contexts like card listings or chips.
+   Falls back to full versionTitle if shortVersionTitle isn't set. #}
+{% macro get_book_short_version_title(book_data, lang) %}
+    {%- if book_data.shortVersionTitles and book_data.shortVersionTitles[lang] -%}
+        {{ book_data.shortVersionTitles[lang] }}
+    {%- elif book_data.shortVersionTitles and book_data.shortVersionTitles.en -%}
+        {{ book_data.shortVersionTitles.en }}
+    {%- elif book_data.versionTitles and book_data.versionTitles[lang] -%}
+        {{ book_data.versionTitles[lang] }}
+    {%- elif book_data.versionTitles and book_data.versionTitles.en -%}
+        {{ book_data.versionTitles.en }}
+    {%- endif -%}
+{% endmacro %}
+
 {# Macro to get the text of a paragraph in the specified language #}
 {% macro get_paragraph_text(paragraph, lang) %}
     {%- if paragraph.i18n and paragraph.i18n[lang] -%}
