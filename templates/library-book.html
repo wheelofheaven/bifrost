@@ -714,6 +714,13 @@ function updateTocHighlight() {
         }
     });
 
+    // Apply the scroll-driven reading marker (left accent bar only) to
+    // whichever paragraph currently sits at the top of the viewport.
+    // Distinct from --selected, which tap-to-select uses for bg + actions.
+    paragraphs.forEach(p => {
+        p.classList.toggle('library-book__paragraph--active', p.id === activeParagraph);
+    });
+
     updateProgressIndicator(activeChapter, activeParagraph);
     updateChapterNavigation();
 }
