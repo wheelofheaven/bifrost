@@ -6,7 +6,7 @@ Named after the rainbow bridge connecting realms in Norse mythology, Bifrost bri
 
 ## Features
 
-- **Multilingual** - 9 languages supported (en, de, es, fr, ja, ko, ru, zh, zh-Hant)
+- **Multilingual** - 10 languages supported (en, de, es, fr, ja, ko, ru, zh, zh-Hant, he), with RTL handling for Hebrew
 - **Dark/Light Mode** - System-aware with manual toggle
 - **Responsive** - Mobile-first design
 - **Accessible** - WCAG 2.1 AA compliant
@@ -18,11 +18,12 @@ Named after the rainbow bridge connecting realms in Norse mythology, Bifrost bri
 | Section | Template | Description |
 |---------|----------|-------------|
 | Wiki | `wiki-page.html` | Encyclopedia entries |
-| Timeline | `timeline-section.html` | Chronological ages |
+| Timeline | `timeline-page.html` | Chronological ages — twelve precessional ages |
 | Library | `library-book.html` | Book reader with study tools |
-| Resources | `resources-page.html` | External resource catalog |
-| Essentials | `essentials-page.html` | Quick reference guides |
-| Explainers | `explainer-page.html` | In-depth articles |
+| Articles | `articles-page.html` | Long-form essays and explainers |
+| News | `news-page.html` | Newsroom dispatches — current events read through the canon |
+| Sources | `sources-section.html` (JSON-driven) | Living bibliography of every primary text the corpus cites |
+| Press | `info-page.html` | Press kit — brand assets, palette, contact |
 
 ## Installation
 

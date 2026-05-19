@@ -20,4 +20,4 @@ responsive = true
 palette = "bifrost"
 
 # Supported sections
-sections = ["wiki", "timeline", "library", "resources", "essentials", "explainers"]
+sections = ["wiki", "timeline", "library", "articles", "news", "sources"]
