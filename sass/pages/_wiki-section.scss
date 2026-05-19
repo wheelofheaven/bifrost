@@ -805,27 +805,23 @@
     .wiki-card {
         padding: 1.25rem 0;
 
-        // Keep the title + code badge on a single row on mobile —
-        // denser cards mean more items visible while scrolling.
+        // Keep the title + code badge on a single row on mobile so the
+        // badge can right-align next to the title instead of taking
+        // its own line — the rest of the card keeps desktop sizing
+        // and clamp behavior.
         &__header {
             flex-direction: row;
             align-items: baseline;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+            gap: 0.75rem;
         }
 
-        &__title {
-            font-size: 1.125rem;
-        }
-
-        &__summary {
-            margin-bottom: 0.75rem;
-            -webkit-line-clamp: 3;
-            line-clamp: 3;
-        }
-
-        &__meta {
-            padding-top: 0.5rem;
+        // Reinstate the rainbow-bar gutter — the `padding: 1.25rem 0`
+        // shorthand above resets padding-left to 0, which would put the
+        // stripe directly against the card text. Explicit padding-left
+        // wins by being the longhand declaration on the more specific
+        // selector.
+        &--preferred {
+            padding-left: 1.5rem;
         }
     }
 
