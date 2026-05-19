@@ -86,6 +86,7 @@
                 <div class="navbar__dropdown-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="community">{{ trans(key="navbarCommunity", lang=detected_lang) }}</h3>
                     <a href="{{ get_url(path='about', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="about">{{ trans(key="navbarAbout", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='press', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="press">{{ trans(key="navbarPress", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='code-of-conduct', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="codeOfConduct">{{ trans(key="navbarCodeOfConduct", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='contributing', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="contributing">{{ trans(key="navbarContributing", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='forums', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="forums">{{ trans(key="navbarForums", lang=detected_lang) }}</a>
@@ -534,19 +535,16 @@
                             knowledge: "Knowledge",
                             community: "Community",
                             articles: "Articles",
-                            articlesDesc:
-                                "In-depth articles including Explainers on key concepts",
-                            revelations: "Revelations",
-                            revelationsDesc:
-                                "Sacred texts and their modern interpretations",
+                            articlesDesc: "Essays and explainers building the working hypothesis.",
+                            library: "Library",
+                            libraryDesc: "Sacred and primary texts with paragraph-level commentary.",
                             wiki: "Wiki",
-                            wikiDesc:
-                                "Comprehensive reference and documentation",
+                            wikiDesc: "Encyclopedic entries on terms, figures, and motifs.",
                             resourcesNav: "Sources",
-                            resourcesNavDesc:
-                                "Curated external books, films, and references",
+                            resourcesNavDesc: "Living bibliography of every source the corpus cites.",
                             org: "Org",
                             about: "About",
+                            press: "Press Kit",
                             codeOfConduct: "Code of Conduct",
                             contributing: "Contributing",
                             forums: "Discussions",
@@ -562,18 +560,16 @@
                             knowledge: "Connaissance",
                             community: "Communauté",
                             articles: "Articles",
-                            articlesDesc:
-                                "Articles approfondis avec des explications sur les concepts clés",
-                            revelations: "Révélations",
-                            revelationsDesc:
-                                "Textes sacrés et leurs interprétations modernes",
+                            articlesDesc: "Essais et explications qui élaborent l'hypothèse de travail.",
+                            library: "Bibliothèque",
+                            libraryDesc: "Textes sacrés et primaires avec commentaire paragraphe par paragraphe.",
                             wiki: "Wiki",
-                            wikiDesc: "Référence et documentation complètes",
+                            wikiDesc: "Entrées encyclopédiques sur termes, figures et motifs.",
                             resourcesNav: "Sources",
-                            resourcesNavDesc:
-                                "Livres, films et références externes sélectionnés",
+                            resourcesNavDesc: "Bibliographie vivante de toutes les sources citées par le corpus.",
                             org: "Organisation",
                             about: "À propos",
+                            press: "Kit Presse",
                             codeOfConduct: "Code de Conduite",
                             contributing: "Contribuer",
                             forums: "Discussions",
@@ -589,18 +585,16 @@
                             knowledge: "Wissen",
                             community: "Community",
                             articles: "Artikel",
-                            articlesDesc:
-                                "Ausführliche Artikel mit Erklärungen zu Schlüsselkonzepten",
-                            revelations: "Offenbarungen",
-                            revelationsDesc:
-                                "Heilige Texte und ihre modernen Interpretationen",
+                            articlesDesc: "Essays und Erklärungen, die die Arbeitshypothese ausarbeiten.",
+                            library: "Bibliothek",
+                            libraryDesc: "Heilige und Quelltexte mit absatzgenauer Kommentierung.",
                             wiki: "Wiki",
-                            wikiDesc: "Umfassende Referenz und Dokumentation",
+                            wikiDesc: "Enzyklopädische Einträge zu Begriffen, Figuren und Motiven.",
                             resourcesNav: "Quellen",
-                            resourcesNavDesc:
-                                "Kuratierte externe Bücher, Filme und Referenzen",
+                            resourcesNavDesc: "Lebendige Bibliografie aller vom Korpus zitierten Quellen.",
                             org: "Organisation",
                             about: "Über uns",
+                            press: "Pressemappe",
                             codeOfConduct: "Verhaltenskodex",
                             contributing: "Beitragen",
                             forums: "Diskussionen",
@@ -614,18 +608,16 @@
                             knowledge: "Conocimiento",
                             community: "Comunidad",
                             articles: "Artículos",
-                            articlesDesc:
-                                "Artículos detallados con explicaciones de conceptos clave",
-                            revelations: "Revelaciones",
-                            revelationsDesc:
-                                "Textos sagrados y sus interpretaciones modernas",
+                            articlesDesc: "Ensayos y explicaciones que elaboran la hipótesis de trabajo.",
+                            library: "Biblioteca",
+                            libraryDesc: "Textos sagrados y primarios con comentario párrafo a párrafo.",
                             wiki: "Wiki",
-                            wikiDesc: "Referencia y documentación integral",
+                            wikiDesc: "Entradas enciclopédicas sobre términos, figuras y motivos.",
                             resourcesNav: "Fuentes",
-                            resourcesNavDesc:
-                                "Libros, películas y referencias externas seleccionados",
+                            resourcesNavDesc: "Bibliografía viva de cada fuente que cita el corpus.",
                             org: "Organización",
                             about: "Acerca de",
+                            press: "Kit de Prensa",
                             codeOfConduct: "Código de Conducta",
                             contributing: "Contribuir",
                             forums: "Discusiones",
@@ -641,15 +633,16 @@
                             knowledge: "知識",
                             community: "コミュニティ",
                             articles: "記事",
-                            articlesDesc: "重要な概念の詳細な解説を含む記事",
-                            revelations: "啓示",
-                            revelationsDesc: "聖典とその現代的解釈",
+                            articlesDesc: "作業仮説を組み立てるエッセイと解説。",
+                            library: "図書館",
+                            libraryDesc: "聖典と原典、段落単位の注釈付き。",
                             wiki: "ウィキ",
-                            wikiDesc: "包括的なリファレンスとドキュメント",
+                            wikiDesc: "用語、人物、モチーフの百科事典項目。",
                             resourcesNav: "出典",
-                            resourcesNavDesc: "厳選された外部の書籍、映画、参考資料",
+                            resourcesNavDesc: "コーパスが引用する全ての出典の生きた書誌。",
                             org: "組織",
                             about: "私たちについて",
+                            press: "プレスキット",
                             codeOfConduct: "行動規範",
                             contributing: "貢献",
                             forums: "ディスカッション",
@@ -665,18 +658,16 @@
                             knowledge: "Знания",
                             community: "Сообщество",
                             articles: "Статьи",
-                            articlesDesc:
-                                "Подробные статьи с объяснениями ключевых концепций",
-                            revelations: "Откровения",
-                            revelationsDesc:
-                                "Священные тексты и их современные интерпретации",
+                            articlesDesc: "Эссе и пояснения, развивающие рабочую гипотезу.",
+                            library: "Библиотека",
+                            libraryDesc: "Священные и первичные тексты с комментариями к каждому абзацу.",
                             wiki: "Вики",
-                            wikiDesc: "Исчерпывающий справочник и документация",
+                            wikiDesc: "Энциклопедические статьи о терминах, фигурах и мотивах.",
                             resourcesNav: "Источники",
-                            resourcesNavDesc:
-                                "Подобранные внешние книги, фильмы и справочники",
+                            resourcesNavDesc: "Живая библиография всех источников, цитируемых корпусом.",
                             org: "Организация",
                             about: "О нас",
+                            press: "Пресс-кит",
                             codeOfConduct: "Кодекс поведения",
                             contributing: "Участие",
                             forums: "Обсуждения",
@@ -692,15 +683,16 @@
                             knowledge: "知识",
                             community: "社区",
                             articles: "文章",
-                            articlesDesc: "包含关键概念详细解释的深度文章",
-                            revelations: "启示",
-                            revelationsDesc: "神圣文本及其现代解释",
+                            articlesDesc: "构建工作假说的论文与解读。",
+                            library: "图书馆",
+                            libraryDesc: "圣典与原典，附段落级注释。",
                             wiki: "百科",
-                            wikiDesc: "全面的参考和文档",
+                            wikiDesc: "关于术语、人物与母题的百科条目。",
                             resourcesNav: "来源",
-                            resourcesNavDesc: "精选的外部书籍、电影和参考资料",
+                            resourcesNavDesc: "语料库引用的所有来源的活态书目。",
                             org: "组织",
                             about: "关于我们",
+                            press: "媒体资料",
                             codeOfConduct: "行为准则",
                             contributing: "贡献",
                             forums: "讨论",
@@ -716,15 +708,16 @@
                             knowledge: "知識",
                             community: "社群",
                             articles: "文章",
-                            articlesDesc: "包含關鍵概念詳細解釋的深度文章",
-                            revelations: "啟示",
-                            revelationsDesc: "神聖文本及其現代解釋",
+                            articlesDesc: "建構工作假說的論文與解讀。",
+                            library: "圖書館",
+                            libraryDesc: "聖典與原典，附段落級註釋。",
                             wiki: "百科",
-                            wikiDesc: "全面的參考和文檔",
+                            wikiDesc: "關於術語、人物與母題的百科條目。",
                             resourcesNav: "來源",
-                            resourcesNavDesc: "精選的外部書籍、電影和參考資料",
+                            resourcesNavDesc: "語料庫引用的所有來源的活態書目。",
                             org: "組織",
                             about: "關於我們",
+                            press: "媒體資料",
                             codeOfConduct: "行為準則",
                             contributing: "貢獻",
                             forums: "討論",
@@ -738,15 +731,16 @@
                             knowledge: "지식",
                             community: "커뮤니티",
                             articles: "기사",
-                            articlesDesc: "핵심 개념을 포함한 심층 기사",
-                            revelations: "계시",
-                            revelationsDesc: "신성한 문헌과 현대적 해석",
+                            articlesDesc: "작업 가설을 구축하는 에세이와 해설.",
+                            library: "도서관",
+                            libraryDesc: "성전과 원전, 단락 단위 주석 포함.",
                             wiki: "위키",
-                            wikiDesc: "종합적인 레퍼런스 및 문서",
+                            wikiDesc: "용어, 인물, 모티프에 관한 백과사전 항목.",
                             resourcesNav: "출처",
-                            resourcesNavDesc: "엄선된 외부 도서, 영화 및 참고 자료",
+                            resourcesNavDesc: "코퍼스가 인용하는 모든 출처의 살아있는 서지.",
                             org: "조직",
                             about: "소개",
+                            press: "프레스 키트",
                             codeOfConduct: "행동 강령",
                             contributing: "기여하기",
                             forums: "토론",
@@ -760,15 +754,16 @@
                             knowledge: "ידע",
                             community: "קהילה",
                             articles: "מאמרים",
-                            articlesDesc: "מאמרים מעמיקים עם הסבר מפורט של המושגים המרכזיים",
-                            revelations: "התגלויות",
-                            revelationsDesc: "טקסטים מקודשים ופרשנותם המודרנית",
+                            articlesDesc: "מאמרים והסברים שבונים את השערת העבודה.",
+                            library: "ספרייה",
+                            libraryDesc: "טקסטים מקודשים ויסודיים עם פירוש ברמת הפסקה.",
                             wiki: "ויקי",
-                            wikiDesc: "מאגר מקיף של ערכים ותיעוד",
+                            wikiDesc: "ערכים אנציקלופדיים על מונחים, דמויות ומוטיבים.",
                             resourcesNav: "מקורות",
-                            resourcesNavDesc: "ספרים, סרטים וחומרי עיון חיצוניים שנבחרו בקפידה",
+                            resourcesNavDesc: "ביבליוגרפיה חיה של כל מקור שהקורפוס מצטט.",
                             org: "ארגון",
                             about: "אודות",
+                            press: "ערכת עיתונאים",
                             codeOfConduct: "קוד התנהגות",
                             contributing: "תרומה",
                             forums: "דיונים",
@@ -842,7 +837,7 @@
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/ph-scroll-light.html" %}
+                            {% include "partials/icons/game-wax-tablet.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
@@ -885,7 +880,7 @@
                 <div class="navbar-dropdown__links">
                     <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/feather-file-text.html" %}
+                            {% include "partials/icons/game-dna2.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
@@ -897,7 +892,7 @@
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/ph-scroll-light.html" %}
+                            {% include "partials/icons/game-wax-tablet.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
@@ -909,7 +904,7 @@
                     </a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/book.html" %}
+                            {% include "partials/icons/game-dragon-balls.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
@@ -921,7 +916,7 @@
                     </a>
                     <a href="{{ get_url(path='sources', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/feather-archive.html" %}
+                            {% include "partials/icons/game-fossil.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
@@ -954,6 +949,13 @@
                                 {% include "partials/icons/famicons-telescope-outline.html" %}
                             </span>
                             <span data-navbar-key="about">{{ trans(key="navbarAbout", lang=detected_lang) }}</span>
+                            <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                        </a>
+                        <a href="{{ get_url(path='press', lang=detected_lang) }}" class="navbar-dropdown__link navbar-dropdown__link--simple">
+                            <span class="navbar-dropdown__link-icon">
+                                {% include "partials/icons/feather-newspaper.html" %}
+                            </span>
+                            <span data-navbar-key="press">{{ trans(key="navbarPress", lang=detected_lang) }}</span>
                             <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                         </a>
                     </div>
