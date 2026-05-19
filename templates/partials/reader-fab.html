@@ -1,0 +1,96 @@
+{# Mobile-only reader options FAB. Replaces the standalone to-top button
+   on <=999px; the legacy .to-top is hidden at that breakpoint in
+   _totop.scss. JS in static/js/reader-fab.js handles open/close,
+   detects `.library-book` to enable book-context slots (TOC, font,
+   bookmarks, progress %), and renders the secondary TOC sheet. #}
+<div class="reader-fab" id="readerFab" data-state="collapsed">
+    <div class="reader-fab__panel"
+         id="readerFabPanel"
+         role="menu"
+         aria-labelledby="readerFabToggle"
+         aria-hidden="true">
+
+        <div class="reader-fab__section">
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="toc"
+                    data-fab-book-only
+                    role="menuitem">
+                {% include "partials/icons/feather-file-text.html" %}
+                <span class="reader-fab__option-label">{{ trans(key="tocContents", lang=detected_lang) }}</span>
+                <span class="reader-fab__option-meta" data-reader-fab-progress>—</span>
+            </button>
+
+            <div class="reader-fab__pair" data-fab-book-only role="group" aria-label="Font size">
+                <button type="button"
+                        class="reader-fab__pair-btn"
+                        data-action="font-decrease"
+                        aria-label="Decrease font size">A&minus;</button>
+                <button type="button"
+                        class="reader-fab__pair-btn"
+                        data-action="font-increase"
+                        aria-label="Increase font size">A+</button>
+            </div>
+
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="bookmarks"
+                    data-fab-book-only
+                    role="menuitem">
+                {% include "partials/icons/feather-archive.html" %}
+                <span class="reader-fab__option-label">Bookmarks &amp; notes</span>
+            </button>
+        </div>
+
+        <div class="reader-fab__section">
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="theme"
+                    role="menuitem">
+                <span class="reader-fab__option-icon" data-theme-icon="dark">{% include "partials/icons/feather-moon.html" %}</span>
+                <span class="reader-fab__option-icon" data-theme-icon="light" hidden>{% include "partials/icons/feather-sun.html" %}</span>
+                <span class="reader-fab__option-label">Theme</span>
+            </button>
+
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="to-top"
+                    role="menuitem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="19" x2="12" y2="5"></line>
+                    <polyline points="5 12 12 5 19 12"></polyline>
+                </svg>
+                <span class="reader-fab__option-label">{{ trans(key="backToTop", lang=detected_lang) }}</span>
+            </button>
+        </div>
+    </div>
+
+    <button type="button"
+            class="reader-fab__toggle"
+            id="readerFabToggle"
+            aria-expanded="false"
+            aria-controls="readerFabPanel"
+            aria-label="Reader options">
+        <span class="reader-fab__toggle-icon" data-icon="menu" aria-hidden="true">{% include "partials/icons/feather-menu.html" %}</span>
+        <span class="reader-fab__toggle-icon" data-icon="close" aria-hidden="true">{% include "partials/icons/feather-x.html" %}</span>
+    </button>
+</div>
+
+{# Secondary TOC sheet — markup left empty; populated by JS on first open
+   by cloning .library-book__toc-list from the sidebar. Sheet slides up
+   from the bottom on tap. #}
+<div class="reader-fab-toc" id="readerFabToc" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="readerFabTocTitle">
+    <div class="reader-fab-toc__backdrop" data-reader-fab-toc-close></div>
+    <div class="reader-fab-toc__sheet">
+        <header class="reader-fab-toc__header">
+            <h2 class="reader-fab-toc__title" id="readerFabTocTitle">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
+            <button type="button"
+                    class="reader-fab-toc__close"
+                    data-reader-fab-toc-close
+                    aria-label="Close contents">
+                {% include "partials/icons/feather-x.html" %}
+            </button>
+        </header>
+        <ul class="reader-fab-toc__list" id="readerFabTocList"></ul>
+    </div>
+</div>

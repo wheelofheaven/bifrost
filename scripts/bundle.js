@@ -30,6 +30,7 @@ const bundles = {
     'pwa.js',
     'toc-scroll-spy.js',
     'to-top.js',
+    'reader-fab.js',
     'prefetch.js',
   ],
   // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.

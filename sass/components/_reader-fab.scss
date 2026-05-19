@@ -1,0 +1,392 @@
+@use "../abstracts/variables" as vars;
+@use "../abstracts/colors" as colors;
+@use "../base/typography" as typo;
+
+// Reader FAB — mobile-only floating action button that replaces the
+// standalone to-top button on small screens. Sits in the same bottom-
+// right corner; when tapped, expands a glassmorphic panel to its left
+// with reader-context options (Contents, theme, font, bookmarks, top).
+// On book pages (`.library-book` present) it surfaces extra slots;
+// elsewhere it shows the generic set (theme + back-to-top).
+//
+// Visibility breakpoint mirrors `.search-fab`: hidden on `>= 1000px`
+// where the navbar already exposes these affordances.
+.reader-fab {
+    position: fixed;
+    right: 1.5rem;
+    bottom: 1.5rem;
+    z-index: 110;
+    display: flex;
+    align-items: center;
+    flex-direction: row-reverse; // panel sits to the left of the toggle
+    gap: 0.5rem;
+
+    @media (min-width: 1000px) {
+        display: none;
+    }
+
+    // Toggle button — same chrome as the existing search-fab so the two
+    // FABs read as siblings.
+    &__toggle {
+        position: relative;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid var(--color-border);
+        border-radius: 0.75rem;
+        color: var(--color-text);
+        cursor: pointer;
+        transition:
+            background-color 0.2s ease,
+            transform 0.2s ease,
+            color 0.2s ease;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            outline: none;
+        }
+
+        // Two stacked icons (menu + close) cross-fade as state flips so
+        // the toggle reads as a single morphing affordance.
+        &-icon {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition:
+                opacity 0.2s ease,
+                transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            svg {
+                width: 1.25rem;
+                height: 1.25rem;
+                display: block;
+            }
+        }
+
+        &-icon[data-icon="menu"] {
+            opacity: 1;
+            transform: rotate(0);
+        }
+
+        &-icon[data-icon="close"] {
+            opacity: 0;
+            transform: rotate(-45deg);
+        }
+
+        .reader-fab[data-state="expanded"] & {
+            &-icon[data-icon="menu"] {
+                opacity: 0;
+                transform: rotate(45deg);
+            }
+            &-icon[data-icon="close"] {
+                opacity: 1;
+                transform: rotate(0);
+            }
+        }
+    }
+
+    // Panel — glass surface containing the reader-options column.
+    // Anchored at its right edge to the toggle, scales out from there
+    // for an organic "blooming from the FAB" feel. Stays absolutely
+    // positioned so a scale to zero doesn't displace the toggle.
+    &__panel {
+        position: absolute;
+        right: calc(3rem + 0.5rem); // toggle width + gap
+        bottom: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        padding: 0.5rem;
+        min-width: 13rem;
+        max-width: calc(100vw - 6rem);
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(16px) saturate(140%);
+        -webkit-backdrop-filter: blur(16px) saturate(140%);
+        border: 1px solid var(--color-border);
+        border-radius: 0.875rem;
+        box-shadow:
+            0 12px 32px rgba(0, 0, 0, 0.18),
+            0 0 0 1px rgba(255, 255, 255, 0.04);
+
+        // Closed state: scaled-down + invisible, scale anchor at the
+        // FAB position so it appears to grow from the toggle.
+        transform-origin: right bottom;
+        transform: scale(0.6);
+        opacity: 0;
+        pointer-events: none;
+        transition:
+            transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1),
+            opacity 0.22s ease;
+
+        .reader-fab[data-state="expanded"] & {
+            transform: scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+    }
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+
+        & + & {
+            margin-top: 0.25rem;
+            padding-top: 0.375rem;
+            border-top: 1px solid var(--color-hairline);
+        }
+    }
+
+    // Single full-width option row: icon + label + optional meta.
+    &__option {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        width: 100%;
+        padding: 0.5rem 0.625rem;
+        background: transparent;
+        border: 0;
+        border-radius: 0.5rem;
+        color: var(--color-text);
+        font-family: var(--font-family-body);
+        font-size: 0.875rem;
+        font-weight: 500;
+        text-align: left;
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            outline: none;
+        }
+
+        svg {
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+            color: var(--color-text-muted);
+        }
+
+        &-label {
+            flex: 1;
+            min-width: 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        &-meta {
+            font-family: typo.$font-family-tech;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text-muted);
+            letter-spacing: 0.02em;
+        }
+    }
+
+    // Pair row (A− / A+) — two equal-width buttons sharing one slot.
+    &__pair {
+        display: flex;
+        gap: 0.375rem;
+        padding: 0.25rem 0.125rem;
+    }
+
+    &__pair-btn {
+        flex: 1;
+        padding: 0.4rem 0.5rem;
+        background: var(--color-background-secondary);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.5rem;
+        color: var(--color-text);
+        font-family: typo.$font-family-tech;
+        font-size: 0.9rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.15s ease, border-color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            border-color: var(--color-border);
+            outline: none;
+        }
+
+        &[aria-disabled="true"] {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+    }
+}
+
+// Hide book-context-only slots when not on a book page. JS toggles
+// `data-context="book"` on `.reader-fab` when `.library-book` exists.
+.reader-fab:not([data-context="book"]) [data-fab-book-only] {
+    display: none;
+}
+
+// Secondary TOC modal — opens from the FAB's "Contents" option.
+// Full-screen on mobile; a centered card on larger viewports just in
+// case the FAB ever surfaces there. Same glass recipe as the panel.
+.reader-fab-toc {
+    position: fixed;
+    inset: 0;
+    z-index: 120;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+
+    &--open {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    &__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+    }
+
+    &__sheet {
+        position: relative;
+        width: 100%;
+        max-height: 80vh;
+        display: flex;
+        flex-direction: column;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        border-top: 1px solid var(--color-border);
+        border-radius: 1.25rem 1.25rem 0 0;
+        box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.25);
+        transform: translateY(100%);
+        transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+
+        .reader-fab-toc--open & {
+            transform: translateY(0);
+        }
+    }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem 0.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__title {
+        margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-text);
+    }
+
+    &__close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        border-radius: 0.5rem;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            color: var(--color-text);
+            outline: none;
+        }
+
+        svg {
+            width: 1rem;
+            height: 1rem;
+        }
+    }
+
+    &__list {
+        flex: 1;
+        margin: 0;
+        padding: 0.5rem 0.5rem max(1rem, env(safe-area-inset-bottom));
+        list-style: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+    }
+
+    &__item {
+        display: block;
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.625rem 0.875rem;
+        border-radius: 0.5rem;
+        color: var(--color-text);
+        font-family: var(--font-family-body);
+        font-size: 0.9rem;
+        text-decoration: none;
+        transition: background-color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            outline: none;
+        }
+
+        &--active {
+            background-color: var(--color-hover);
+            font-weight: 600;
+        }
+    }
+
+    &__chapter-number {
+        flex-shrink: 0;
+        min-width: 1.75rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-align: right;
+    }
+
+    &__chapter-title {
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+}
+
+// PWA install banner lifts the FAB clear of itself — match how
+// `.to-top` is offset in _totop.scss so the two FABs (search + reader)
+// don't get covered by the banner.
+body:has(.pwa-install-banner--visible) .reader-fab {
+    bottom: 6rem;
+
+    @media (max-width: 640px) {
+        bottom: 10rem;
+    }
+}
