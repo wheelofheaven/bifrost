@@ -1,23 +1,32 @@
 #!/usr/bin/env node
 /**
- * Inline critical CSS + non-block main.css (+ cache-bust by build SHA)
+ * Inline critical CSS + non-block main.css + cache-bust JS bundles
  *
- * Post-build step. Walks every HTML file in public/, inlines the contents
- * of public/critical.css inside <head>, and rewrites the synchronous
- * <link rel="stylesheet" href=".../main.css"> into a non-render-blocking
- * preload-then-stylesheet swap (plus a <noscript> fallback).
+ * Post-build step. For every HTML file in public/:
+ *   1. Inlines public/critical.css inside <head>
+ *   2. Rewrites the synchronous <link rel="stylesheet" href=".../main.css">
+ *      into a non-render-blocking preload-then-stylesheet swap
+ *   3. Appends `?v=<BUILD_VERSION>` to all JS bundle URLs (overwriting any
+ *      pre-existing `?v=...`), so Cloudflare cannot serve a stale bundle
+ *      against fresh HTML
+ *
+ * The search bundle is loaded dynamically from inside core.bundle.js, so a
+ * separate post-pass rewrites the literal "search.bundle.js?v=..." string
+ * embedded in that minified file.
  *
  * Critical.css is ~9 KB gzipped; the cost of inlining it per page is
  * accepted in exchange for unblocking FCP/LCP. Run AFTER purgecss so the
  * inlined sheet is already trimmed.
  *
- * Cache-busting: if BUILD_VERSION is set (CI: `git rev-parse --short HEAD`),
- * a `?v=<sha>` query is appended to the main.css URL. This makes every
- * deploy ship with a fresh URL, so Cloudflare (which caches main.css for
- * 7 days) can never serve a stale stylesheet against fresh HTML — the
- * URL the HTML references simply isn't in CF's cache yet on the first
- * request after a deploy. Without BUILD_VERSION (local dev) the URL is
- * unchanged and zola serve's live-reload handles freshness.
+ * Cache-busting rationale: Cloudflare caches static assets (CSS/JS) for
+ * up to 7 days by default. Without a per-deploy URL change, returning
+ * visitors keep getting the old bundle until the cache is manually
+ * purged. By stamping every CSS + JS bundle URL with the build SHA the
+ * URL itself is new on every deploy, so the CDN cache miss on first
+ * fetch is the freshness guarantee — no manual purge needed.
+ *
+ * Without BUILD_VERSION (local dev) URLs are left unchanged; zola serve's
+ * live-reload handles freshness.
  *
  * Idempotent: re-running on already-processed files is a no-op.
  */
@@ -28,6 +37,10 @@ const path = require('path');
 const PUBLIC_DIR = path.join(__dirname, '../../../public');
 const CRITICAL_PATH = path.join(PUBLIC_DIR, 'critical.css');
 const BUILD_VERSION = (process.env.BUILD_VERSION || '').trim();
+
+// JS bundles referenced from HTML. core.bundle.js is loaded on every page;
+// library.bundle.js only on /library/<slug>/ pages.
+const JS_BUNDLES = ['core.bundle.js', 'library.bundle.js'];
 
 function* walk(dir) {
     for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
@@ -42,6 +55,22 @@ function bustUrl(href) {
     return href.includes('?')
         ? `${href}&v=${BUILD_VERSION}`
         : `${href}?v=${BUILD_VERSION}`;
+}
+
+// Rewrites every JS bundle reference in an HTML attribute (src="...")
+// to `name?v=<sha>`, stripping any existing query so the URL is canonical
+// per deploy. Operates on a single bundle name at a time so we don't
+// accidentally swallow other query parameters.
+function bustJsBundles(html) {
+    if (!BUILD_VERSION) return html;
+    let result = html;
+    for (const name of JS_BUNDLES) {
+        const escaped = name.replace(/\./g, '\\.');
+        // Match: bundle name + optional existing ?query, up to closing "
+        const re = new RegExp(`(${escaped})(\\?[^"]*)?(?=")`, 'g');
+        result = result.replace(re, `$1?v=${BUILD_VERSION}`);
+    }
+    return result;
 }
 
 function rewrite(html, criticalCss) {
@@ -62,7 +91,27 @@ function rewrite(html, criticalCss) {
         `onload="this.onload=null;this.rel='stylesheet'">` +
         `<noscript><link rel="stylesheet" href="${href}"></noscript>`;
 
-    return html.replace(linkRe, replacement);
+    return bustJsBundles(html.replace(linkRe, replacement));
+}
+
+// Rewrite the search bundle URL string embedded inside core.bundle.js,
+// since the search loader builds the <script src> at runtime rather than
+// loading via an HTML <script src>. Without this pass the search modal
+// would keep loading the stale CDN-cached search.bundle.js even after a
+// fresh deploy.
+function bustSearchBundleInCore() {
+    if (!BUILD_VERSION) return false;
+    const corePath = path.join(PUBLIC_DIR, 'js/dist/core.bundle.js');
+    if (!fs.existsSync(corePath)) return false;
+    const src = fs.readFileSync(corePath, 'utf8');
+    // Match search.bundle.js with optional existing ?v=... up to the
+    // next quote (single or double) — the URL lives inside a JS string
+    // literal in the minified bundle.
+    const re = /search\.bundle\.js(\?v=[^"']*)?/g;
+    const rewritten = src.replace(re, `search.bundle.js?v=${BUILD_VERSION}`);
+    if (rewritten === src) return false;
+    fs.writeFileSync(corePath, rewritten);
+    return true;
 }
 
 function main() {
@@ -73,8 +122,8 @@ function main() {
     const criticalCss = fs.readFileSync(CRITICAL_PATH, 'utf8').trim();
     const criticalKb = (Buffer.byteLength(criticalCss) / 1024).toFixed(1);
     const cachebustMsg = BUILD_VERSION
-        ? ` + cache-bust main.css?v=${BUILD_VERSION}`
-        : ' (no BUILD_VERSION set — main.css URL unchanged)';
+        ? ` + cache-bust main.css + JS bundles ?v=${BUILD_VERSION}`
+        : ' (no BUILD_VERSION set — URLs unchanged)';
 
     console.log(`\n🎨 Inline critical CSS (${criticalKb} KB) + async main.css${cachebustMsg}\n`);
 
@@ -93,6 +142,10 @@ function main() {
 
     console.log(`✅ Inlined into ${processed} HTML file(s)`);
     if (unchanged > 0) console.log(`   ${unchanged} file(s) had no main.css link (e.g. redirect aliases)`);
+
+    if (bustSearchBundleInCore()) {
+        console.log(`✅ Rewrote search.bundle.js URL inside core.bundle.js → ?v=${BUILD_VERSION}`);
+    }
     console.log();
 }
 
