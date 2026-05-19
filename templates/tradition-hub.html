@@ -50,35 +50,15 @@
 
             <aside class="tradition-hub__aside" role="complementary" aria-label="Related metadata">
 
-                {# --- Sources from this family (auto-filtered from the
-                       data-bibliography manifest) --- #}
-                {% if page.extra.source_family %}
-                    {% set manifest = load_data(path="data/sources/index.json", required=false) %}
-                    {% if manifest and manifest.sources %}
-                        {% set family_sources = manifest.sources | filter(attribute="source_family", value=page.extra.source_family) %}
-                        {% if family_sources | length > 0 %}
-                        <section class="tradition-hub__aside-block">
-                            <h2 class="tradition-hub__aside-title">All sources in this family</h2>
-                            <p class="tradition-hub__aside-note">{{ family_sources | length }} entries</p>
-                            <ul class="tradition-hub__source-list">
-                            {% for src in family_sources | sort(attribute="title") %}
-                                <li class="tradition-hub__source-item">
-                                    <a href="{{ get_url(path='sources/' ~ src.id, lang=detected_lang) }}" class="tradition-hub__source-link">
-                                        <span class="tradition-hub__source-title">{{ src.title }}</span>
-                                        {% if src.authority_tier %}
-                                        <span class="tradition-hub__source-tier">{{ src.authority_tier | title }}</span>
-                                        {% endif %}
-                                    </a>
-                                </li>
-                            {% endfor %}
-                            </ul>
-                        </section>
-                        {% endif %}
-                    {% endif %}
-                {% endif %}
-
-                {# --- Cited sources (six-source rule) --- #}
+                {# --- Cited sources (six-source rule). Titles resolved
+                       via the flat data/sources.json artifact; links go
+                       to each source's external follow_url since the
+                       per-source detail pages were dropped in V1. The
+                       `source_family` filter that powered the older
+                       "All sources in this family" aside is gone with
+                       the editorial taxonomy. #}
                 {% if page.extra.cited_sources %}
+                {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
                 <section class="tradition-hub__aside-block">
                     <h2 class="tradition-hub__aside-title">Cited sources</h2>
                     <p class="tradition-hub__aside-note">
@@ -89,14 +69,25 @@
                     </p>
                     <ul class="tradition-hub__source-list">
                     {% for source_slug in page.extra.cited_sources %}
-                        {% set src_record = load_data(path="data/sources/sources/" ~ source_slug ~ ".json", required=false) %}
-                        {% if src_record %}
+                        {% set_global src_record = false %}
+                        {% if sources_manifest and sources_manifest.sources %}
+                            {% set matches = sources_manifest.sources | filter(attribute="id", value=source_slug) %}
+                            {% if matches | length > 0 %}
+                                {% set first_match = matches | first %}
+                                {% set_global src_record = first_match %}
+                            {% endif %}
+                        {% endif %}
                         <li class="tradition-hub__source-item">
-                            <a href="{{ get_url(path='sources/' ~ source_slug, lang=detected_lang) }}" class="tradition-hub__source-link">
+                            {% if src_record and src_record.follow_url %}
+                            <a href="{{ src_record.follow_url | safe }}" class="tradition-hub__source-link" target="_blank" rel="noopener noreferrer">
                                 <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             </a>
+                            {% elif src_record %}
+                            <span class="tradition-hub__source-title">{{ src_record.title }}</span>
+                            {% else %}
+                            <span class="tradition-hub__source-title">{{ source_slug }}</span>
+                            {% endif %}
                         </li>
-                        {% endif %}
                     {% endfor %}
                     </ul>
                 </section>

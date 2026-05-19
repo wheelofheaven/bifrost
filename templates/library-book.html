@@ -256,15 +256,26 @@
                     </div>
                     {% endif %}
 
-                    {# Cross-link to the bibliography record. Set by
-                       data-library/catalog.json's source_id field; resolves
-                       the title via data-bibliography for nicer display. #}
+                    {# Cross-link to the source. `source_id` comes from
+                       data-library/catalog.json; the title is resolved
+                       by looking the id up in the flat data/sources.json
+                       artifact. Detail pages don't exist in V1, so the
+                       link goes to /sources/ (the index page handles
+                       deep-linking via search). #}
                     {% if current_book_entry and current_book_entry.source_id %}
-                    {% set src_record = load_data(path="data/sources/sources/" ~ current_book_entry.source_id ~ ".json", required=false) %}
+                    {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+                    {% set_global src_title = current_book_entry.source_id %}
+                    {% if sources_manifest and sources_manifest.sources %}
+                        {% set matches = sources_manifest.sources | filter(attribute="id", value=current_book_entry.source_id) %}
+                        {% if matches | length > 0 %}
+                            {% set first_match = matches | first %}
+                            {% set_global src_title = first_match.title %}
+                        {% endif %}
+                    {% endif %}
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">Source:</span>
                         <span class="library-book__meta-value">
-                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang=detected_lang) }}">{% if src_record %}{{ src_record.title }}{% else %}{{ current_book_entry.source_id }}{% endif %}</a>
+                            <a href="{{ get_url(path='sources/', lang=detected_lang) }}">{{ src_title }}</a>
                         </span>
                     </div>
                     {% endif %}
