@@ -1,8 +1,12 @@
 {# Mobile-only reader options FAB. Replaces the standalone to-top button
    on <=999px; the legacy .to-top is hidden at that breakpoint in
    _totop.scss. JS in static/js/reader-fab.js handles open/close,
-   detects `.library-book` to enable book-context slots (TOC, font,
-   bookmarks, progress %), and renders the secondary TOC sheet. #}
+   detects `.library-book` / `.wiki__sidebar` to enable book- and wiki-
+   context slots, and renders the secondary TOC sheet.
+
+   Toggle uses a sliders icon (not a burger) to visually distinguish
+   the FAB from the navbar burger — one is site navigation, this is
+   reader/page options. #}
 <div class="reader-fab" id="readerFab" data-state="collapsed">
     <div class="reader-fab__panel"
          id="readerFabPanel"
@@ -11,16 +15,6 @@
          aria-hidden="true">
 
         <div class="reader-fab__section">
-            <button type="button"
-                    class="reader-fab__option"
-                    data-action="toc"
-                    data-fab-book-only
-                    role="menuitem">
-                {% include "partials/icons/feather-file-text.html" %}
-                <span class="reader-fab__option-label">{{ trans(key="tocContents", lang=detected_lang) }}</span>
-                <span class="reader-fab__option-meta" data-reader-fab-progress>—</span>
-            </button>
-
             <div class="reader-fab__pair" data-fab-book-only role="group" aria-label="Font size">
                 <button type="button"
                         class="reader-fab__pair-btn"
@@ -34,11 +28,43 @@
 
             <button type="button"
                     class="reader-fab__option"
+                    data-action="toc"
+                    data-fab-reader-only
+                    role="menuitem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="8" y1="6" x2="21" y2="6"></line>
+                    <line x1="8" y1="12" x2="21" y2="12"></line>
+                    <line x1="8" y1="18" x2="21" y2="18"></line>
+                    <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                    <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                    <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                </svg>
+                <span class="reader-fab__option-label">{{ trans(key="tocContents", lang=detected_lang) }}</span>
+                <span class="reader-fab__option-meta" data-reader-fab-progress data-fab-book-only>—</span>
+            </button>
+
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="metadata"
+                    data-fab-reader-only
+                    role="menuitem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                <span class="reader-fab__option-label">Metadata</span>
+            </button>
+
+            <button type="button"
+                    class="reader-fab__option"
                     data-action="bookmarks"
                     data-fab-book-only
                     role="menuitem">
-                {% include "partials/icons/feather-archive.html" %}
-                <span class="reader-fab__option-label">Bookmarks &amp; notes</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M19 21l-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span class="reader-fab__option-label">Bookmarks &amp; Notes</span>
             </button>
         </div>
 
@@ -71,14 +97,28 @@
             aria-expanded="false"
             aria-controls="readerFabPanel"
             aria-label="Reader options">
-        <span class="reader-fab__toggle-icon" data-icon="menu" aria-hidden="true">{% include "partials/icons/feather-menu.html" %}</span>
+        {# Sliders (settings) icon — visually distinct from the navbar burger
+           so the two FABs read as separate affordances on mobile. #}
+        <span class="reader-fab__toggle-icon" data-icon="menu" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="21" y1="4" x2="14" y2="4"></line>
+                <line x1="10" y1="4" x2="3" y2="4"></line>
+                <line x1="21" y1="12" x2="12" y2="12"></line>
+                <line x1="8" y1="12" x2="3" y2="12"></line>
+                <line x1="21" y1="20" x2="16" y2="20"></line>
+                <line x1="12" y1="20" x2="3" y2="20"></line>
+                <line x1="14" y1="2" x2="14" y2="6"></line>
+                <line x1="8" y1="10" x2="8" y2="14"></line>
+                <line x1="16" y1="18" x2="16" y2="22"></line>
+            </svg>
+        </span>
         <span class="reader-fab__toggle-icon" data-icon="close" aria-hidden="true">{% include "partials/icons/feather-x.html" %}</span>
     </button>
 </div>
 
 {# Secondary TOC sheet — markup left empty; populated by JS on first open
-   by cloning .library-book__toc-list from the sidebar. Sheet slides up
-   from the bottom on tap. #}
+   by cloning the chapter list (library) or heading list (wiki) from the
+   sidebar. Sheet slides up from the bottom on tap. #}
 <div class="reader-fab-toc" id="readerFabToc" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="readerFabTocTitle">
     <div class="reader-fab-toc__backdrop" data-reader-fab-toc-close></div>
     <div class="reader-fab-toc__sheet">

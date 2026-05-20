@@ -228,9 +228,28 @@
     }
 }
 
-// Hide book-context-only slots when not on a book page. JS toggles
-// `data-context="book"` on `.reader-fab` when `.library-book` exists.
+// Context-aware option visibility.
+//
+// JS sets `data-context` on `.reader-fab`:
+//   • "book" → on /library/<slug>/ (has .library-book)
+//   • "wiki" → on a content page with a sidebar (.wiki__sidebar)
+//   • (unset) → generic pages: only the global section (Theme,
+//     Back to top) is exposed.
+//
+// `data-fab-book-only` slots show only on book pages (font, bookmarks).
+// `data-fab-reader-only` slots show on book OR wiki pages (TOC, metadata).
 .reader-fab:not([data-context="book"]) [data-fab-book-only] {
+    display: none;
+}
+
+.reader-fab:not([data-context="book"]):not([data-context="wiki"]) [data-fab-reader-only] {
+    display: none;
+}
+
+// When the entire first section is empty (generic page), hide its
+// divider so the panel doesn't show a lone separator.
+.reader-fab:not([data-context="book"]):not([data-context="wiki"])
+    .reader-fab__section:first-child {
     display: none;
 }
 
