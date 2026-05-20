@@ -87,11 +87,11 @@
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="community">{{ trans(key="navbarCommunity", lang=detected_lang) }}</h3>
                     <a href="{{ get_url(path='about', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="about">{{ trans(key="navbarAbout", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='press', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="press">{{ trans(key="navbarPress", lang=detected_lang) }}</a>
+                    <a href="https://docs.wheelofheaven.world" class="navbar__dropdown-inline-link" rel="noopener" data-navbar-key="docs">{{ trans(key="navbarDocs", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='code-of-conduct', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="codeOfConduct">{{ trans(key="navbarCodeOfConduct", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='contributing', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="contributing">{{ trans(key="navbarContributing", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='forums', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="forums">{{ trans(key="navbarForums", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='faq', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="faq">{{ trans(key="navbarFAQ", lang=detected_lang) }}</a>
-                    <a href="https://docs.wheelofheaven.world" class="navbar__dropdown-inline-link" rel="noopener" data-navbar-key="docs">{{ trans(key="navbarDocs", lang=detected_lang) }}</a>
                     <a href="https://x.com/wheelofheaven" class="navbar__dropdown-inline-link" target="_blank" rel="noopener noreferrer" data-navbar-key="followX">{{ trans(key="navbarFollowX", lang=detected_lang) }}</a>
                 </div>
             </div>
@@ -969,6 +969,13 @@
                             <span data-navbar-key="press">{{ trans(key="navbarPress", lang=detected_lang) }}</span>
                             <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                         </a>
+                        <a href="https://docs.wheelofheaven.world" class="navbar-dropdown__link navbar-dropdown__link--simple" rel="noopener">
+                            <span class="navbar-dropdown__link-icon">
+                                {% include "partials/icons/feather-file-text.html" %}
+                            </span>
+                            <span data-navbar-key="docs">{{ trans(key="navbarDocs", lang=detected_lang) }}</span>
+                            <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                        </a>
                     </div>
                 </div>
                 <div class="navbar-dropdown__section">
@@ -1005,13 +1012,6 @@
                                 {% include "partials/icons/tdesign-questionnaire-double.html" %}
                             </span>
                             <span data-navbar-key="faq">{{ trans(key="navbarFAQ", lang=detected_lang) }}</span>
-                            <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
-                        </a>
-                        <a href="https://docs.wheelofheaven.world" class="navbar-dropdown__link navbar-dropdown__link--simple" rel="noopener">
-                            <span class="navbar-dropdown__link-icon">
-                                {% include "partials/icons/book-open.html" %}
-                            </span>
-                            <span data-navbar-key="docs">{{ trans(key="navbarDocs", lang=detected_lang) }}</span>
                             <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                         </a>
                     </div>
