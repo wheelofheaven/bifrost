@@ -25,19 +25,20 @@
         display: none;
     }
 
-    // On mobile, only show the FAB on pages with reading context
-    // (a book, a wiki entry with a sidebar, or an article detail page).
-    // Generic pages — landing, overviews, indexes — fall back to the
-    // plain `.to-top` button (see `_totop.scss`), since the FAB's only
-    // options there (Theme + Back to top) are already reachable
-    // elsewhere. Article detail pages have a sparse FAB but earn their
-    // place via the "Back to Articles" entry.
+    // On mobile, only show the FAB on pages with reading context —
+    // a book, a wiki entry with a sidebar, an article, or a timeline
+    // age page. Generic pages (landing, overviews, indexes) fall
+    // back to the plain `.to-top` button (see `_totop.scss`) since
+    // the FAB's only options there (Theme + Back to top) are already
+    // reachable elsewhere. Article and timeline contexts have a
+    // sparse FAB but earn their place via the "Back to ..." entry.
     @media (max-width: 999px) {
         display: none;
 
         body:has(.library-book) &,
         body:has(.wiki__sidebar) &,
-        body:has(.article) & {
+        body:has(.article) &,
+        body:has(.timeline-page) & {
             display: flex;
         }
     }
@@ -197,7 +198,10 @@
 
         // Wrapper around an inline SVG icon — used by Theme + the
         // "Back to overview" link. Sizes the SVG and inherits the
-        // muted-icon colour from the rule above.
+        // muted-icon colour from the rule above. Respect the [hidden]
+        // attribute (the theme button uses it to swap moon/sun); our
+        // class-based display: inline-flex would otherwise outweigh
+        // the UA `[hidden] { display: none }` default.
         &-icon {
             display: inline-flex;
             align-items: center;
@@ -205,6 +209,10 @@
             flex-shrink: 0;
             width: 1rem;
             height: 1rem;
+
+            &[hidden] {
+                display: none;
+            }
         }
 
         // Active state for toggle-style options (e.g. Interlinear). The
