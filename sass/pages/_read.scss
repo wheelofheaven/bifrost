@@ -1,4 +1,5 @@
 @use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 
 // /read/ — three reading paths in a row + a featured-entries dropdown.
@@ -34,14 +35,20 @@
     }
 
     // ---- Three reading paths in a row ----
+    // Each card is wrapped in a Bifrost-rainbow ring drawn via a ::before
+    // mask trick (same recipe used by `.navbar__cta-split` and the
+    // `.footer__rainbow` strip). The dual-background-clip variant isn't
+    // a fit here because we want the card's own background-color (for
+    // hover) to remain independent of the gradient.
     &__paths {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 0;
+        gap: v.$spacing-lg;
         margin: 0 auto;
 
         @media (max-width: 900px) {
             grid-template-columns: 1fr;
+            gap: v.$spacing-md;
         }
     }
 
@@ -53,28 +60,42 @@
         padding: v.$spacing-2xl v.$spacing-xl v.$spacing-3xl;
         text-decoration: none;
         color: var(--color-text);
-        background: transparent;
-        border-top: 1px solid var(--color-hairline);
-        border-bottom: 1px solid var(--color-hairline);
+        background-color: transparent;
+        border-radius: v.$border-radius-lg;
         transition: background-color 0.25s ease, transform 0.25s ease;
 
-        // Vertical hairline between paths on desktop. We rely on a
-        // left-border on every card and remove it from the first so the
-        // whole row reads as one segmented block, not three orphan tiles.
-        & + & {
-            border-left: 1px solid var(--color-hairline);
+        // Bifrost-rainbow border ring. Mask carves out the interior so
+        // only the 1.5px outline reads as a rainbow.
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1.5px;
+            background: linear-gradient(
+                90deg,
+                #{c.$pink-300}     0%,
+                #{c.$lavender-300} 14%,
+                #{c.$mauve-300}    28%,
+                #{c.$blue-300}     42%,
+                #{c.$cyan-300}     56%,
+                #{c.$mint-300}     70%,
+                #{c.$green-300}    84%,
+                #{c.$pink-300}     100%
+            );
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            pointer-events: none;
         }
 
         @media (max-width: 900px) {
             padding: v.$spacing-xl v.$spacing-md v.$spacing-2xl;
-
-            // On mobile each card is full-width, so the side hairline is
-            // dropped (the top hairline already separates them).
-            & + & {
-                border-left: none;
-                border-top: 1px solid var(--color-hairline);
-                margin-top: -1px; // collapse adjacent borders
-            }
         }
 
         &:hover,
@@ -94,14 +115,7 @@
 
         &:focus-visible {
             outline: 2px solid var(--color-accent-primary);
-            outline-offset: -2px;
-        }
-
-        // The featured (Wheel of Heaven) path gets a subtle accent at the
-        // top — a hairline width of accent color — so the eye lands on
-        // the central narrative first. No fill, no shadow.
-        &--featured {
-            border-top: 1px solid var(--color-accent-primary);
+            outline-offset: 2px;
         }
     }
 
@@ -281,8 +295,8 @@
 
     &__featured-list a {
         display: flex;
-        align-items: flex-start;
-        gap: v.$spacing-sm;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
         text-decoration: none;
         color: var(--color-text);
         transition: transform 0.2s ease;
@@ -295,10 +309,6 @@
             .read__featured-item-title {
                 color: var(--color-accent-primary);
             }
-
-            .read__featured-item-icon {
-                color: var(--color-accent-primary);
-            }
         }
 
         &:focus-visible {
@@ -306,27 +316,6 @@
             outline-offset: 4px;
             border-radius: v.$border-radius-xs;
         }
-    }
-
-    &__featured-item-icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-        width: 1.125rem;
-        height: 1.125rem;
-        margin-top: 0.125rem;
-        color: var(--color-text-muted);
-        transition: color 0.2s ease;
-
-        svg { width: 100%; height: 100%; }
-    }
-
-    &__featured-item-body {
-        display: flex;
-        flex-direction: column;
-        gap: v.$spacing-2xs;
-        min-width: 0;
     }
 
     &__featured-item-title {
