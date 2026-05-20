@@ -109,10 +109,12 @@
                                 <div class="library-book__para-num">{{ paragraph.n }}</div>
                                 <div class="library-book__para-content">
                                     {% set has_translation = paragraph.i18n and paragraph.i18n[detected_lang] %}
-                                    <div class="library-book__para-original">{{ paragraph.text }}</div>
                                     <div class="library-book__para-translation">
                                         {% if has_translation %}{{ paragraph.i18n[detected_lang] }}{% else %}{{ paragraph.text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter.n }}p{{ paragraph.n }}', this)" aria-label="Open commentary for verse {{ paragraph.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
                                     </div>
+                                    {% if has_translation %}
+                                    <div class="library-book__para-original" lang="{{ original_lang }}">{{ paragraph.text }}</div>
+                                    {% endif %}
                                 </div>
                                 <div class="library-book__para-actions">
                                     <button class="library-book__share-btn" onclick="event.stopPropagation(); shareParagraph('c{{ chapter.n }}p{{ paragraph.n }}')" title="Share this paragraph" aria-label="Share this paragraph">
@@ -371,21 +373,13 @@
                         <span id="paragraph-progress">¶ 1</span>
                     </div>
                     <div class="library-book__actions">
-                        <button onclick="toggleOriginalText()" id="original-toggle" class="library-book__btn library-book__btn--ghost" title="Show/Hide Original Text" aria-pressed="false" aria-label="Toggle original language text">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                                <polyline points="14,2 14,8 20,8"></polyline>
-                                <line x1="16" y1="13" x2="8" y2="13"></line>
-                                <line x1="16" y1="17" x2="8" y2="17"></line>
+                        <button onclick="toggleInterlinear()" id="interlinear-toggle" class="library-book__btn library-book__btn--ghost" title="Show the original language text below each translated paragraph" aria-pressed="false" aria-label="Toggle interlinear view">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <line x1="3" y1="12" x2="21" y2="12"></line>
+                                <line x1="3" y1="18" x2="21" y2="18"></line>
                             </svg>
-                            <span>{{ trans(key="libraryToggleOriginal", lang=detected_lang) }}</span>
-                        </button>
-                        <button onclick="toggleSideBySide()" id="side-by-side-toggle" class="library-book__btn library-book__btn--ghost hidden" title="Toggle Side-by-Side" aria-pressed="false" aria-label="Toggle side-by-side view">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                                <line x1="12" y1="3" x2="12" y2="21"></line>
-                            </svg>
-                            <span>{{ trans(key="libraryToggleSplit", lang=detected_lang) }}</span>
+                            <span>Interlinear</span>
                         </button>
                     </div>
                 </div>
@@ -505,46 +499,24 @@ const totalChapters = {% if book_chapters %}{{ book_chapters | length }}{% else 
 const bookTitle = "{{ book_title | default(value='') }}";
 const bookPrimaryLang = "{{ book_data.primaryLang | default(value='') }}";
 const pageLang = "{{ detected_lang | default(value='') }}";
-let showingOriginal = false;
-let sideBySide = false;
+let interlinear = false;
 let selectedParagraph = null;
 
-function toggleOriginalText() {
-    const originalTexts = document.querySelectorAll('.library-book__para-original');
-    const button = document.getElementById('original-toggle');
-    const sideBySideToggle = document.getElementById('side-by-side-toggle');
-    showingOriginal = !showingOriginal;
+// Show or hide the original-language text rendered as a second block
+// underneath each translated paragraph. We call this "interlinear" in
+// the UI because it matches the canonical scholarly term — original
+// and translation interleaved, in this case at the paragraph level —
+// and because it collapses the previous Original + Split toggles into
+// a single understandable affordance.
+function toggleInterlinear() {
+    interlinear = !interlinear;
+    const root = document.querySelector('.library-book');
+    if (root) root.classList.toggle('library-book--interlinear', interlinear);
 
-    originalTexts.forEach(text => {
-        text.style.display = showingOriginal ? 'block' : 'none';
-    });
-
+    const button = document.getElementById('interlinear-toggle');
     if (button) {
-        button.classList.toggle('library-book__btn--active', showingOriginal);
-        button.setAttribute('aria-pressed', showingOriginal ? 'true' : 'false');
-    }
-
-    if (sideBySideToggle) {
-        sideBySideToggle.classList.toggle('hidden', !showingOriginal);
-    }
-
-    if (!showingOriginal && sideBySide) {
-        toggleSideBySide();
-    }
-}
-
-function toggleSideBySide() {
-    const textContents = document.querySelectorAll('.library-book__text');
-    const button = document.getElementById('side-by-side-toggle');
-    sideBySide = !sideBySide;
-
-    textContents.forEach(content => {
-        content.classList.toggle('library-book__text--split', sideBySide);
-    });
-
-    if (button) {
-        button.classList.toggle('library-book__btn--active', sideBySide);
-        button.setAttribute('aria-pressed', sideBySide ? 'true' : 'false');
+        button.classList.toggle('library-book__btn--active', interlinear);
+        button.setAttribute('aria-pressed', interlinear ? 'true' : 'false');
     }
 }
 
@@ -790,15 +762,9 @@ function scrollToChapter(chapterNumber) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // For translated books (page language ≠ original), default to
-    // side-by-side: reveal the originals and split the columns so
-    // readers see source + translation in parallel. For monolingual
-    // books, leave only the translation visible.
-    const isTranslatedView = bookPrimaryLang && pageLang && bookPrimaryLang !== pageLang;
-    if (isTranslatedView) {
-        toggleOriginalText();
-        toggleSideBySide();
-    }
+    // Interlinear is opt-in via the sidebar toggle; library-reader.js
+    // restores the last view mode from LibraryStorage at init, so a
+    // returning reader who left it on keeps it on.
 
     updateChapterNavigation();
 

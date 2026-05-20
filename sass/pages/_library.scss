@@ -1128,57 +1128,6 @@
         color: var(--color-text);
     }
 
-    // Paragraph Styles
-    &__text {
-        // Default view
-    }
-
-    // Split view: current-language translation on the left (primary
-    // reading surface), original on the right (reference). Achieved
-    // with flex-direction: row-reverse so the DOM order
-    // (original → translation) doesn't need to change. On mobile the
-    // columns stack with translation on top, original below.
-    &__text--split {
-        .library-book__para-content {
-            display: flex;
-            flex-direction: row-reverse;
-            gap: 1.5rem;
-
-            @media (max-width: 768px) {
-                flex-direction: column-reverse;
-                gap: 0.75rem;
-            }
-        }
-
-        .library-book__para-original {
-            display: block !important;
-            flex: 1;
-            margin-bottom: 0;
-            border-bottom: none;
-            padding-bottom: 0;
-            padding-left: 1.5rem;
-            font-style: normal;
-            color: var(--color-text);
-
-            @media (max-width: 768px) {
-                padding-left: 0;
-            }
-        }
-
-        .library-book__para-translation {
-            flex: 1;
-            padding-right: 1.5rem;
-            border-right: 1px solid var(--color-hairline);
-
-            @media (max-width: 768px) {
-                padding-right: 0;
-                border-right: none;
-                padding-bottom: 0.75rem;
-                border-bottom: 1px solid var(--color-hairline);
-            }
-        }
-    }
-
     // Paragraphs read as text flow, not stacked cards. No hairline
     // between paragraphs — leading does the separating. Selection adds
     // an accent stripe to the left of the paragraph (in the content
@@ -1295,12 +1244,22 @@
         }
     }
 
+    // The original-language block sits below the translation in DOM
+    // order and is hidden by default. The `.library-book--interlinear`
+    // root class flips it to block so each translated paragraph is
+    // followed by its source — a paragraph-level interlinear view.
+    // Visually muted vs. the translation to keep the eye on the
+    // primary reading surface.
     &__para-original {
         display: none;
         color: var(--color-text-muted);
-        margin-bottom: 0.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px dashed var(--color-hairline-subtle);
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px dashed var(--color-hairline-subtle);
+
+        .library-book--interlinear & {
+            display: block;
+        }
     }
 
     &__para-translation {
