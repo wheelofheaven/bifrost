@@ -15,18 +15,21 @@
        section index. No expand state — picking a path commits you to it. #}
     <nav class="read__paths" aria-label="Reading paths">
         <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="read__path read__path--featured">
+            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/book.html" %}</span>
             <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
             <h2 class="read__path-title">Wheel of Heaven</h2>
             <p class="read__path-desc">{{ trans(key="readWoHDesc", lang=detected_lang) }}</p>
             <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
         </a>
         <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="read__path">
+            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
             <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
             <h2 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h2>
             <p class="read__path-desc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</p>
             <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
         </a>
         <a href="{{ get_url(path='library', lang=detected_lang) }}" class="read__path">
+            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
             <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
             <h2 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h2>
             <p class="read__path-desc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</p>
@@ -44,59 +47,89 @@
         </summary>
         <div class="read__featured-body">
             <div class="read__featured-group">
-                <h3 class="read__featured-group-title">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</h3>
+                <h3 class="read__featured-group-title">
+                    <span class="read__featured-group-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                    <span>{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
+                </h3>
                 <ul class="read__featured-list">
                     <li>
                         <a href="{{ get_url(path='wiki/elohim', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Elohim</span>
-                            <span class="read__featured-item-desc">The plural beings of Genesis — read here as a small advanced human civilization from elsewhere.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Elohim</span>
+                                <span class="read__featured-item-desc">The plural beings of Genesis — read here as a small advanced human civilization from elsewhere.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='wiki/raelism', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Raëlism</span>
-                            <span class="read__featured-item-desc">The 1973 message and the movement built around it — the project's primary interpretive lens.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Raëlism</span>
+                                <span class="read__featured-item-desc">The 1973 message and the movement built around it — the project's primary interpretive lens.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='wiki/precession', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Precession</span>
-                            <span class="read__featured-item-desc">The 26,000-year wobble of Earth's axis — the cosmic clock that times the Great Year.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Precession</span>
+                                <span class="read__featured-item-desc">The 26,000-year wobble of Earth's axis — the cosmic clock that times the Great Year.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='wiki/wheel-of-heaven', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Wheel of Heaven</span>
-                            <span class="read__featured-item-desc">The term, the project, and the forthcoming book of the same name.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Wheel of Heaven</span>
+                                <span class="read__featured-item-desc">The term, the project, and the forthcoming book of the same name.</span>
+                            </span>
                         </a>
                     </li>
                 </ul>
             </div>
             <div class="read__featured-group">
-                <h3 class="read__featured-group-title">{{ trans(key="navbarReadSources", lang=detected_lang) }}</h3>
+                <h3 class="read__featured-group-title">
+                    <span class="read__featured-group-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
+                    <span>{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+                </h3>
                 <ul class="read__featured-list">
                     <li>
                         <a href="{{ get_url(path='library/the-book-which-tells-the-truth', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">The Book Which Tells the Truth</span>
-                            <span class="read__featured-item-desc">The 1973 message — the founding Raëlian text and the corpus's primary lens.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">The Book Which Tells the Truth</span>
+                                <span class="read__featured-item-desc">The 1973 message — the founding Raëlian text and the corpus's primary lens.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='sources/extraterrestrials-took-me-to-their-planet', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Extraterrestrials Took Me to Their Planet</span>
-                            <span class="read__featured-item-desc">The 1975 sequel — the trip to the Elohim's home planet and what was shown there.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Extraterrestrials Took Me to Their Planet</span>
+                                <span class="read__featured-item-desc">The 1975 sequel — the trip to the Elohim's home planet and what was shown there.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='library/genesis', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Genesis</span>
-                            <span class="read__featured-item-desc">The opening book of the Hebrew Bible — creation, flood, patriarchs.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Genesis</span>
+                                <span class="read__featured-item-desc">The opening book of the Hebrew Bible — creation, flood, patriarchs.</span>
+                            </span>
                         </a>
                     </li>
                     <li>
                         <a href="{{ get_url(path='library/eridu-genesis', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Eridu Genesis</span>
-                            <span class="read__featured-item-desc">The Sumerian narrative of paradise, the creation of humanity, and the flood — older than the Enuma Elish, the earliest parallel to Genesis.</span>
+                            <span class="read__featured-item-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
+                            <span class="read__featured-item-body">
+                                <span class="read__featured-item-title">Eridu Genesis</span>
+                                <span class="read__featured-item-desc">The Sumerian narrative of paradise, the creation of humanity, and the flood — older than the Enuma Elish, the earliest parallel to Genesis.</span>
+                            </span>
                         </a>
                     </li>
                 </ul>
