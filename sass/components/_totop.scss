@@ -53,13 +53,15 @@
     }
 }
 
-// Search FAB — mobile only. Sits above the reader-fab (which always
-// occupies the bottom-right corner on mobile), creating a small
-// two-button stack: search on top, reader options below.
-// Desktop has the inline search icon in the navbar.
+// Search FAB — mobile only. By default it sits in the bottom-right
+// corner (the same slot as the to-top button). When the user scrolls
+// far enough for the to-top button to fade in, or when a reader-fab is
+// present on a detail page, the search FAB slides UP one button-height
+// so the two don't overlap. Desktop has the inline search icon in the
+// navbar, so this whole component hides at >=1000px.
 .search-fab {
     position: fixed;
-    bottom: 5rem; // stacked above the reader-fab
+    bottom: 1.5rem; // default: occupy the corner slot
     right: 1.5rem;
     display: flex;
     align-items: center;
@@ -99,40 +101,71 @@
     }
 }
 
-// On generic mobile pages (no reading context) the only sibling FAB to
-// search is the to-top button — and that one only appears after the
-// user has scrolled. While the page is still at the top, the to-top
-// slot is empty, so drop the search FAB into it instead of leaving the
-// search button orphaned high up the screen. As soon as the user
-// scrolls and `.to-top--visible` is set by `to-top.js`, the rule stops
-// matching and search slides back up to its stacked position. The
-// transition on `bottom` makes the move feel deliberate.
+// Stack search above the to-top button once it fades in. Sibling
+// selector — `partials/totop.html` and `partials/search-fab.html` are
+// rendered as siblings of `<main>` in `base.html`.
+.to-top--visible ~ .search-fab {
+    bottom: 5rem;
+}
+
+// On detail pages (book / wiki / article) the reader-fab owns the
+// corner permanently. Push search up one slot so the two don't stack
+// on top of each other.
 @media (max-width: 999px) {
-    body:not(:has(.library-book)):not(:has(.wiki__sidebar)):not(:has(.article)):not(:has(.to-top--visible)) .search-fab {
-        bottom: 1.5rem;
+    body:has(.library-book) .search-fab,
+    body:has(.wiki__sidebar) .search-fab,
+    body:has(.article) .search-fab {
+        bottom: 5rem;
     }
 }
 
-// When the PWA install banner is visible, lift the search FAB clear of
-// it. The reader-fab handles its own offset in _reader-fab.scss.
+// PWA install banner lifts every bottom-right FAB clear of itself so
+// the Install button stays tappable. Each FAB's idle offset becomes
+// "banner height + 1.5rem"; stacked offsets layer on top of that.
 body:has(.pwa-install-banner--visible) {
     .to-top {
         bottom: 6rem;
     }
 
     .search-fab {
-        bottom: 9.5rem;
+        bottom: 6rem; // banner-lifted corner slot
     }
 
-    @media (max-width: 640px) {
-        // Banner stacks into a column on narrow screens, so it's taller.
+    .to-top--visible ~ .search-fab {
+        bottom: 9.5rem; // banner-lifted stacked slot
+    }
+}
+
+// Detail pages + PWA banner: search needs the banner-lifted stacked
+// offset since the reader-fab still owns the corner.
+@media (max-width: 999px) {
+    body:has(.pwa-install-banner--visible):has(.library-book) .search-fab,
+    body:has(.pwa-install-banner--visible):has(.wiki__sidebar) .search-fab,
+    body:has(.pwa-install-banner--visible):has(.article) .search-fab {
+        bottom: 9.5rem;
+    }
+}
+
+@media (max-width: 640px) {
+    // Banner stacks into a column on narrow screens, so it's taller.
+    body:has(.pwa-install-banner--visible) {
         .to-top {
             bottom: 10rem;
         }
 
         .search-fab {
+            bottom: 10rem;
+        }
+
+        .to-top--visible ~ .search-fab {
             bottom: 13.5rem;
         }
+    }
+
+    body:has(.pwa-install-banner--visible):has(.library-book) .search-fab,
+    body:has(.pwa-install-banner--visible):has(.wiki__sidebar) .search-fab,
+    body:has(.pwa-install-banner--visible):has(.article) .search-fab {
+        bottom: 13.5rem;
     }
 }
 
