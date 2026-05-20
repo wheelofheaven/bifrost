@@ -34,12 +34,20 @@
     }
 }
 
-// Below 1000px the reader-fab (see components/_reader-fab.scss) takes
-// over the bottom-right corner with an expanded options menu — hide
-// the legacy to-top button there so the two don't stack. The "Back to
-// top" affordance lives inside the reader-fab panel.
+// Below 1000px the reader-fab (see components/_reader-fab.scss) owns
+// the bottom-right corner on pages with reading context (a book, or a
+// wiki entry with a sidebar). Hide the legacy to-top button there so
+// the two don't stack — "Back to top" lives inside the FAB panel.
+//
+// On generic pages (landing, section overviews, news/article/timeline
+// indexes) the FAB only offers Theme + Back to top, both reachable
+// elsewhere on mobile (theme is in the burger menu). The FAB wrapper
+// just adds friction there, so we leave the plain to-top button on
+// instead. The matching rule in `_reader-fab.scss` hides the FAB in
+// the same condition.
 @media (max-width: 999px) {
-    .to-top {
+    body:has(.library-book) .to-top,
+    body:has(.wiki__sidebar) .to-top {
         display: none;
     }
 }

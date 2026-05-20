@@ -25,6 +25,20 @@
         display: none;
     }
 
+    // On mobile, only show the FAB on pages with reading context
+    // (a book, or a wiki entry with a sidebar). Generic pages —
+    // landing, overviews, indexes — fall back to the plain `.to-top`
+    // button (see `_totop.scss`), since the FAB's only options there
+    // (Theme + Back to top) are already reachable elsewhere.
+    @media (max-width: 999px) {
+        display: none;
+
+        body:has(.library-book) &,
+        body:has(.wiki__sidebar) & {
+            display: flex;
+        }
+    }
+
     // Toggle button — same chrome as the existing search-fab so the two
     // FABs read as siblings.
     &__toggle {
