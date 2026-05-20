@@ -26,15 +26,18 @@
     }
 
     // On mobile, only show the FAB on pages with reading context
-    // (a book, or a wiki entry with a sidebar). Generic pages —
-    // landing, overviews, indexes — fall back to the plain `.to-top`
-    // button (see `_totop.scss`), since the FAB's only options there
-    // (Theme + Back to top) are already reachable elsewhere.
+    // (a book, a wiki entry with a sidebar, or an article detail page).
+    // Generic pages — landing, overviews, indexes — fall back to the
+    // plain `.to-top` button (see `_totop.scss`), since the FAB's only
+    // options there (Theme + Back to top) are already reachable
+    // elsewhere. Article detail pages have a sparse FAB but earn their
+    // place via the "Back to Articles" entry.
     @media (max-width: 999px) {
         display: none;
 
         body:has(.library-book) &,
-        body:has(.wiki__sidebar) & {
+        body:has(.wiki__sidebar) &,
+        body:has(.article) & {
             display: flex;
         }
     }
@@ -175,6 +178,7 @@
         font-size: 0.875rem;
         font-weight: 500;
         text-align: left;
+        text-decoration: none;
         cursor: pointer;
         transition: background-color 0.15s ease, color 0.15s ease;
 
@@ -189,6 +193,31 @@
             height: 1rem;
             flex-shrink: 0;
             color: var(--color-text-muted);
+        }
+
+        // Wrapper around an inline SVG icon — used by Theme + the
+        // "Back to overview" link. Sizes the SVG and inherits the
+        // muted-icon colour from the rule above.
+        &-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            width: 1rem;
+            height: 1rem;
+        }
+
+        // Active state for toggle-style options (e.g. Interlinear). The
+        // sidebar control uses `.library-book__btn--active`; we mirror
+        // the visual cue here so the FAB stays in sync with the page.
+        &--active {
+            color: var(--color-accent-primary);
+            background-color: var(--color-hover);
+
+            svg,
+            .reader-fab__option-icon {
+                color: var(--color-accent-primary);
+            }
         }
 
         &-label {
@@ -245,13 +274,15 @@
 // Context-aware option visibility.
 //
 // JS sets `data-context` on `.reader-fab`:
-//   • "book" → on /library/<slug>/ (has .library-book)
-//   • "wiki" → on a content page with a sidebar (.wiki__sidebar)
-//   • (unset) → generic pages: only the global section (Theme,
-//     Back to top) is exposed.
+//   • "book"    → on /library/<slug>/ (has .library-book)
+//   • "wiki"    → on a content page with a sidebar (.wiki__sidebar)
+//   • "article" → on /articles/<slug>/ (has .article)
+//   • (unset)   → generic pages: only the global section (Theme,
+//                 Back to top) is exposed.
 //
-// `data-fab-book-only` slots show only on book pages (font, bookmarks).
-// `data-fab-reader-only` slots show on book OR wiki pages (TOC, metadata).
+// `data-fab-book-only` slots show only on book pages (font, bookmarks,
+// interlinear). `data-fab-reader-only` slots show on book OR wiki pages
+// (TOC, metadata) — articles don't have a TOC/sidebar to scroll to.
 .reader-fab:not([data-context="book"]) [data-fab-book-only] {
     display: none;
 }
@@ -260,10 +291,14 @@
     display: none;
 }
 
-// When the entire first section is empty (generic page), hide its
-// divider so the panel doesn't show a lone separator.
+// The `--context` section bundles all the reading-context options
+// (font, TOC, metadata, bookmarks, interlinear). On article and
+// generic contexts every child is already hidden by the rules above,
+// so the section itself collapses to a phantom divider — hide it
+// explicitly so the panel reads as a clean two-section stack: back
+// link (article) and theme + top.
 .reader-fab:not([data-context="book"]):not([data-context="wiki"])
-    .reader-fab__section:first-child {
+    .reader-fab__section--context {
     display: none;
 }
 

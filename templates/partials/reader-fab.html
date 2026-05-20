@@ -1,20 +1,65 @@
 {# Mobile-only reader options FAB. Replaces the standalone to-top button
    on <=999px; the legacy .to-top is hidden at that breakpoint in
    _totop.scss. JS in static/js/reader-fab.js handles open/close,
-   detects `.library-book` / `.wiki__sidebar` to enable book- and wiki-
-   context slots, and renders the secondary TOC sheet.
+   detects `.library-book` / `.wiki__sidebar` / `.article` to enable
+   book-, wiki-, and article-context slots, and renders the secondary
+   TOC sheet.
 
    Toggle uses a sliders icon (not a burger) to visually distinguish
    the FAB from the navbar burger — one is site navigation, this is
    reader/page options. #}
-<div class="reader-fab" id="readerFab" data-state="collapsed">
+{# "Back to overview" detection: detail pages live below `/library/`,
+   `/wiki/`, `/articles/` (with an optional `/{lang}/` prefix for non-
+   English). The section root URLs themselves should NOT show the link.
+   We compute the localized root once per request and compare against
+   `current_path` rather than threading a section flag through every
+   template. #}
+{% if detected_lang == "en" %}
+    {% set_global _lib_root  = "/library/" %}
+    {% set_global _wiki_root = "/wiki/" %}
+    {% set_global _art_root  = "/articles/" %}
+{% else %}
+    {% set_global _lib_root  = "/" ~ detected_lang ~ "/library/" %}
+    {% set_global _wiki_root = "/" ~ detected_lang ~ "/wiki/" %}
+    {% set_global _art_root  = "/" ~ detected_lang ~ "/articles/" %}
+{% endif %}
+{% set _is_lib_detail  = current_path and current_path is starting_with(_lib_root)  and current_path != _lib_root %}
+{% set _is_wiki_detail = current_path and current_path is starting_with(_wiki_root) and current_path != _wiki_root %}
+{% set _is_art_detail  = current_path and current_path is starting_with(_art_root)  and current_path != _art_root %}
+{% set_global _back_path = "" %}
+{% set_global _back_key = "" %}
+{% if _is_lib_detail %}
+    {% set_global _back_path = "library" %}
+    {% set_global _back_key = "navbarLibrary" %}
+{% elif _is_wiki_detail %}
+    {% set_global _back_path = "wiki" %}
+    {% set_global _back_key = "navbarWiki" %}
+{% elif _is_art_detail %}
+    {% set_global _back_path = "articles" %}
+    {% set_global _back_key = "navbarArticles" %}
+{% endif %}
+{% set _show_back = _is_lib_detail or _is_wiki_detail or _is_art_detail %}
+<div class="reader-fab" id="readerFab" data-state="collapsed"{% if _show_back %} data-has-back="true"{% endif %}>
     <div class="reader-fab__panel"
          id="readerFabPanel"
          role="menu"
          aria-labelledby="readerFabToggle"
          aria-hidden="true">
 
-        <div class="reader-fab__section">
+        {% if _show_back %}
+        <div class="reader-fab__section reader-fab__section--back">
+            <a class="reader-fab__option reader-fab__option--back"
+               href="{{ get_url(path=_back_path, lang=detected_lang) }}"
+               role="menuitem">
+                <span class="reader-fab__option-icon" aria-hidden="true">
+                    {% include "partials/icons/arrow-left.html" %}
+                </span>
+                <span class="reader-fab__option-label">{{ trans(key="navbarBack", lang=detected_lang) }} · {{ trans(key=_back_key, lang=detected_lang) }}</span>
+            </a>
+        </div>
+        {% endif %}
+
+        <div class="reader-fab__section reader-fab__section--context">
             <div class="reader-fab__pair" data-fab-book-only role="group" aria-label="Font size">
                 <button type="button"
                         class="reader-fab__pair-btn"
@@ -54,6 +99,20 @@
                     <line x1="12" y1="8" x2="12.01" y2="8"></line>
                 </svg>
                 <span class="reader-fab__option-label">Metadata</span>
+            </button>
+
+            <button type="button"
+                    class="reader-fab__option"
+                    data-action="interlinear"
+                    data-fab-book-only
+                    aria-pressed="false"
+                    role="menuitem">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="3" y1="7" x2="21" y2="7"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="17" x2="21" y2="17"></line>
+                </svg>
+                <span class="reader-fab__option-label">Interlinear</span>
             </button>
 
             <button type="button"

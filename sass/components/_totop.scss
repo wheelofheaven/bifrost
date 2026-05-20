@@ -47,7 +47,8 @@
 // the same condition.
 @media (max-width: 999px) {
     body:has(.library-book) .to-top,
-    body:has(.wiki__sidebar) .to-top {
+    body:has(.wiki__sidebar) .to-top,
+    body:has(.article) .to-top {
         display: none;
     }
 }
@@ -95,6 +96,20 @@
 
     @media (min-width: 1000px) {
         display: none;
+    }
+}
+
+// On generic mobile pages (no reading context) the only sibling FAB to
+// search is the to-top button — and that one only appears after the
+// user has scrolled. While the page is still at the top, the to-top
+// slot is empty, so drop the search FAB into it instead of leaving the
+// search button orphaned high up the screen. As soon as the user
+// scrolls and `.to-top--visible` is set by `to-top.js`, the rule stops
+// matching and search slides back up to its stacked position. The
+// transition on `bottom` makes the move feel deliberate.
+@media (max-width: 999px) {
+    body:not(:has(.library-book)):not(:has(.wiki__sidebar)):not(:has(.article)):not(:has(.to-top--visible)) .search-fab {
+        bottom: 1.5rem;
     }
 }
 
