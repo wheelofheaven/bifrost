@@ -64,6 +64,11 @@ bifrost/
 
 See `theme.toml` for available options.
 
+## Documentation
+
+Theme architecture, SCSS conventions, shortcode reference, and how to
+extend Bifrost: **<https://docs.wheelofheaven.world/contributing/dev/bifrost-theme/>**.
+
 ## License
 
 CC0-1.0 (Public Domain)
