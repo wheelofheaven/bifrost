@@ -38,6 +38,9 @@
         '.wiki__sidebar',
         '.read__cards',
         '.read__sublinks',
+        // The /wiki/ overview itself — every card already links to its
+        // own entry, so a hover-preview tooltip on top of that is noise.
+        '.wiki-section',
     ].join(',');
 
     document.querySelectorAll('a[href*="/wiki/"]').forEach(link => {

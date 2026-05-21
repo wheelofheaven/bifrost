@@ -5,6 +5,7 @@
 @use "../abstracts/variables" as vars;
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-card" as gcc;
 
 // Minimal Wiki Header
 .wiki-header {
@@ -1093,75 +1094,64 @@
         gap: 0.75rem;
     }
 
-    // Per-card Bifrost stripe — each card picks up its own palette
-    // stop in the order they appear, so the row reads as the rainbow
-    // unfolded across the featured set. Falls back to lavender past 8.
-    $featured-accents: (
-        colors.$yellow-500,
-        colors.$pink-500,
-        colors.$lavender-500,
-        colors.$mauve-500,
-        colors.$blue-500,
-        colors.$cyan-500,
-        colors.$mint-500,
-        colors.$green-500
+    // Per-card cloud duos — each card gets its own Bifrost cloud pair,
+    // walking the palette across the featured row so the set reads as
+    // the rainbow softened into atmosphere. Pairs are adjacent stops on
+    // the same wheel used by the rest of the project's Bifrost surfaces.
+    $featured-clouds: (
+        (colors.$yellow-300,   colors.$pink-300),     // 1
+        (colors.$pink-300,     colors.$lavender-300), // 2
+        (colors.$lavender-300, colors.$mauve-300),    // 3
+        (colors.$mauve-300,    colors.$blue-300),     // 4
+        (colors.$blue-300,     colors.$cyan-300),     // 5
+        (colors.$cyan-300,     colors.$mint-300),     // 6
+        (colors.$mint-300,     colors.$green-300),    // 7
+        (colors.$green-300,    colors.$yellow-300)    // 8 (closes the loop)
     );
 
     &__card {
-        position: relative;
+        @include gcc.glass-cloud-card;
+
         display: flex;
         flex-direction: column;
         gap: 0.4rem;
         padding: 1rem 1rem 0.875rem;
         border-radius: vars.$border-radius-md;
-        background: var(--color-card-bg, var(--color-background));
-        border: 1px solid var(--color-hairline);
         color: var(--color-text);
         text-decoration: none;
-        overflow: hidden;
-        transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
-        // Default accent — overridden per nth-child below.
-        --featured-accent: #{colors.$lavender-500};
+        // The mixin renders a soft cloud duo through a blurred ::before
+        // layer at z-index -1. Card content needs an explicit border —
+        // the mixin sets border:0 to let the glass tint read clean.
+        border: 1px solid var(--color-hairline);
 
-        &::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--featured-accent);
-            opacity: 0.85;
-            transition: opacity 0.2s ease, height 0.2s ease;
-        }
-
-        @for $i from 1 through length($featured-accents) {
+        @for $i from 1 through length($featured-clouds) {
             &:nth-child(#{$i}) {
-                --featured-accent: #{nth($featured-accents, $i)};
+                --cloud-a: #{nth(nth($featured-clouds, $i), 1)};
+                --cloud-b: #{nth(nth($featured-clouds, $i), 2)};
             }
         }
 
         &:hover,
         &:focus-visible {
             transform: translateY(-2px);
-            border-color: var(--featured-accent);
+            border-color: var(--cloud-b);
             box-shadow: 0 6px 20px -8px rgba(0, 0, 0, 0.18);
             outline: none;
 
             &::before {
-                opacity: 1;
-                height: 4px;
+                opacity: 0.75;
             }
 
             .wiki-featured__card-arrow {
                 transform: translateX(3px);
-                color: var(--featured-accent);
+                color: var(--color-text);
             }
         }
 
         &:focus-visible {
-            outline: 2px solid var(--featured-accent);
+            outline: 2px solid var(--cloud-b);
             outline-offset: 2px;
         }
     }
@@ -1170,7 +1160,7 @@
         font-family: typo.$font-family-tech;
         font-size: 0.65rem;
         font-weight: 700;
-        color: var(--featured-accent);
+        color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.1em;
         min-height: 0.9em; // reserve space even when empty so titles align
