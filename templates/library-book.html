@@ -25,6 +25,43 @@
     {% endif %}
 {% endif %}
 
+{# Reference translation lookup. For WoH translations (slug ends in
+   '-woh'), attempt to load the parallel non-WoH book's chapters as the
+   reference (e.g., genesis-woh → genesis = ASV 1901). Builds
+   ref_chapters as a list parallel to book_chapters. The per-paragraph
+   match happens later via the `filter` filter on verse number `n`. #}
+{% set reference_book_slug = book_slug | replace(from="-woh", to="") %}
+{% set has_reference = reference_book_slug != book_slug %}
+{% set_global ref_chapters = [] %}
+{% set_global ref_book_title = "" %}
+{% set_global ref_book_version = "" %}
+{% if has_reference %}
+    {% set ref_meta = load_data(path="data/library/" ~ reference_book_slug ~ "/_meta.json", required=false) %}
+    {% if ref_meta %}
+        {% if ref_meta.titles and ref_meta.titles[detected_lang] %}
+            {% set_global ref_book_title = ref_meta.titles[detected_lang] %}
+        {% elif ref_meta.titles and ref_meta.titles.en %}
+            {% set_global ref_book_title = ref_meta.titles.en %}
+        {% else %}
+            {% set_global ref_book_title = reference_book_slug %}
+        {% endif %}
+        {% if ref_meta.versionTitles and ref_meta.versionTitles[detected_lang] %}
+            {% set_global ref_book_version = ref_meta.versionTitles[detected_lang] %}
+        {% elif ref_meta.versionTitles and ref_meta.versionTitles.en %}
+            {% set_global ref_book_version = ref_meta.versionTitles.en %}
+        {% endif %}
+        {% for ch_info in ref_meta.chapterFiles %}
+            {% set ref_chapter_data = load_data(path="data/library/" ~ reference_book_slug ~ "/" ~ ch_info.file, required=false) %}
+            {% if ref_chapter_data %}
+                {% set_global ref_chapters = ref_chapters | concat(with=[ref_chapter_data]) %}
+            {% else %}
+                {% set_global ref_chapters = ref_chapters | concat(with=[false]) %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+{% endif %}
+{% set show_reference_toggle = ref_chapters | length > 0 %}
+
 {% if book_data %}
 <!-- Book Schema -->
 {% include "partials/schema/book.html" %}
@@ -91,6 +128,11 @@
                 <!-- Book Content -->
                 <div class="library-book__content">
                     {% for chapter in book_chapters %}
+                    {# Reference chapter for parallel display (same chapter index). #}
+                    {% set ref_chapter = false %}
+                    {% if ref_chapters | length > loop.index0 %}
+                        {% set ref_chapter = ref_chapters | nth(n=loop.index0) %}
+                    {% endif %}
                     <section class="library-book__chapter" id="chapter-{{ chapter.n }}">
                         <header class="library-book__chapter-header">
                             <span class="library-book__chapter-number">{{ trans(key="libraryChapter", lang=detected_lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=detected_lang) }}</span>
@@ -102,6 +144,15 @@
                         <div class="library-book__text" id="text-content-{{ chapter.n }}">
                             {% for paragraph in chapter.paragraphs %}
                             {% set has_commentary = paragraph.commentary | default(value="") | trim != "" %}
+                            {# Look up matching reference paragraph by verse number (n). #}
+                            {% set ref_paragraph_text = "" %}
+                            {% if ref_chapter and ref_chapter.paragraphs %}
+                                {% set ref_paragraph_matches = ref_chapter.paragraphs | filter(attribute="n", value=paragraph.n) %}
+                                {% if ref_paragraph_matches | length > 0 %}
+                                    {% set first_match = ref_paragraph_matches | first %}
+                                    {% set ref_paragraph_text = first_match.text | default(value="") %}
+                                {% endif %}
+                            {% endif %}
                             <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
                                  id="c{{ chapter.n }}p{{ paragraph.n }}"
                                  data-ref-id="{{ paragraph.refId | default(value='') }}"
@@ -112,6 +163,9 @@
                                     <div class="library-book__para-translation">
                                         {% if has_translation %}{{ paragraph.i18n[detected_lang] }}{% else %}{{ paragraph.text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter.n }}p{{ paragraph.n }}', this)" aria-label="Open commentary for verse {{ paragraph.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
                                     </div>
+                                    {% if ref_paragraph_text %}
+                                    <div class="library-book__para-reference" aria-label="Reference translation">{{ ref_paragraph_text }}</div>
+                                    {% endif %}
                                     {% if has_translation %}
                                     <div class="library-book__para-original" lang="{{ original_lang }}">{{ paragraph.text }}</div>
                                     {% endif %}
@@ -381,6 +435,21 @@
                             </svg>
                             <span>Interlinear</span>
                         </button>
+                        {% if show_reference_toggle %}
+                        {% set ref_button_label = "Reference" %}
+                        {% if ref_book_version %}
+                            {% set ref_button_label = ref_book_version %}
+                        {% elif ref_book_title %}
+                            {% set ref_button_label = ref_book_title %}
+                        {% endif %}
+                        <button onclick="toggleReference()" id="reference-toggle" class="library-book__btn library-book__btn--ghost" title="Show {{ ref_button_label }} alongside the WoH text" aria-pressed="false" aria-label="Toggle reference translation">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                            </svg>
+                            <span>{{ ref_button_label }}</span>
+                        </button>
+                        {% endif %}
                     </div>
                 </div>
 
@@ -528,6 +597,47 @@ function toggleInterlinear() {
         button.setAttribute('aria-pressed', interlinear ? 'true' : 'false');
     }
 }
+
+// Reveal/hide the reference translation (e.g. ASV 1901 for the Hebrew
+// Bible) inline under each WoH translated verse. The reference text
+// is rendered server-side into `.library-book__para-reference` elements
+// and kept hidden by default; the toggle exposes them globally for the
+// whole chapter. Preference is persisted in localStorage so a reader
+// who turns it on once doesn't have to re-toggle on every visit.
+let referenceShown = false;
+const REFERENCE_STORAGE_KEY = 'library-book:show-reference';
+
+function toggleReference() {
+    referenceShown = !referenceShown;
+    applyReferenceState();
+    try { localStorage.setItem(REFERENCE_STORAGE_KEY, referenceShown ? '1' : '0'); } catch (_) {}
+}
+
+function applyReferenceState() {
+    const root = document.querySelector('.library-book');
+    if (root) root.classList.toggle('library-book--show-reference', referenceShown);
+
+    const button = document.getElementById('reference-toggle');
+    if (button) {
+        button.classList.toggle('library-book__btn--active', referenceShown);
+        button.setAttribute('aria-pressed', referenceShown ? 'true' : 'false');
+    }
+}
+
+// Restore reference-toggle preference on first paint. Wrapped so the
+// rest of the page can keep loading if localStorage is unavailable
+// (private-browsing mode, sandboxed iframe, etc.).
+(function restoreReferencePreference() {
+    if (!document.getElementById('reference-toggle')) return;
+    try {
+        if (localStorage.getItem(REFERENCE_STORAGE_KEY) === '1') {
+            referenceShown = true;
+            // Defer to next tick so the DOM is fully constructed when
+            // classList.toggle runs.
+            requestAnimationFrame(applyReferenceState);
+        }
+    } catch (_) {}
+})();
 
 function selectParagraph(paragraphId) {
     document.querySelectorAll('.library-book__paragraph').forEach(p => {

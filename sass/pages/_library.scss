@@ -1223,6 +1223,7 @@
     // legibility-tuned rendering, soft hyphens so long Latin words
     // don't punch through the measure on narrow viewports.
     &__para-original,
+    &__para-reference,
     &__para-translation {
         font-family: var(--font-family-citation);
         font-size: var(--reader-font-size, 1.3125rem);
@@ -1258,6 +1259,33 @@
         border-top: 1px dashed var(--color-hairline-subtle);
 
         .library-book--interlinear & {
+            display: block;
+        }
+    }
+
+    // Reference translation (e.g. ASV 1901 for the Hebrew Bible).
+    // Sits between the WoH translation and the original-language
+    // source so a reader who turns the global toggle on sees the
+    // verse in three registers stacked: WoH → reference → source.
+    // Hidden by default; revealed when the root has
+    // `.library-book--show-reference`.
+    //
+    // Visually distinct from `.library-book__para-original`: italic
+    // (a scholarly-citation cue), slightly smaller, with a softer
+    // separator line. The point is to keep WoH the primary text and
+    // the reference legible-but-secondary.
+    &__para-reference {
+        display: none;
+        color: var(--color-text-muted);
+        font-style: italic;
+        font-size: calc(var(--reader-font-size, 1.3125rem) * 0.95);
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        padding-left: 0.875rem;
+        border-top: 1px dashed var(--color-hairline-subtle);
+        border-left: 2px solid var(--color-hairline-subtle);
+
+        .library-book--show-reference & {
             display: block;
         }
     }
@@ -3143,7 +3171,8 @@
     }
 
     .library-book__para-translation,
-    .library-book__para-original {
+    .library-book__para-original,
+    .library-book__para-reference {
         color: #5c4b37;
     }
 }
@@ -3158,7 +3187,8 @@
         color: #e0e0e0;
     }
 
-    .library-book__para-original {
+    .library-book__para-original,
+    .library-book__para-reference {
         color: #a0a0a0;
     }
 }
@@ -3327,7 +3357,8 @@
     --reader-font-size: 1.125rem;
 
     .library-book__para-translation,
-    .library-book__para-original {
+    .library-book__para-original,
+    .library-book__para-reference {
         font-size: var(--reader-font-size);
     }
 
