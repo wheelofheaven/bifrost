@@ -117,6 +117,38 @@ block content %}
             {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" | split(pat="") %}
         {% endif %}
 
+        {# Featured entries — editor-curated set of the most prominent
+           articles. Pages opt in via `extra.featured_order` (positive
+           integer). The section renders above the A-Z grouping; the
+           same articles still appear in their alphabetical letter group
+           below, so featuring an entry doesn't remove it from the main
+           flow. JS filters/Group-by hide this section when not in alpha
+           mode or when a filter/search is active. #}
+        {% set featured_pages_raw = section.pages | filter(attribute="extra.featured_order") %}
+        {% set featured_pages = featured_pages_raw | sort(attribute="extra.featured_order") %}
+        {% if featured_pages | length > 0 %}
+        <section class="wiki-featured" id="wiki-featured" aria-labelledby="wiki-featured-heading">
+            <header class="wiki-featured__header">
+                <h2 class="wiki-featured__title" id="wiki-featured-heading">{{ trans(key="wikiFeaturedTitle", lang=detected_lang) }}</h2>
+                <p class="wiki-featured__lede">{{ trans(key="wikiFeaturedLede", lang=detected_lang) }}</p>
+            </header>
+            <div class="wiki-featured__grid">
+                {% for page in featured_pages %}
+                <a class="wiki-featured__card" href="{{ page.permalink }}" data-featured-order="{{ page.extra.featured_order }}">
+                    {% if page.extra.category and page.extra.category != page.title %}
+                    <span class="wiki-featured__card-eyebrow">{{ page.extra.category }}</span>
+                    {% endif %}
+                    <h3 class="wiki-featured__card-title">{{ page.title }}</h3>
+                    {% if page.extra.summary or page.description %}
+                    <p class="wiki-featured__card-desc">{{ page.extra.summary | default(value=page.description) | striptags | truncate(length=140, end="…") }}</p>
+                    {% endif %}
+                    <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
         <!-- Alphabetical Quick Navigation — shown only when the Group-by
              selector is set to "alpha" (the default). -->
         <div class="wiki-alphabet" id="wiki-alphabet">
@@ -465,6 +497,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 .some(a => a.style.display !== 'none');
             group.style.display = hasVisible ? '' : 'none';
         });
+
+        // Hide the Featured block when filters / non-alpha grouping
+        // are active — it's a curated overview, not a search result.
+        const featured = document.getElementById('wiki-featured');
+        if (featured) {
+            const nonAlpha = groupBy && groupBy.value !== 'alpha';
+            featured.classList.toggle('hidden', !!searchTerm || !!selectedCategory || nonAlpha);
+        }
 
         if (noResults) {
             noResults.classList.toggle('hidden', visibleCount > 0);
