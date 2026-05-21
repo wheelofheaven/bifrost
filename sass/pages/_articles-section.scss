@@ -12,6 +12,7 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-card" as gcc;
 
 // ---- Section: .articles-feed ----
 
@@ -371,13 +372,14 @@
     }
 
     // Lead card — magazine-cover treatment for the featured/most-recent
-    // article at the top. Boxed (instead of the feed's hairline rhythm),
-    // larger headline + lede.
+    // article at the top. Uses the shared glass-and-cloud recipe so the
+    // hero card visually rhymes with `/read/`'s reading-path cards. The
+    // cloud duo is driven by `data-category` (see overrides below).
     &--lead {
+        @include gcc.glass-cloud-card;
+
         padding: v.$spacing-xl;
         margin-bottom: 0;
-        background: var(--color-background-secondary);
-        border: 1px solid var(--color-hairline);
         border-radius: v.$border-radius-lg;
 
         @media (max-width: 768px) {
@@ -398,6 +400,42 @@
             font-size: v.$font-size-lg;
             line-height: 1.6;
             color: var(--color-text);
+        }
+
+        // Per-category cloud duos. Categories are free-form text on
+        // articles, but `data-category` is rendered as a lowercased
+        // slug by `macros/article.html::card_lead`, so we can match on
+        // the canonical form here. Fallbacks land on the mixin's
+        // default (mauve + blue) when no override fires.
+        &[data-category="philosophy"] {
+            --cloud-a: #{c.$lavender-300};
+            --cloud-b: #{c.$mauve-300};
+        }
+        &[data-category="methodology"] {
+            --cloud-a: #{c.$cyan-300};
+            --cloud-b: #{c.$mint-300};
+        }
+        &[data-category="cosmology & framework"] {
+            --cloud-a: #{c.$mauve-300};
+            --cloud-b: #{c.$blue-300};
+        }
+        &[data-category="science & technology"] {
+            --cloud-a: #{c.$cyan-300};
+            --cloud-b: #{c.$blue-300};
+        }
+        &[data-category="texts & scriptures"] {
+            --cloud-a: #{c.$pink-300};
+            --cloud-b: #{c.$yellow-300};
+        }
+        &[data-category="figures"],
+        &[data-category="biblical figures"],
+        &[data-category="cosmic figures"] {
+            --cloud-a: #{c.$yellow-300};
+            --cloud-b: #{c.$pink-300};
+        }
+        &[data-category="culture & aesthetics"] {
+            --cloud-a: #{c.$pink-300};
+            --cloud-b: #{c.$lavender-300};
         }
     }
 

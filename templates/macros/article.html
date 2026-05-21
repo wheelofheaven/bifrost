@@ -80,7 +80,11 @@
 {# Lead card — magazine-cover treatment for the featured/most-recent
    article at the top of the section index. Same data, heavier visual
    weight: "Featured Explainer" kicker, larger headline, longer lede.
-   The `--lead` modifier on the card root drives the size differences. #}
+   The `--lead` modifier on the card root drives the size differences.
+
+   Meta row is intentionally lean here — kicker + category + date.
+   Claim type and reading time are still on the per-article page; the
+   lead exists to hook the reader, not to expose every facet. #}
 {% macro card_lead(page, lang="en") %}
 <article class="article-card article-card--lead"
          data-title="{{ page.title | lower }}"
@@ -92,14 +96,10 @@
         {% if page.extra.category %}
         <span class="article-card__category">{{ page.extra.category }}</span>
         {% endif %}
-        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value=''), lang=lang) }}
         {% if page.date %}
         <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
             {{ page.date | date(format="%b %d, %Y") }}
         </time>
-        {% endif %}
-        {% if page.word_count %}
-        <span class="article-card__reading-time">{{ (page.word_count / 200) | round(method="ceil") }} {{ trans(key="readingTimeUnit", lang=lang) }}</span>
         {% endif %}
     </div>
     <h2 class="article-card__title">

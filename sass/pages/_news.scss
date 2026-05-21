@@ -7,6 +7,7 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-card" as gcc;
 
 // ---- Section: .newsroom ----
 
@@ -382,18 +383,19 @@
     }
 
     // Lead card — magazine cover treatment for the most-recent
-    // dispatch at the top of the section. Boxed (instead of the
-    // hairline rhythm of feed cards), with a soft accent and a
-    // larger headline + lede so it visually anchors the page.
+    // dispatch at the top of the section. Uses the shared glass-and-
+    // cloud recipe (same as /read/ and the lead Article) so the three
+    // section heroes feel like part of one design language. Cloud duo
+    // is driven by `data-event-type` (see overrides below).
     &--lead {
+        @include gcc.glass-cloud-card;
+
         padding: v.$spacing-xl;
         margin-bottom: 0;
-        background: var(--color-background-secondary);
-        border: 1px solid var(--color-hairline);
         border-radius: v.$border-radius-lg;
-
-        // The boxed treatment replaces the feed-card hairline.
-        border-bottom: 1px solid var(--color-hairline);
+        // Override the feed-card's bottom hairline; the boxed glass
+        // treatment supplies its own visual boundary.
+        border-bottom: 0;
 
         @media (max-width: 768px) {
             padding: v.$spacing-lg;
@@ -413,6 +415,31 @@
             font-size: v.$font-size-lg;
             line-height: 1.6;
             color: var(--color-text);
+        }
+
+        // Per-event-type cloud duos. Event types are a documented
+        // enum (`announcement | discovery | anniversary |
+        // cultural-moment | obituary`) — see content-editing.md and
+        // content.md. Fallbacks land on the mixin's default duo.
+        &[data-event-type="announcement"] {
+            --cloud-a: #{c.$cyan-300};
+            --cloud-b: #{c.$mint-300};
+        }
+        &[data-event-type="discovery"] {
+            --cloud-a: #{c.$mauve-300};
+            --cloud-b: #{c.$blue-300};
+        }
+        &[data-event-type="anniversary"] {
+            --cloud-a: #{c.$yellow-300};
+            --cloud-b: #{c.$pink-300};
+        }
+        &[data-event-type="cultural-moment"] {
+            --cloud-a: #{c.$pink-300};
+            --cloud-b: #{c.$lavender-300};
+        }
+        &[data-event-type="obituary"] {
+            --cloud-a: #{c.$lavender-300};
+            --cloud-b: #{c.$mauve-300};
         }
     }
 

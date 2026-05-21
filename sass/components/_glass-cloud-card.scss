@@ -1,0 +1,64 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+// Glass-and-cloud card recipe — the visual treatment used by the
+// reading-path cards on `/read/`, the lead Article on `/articles/`,
+// and the lead Dispatch on `/news/`. Centralised here so the recipe
+// (glass tint, blur, cloud gradient, animation timing) stays in sync
+// across the three call sites. Add new call sites by `@include`-ing
+// `glass-cloud-card` on the card root and assigning a `--cloud-a` /
+// `--cloud-b` duo from the Bifrost palette.
+//
+// The mixin doesn't set padding or border-radius — call sites pick
+// values that match their content density.
+
+@mixin glass-cloud-card {
+    position: relative;
+    // New stacking context so the cloud layer's negative z-index
+    // stays inside the card and doesn't bleed through to whatever
+    // sits beneath.
+    isolation: isolate;
+    // Clip the blurred edges of the cloud layer to the card's
+    // border-radius.
+    overflow: hidden;
+    background-color: var(--color-navbar-bg);
+    backdrop-filter: blur(14px) saturate(150%);
+    -webkit-backdrop-filter: blur(14px) saturate(150%);
+    border: 0;
+
+    // Cloud-duo defaults. Override per card by setting `--cloud-a`
+    // and `--cloud-b` to two Bifrost palette colours.
+    --cloud-a: #{c.$mauve-300};
+    --cloud-b: #{c.$blue-300};
+
+    &::before {
+        content: "";
+        position: absolute;
+        // Negative inset gives the animated transform room to slide
+        // without exposing the clipped edge of the gradient.
+        inset: -25%;
+        z-index: -1;
+        background:
+            radial-gradient(circle at 18% 22%, var(--cloud-a) 0%, transparent 40%),
+            radial-gradient(circle at 82% 78%, var(--cloud-b) 0%, transparent 40%);
+        filter: blur(28px);
+        opacity: 0.5;
+        animation: glass-cloud-drift 36s ease-in-out infinite alternate;
+        will-change: transform;
+        pointer-events: none;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        &::before { animation: none; }
+    }
+}
+
+// Slow drift. Tuned so the cloud silhouettes change shape noticeably
+// over half a minute without ever feeling like a "moving thing" —
+// the cards should still read as static on a glance.
+@keyframes glass-cloud-drift {
+    0%   { transform: translate3d(-4%, -3%, 0) scale(1);    }
+    33%  { transform: translate3d( 6%,  2%, 0) scale(1.10); }
+    66%  { transform: translate3d( 3%,  6%, 0) scale(0.95); }
+    100% { transform: translate3d(-5%,  4%, 0) scale(1.05); }
+}

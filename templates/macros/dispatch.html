@@ -103,9 +103,11 @@
          data-title="{{ page.title | lower }}"
          data-event-type="{{ page.extra.event_type | default(value='') }}"
          data-date="{{ page.date | default(value='') }}">
+    {# Meta row is intentionally lean on the lead — kicker + date.
+       Event type is communicated by the cloud-duo colour now, so the
+       redundant chip would just add chrome on top of the hero. #}
     <div class="dispatch-card__meta">
         <span class="dispatch-card__lead-kicker">{{ trans(key="dispatchLeadKicker", lang=lang) }}</span>
-        {{ self::chip(event_type=page.extra.event_type | default(value=""), lang=lang) }}
         {% if page.extra.event_date %}
         <time class="dispatch-card__event-date" datetime="{{ page.extra.event_date | date(format='%Y-%m-%d') }}">
             {{ page.extra.event_date | date(format="%b %d, %Y") }}

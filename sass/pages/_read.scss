@@ -1,6 +1,7 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-card" as gcc;
 
 // /read/ — three reading paths in a row + a featured-entries dropdown.
 // Aesthetic mirrors the landing page: hairlines instead of borders, lead-font
@@ -35,11 +36,17 @@
     }
 
     // ---- Three reading paths in a row ----
-    // Each card is wrapped in a Bifrost-rainbow ring drawn via a ::before
-    // mask trick (same recipe used by `.navbar__cta-split` and the
-    // `.footer__rainbow` strip). The dual-background-clip variant isn't
-    // a fit here because we want the card's own background-color (for
-    // hover) to remain independent of the gradient.
+    // Each card is a glass surface: low-alpha fill + backdrop-filter
+    // blur so whatever sits behind softens into the card. Two slow,
+    // heavily-blurred radial-gradient "clouds" drift inside the card
+    // via a ::before — each card picks its own duo from the Bifrost
+    // palette so the three read as related-but-distinct without the
+    // rainbow border that lived here before.
+    //
+    // Reference for the glassmorphic feel: docs.wheelofheaven.world
+    // hero card (borderless, blurry, semi-transparent). Our version
+    // is more saturated because the clouds carry the brand colour cue
+    // that used to live in the outline.
     &__paths {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -53,7 +60,8 @@
     }
 
     &__path {
-        position: relative;
+        @include gcc.glass-cloud-card;
+
         display: flex;
         flex-direction: column;
         gap: v.$spacing-2xs;
@@ -63,38 +71,22 @@
         padding: v.$spacing-xl v.$spacing-3xl v.$spacing-2xl v.$spacing-xl;
         text-decoration: none;
         color: var(--color-text);
-        background-color: transparent;
         border-radius: v.$border-radius-lg;
         transition: background-color 0.25s ease, transform 0.25s ease;
 
-        // Bifrost-rainbow border ring. Mask carves out the interior so
-        // only the 1.5px outline reads as a rainbow.
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1.5px;
-            background: linear-gradient(
-                90deg,
-                #{c.$pink-300}     0%,
-                #{c.$lavender-300} 14%,
-                #{c.$mauve-300}    28%,
-                #{c.$blue-300}     42%,
-                #{c.$cyan-300}     56%,
-                #{c.$mint-300}     70%,
-                #{c.$green-300}    84%,
-                #{c.$pink-300}     100%
-            );
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            mask-composite: exclude;
-            pointer-events: none;
+        // Stagger each card so the three don't pulse in lock-step.
+        // Negative delays start mid-cycle on page load.
+        &:nth-child(2) {
+            --cloud-a: #{c.$cyan-300};
+            --cloud-b: #{c.$green-300};
+
+            &::before { animation-delay: -12s; }
+        }
+        &:nth-child(3) {
+            --cloud-a: #{c.$pink-300};
+            --cloud-b: #{c.$yellow-300};
+
+            &::before { animation-delay: -24s; }
         }
 
         @media (max-width: 900px) {
@@ -136,7 +128,10 @@
         justify-content: center;
         width: 1.75rem;
         height: 1.75rem;
-        color: var(--color-accent-primary);
+        // Body-coloured rather than accent so the cloud gradient
+        // behind it carries the colour story. The icon stays as a
+        // neutral silhouette.
+        color: var(--color-text);
         transition: color 0.2s ease, transform 0.25s ease;
 
         svg { width: 100%; height: 100%; }

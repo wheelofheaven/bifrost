@@ -169,6 +169,14 @@
         }
     }
 
+    // §7 hosts the three reading-path cards. The default 38rem inner
+    // width squeezes them into tall, elongated tiles where the title
+    // and desc wrap a lot; widen to match the `/read/` page layout so
+    // each card has room to breathe.
+    &--paths &__inner {
+        max-width: 64rem;
+    }
+
     &__text {
         display: flex;
         flex-direction: column;
