@@ -186,6 +186,9 @@
 <link rel="alternate" type="text/markdown" title="{{ config.title }} - llms.txt" href="{{ get_url(path='llms.txt') }}">
 <link rel="alternate" type="text/markdown" title="{{ config.title }} - llms-full.txt" href="{{ get_url(path='llms-full.txt') }}">
 
+<!-- JSON API twin (every HTML page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
+<link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1{{ current_path | default(value='/') }}">
+
 <!-- Organization Schema (included on all pages) -->
 {% include "partials/schema/organization.html" %}
 
