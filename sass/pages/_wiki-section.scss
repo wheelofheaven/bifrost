@@ -720,6 +720,79 @@
     }
 }
 
+// Wheel of Heaven Translation Program — a subset of preferred editions
+// produced in-house by the WoH Translation Program (Translator → Editor →
+// Reviewer → human sign-off; methodology at
+// docs.wheelofheaven.world/contributing/content/source-text-translation/).
+// Cards already pick up the rainbow stripe via .wiki-card--preferred; this
+// adds the small linked program chip rendered below the title.
+.wiki-card__program-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.35rem 0 0.75rem;
+    padding: 0.2rem 0.6rem 0.2rem 0.55rem;
+    border-radius: 999px;
+    background: var(--color-background);
+    color: var(--color-text-muted);
+    font-family: typo.$font-family-tech;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-decoration: none;
+    align-self: flex-start;
+    position: relative;
+    transition: color 0.2s ease, transform 0.2s ease;
+
+    // Rainbow hairline border via dual-background trick — same palette
+    // stops as the .wiki-card--preferred left stripe, just laid around
+    // a pill instead of a vertical bar.
+    border: 1px solid transparent;
+    background-clip: padding-box;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -1px;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+            90deg,
+            colors.$yellow-500 0%,
+            colors.$pink-500 18%,
+            colors.$lavender-500 34%,
+            colors.$blue-500 52%,
+            colors.$cyan-500 70%,
+            colors.$mint-500 86%,
+            colors.$green-500 100%
+        );
+        -webkit-mask:
+            linear-gradient(#fff 0 0) content-box,
+            linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+                mask-composite: exclude;
+        opacity: 0.85;
+        pointer-events: none;
+        transition: opacity 0.2s ease;
+    }
+
+    &:hover,
+    &:focus-visible {
+        color: var(--color-text);
+        transform: translateY(-1px);
+
+        &::before {
+            opacity: 1;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+    }
+}
+
 // Wiki Subsection Card Component
 .wiki-subsection-card {
     background: var(--color-background);
