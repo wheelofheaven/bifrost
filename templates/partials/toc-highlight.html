@@ -71,14 +71,21 @@
                 parentItem.classList.add('is-active');
             }
 
-            // Scroll TOC to keep active link visible
+            // Scroll TOC to keep active link visible — only scroll the
+            // TOC container itself. `scrollIntoView` would bubble up to
+            // the document and yank the page during normal reading,
+            // especially on mobile where the TOC is in document flow
+            // rather than a sticky sidebar with its own overflow.
             const tocContainer = tocNav.closest('.wiki__toc, .resources__toc, .article__toc');
             if (tocContainer) {
                 const linkRect = current.link.getBoundingClientRect();
                 const containerRect = tocContainer.getBoundingClientRect();
 
-                if (linkRect.top < containerRect.top + 50 || linkRect.bottom > containerRect.bottom - 50) {
-                    current.link.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                if (linkRect.top < containerRect.top || linkRect.bottom > containerRect.bottom) {
+                    const delta =
+                        (linkRect.top + linkRect.height / 2) -
+                        (containerRect.top + containerRect.height / 2);
+                    tocContainer.scrollBy({ top: delta, behavior: 'smooth' });
                 }
             }
 
