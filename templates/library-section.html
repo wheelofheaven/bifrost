@@ -117,6 +117,55 @@
             </div>
         </div>
 
+        {# Featured texts — editor-curated set of the most prominent
+           books. Books opt in via `featuredOrder` (positive integer) in
+           catalog.json. The section renders above the tradition groups;
+           the same books still appear in their tradition group below,
+           so featuring an entry doesn't remove it from the main flow.
+           JS hides this section when a filter/search/curation toggle is
+           active (curated overview, not a search result). #}
+        {% set featured_books_raw = catalog.books | filter(attribute="featuredOrder") %}
+        {% set featured_books = featured_books_raw | sort(attribute="featuredOrder") %}
+        {% if featured_books | length > 0 %}
+        <section class="wiki-featured" id="library-featured" aria-labelledby="library-featured-heading">
+            <header class="wiki-featured__header">
+                <h2 class="wiki-featured__title" id="library-featured-heading">{{ trans(key="libraryFeaturedTitle", lang=detected_lang) }}</h2>
+                <p class="wiki-featured__lede">{{ trans(key="libraryFeaturedLede", lang=detected_lang) }}</p>
+            </header>
+            <div class="wiki-featured__grid">
+                {% for book_entry in featured_books %}
+                    {% set f_meta = load_data(path="data/library/" ~ book_entry.slug ~ "/_meta.json", required=false) %}
+                    {% set_global f_book_data = false %}
+                    {% if f_meta %}
+                        {% set_global f_book_data = f_meta %}
+                    {% else %}
+                        {% set_global f_book_data = load_data(path="data/library/" ~ book_entry.slug ~ ".json", required=false) %}
+                    {% endif %}
+                    {% if f_book_data %}
+                        {% set f_title = library_macros::get_book_title(book_data=f_book_data, lang=detected_lang) %}
+                        {% set f_desc = library_macros::get_book_description(book_data=f_book_data, lang=detected_lang) | trim %}
+                        {% set_global f_tradition_name = "" %}
+                        {% for t in catalog.traditions %}
+                            {% if t.id == book_entry.tradition %}
+                                {% set_global f_tradition_name = t.name[detected_lang] | default(value=t.name.en) %}
+                            {% endif %}
+                        {% endfor %}
+                <a class="wiki-featured__card" href="{{ get_url(path='library/' ~ book_entry.slug, lang=detected_lang) }}" data-featured-order="{{ book_entry.featuredOrder }}">
+                    {% if f_tradition_name %}
+                    <span class="wiki-featured__card-eyebrow">{{ f_tradition_name }}</span>
+                    {% endif %}
+                    <h3 class="wiki-featured__card-title">{{ f_title }}</h3>
+                    {% if f_desc %}
+                    <p class="wiki-featured__card-desc">{{ f_desc | striptags | truncate(length=140, end="…") }}</p>
+                    {% endif %}
+                    <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
         <!-- Books grouped by tradition. Within each tradition the books
              render as wiki-cards in the same flat grid used on /wiki/.
              Tradition sections are shown/hidden by the filter dropdown,
@@ -453,6 +502,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (details && !details.open) details.setAttribute('open', '');
             }
         });
+
+        // Hide the Featured block when filters / search / curation
+        // toggle are active — it's a curated overview, not a search
+        // result. Mirrors the wiki's filterArticles() behavior.
+        const featured = document.getElementById('library-featured');
+        if (featured) {
+            featured.classList.toggle('hidden', filtersActive);
+        }
 
         if (noResults) {
             noResults.classList.toggle('hidden', visibleCount > 0);
