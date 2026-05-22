@@ -1254,90 +1254,6 @@
     }
 }
 
-// Featured Articles Section
-.wiki-featured {
-    margin-bottom: 3rem;
-    padding: 2rem 0;
-    border-top: 1px solid var(--color-hairline);
-    border-bottom: 1px solid var(--color-hairline);
-    background: var(--color-background-secondary);
-
-    &__title {
-        font-family: var(--font-family-lead);
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--color-text);
-        margin: 0 0 1.5rem 0;
-        text-align: center;
-    }
-
-    &__grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 1rem;
-
-        @media (max-width: 768px) {
-            grid-template-columns: 1fr;
-        }
-    }
-}
-
-.wiki-featured-card {
-    background: var(--color-background);
-    border: 1px solid var(--color-hairline);
-    border-radius: 0.5rem;
-    padding: 1.25rem;
-    transition: all 0.2s ease;
-    position: relative;
-
-    &:hover {
-        border-color: var(--color-accent-primary);
-        transform: translateY(-2px);
-    }
-
-    &__content {
-        margin-bottom: 1rem;
-    }
-
-    &__title {
-        margin: 0 0 0.75rem 0;
-        font-family: var(--font-family-lead);
-        font-size: 1.125rem;
-        font-weight: 700;
-
-        a {
-            color: var(--color-text);
-            text-decoration: none;
-
-            &:hover {
-                color: var(--color-accent-primary);
-            }
-        }
-    }
-
-    &__summary {
-        font-size: 0.875rem;
-        line-height: 1.5;
-        color: var(--color-text-muted);
-        margin: 0;
-    }
-
-    &__category {
-        position: absolute;
-        top: 0.75rem;
-        right: 0.75rem;
-        font-family: typo.$font-family-tech;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: var(--color-accent-primary);
-        background: var(--color-background-tertiary);
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-    }
-}
-
 // Enhanced Wiki Card with Discovery Features
 .wiki-card {
     &__alternatives {
@@ -1468,13 +1384,6 @@
         }
     }
 
-    .wiki-featured {
-        padding: 1.5rem 1rem;
-
-        &__grid {
-            gap: 0.75rem;
-        }
-    }
 }
 
 // Wiki Statistics Component
