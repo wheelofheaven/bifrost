@@ -426,30 +426,64 @@
                         <span class="library-book__progress-sep">·</span>
                         <span id="paragraph-progress">¶ 1</span>
                     </div>
-                    <div class="library-book__actions">
-                        <button onclick="toggleInterlinear()" id="interlinear-toggle" class="library-book__btn library-book__btn--ghost" title="Show the original language text below each translated paragraph" aria-pressed="false" aria-label="Toggle interlinear view">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <line x1="3" y1="6" x2="21" y2="6"></line>
-                                <line x1="3" y1="12" x2="21" y2="12"></line>
-                                <line x1="3" y1="18" x2="21" y2="18"></line>
-                            </svg>
-                            <span>Interlinear</span>
-                        </button>
-                        {% if show_reference_toggle %}
-                        {% set ref_button_label = "Reference" %}
+                    {# Interlinear control. Combines the previous Interlinear
+                       (show original-language line) and Reference (show
+                       parallel translation, e.g. ASV 1901) buttons into one
+                       split control: a main toggle + a caret that opens a
+                       listbox of available interlinear sources. The caret +
+                       listbox only render when at least two sources exist
+                       (i.e. a reference is wired up). Default source is the
+                       original language. #}
+                    {% set_global interlinear_original_label = "" %}
+                    {% if original_lang == "he" %}
+                        {% set_global interlinear_original_label = "Hebrew" %}
+                    {% elif original_lang == "grc" %}
+                        {% set_global interlinear_original_label = "Ancient Greek" %}
+                    {% elif original_lang == "akk" %}
+                        {% set_global interlinear_original_label = "Akkadian" %}
+                    {% elif original_lang == "sux" %}
+                        {% set_global interlinear_original_label = "Sumerian" %}
+                    {% elif original_lang == "ar" %}
+                        {% set_global interlinear_original_label = "Arabic" %}
+                    {% elif original_lang == "arc" %}
+                        {% set_global interlinear_original_label = "Aramaic" %}
+                    {% else %}
+                        {% set_global interlinear_original_label = original_lang | upper %}
+                    {% endif %}
+
+                    {% set ref_button_label = "" %}
+                    {% if show_reference_toggle %}
                         {% if ref_book_version %}
                             {% set ref_button_label = ref_book_version %}
                         {% elif ref_book_title %}
                             {% set ref_button_label = ref_book_title %}
+                        {% else %}
+                            {% set ref_button_label = "Reference" %}
                         {% endif %}
-                        <button onclick="toggleReference()" id="reference-toggle" class="library-book__btn library-book__btn--ghost" title="Show {{ ref_button_label }} alongside the WoH text" aria-pressed="false" aria-label="Toggle reference translation">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-                            </svg>
-                            <span>{{ ref_button_label }}</span>
-                        </button>
-                        {% endif %}
+                    {% endif %}
+
+                    <div class="library-book__actions">
+                        <div class="library-book__interlinear" data-default-source="original">
+                            <button onclick="toggleInterlinear()" id="interlinear-toggle" class="library-book__btn library-book__btn--ghost library-book__interlinear-main" title="Show the selected interlinear source below each translated paragraph" aria-pressed="false" aria-label="Toggle interlinear view">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                                </svg>
+                                <span>Interlinear</span>
+                            </button>
+                            {% if show_reference_toggle %}
+                            <button type="button" id="interlinear-menu-toggle" class="library-book__btn library-book__btn--ghost library-book__interlinear-caret" onclick="toggleInterlinearMenu(event)" aria-haspopup="listbox" aria-expanded="false" aria-controls="interlinear-menu" aria-label="Choose interlinear source">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                            </button>
+                            <ul id="interlinear-menu" class="library-book__interlinear-menu" role="listbox" aria-label="Interlinear source" hidden>
+                                <li role="option" data-source="original" aria-selected="true" tabindex="-1">{{ interlinear_original_label }}</li>
+                                <li role="option" data-source="reference" aria-selected="false" tabindex="-1">{{ ref_button_label }}</li>
+                            </ul>
+                            {% endif %}
+                        </div>
                     </div>
                 </div>
 
@@ -580,63 +614,178 @@ const pageLang = "{{ detected_lang | default(value='') }}";
 let interlinear = false;
 let selectedParagraph = null;
 
-// Show or hide the original-language text rendered as a second block
-// underneath each translated paragraph. We call this "interlinear" in
-// the UI because it matches the canonical scholarly term — original
-// and translation interleaved, in this case at the paragraph level —
-// and because it collapses the previous Original + Split toggles into
-// a single understandable affordance.
-function toggleInterlinear() {
-    interlinear = !interlinear;
-    const root = document.querySelector('.library-book');
-    if (root) root.classList.toggle('library-book--interlinear', interlinear);
+// Interlinear control. One toggle, multiple sources: the main button
+// shows/hides whichever source is currently selected (original language
+// by default, or a reference translation like ASV 1901). The caret
+// dropdown switches the active source. Source choice and shown state
+// both persist across reloads.
+//
+// CSS contract is unchanged: the root carries either
+// `.library-book--interlinear` (original-language line visible) or
+// `.library-book--show-reference` (reference-translation line visible).
+// At most one is set at a time — the two interlinear sources are
+// mutually exclusive in the reading surface.
+const INTERLINEAR_SOURCE_KEY = 'library-book:interlinear-source';
+const INTERLINEAR_SHOWN_KEY  = 'library-book:interlinear-shown';
+const LEGACY_REFERENCE_KEY   = 'library-book:show-reference';
 
-    const button = document.getElementById('interlinear-toggle');
-    if (button) {
-        button.classList.toggle('library-book__btn--active', interlinear);
-        button.setAttribute('aria-pressed', interlinear ? 'true' : 'false');
-    }
-}
+let interlinearSource = 'original';
+let interlinearShown  = false;
 
-// Reveal/hide the reference translation (e.g. ASV 1901 for the Hebrew
-// Bible) inline under each WoH translated verse. The reference text
-// is rendered server-side into `.library-book__para-reference` elements
-// and kept hidden by default; the toggle exposes them globally for the
-// whole chapter. Preference is persisted in localStorage so a reader
-// who turns it on once doesn't have to re-toggle on every visit.
-let referenceShown = false;
-const REFERENCE_STORAGE_KEY = 'library-book:show-reference';
-
-function toggleReference() {
-    referenceShown = !referenceShown;
-    applyReferenceState();
-    try { localStorage.setItem(REFERENCE_STORAGE_KEY, referenceShown ? '1' : '0'); } catch (_) {}
-}
-
-function applyReferenceState() {
-    const root = document.querySelector('.library-book');
-    if (root) root.classList.toggle('library-book--show-reference', referenceShown);
-
-    const button = document.getElementById('reference-toggle');
-    if (button) {
-        button.classList.toggle('library-book__btn--active', referenceShown);
-        button.setAttribute('aria-pressed', referenceShown ? 'true' : 'false');
-    }
-}
-
-// Restore reference-toggle preference on first paint. Wrapped so the
-// rest of the page can keep loading if localStorage is unavailable
-// (private-browsing mode, sandboxed iframe, etc.).
-(function restoreReferencePreference() {
-    if (!document.getElementById('reference-toggle')) return;
+function readInterlinearPrefs() {
     try {
-        if (localStorage.getItem(REFERENCE_STORAGE_KEY) === '1') {
-            referenceShown = true;
-            // Defer to next tick so the DOM is fully constructed when
-            // classList.toggle runs.
-            requestAnimationFrame(applyReferenceState);
+        const storedSource = localStorage.getItem(INTERLINEAR_SOURCE_KEY);
+        if (storedSource === 'original' || storedSource === 'reference') {
+            interlinearSource = storedSource;
+        }
+        const storedShown = localStorage.getItem(INTERLINEAR_SHOWN_KEY);
+        if (storedShown === '1') interlinearShown = true;
+        // One-time migration of the previous Reference button's
+        // standalone preference. If a legacy key says reference was on,
+        // adopt it as the new (source=reference, shown=true) state and
+        // drop the legacy key so this branch never fires again.
+        const legacy = localStorage.getItem(LEGACY_REFERENCE_KEY);
+        if (legacy !== null) {
+            if (legacy === '1' && storedSource === null) {
+                interlinearSource = 'reference';
+                interlinearShown = true;
+            }
+            localStorage.removeItem(LEGACY_REFERENCE_KEY);
         }
     } catch (_) {}
+}
+
+function persistInterlinearPrefs() {
+    try {
+        localStorage.setItem(INTERLINEAR_SOURCE_KEY, interlinearSource);
+        localStorage.setItem(INTERLINEAR_SHOWN_KEY, interlinearShown ? '1' : '0');
+    } catch (_) {}
+}
+
+function applyInterlinearState() {
+    const root = document.querySelector('.library-book');
+    if (root) {
+        root.classList.toggle('library-book--interlinear',     interlinearShown && interlinearSource === 'original');
+        root.classList.toggle('library-book--show-reference',  interlinearShown && interlinearSource === 'reference');
+    }
+    interlinear = interlinearShown && interlinearSource === 'original';
+
+    const mainBtn = document.getElementById('interlinear-toggle');
+    if (mainBtn) {
+        mainBtn.classList.toggle('library-book__btn--active', interlinearShown);
+        mainBtn.setAttribute('aria-pressed', interlinearShown ? 'true' : 'false');
+    }
+    const caretBtn = document.getElementById('interlinear-menu-toggle');
+    if (caretBtn) {
+        caretBtn.classList.toggle('library-book__btn--active', interlinearShown);
+    }
+    const menu = document.getElementById('interlinear-menu');
+    if (menu) {
+        menu.querySelectorAll('[role="option"]').forEach(opt => {
+            const isSelected = opt.dataset.source === interlinearSource;
+            opt.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        });
+    }
+}
+
+function toggleInterlinear() {
+    interlinearShown = !interlinearShown;
+    applyInterlinearState();
+    persistInterlinearPrefs();
+}
+
+function selectInterlinearSource(source) {
+    if (source !== 'original' && source !== 'reference') return;
+    interlinearSource = source;
+    // Selecting from the menu both picks the source AND shows it; that
+    // matches the user's intent ("show me this one") and saves a
+    // second click. Re-selecting the already-active source while it's
+    // shown is a no-op.
+    interlinearShown = true;
+    applyInterlinearState();
+    persistInterlinearPrefs();
+    closeInterlinearMenu({ returnFocus: true });
+}
+
+function openInterlinearMenu() {
+    const menu = document.getElementById('interlinear-menu');
+    const caret = document.getElementById('interlinear-menu-toggle');
+    if (!menu || !caret) return;
+    menu.hidden = false;
+    caret.setAttribute('aria-expanded', 'true');
+    // Focus the currently-selected option so arrow keys feel natural.
+    const selected = menu.querySelector(`[role="option"][data-source="${interlinearSource}"]`)
+                  || menu.querySelector('[role="option"]');
+    if (selected) selected.focus();
+}
+
+function closeInterlinearMenu(opts) {
+    const menu = document.getElementById('interlinear-menu');
+    const caret = document.getElementById('interlinear-menu-toggle');
+    if (!menu || !caret) return;
+    if (menu.hidden) return;
+    menu.hidden = true;
+    caret.setAttribute('aria-expanded', 'false');
+    if (opts && opts.returnFocus) caret.focus();
+}
+
+function toggleInterlinearMenu(event) {
+    if (event) event.stopPropagation();
+    const menu = document.getElementById('interlinear-menu');
+    if (!menu) return;
+    if (menu.hidden) openInterlinearMenu();
+    else closeInterlinearMenu();
+}
+
+(function wireInterlinear() {
+    if (!document.getElementById('interlinear-toggle')) return;
+    readInterlinearPrefs();
+    // Defer to next frame so the root element is in the DOM when we
+    // toggle its classes.
+    requestAnimationFrame(applyInterlinearState);
+
+    const menu = document.getElementById('interlinear-menu');
+    if (!menu) return;
+
+    // Option clicks select the source and close the menu.
+    menu.addEventListener('click', function (e) {
+        const opt = e.target.closest('[role="option"]');
+        if (!opt) return;
+        selectInterlinearSource(opt.dataset.source);
+    });
+
+    // Keyboard nav within the listbox: ↑/↓ moves focus, Enter/Space
+    // selects, Esc closes and returns focus to the caret. Home/End
+    // jump to the ends.
+    menu.addEventListener('keydown', function (e) {
+        const opts = Array.from(menu.querySelectorAll('[role="option"]'));
+        if (!opts.length) return;
+        const currentIdx = opts.indexOf(document.activeElement);
+        let nextIdx = currentIdx;
+        switch (e.key) {
+            case 'ArrowDown': nextIdx = currentIdx < 0 ? 0 : Math.min(currentIdx + 1, opts.length - 1); e.preventDefault(); break;
+            case 'ArrowUp':   nextIdx = currentIdx < 0 ? opts.length - 1 : Math.max(currentIdx - 1, 0); e.preventDefault(); break;
+            case 'Home':      nextIdx = 0; e.preventDefault(); break;
+            case 'End':       nextIdx = opts.length - 1; e.preventDefault(); break;
+            case 'Enter':
+            case ' ':
+                if (currentIdx >= 0) { selectInterlinearSource(opts[currentIdx].dataset.source); e.preventDefault(); }
+                return;
+            case 'Escape':
+                closeInterlinearMenu({ returnFocus: true });
+                e.preventDefault();
+                return;
+            default: return;
+        }
+        if (nextIdx !== currentIdx && opts[nextIdx]) opts[nextIdx].focus();
+    });
+
+    // Click anywhere outside the control closes the menu.
+    document.addEventListener('click', function (e) {
+        if (menu.hidden) return;
+        const wrapper = e.target.closest('.library-book__interlinear');
+        if (!wrapper) closeInterlinearMenu();
+    });
 })();
 
 function selectParagraph(paragraphId) {

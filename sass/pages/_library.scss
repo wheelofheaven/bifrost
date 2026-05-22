@@ -1059,12 +1059,6 @@
             }
         }
 
-        &--active {
-            background: var(--color-accent-primary) !important;
-            border-color: var(--color-accent-primary) !important;
-            color: white !important;
-        }
-
         &.desktop-only {
             @media (max-width: 768px) {
                 display: none;
@@ -3550,14 +3544,13 @@
         flex-wrap: wrap;
     }
 
-    // Ghost buttons — minimal chrome with a gradient stroke ring,
-    // mirroring the navbar Read CTA. No solid fill so they read as
-    // affordances rather than primary actions. The ring is drawn by a
-    // ::before pseudo using the same mask trick as `.navbar__cta-split`
-    // so backdrop / hover effects don't fight a two-layer
-    // background-clip.
+    // Ghost buttons — minimal chrome, no stroke ring. Active state uses
+    // a static cloud-glass fill (the recipe from
+    // components/_glass-cloud-card.scss, scaled down and de-animated)
+    // so the toggled-on state reads as a soft tinted surface instead of
+    // a brightened outline. The global focus outline from
+    // components/_focus.scss provides the keyboard indicator.
     &__btn--ghost {
-        position: relative;
         display: inline-flex;
         align-items: center;
         gap: 0.375rem;
@@ -3570,64 +3563,125 @@
         font-size: 0.75rem;
         font-weight: 600;
         cursor: pointer;
-        transition: filter 0.15s ease, color 0.15s ease;
-
-        // Gradient stroke ring — mint → mauve, same palette as the
-        // navbar CTA. Sits outside the children's stacking context.
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: inherit;
-            padding: 1px;
-            background: linear-gradient(
-                135deg,
-                #{rgba(colors.$mint, 0.6)},
-                #{rgba(colors.$mauve-500, 0.6)}
-            );
-            -webkit-mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            -webkit-mask-composite: xor;
-            mask:
-                linear-gradient(#000 0 0) content-box,
-                linear-gradient(#000 0 0);
-            mask-composite: exclude;
-            pointer-events: none;
-            transition: filter 0.15s ease;
-        }
+        transition: color 0.15s ease, background-color 0.15s ease;
 
         &:hover {
             color: var(--color-accent-primary);
-
-            &::before {
-                filter: brightness(1.2) saturate(1.15);
-            }
+            background-color: var(--color-hover);
         }
 
         &.library-book__btn--active {
-            color: var(--color-accent-primary);
+            position: relative;
+            isolation: isolate;
+            overflow: hidden;
+            color: var(--color-text);
 
+            // Cloud duo behind the label — same mint → mauve palette
+            // the gradient ring used to draw, but as a soft static
+            // fill. Negative inset lets the radial gradients fall
+            // off the edge cleanly inside the rounded clip.
             &::before {
-                filter: brightness(1.25) saturate(1.2);
-            }
-        }
-
-        // The global `[class*="__btn"]:focus-visible` rule in
-        // components/_focus.scss paints a 2px outline 2px outside the
-        // box, which reads as a redundant second border on top of the
-        // gradient ring. Drop the outline and use the ring itself
-        // (brightened + a thin focus tint) as the keyboard indicator.
-        &:focus-visible {
-            outline: none;
-            color: var(--color-accent-primary);
-
-            &::before {
-                filter: brightness(1.35) saturate(1.25);
+                content: "";
+                position: absolute;
+                inset: -25%;
+                z-index: -1;
+                background:
+                    radial-gradient(circle at 20% 25%, #{rgba(colors.$mint, 0.55)} 0%, transparent 60%),
+                    radial-gradient(circle at 80% 75%, #{rgba(colors.$mauve-500, 0.55)} 0%, transparent 60%);
+                filter: blur(6px);
+                pointer-events: none;
             }
         }
 
         svg { flex-shrink: 0; }
+    }
+
+    // Split-button wrapper that holds the main Interlinear toggle, the
+    // caret that opens the source picker, and the popover listbox.
+    // Inline-flex so the main button and caret sit flush as one visual
+    // unit; the listbox is absolutely positioned beneath.
+    &__interlinear {
+        position: relative;
+        display: inline-flex;
+        align-items: stretch;
+        gap: 1px;
+    }
+
+    // Main button keeps the standard ghost-button box; only the right
+    // edge gets squared off so the caret docks against it.
+    &__interlinear-main {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+    }
+
+    // Caret is a ghost button with just an icon. Square left edge so
+    // it docks against the main button without a visible seam.
+    &__interlinear-caret {
+        padding-left: 0.375rem;
+        padding-right: 0.375rem;
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+    }
+
+    // Listbox popover. Sits above the sidebar's other surfaces with a
+    // glass-panel chrome (background + blur + soft border). Options
+    // wrap on their own lines; the selected one carries the same
+    // cloud-glass fill recipe as an active button for visual rhyme.
+    &__interlinear-menu {
+        position: absolute;
+        top: calc(100% + 0.25rem);
+        left: 0;
+        z-index: 10;
+        margin: 0;
+        padding: 0.25rem;
+        min-width: 100%;
+        list-style: none;
+        background: var(--color-navbar-bg);
+        backdrop-filter: blur(14px) saturate(150%);
+        -webkit-backdrop-filter: blur(14px) saturate(150%);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.5rem;
+        box-shadow: 0 8px 24px -8px rgba(0, 0, 0, 0.2);
+
+        &[hidden] { display: none; }
+
+        li[role="option"] {
+            position: relative;
+            isolation: isolate;
+            padding: 0.4rem 0.625rem;
+            border-radius: 0.375rem;
+            font-family: typo.$font-family-tech;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text);
+            cursor: pointer;
+            white-space: nowrap;
+            user-select: none;
+
+            &:hover,
+            &:focus-visible {
+                color: var(--color-accent-primary);
+                background-color: var(--color-hover);
+                outline: none;
+            }
+
+            &[aria-selected="true"] {
+                overflow: hidden;
+                color: var(--color-text);
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: -25%;
+                    z-index: -1;
+                    background:
+                        radial-gradient(circle at 20% 25%, #{rgba(colors.$mint, 0.55)} 0%, transparent 60%),
+                        radial-gradient(circle at 80% 75%, #{rgba(colors.$mauve-500, 0.55)} 0%, transparent 60%);
+                    filter: blur(6px);
+                    pointer-events: none;
+                }
+            }
+        }
     }
 
     // Chapter content — clean text flow, no card chrome
