@@ -123,6 +123,19 @@
         <div class="reader-fab__section">
             <button type="button"
                     class="reader-fab__option"
+                    data-action="listen"
+                    role="menuitem"
+                    hidden>
+                <span class="reader-fab__option-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                        <polygon points="5 3 19 12 5 21 5 3"/>
+                    </svg>
+                </span>
+                <span class="reader-fab__option-label">{{ trans(key="listenLabel", lang=detected_lang) }}</span>
+            </button>
+
+            <button type="button"
+                    class="reader-fab__option"
                     data-action="theme"
                     role="menuitem">
                 <span class="reader-fab__option-icon" data-theme-icon="dark">{% include "partials/icons/feather-moon.html" %}</span>
