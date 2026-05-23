@@ -1,58 +1,54 @@
-<!-- Language Alternates -->
-<!-- x-default points to English (default language) version -->
-{% if page %}
-    {% set en_translation = page.translations | filter(attribute="lang", value="en") | first %}
-    {% if en_translation %}
-<link rel="alternate" hreflang="x-default" href="{{ en_translation.permalink }}">
-    {% elif lang == "en" %}
-<link rel="alternate" hreflang="x-default" href="{{ current_url | safe }}">
-    {% else %}
-<link rel="alternate" hreflang="x-default" href="{{ config.base_url }}/">
-    {% endif %}
-{% elif section %}
-    {% set en_translation = section.translations | filter(attribute="lang", value="en") | first %}
-    {% if en_translation %}
-<link rel="alternate" hreflang="x-default" href="{{ en_translation.permalink }}">
-    {% elif lang == "en" %}
-<link rel="alternate" hreflang="x-default" href="{{ current_url | safe }}">
-    {% else %}
-<link rel="alternate" hreflang="x-default" href="{{ get_url(path=section.path, lang="en") }}">
-    {% endif %}
-{% else %}
-<link rel="alternate" hreflang="x-default" href="{{ config.base_url }}/">
+{# Language Alternates (hreflang)
+
+   The site uses directory-based locales (content/de/wiki/elohim.md)
+   rather than Zola's native file-suffix convention
+   (content/wiki/elohim.de.md). That means `page.translations` is
+   always empty here and `lang` resolves to the default ("en") on
+   every page — Zola treats each directory as an unrelated page tree.
+
+   Instead, we drive hreflang from data/translations.json (built by
+   scripts/build_translations_manifest.py, wired into the `build`
+   task in mise.toml). The manifest maps canonical paths
+   ("wiki/elohim", "timeline/age-of-aquarius", "_root") to the list
+   of locales where that page actually exists.
+
+   `detected_lang` is set by base.html from the URL path. Use that
+   instead of the unreliable `lang` global.
+#}
+{% set manifest = load_data(path="data/translations.json") %}
+{% set locales_in_order = ["en", "de", "es", "fr", "ja", "ko", "ru", "zh", "zh-Hant", "he"] %}
+
+{# Compute canonical key from current_path. Strip leading/trailing
+   slashes, then drop the leading locale segment if present, then
+   fall back to "_root" for the homepage. #}
+{% set trimmed = current_path | trim_start_matches(pat="/") | trim_end_matches(pat="/") %}
+{% set _key_parts = trimmed | split(pat="/") %}
+{% if _key_parts | length > 0 and _key_parts[0] in ["de", "es", "fr", "he", "ja", "ko", "ru", "zh", "zh-Hant"] %}
+    {% set _key_parts = _key_parts | slice(start=1) %}
 {% endif %}
-<!-- Current language -->
-<link rel="alternate" hreflang="{{ lang }}" href="{{ current_url | safe }}">
-<!-- Other languages -->
-{% for lang_code, lang_config in config.languages %}
-    {% if lang_code != lang %}
-        {% if page %}
-            {% set translation = page.translations | filter(attribute="lang", value=lang_code) | first %}
-            {% if translation %}
-        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ translation.permalink }}">
-            {% endif %}
-        {% elif section %}
-            {% set translation = section.translations | filter(attribute="lang", value=lang_code) | first %}
-            {% if translation %}
-        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ translation.permalink }}">
-            {% else %}
-                {# Fallback: construct URL for sections that exist in all
-                   languages. Two pre-existing quirks to work around:
-                   (1) `section.path` starts with `/` and `get_url(lang=...)`
-                       also prepends a slash, so naive concatenation produces
-                       `/ko//wiki/`.
-                   (2) `section.path` on a non-English section already
-                       includes the locale prefix (`/de/wiki/`), so without
-                       stripping we get `/ko//de/wiki/`.
-                   Split on `/`, drop the leading empty segment plus the
-                   current-locale segment if any, then rejoin. #}
-                {% if detected_lang == "en" %}{% set_global skip_n = 1 %}{% else %}{% set_global skip_n = 2 %}{% endif %}
-                {% set segments = section.path | split(pat="/") | slice(start=skip_n) %}
-                {% set raw_path = segments | join(sep="/") %}
-        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path=raw_path, lang=lang_code) }}">
-            {% endif %}
+{% set canonical_key = _key_parts | join(sep="/") %}
+{% if canonical_key == "" %}{% set canonical_key = "_root" %}{% endif %}
+
+{% set available_langs = manifest.paths[canonical_key] | default(value=[]) %}
+
+{# Emit one hreflang per available locale, in the canonical order
+   above. The English version is also the x-default — when Google
+   can't match a user's language to anything in our list, send them
+   to English. #}
+{% for locale in locales_in_order %}
+    {% if locale in available_langs %}
+        {% if canonical_key == "_root" %}
+            {% if locale == "en" %}{% set href = config.base_url ~ "/" %}
+            {% else %}{% set href = config.base_url ~ "/" ~ locale ~ "/" %}{% endif %}
         {% else %}
-        <link rel="alternate" hreflang="{{ lang_code }}" href="{{ get_url(path='/', lang=lang_code) }}">
+            {% if locale == "en" %}{% set href = config.base_url ~ "/" ~ canonical_key ~ "/" %}
+            {% else %}{% set href = config.base_url ~ "/" ~ locale ~ "/" ~ canonical_key ~ "/" %}{% endif %}
+        {% endif %}
+        {% if locale == "en" %}
+<link rel="alternate" hreflang="x-default" href="{{ href | safe }}">
+<link rel="alternate" hreflang="en" href="{{ href | safe }}">
+        {% else %}
+<link rel="alternate" hreflang="{{ locale }}" href="{{ href | safe }}">
         {% endif %}
     {% endif %}
 {% endfor %}
