@@ -21,6 +21,21 @@
         <!-- Preconnect to CDN for faster resource loading -->
         <link rel="preconnect" href="https://assets.wheelofheaven.world" crossorigin />
         <link rel="dns-prefetch" href="https://assets.wheelofheaven.world" />
+        {# Landing-page LCP preload: the §1 video poster is the largest paint
+           in the first viewport, and `<video poster=...>` is not preload-scanned,
+           so the browser discovers it late. Preloading it directly cuts LCP
+           dramatically on the homepage. Restrict to the root path in each
+           locale so other pages don't pay for an unused fetch. #}
+        {% set _is_landing = _p == "/" or _p == "/de/" or _p == "/es/" or _p == "/fr/" or _p == "/he/" or _p == "/ja/" or _p == "/ko/" or _p == "/ru/" or _p == "/zh/" or _p == "/zh-Hant/" %}
+        {% if _is_landing %}
+        <link
+            rel="preload"
+            as="image"
+            type="image/webp"
+            href="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp"
+            fetchpriority="high"
+        />
+        {% endif %}
         <title>
             {% if page.title %}{{ page.title }} | {% endif %}{{ config.title }}
         </title>
