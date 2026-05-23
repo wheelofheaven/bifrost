@@ -121,6 +121,25 @@
     }
 }
 
+// Reduced-transparency support. iOS's "Reduce Transparency" accessibility
+// setting (and the equivalent on macOS/Windows) signals that the user
+// can't or doesn't want to rely on `backdrop-filter` to make glassy
+// surfaces legible. Many of our chrome surfaces (navbar, FAB, glossary
+// tooltip, dropdowns, to-top, listen button, PWA banner, reading list)
+// share the `--color-navbar-bg` token at ~10% alpha — visible only when
+// backdrop-filter renders. Drop the alpha when the user has asked to
+// reduce transparency so the surfaces stay readable.
+@media (prefers-reduced-transparency: reduce) {
+    :root {
+        --color-navbar-bg: #{colors.$gray-900};
+    }
+    :root:not([data-theme]) {
+        @media (prefers-color-scheme: light) {
+            --color-navbar-bg: #{colors.$gray-100};
+        }
+    }
+}
+
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
     * {

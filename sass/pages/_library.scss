@@ -4373,13 +4373,14 @@
         flex-direction: column;
         overflow: hidden;
 
-        // Glass surface. ~28% tint of the theme's surface colour means
-        // the underlying page bleeds through and the backdrop-filter
-        // has something to act on; a hairline border + dual shadow
-        // give the card its edge.
-        background: color-mix(in srgb,
-            var(--color-card-bg, var(--color-background, #1a1a1a)) 28%,
-            transparent);
+        // Glass surface — chrome (border, shadow, radius) lives on the
+        // popover itself; the translucent tint + backdrop-filter live
+        // on `::before` so they aren't on the same element as the
+        // entrance `transform` below. iOS Safari has a long-standing
+        // regression where backdrop-filter silently fails to paint
+        // when the element carries a non-identity transform, which
+        // collapses the glass to whatever fallback background is set —
+        // here, ~28% alpha — and the popover reads as fully see-through.
         color: var(--color-text, inherit);
         border: 1px solid color-mix(in srgb,
             var(--color-text, currentColor) 14%,
@@ -4389,8 +4390,34 @@
             0 24px 60px rgba(0, 0, 0, 0.28),
             0 2px 10px rgba(0, 0, 0, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(28px) saturate(180%);
-        -webkit-backdrop-filter: blur(28px) saturate(180%);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: inherit;
+            background: color-mix(in srgb,
+                var(--color-card-bg, var(--color-background, #1a1a1a)) 28%,
+                transparent);
+            backdrop-filter: blur(28px) saturate(180%);
+            -webkit-backdrop-filter: blur(28px) saturate(180%);
+
+            // Fallback for browsers without backdrop-filter (or where
+            // it fails to paint): opaque the surface so legibility is
+            // preserved. The `prefers-reduced-transparency` branch
+            // covers users who've asked iOS/macOS to skip glass.
+            @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+                background: color-mix(in srgb,
+                    var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
+                    transparent);
+            }
+            @media (prefers-reduced-transparency: reduce) {
+                background: color-mix(in srgb,
+                    var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
+                    transparent);
+            }
+        }
 
         // Entrance state — fades + slides in from a touch above.
         opacity: 0;
@@ -4401,14 +4428,6 @@
             transform 0.2s cubic-bezier(0.32, 0.72, 0, 1),
             visibility 0.2s ease;
         pointer-events: none;
-
-        // Fallback for browsers without backdrop-filter: opaque the
-        // surface so legibility is preserved.
-        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-            background: color-mix(in srgb,
-                var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
-                transparent);
-        }
 
         &.is-open {
             opacity: 1;

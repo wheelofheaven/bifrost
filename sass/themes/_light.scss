@@ -74,3 +74,12 @@
 [data-theme="light"] .translation-notice {
     background-color: var(--color-navbar-bg);
 }
+
+// See `_init.scss` for the rationale: keep navbar-style glass surfaces
+// legible when the user requests reduced transparency, since the
+// translucent default depends on backdrop-filter actually painting.
+@media (prefers-reduced-transparency: reduce) {
+    [data-theme="light"] {
+        --color-navbar-bg: #{colors.$gray-100};
+    }
+}
