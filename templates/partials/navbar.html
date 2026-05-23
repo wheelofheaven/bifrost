@@ -150,6 +150,7 @@
             class="navbar__pane navbar__pane--lang mobile-only"
             id="mobile-lang-pane"
             aria-hidden="true"
+            inert
         >
             <div class="navbar__pane-header">
                 <button
@@ -413,12 +414,14 @@
                     function openMobileLangPane() {
                         if (!navbarContent || !mobileLangPane) return;
                         navbarContent.classList.add("navbar__content--lang-open");
+                        mobileLangPane.removeAttribute("inert");
                         mobileLangPane.setAttribute("aria-hidden", "false");
                     }
 
                     function closeMobileLangPane() {
                         if (!navbarContent || !mobileLangPane) return;
                         navbarContent.classList.remove("navbar__content--lang-open");
+                        mobileLangPane.setAttribute("inert", "");
                         mobileLangPane.setAttribute("aria-hidden", "true");
                     }
 
