@@ -26,7 +26,7 @@
            so the browser discovers it late. Preloading it directly cuts LCP
            dramatically on the homepage. Restrict to the root path in each
            locale so other pages don't pay for an unused fetch. #}
-        {% set _is_landing = _p == "/" or _p == "/de/" or _p == "/es/" or _p == "/fr/" or _p == "/he/" or _p == "/ja/" or _p == "/ko/" or _p == "/ru/" or _p == "/zh/" or _p == "/zh-Hant/" %}
+        {% set_global _is_landing = _p == "/" or _p == "/de/" or _p == "/es/" or _p == "/fr/" or _p == "/he/" or _p == "/ja/" or _p == "/ko/" or _p == "/ru/" or _p == "/zh/" or _p == "/zh-Hant/" %}
         {% if _is_landing %}
         <link
             rel="preload"

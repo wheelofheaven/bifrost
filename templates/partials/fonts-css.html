@@ -79,9 +79,21 @@
 <!-- Theme Initialization -->
 {% include "partials/theme-init.html" %}
 
-<!-- Stylesheet. Loaded synchronously to avoid FOUC on below-the-fold
-     page-specific styles (wiki, library, articles, etc.) that aren't
-     in critical.css. The sheet is aggressively cached (see _headers),
-     so the render-blocking cost only applies to uncached first
-     visits. -->
+<!-- Stylesheet loading strategy:
+     - Landing pages: ship the small critical.css synchronously (covers
+       every .landing-* above-the-fold rule via sass/critical.scss) and
+       async-load main.css with the preload/onload swap pattern. This
+       cuts render-blocking bytes from ~455 KB to ~60 KB on the LCP-
+       critical homepage.
+     - Other pages: full main.css synchronously, because critical.css
+       doesn't cover wiki/library/article page-specific layouts and an
+       async swap would FOUC the body.
+     The sheet is aggressively cached (see _headers), so the render-
+     blocking cost only applies to uncached first visits. -->
+{% if _is_landing %}
+<link rel="stylesheet" href="{{ get_url(path='critical.css') }}">
+<link rel="preload" as="style" href="{{ get_url(path='main.css') }}" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"></noscript>
+{% else %}
 <link rel="stylesheet" href="{{ get_url(path='main.css') }}">
+{% endif %}
