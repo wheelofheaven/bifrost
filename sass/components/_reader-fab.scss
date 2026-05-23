@@ -116,6 +116,14 @@
     // Anchored at its right edge to the toggle, scales out from there
     // for an organic "blooming from the FAB" feel. Stays absolutely
     // positioned so a scale to zero doesn't displace the toggle.
+    //
+    // Glass tint + blur live on the `::before` pseudo (not the panel
+    // itself) so they aren't on the same element as the entrance
+    // `transform: scale(...)`. iOS Safari has a regression where
+    // backdrop-filter silently fails to paint when the element carries
+    // a non-identity transform, which would collapse this surface to
+    // the ~10% alpha of `--color-navbar-bg` — i.e. effectively
+    // transparent. Splitting the two follows the navbar pattern.
     &__panel {
         position: absolute;
         right: calc(3rem + 0.5rem); // toggle width + gap
@@ -126,14 +134,22 @@
         padding: 0.5rem;
         min-width: 13rem;
         max-width: calc(100vw - 6rem);
-        background-color: var(--color-navbar-bg);
-        backdrop-filter: blur(16px) saturate(140%);
-        -webkit-backdrop-filter: blur(16px) saturate(140%);
         border: 1px solid var(--color-border);
         border-radius: 0.875rem;
         box-shadow:
             0 12px 32px rgba(0, 0, 0, 0.18),
             0 0 0 1px rgba(255, 255, 255, 0.04);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: inherit;
+            background-color: var(--color-navbar-bg);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+        }
 
         // Closed state: scaled-down + invisible, scale anchor at the
         // FAB position so it appears to grow from the toggle.
@@ -337,20 +353,32 @@
         -webkit-backdrop-filter: blur(4px);
     }
 
+    // Sheet — glass tint + blur on `::before` for the same iOS Safari
+    // reason documented on `&__panel` above: the entrance
+    // `transform: translateY(100%)` would otherwise collapse the blur
+    // and leave a ~10% alpha surface over the page.
     &__sheet {
         position: relative;
         width: 100%;
         max-height: 80vh;
         display: flex;
         flex-direction: column;
-        background-color: var(--color-navbar-bg);
-        backdrop-filter: blur(20px) saturate(140%);
-        -webkit-backdrop-filter: blur(20px) saturate(140%);
         border-top: 1px solid var(--color-border);
         border-radius: 1.25rem 1.25rem 0 0;
         box-shadow: 0 -16px 40px rgba(0, 0, 0, 0.25);
         transform: translateY(100%);
         transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            border-radius: inherit;
+            background-color: var(--color-navbar-bg);
+            backdrop-filter: blur(20px) saturate(140%);
+            -webkit-backdrop-filter: blur(20px) saturate(140%);
+        }
 
         .reader-fab-toc--open & {
             transform: translateY(0);
