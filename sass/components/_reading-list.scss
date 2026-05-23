@@ -330,18 +330,22 @@
 
     &__footer {
         display: none;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: center;
+        gap: 0.5rem;
         padding: 0.75rem 1rem;
         border-top: 1px solid var(--color-hairline);
     }
 
+    &__export,
+    &__import,
     &__clear {
-        display: flex;
+        display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border: none;
+        gap: 0.4rem;
+        padding: 0.5rem 0.85rem;
+        border: 1px solid var(--color-hairline);
         border-radius: v.$border-radius-sm;
         background-color: transparent;
         color: var(--color-text-muted);
@@ -350,13 +354,23 @@
         transition: all v.$transition-base ease;
 
         &:hover {
-            background-color: rgba(c.$pink, 0.1);
-            color: c.$pink;
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
         }
 
         &:focus-visible {
             outline: 2px solid var(--color-focus);
             outline-offset: 2px;
+        }
+    }
+
+    &__clear {
+        border-color: transparent;
+
+        &:hover {
+            background-color: rgba(c.$pink, 0.1);
+            border-color: rgba(c.$pink, 0.4);
+            color: c.$pink;
         }
     }
 }

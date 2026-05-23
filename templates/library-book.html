@@ -92,7 +92,7 @@
     {% endfor %}
 {% endif %}
 
-<div class="library-book" data-book-slug="{{ book_slug }}" data-book-code="{{ book_data.code | default(value='') }}">
+<div class="library-book" data-book-slug="{{ book_slug }}" data-book-code="{{ book_data.code | default(value='') }}" data-book-title="{{ book_title | default(value='') | escape }}">
     <!-- Breadcrumb Navigation -->
     {{ breadcrumbs::library(book_title=book_title, lang=detected_lang) }}
 

@@ -341,6 +341,79 @@
         }
     }
 
+    // Per-note Export ▾ dropdown sits in the item action row. Uses
+    // native <details>/<summary> for zero-JS toggling; the menu is
+    // positioned absolutely so it can overflow the item card.
+    &__item-export {
+        position: relative;
+
+        &[open] > .study-panel__item-export-toggle {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+    }
+
+    &__item-export-toggle {
+        display: inline-block;
+        padding: 0.35rem 0.6rem;
+        background: var(--color-background);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.25rem;
+        font-family: var(--font-family-tech);
+        font-size: 0.7rem;
+        font-weight: 600;
+        cursor: pointer;
+        list-style: none;
+        transition: all 0.2s ease;
+
+        &::-webkit-details-marker { display: none; }
+        &::marker { content: ''; }
+
+        &:hover {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+
+        &::after {
+            content: ' \25BE';
+            font-size: 0.6rem;
+            margin-left: 0.2rem;
+        }
+    }
+
+    &__item-export-menu {
+        position: absolute;
+        top: calc(100% + 4px);
+        right: 0;
+        z-index: 5;
+        display: flex;
+        flex-direction: column;
+        min-width: 9.5rem;
+        background: var(--color-background);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.15);
+        overflow: hidden;
+
+        button {
+            padding: 0.5rem 0.75rem;
+            background: transparent;
+            border: 0;
+            font-family: var(--font-family-tech);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--color-text);
+            text-align: left;
+            cursor: pointer;
+            transition: background 0.15s ease;
+
+            &:hover {
+                background: var(--color-background-secondary);
+                color: var(--color-accent-primary);
+            }
+        }
+    }
+
     &__empty {
         text-align: center;
         padding: 2rem;
@@ -359,8 +432,28 @@
     &__footer {
         display: flex;
         gap: 0.5rem;
-        padding: 1rem;
+        padding: 1rem 1rem 0.5rem;
         border-top: 1px solid var(--color-hairline);
+    }
+
+    &__footer-secondary {
+        padding: 0 1rem 0.75rem;
+        text-align: center;
+    }
+
+    &__secondary-link {
+        background: transparent;
+        border: 0;
+        padding: 0.25rem 0.5rem;
+        font-family: var(--font-family-tech);
+        font-size: 0.7rem;
+        color: var(--color-text-muted);
+        text-decoration: underline;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--color-accent-primary);
+        }
     }
 
     &__export,
