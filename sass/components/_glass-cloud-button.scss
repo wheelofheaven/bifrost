@@ -1,0 +1,84 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+@use "glass-cloud-card" as gcc;
+
+// Glass-cloud button — the lead-card visual language scaled down to
+// button affordances.
+//
+// Same recipe as `glass-cloud-card` (animated cloud-duo gradient on a
+// glass-blurred surface) with button-shaped padding / radius /
+// typography, plus lift-on-hover, focus ring, and active-press
+// feedback. Use for in-content CTAs that should feel premium and
+// match the lead Article / lead Dispatch / reading-path cards.
+//
+// Usage:
+//   @use "glass-cloud-button" as gcc-btn;
+//   .my-cta { @include gcc-btn.glass-cloud-button; }
+//
+// Per-instance cloud-duo override (inherited from the card mixin):
+//   .my-cta {
+//       @include gcc-btn.glass-cloud-button;
+//       --cloud-a: #{c.$mint-300};
+//       --cloud-b: #{c.$lavender-300};
+//   }
+
+@mixin glass-cloud-button {
+    @include gcc.glass-cloud-card;
+
+    // Button shape — the card mixin doesn't set padding, radius, or
+    // typography; buttons need their own.
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.55rem 1rem;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    color: var(--color-text);
+    font-family: var(--font-family-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    line-height: 1.2;
+    white-space: nowrap;
+
+    // Tone the card-scale cloud drift down a notch — same animation
+    // and timing, just less prominent on a small surface.
+    &::before {
+        opacity: 0.65;
+        filter: blur(20px);
+    }
+
+    // Lift + brighten on hover/focus. Same affordances on focus so the
+    // button is reachable by keyboard with a visible state change.
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+
+    &:hover,
+    &:focus-visible {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgb(0 0 0 / 14%);
+
+        &::before {
+            opacity: 0.85;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+    }
+
+    &:active {
+        transform: translateY(0);
+        box-shadow: 0 1px 2px rgb(0 0 0 / 10%);
+    }
+
+    // Inline SVG icons sized to font cap-height. Buttons typically
+    // pair a glyph with a short label; this keeps the two visually
+    // balanced without each call site needing its own svg rule.
+    svg {
+        width: 1em;
+        height: 1em;
+        flex-shrink: 0;
+    }
+}

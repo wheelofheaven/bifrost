@@ -2,6 +2,7 @@
 @use "../abstracts/variables" as vars;
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-button" as gcc-btn;
 
 // Shared category-group header used by /library/ (grouping by tradition)
 // and /wiki/ (grouping by category). Mirrors the wiki section card style
@@ -3737,25 +3738,16 @@
         flex-wrap: wrap;
     }
 
-    &__history-link,
-    &__edit-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.375rem;
-        font-family: typo.$font-family-tech;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--color-text-muted);
-        text-decoration: none;
-        padding: 0.375rem 0.625rem;
-        border: 1px solid var(--color-hairline);
-        border-radius: 0.375rem;
-        transition: all 0.15s ease;
+    &__history-link {
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{colors.$blue-300};
+        --cloud-b: #{colors.$mauve-300};
+    }
 
-        &:hover {
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
-        }
+    &__edit-btn {
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{colors.$mint-300};
+        --cloud-b: #{colors.$blue-300};
     }
 
     // Related books — link-list, no card hierarchy

@@ -3,7 +3,9 @@
 // BEM-based styling for wiki pages with frosted glass/futuristic aesthetic
 
 @use "../abstracts/variables" as vars;
+@use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
+@use "../components/glass-cloud-button" as gcc-btn;
 
 .wiki {
     min-height: 100vh;
@@ -635,80 +637,15 @@
     }
 
     &__history-link {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4375rem;
-        padding: 0.375rem 0.875rem;
-        border: 1px solid var(--color-hairline);
-        border-radius: vars.$border-radius-full;
-        background: var(--color-card-bg);
-        color: var(--color-text-muted);
-        font-family: var(--font-family-body);
-        font-size: 0.8125rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s ease;
-
-        svg {
-            flex-shrink: 0;
-            opacity: 0.85;
-            transition: transform 0.3s ease;
-        }
-
-        &:hover,
-        &:focus-visible {
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
-            background: var(--color-hover);
-            outline: none;
-
-            svg {
-                transform: rotate(-30deg);
-            }
-        }
-
-        &:focus-visible {
-            outline: 2px solid var(--color-accent-primary);
-            outline-offset: 2px;
-        }
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$blue-300};
+        --cloud-b: #{c.$mauve-300};
     }
 
     &__edit-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4375rem;
-        padding: 0.375rem 0.875rem;
-        border: 1px solid var(--color-hairline);
-        border-radius: vars.$border-radius-full;
-        background: var(--color-card-bg);
-        color: var(--color-text-muted);
-        font-family: var(--font-family-body);
-        font-size: 0.8125rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s ease;
-
-        svg {
-            flex-shrink: 0;
-            transition: transform 0.2s ease;
-        }
-
-        &:hover,
-        &:focus-visible {
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
-            background: var(--color-hover);
-            outline: none;
-
-            svg {
-                transform: rotate(-8deg);
-            }
-        }
-
-        &:focus-visible {
-            outline: 2px solid var(--color-accent-primary);
-            outline-offset: 2px;
-        }
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$mint-300};
+        --cloud-b: #{c.$blue-300};
     }
 
     // Main Content
