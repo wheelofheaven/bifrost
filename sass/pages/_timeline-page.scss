@@ -110,7 +110,8 @@
 
     // Zodiac glyph badge — matches the .dates / .day pill treatment
     // so all three chips in the age-badge row read as a single
-    // metadata cluster. Icon is sized to the chip's cap-height.
+    // metadata cluster. Icon is sized to the chip's cap-height and
+    // inherits the muted text colour from .age-badge.
     &__symbol {
         display: inline-flex;
         align-items: center;
@@ -120,7 +121,6 @@
         background: var(--color-surface);
         border: 1px solid var(--color-hairline);
         line-height: 0;
-        color: var(--color-accent-primary);
 
         svg {
             width: 1.125rem;
