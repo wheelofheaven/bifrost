@@ -108,16 +108,23 @@
         flex-wrap: wrap;
     }
 
+    // Zodiac glyph badge — matches the .dates / .day pill treatment
+    // so all three chips in the age-badge row read as a single
+    // metadata cluster. Icon is sized to the chip's cap-height.
     &__symbol {
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        line-height: 1;
+        padding: 0.125rem 0.5rem;
+        border-radius: vars.$border-radius-full;
+        background: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        line-height: 0;
         color: var(--color-accent-primary);
 
         svg {
-            width: 1.75rem;
-            height: 1.75rem;
+            width: 1.125rem;
+            height: 1.125rem;
         }
     }
 
