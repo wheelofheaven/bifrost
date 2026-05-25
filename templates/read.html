@@ -16,7 +16,7 @@
    can't sort numerics across positive/negative magnitudes. #}
 {% set age_order = ["capricorn", "sagittarius", "scorpio", "libra", "virgo", "leo", "cancer", "gemini", "taurus", "aries", "pisces", "aquarius"] %}
 
-<div class="read read--pattern-a" id="read-root">
+<div class="read" id="read-root">
     <header class="read__header">
         <h1 class="read__title">{{ section.title }}</h1>
         {% if section.extra.lede %}
@@ -24,23 +24,12 @@
         {% elif section.description %}
         <p class="read__lede">{{ section.description }}</p>
         {% endif %}
-
-        {# Layout-variant toggle. Two interaction patterns share the
-           same markup; CSS shows the pattern-A or pattern-B chrome
-           depending on the `read--pattern-a` / `read--pattern-b`
-           wrapper class. Kept inline at the top so the user can flip
-           between them without leaving the page. #}
-        <div class="read__pattern-toggle" role="group" aria-label="Layout variant">
-            <button type="button" class="read__pattern-toggle-btn read__pattern-toggle-btn--active" data-pattern="a">A · Discover in card</button>
-            <button type="button" class="read__pattern-toggle-btn" data-pattern="b">B · Tab strip</button>
-        </div>
     </header>
 
     {# Three reading paths. Each is an <article> with two clickable
        regions: the main link (top, fills most of the card) and the
-       Discover button (bottom, pattern-A only). In pattern-B the
-       Discover button is hidden and a separate tab strip below the
-       cards handles the carousel switching. #}
+       Discover button (bottom). Discover switches which carousel is
+       shown below the cards; the link goes to the section landing. #}
     <nav class="read__paths" aria-label="Reading paths">
         <article class="read__path read__path--featured" data-section="timeline">
             <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang) }}">
@@ -82,24 +71,6 @@
             </button>
         </article>
     </nav>
-
-    {# Pattern-B tab strip. Hidden in pattern-A. Same data-section
-       semantics as the in-card Discover buttons so the JS can drive
-       both with one switch handler. #}
-    <div class="read__tabs" role="tablist" aria-label="Section preview">
-        <button type="button" class="read__tab read__tab--active" role="tab" data-section="timeline" aria-pressed="true">
-            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
-            <span class="read__tab-label">The Ages</span>
-        </button>
-        <button type="button" class="read__tab" role="tab" data-section="wiki" aria-pressed="false">
-            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
-            <span class="read__tab-label">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
-        </button>
-        <button type="button" class="read__tab" role="tab" data-section="library" aria-pressed="false">
-            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
-            <span class="read__tab-label">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
-        </button>
-    </div>
 
     {# Carousel stack. Three carousels — one per section — stacked in
        the DOM, with [hidden] applied to all but the active one. #}
@@ -230,20 +201,9 @@
     const root = document.getElementById('read-root');
     if (!root) return;
 
-    // ── A/B pattern toggle ────────────────────────────────────────
-    const patternBtns = root.querySelectorAll('.read__pattern-toggle-btn');
-    patternBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const pattern = btn.dataset.pattern;
-            root.classList.remove('read--pattern-a', 'read--pattern-b');
-            root.classList.add('read--pattern-' + pattern);
-            patternBtns.forEach(b => b.classList.toggle('read__pattern-toggle-btn--active', b === btn));
-        });
-    });
-
     // ── Section switcher ─────────────────────────────────────────
-    // Discover buttons (pattern A) and tab buttons (pattern B) both
-    // carry data-section. Clicking either swaps the visible carousel.
+    // Each Discover button carries data-section; clicking swaps the
+    // visible carousel below.
     function setActiveSection(section) {
         // Carousels: show one, hide the rest.
         root.querySelectorAll('.read__carousel').forEach(c => {
@@ -262,34 +222,36 @@
         root.querySelectorAll('.read__path').forEach(p => {
             p.classList.toggle('read__path--active', p.dataset.section === section);
         });
-        // Tabs (pattern B).
-        root.querySelectorAll('.read__tab').forEach(t => {
-            const active = t.dataset.section === section;
-            t.classList.toggle('read__tab--active', active);
-            t.setAttribute('aria-pressed', active ? 'true' : 'false');
-        });
     }
 
-    root.querySelectorAll('.read__path-discover, .read__tab').forEach(el => {
+    root.querySelectorAll('.read__path-discover').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
             const section = el.dataset.section;
             setActiveSection(section);
 
-            // Scroll the active carousel into view. Critical on mobile,
-            // where the cards take the full first screen and the carousel
-            // is below the fold — without this, tapping Discover does
-            // nothing visible. `block: 'nearest'` is polite on desktop
-            // (no scroll if the carousel is already in viewport) but
-            // pulls it into view on phones.
             const target = root.querySelector(
                 '.read__carousel[data-section="' + section + '"]'
             );
             if (target) {
-                // Defer one frame so the [hidden] removal in setActiveSection
-                // takes effect before measuring scroll position.
+                // Defer one frame so the [hidden] removal takes effect
+                // before measuring scroll position OR re-running the
+                // category-rail's nav-button state.
                 requestAnimationFrame(() => {
+                    // Scroll the active carousel into view. Critical on
+                    // mobile where the cards take the full first screen.
+                    // `block: 'nearest'` skips the scroll on desktop if
+                    // the carousel is already in viewport.
                     target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    // Force the category-rail nav buttons to re-measure.
+                    // Initially-hidden tracks have clientWidth = 0, which
+                    // makes updateNav() disable both prev/next buttons
+                    // on page load. Dispatching a scroll event on the now-
+                    // visible track re-triggers updateNav with the real
+                    // dimensions.
+                    const track = target.querySelector('.category-rail__track');
+                    if (track) track.dispatchEvent(new Event('scroll'));
                 });
             }
         });
