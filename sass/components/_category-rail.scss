@@ -214,10 +214,11 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            gap: v.$spacing-sm;
-            width: 17rem;
-            min-height: 19rem;
-            padding: v.$spacing-lg v.$spacing-md v.$spacing-md;
+            gap: v.$spacing-xs;
+            width: 15rem;
+            // No min-height — let the tile size to its content so it
+            // doesn't grow taller than the featured cards above the rail.
+            padding: v.$spacing-md v.$spacing-md v.$spacing-sm;
             border: 1px solid var(--color-hairline);
             border-radius: v.$border-radius-lg;
             color: var(--color-text);
@@ -236,8 +237,8 @@
 
             &:hover,
             &:focus-visible {
-                transform: translateY(-4px) scale(1.01);
-                box-shadow: 0 12px 28px rgb(0 0 0 / 18%);
+                transform: translateY(-3px);
+                box-shadow: 0 8px 20px rgb(0 0 0 / 14%);
 
                 &::before {
                     opacity: 0.85;
@@ -250,15 +251,13 @@
             }
 
             @media (max-width: 640px) {
-                width: 14rem;
-                min-height: 17rem;
+                width: 13rem;
             }
         }
 
         .category-rail__tile-icon {
-            width: 4.5rem;
-            height: 4.5rem;
-            margin-top: v.$spacing-xs;
+            width: 2.5rem;
+            height: 2.5rem;
             color: var(--color-text);
             opacity: 0.95;
 
@@ -271,10 +270,10 @@
         .category-rail__tile-title {
             margin: 0;
             font-family: var(--font-family-lead);
-            font-size: v.$font-size-xl;
+            font-size: v.$font-size-base;
             font-weight: 700;
             color: var(--color-text);
-            line-height: 1.15;
+            line-height: 1.2;
         }
 
         .category-rail__tile-count {
