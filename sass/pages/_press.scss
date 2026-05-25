@@ -1,5 +1,6 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
+@use "../components/glass-cloud-button" as gcc-btn;
 
 // Press kit page — substantial layout: hero, boilerplate cards with copy
 // buttons, fact sheet, brand-name usage do/don't, asset preview tiles,
@@ -71,16 +72,16 @@
             background: var(--color-hover);
         }
 
+        // Primary CTA — glass-cloud language. Padding / font-size /
+        // pill radius are restored from the parent so the primary and
+        // secondary buttons read as siblings on the same CTA row.
         &--primary {
-            background: var(--color-accent-primary);
-            border-color: var(--color-accent-primary);
-            color: var(--color-bg, #0a0e1a);
-
-            &:hover {
-                background: var(--color-accent-primary);
-                color: var(--color-bg, #0a0e1a);
-                filter: brightness(1.1);
-            }
+            @include gcc-btn.glass-cloud-button;
+            padding: v.$spacing-sm v.$spacing-lg;
+            border-radius: v.$border-radius-full;
+            font-size: v.$font-size-sm;
+            --cloud-a: #{c.$yellow-300};
+            --cloud-b: #{c.$mint-300};
         }
     }
 

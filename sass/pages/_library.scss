@@ -2818,22 +2818,10 @@
 // =====================================================
 .library-no-results {
     &__reset {
+        @include gcc-btn.glass-cloud-button;
         margin-top: 1rem;
-        padding: 0.75rem 1.5rem;
-        background: var(--color-accent-primary);
-        border: none;
-        border-radius: 0.5rem;
-        color: white;
-        font-family: var(--font-family-tech);
-        font-size: 0.875rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.2s ease;
-
-        &:hover {
-            background: var(--color-accent-secondary);
-            transform: translateY(-2px);
-        }
+        --cloud-a: #{colors.$lavender-300};
+        --cloud-b: #{colors.$blue-300};
     }
 }
 
@@ -3019,13 +3007,9 @@
     }
 
     &--primary {
-        background: var(--color-accent-primary);
-        border-color: var(--color-accent-primary);
-        color: white;
-
-        &:hover {
-            background: var(--color-accent-secondary);
-        }
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{colors.$yellow-300};
+        --cloud-b: #{colors.$mint-300};
     }
 }
 
@@ -3134,21 +3118,11 @@
 }
 
 .library-reader__shortcuts-close {
+    @include gcc-btn.glass-cloud-button;
     width: 100%;
-    padding: 0.75rem;
-    background: var(--color-accent-primary);
-    border: none;
-    border-radius: 0.5rem;
-    color: white;
-    font-family: var(--font-family-tech);
-    font-size: 0.875rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-        background: var(--color-accent-secondary);
-    }
+    justify-content: center;
+    --cloud-a: #{colors.$mint-300};
+    --cloud-b: #{colors.$blue-300};
 }
 
 @keyframes fadeIn {

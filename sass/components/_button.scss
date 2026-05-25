@@ -4,6 +4,7 @@
 
 @use "../abstracts/variables" as vars;
 @use "../abstracts/colors" as colors;
+@use "glass-cloud-button" as gcc-btn;
 
 .btn {
     display: inline-flex;
@@ -68,27 +69,10 @@
 
     // Button Variants
 
-    // Primary button - main actions
+    // Primary button - main actions. Glass-cloud language; per-instance
+    // cloud-duo can be overridden by setting --cloud-a / --cloud-b.
     &--primary {
-        background: linear-gradient(
-            135deg,
-            var(--color-accent-primary),
-            var(--color-accent-secondary)
-        );
-        color: var(--color-background);
-        border: 2px solid transparent;
-
-        &:hover {
-            transform: translateY(-2px);
-            box-shadow:
-                0 8px 16px rgba(0, 0, 0, 0.2),
-                0 0 0 1px var(--color-accent-primary);
-        }
-
-        &:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+        @include gcc-btn.glass-cloud-button;
     }
 
     // Secondary button - alternative actions
