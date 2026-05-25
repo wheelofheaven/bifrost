@@ -33,6 +33,7 @@ const bundles = {
     'reader-fab.js',
     'prefetch.js',
     'listen-button.js',
+    'category-rail.js',
   ],
   // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.
   'search.bundle.js': [

@@ -1,22 +1,70 @@
-{# Library Blockquote Shortcode #}
-{% set book = book | default(value="") %}
-{% set chapter = chapter | default(value="") %}
-{% set verse = verse | default(value="") %}
-{% set path = path | default(value="") %}
-{% set title = title | default(value="Library") %}
+{# Library quote shortcode.
+
+   Paired-tag form, body is the quoted text:
+       {% library(book="genesis-woh", chapter=1, verse=1) %}
+       When the Elohim began to shape the skies and the land—
+       {% end %}
+
+   When `book` is set, the shortcode auto-resolves the link to
+   /library/<book>/ and (if `chapter` + `verse` are present) appends
+   the deep-link anchor `#c<chapter>p<verse>` so the reader lands on
+   the exact verse. It also looks up the book's English title from
+   data/library/<book>/_meta.json for the "Read in" button label.
+
+   Legacy/manual mode still works: pass `path="/library/some-book/"`
+   and `title="Some Book"` directly. Manual `path` always wins over
+   the resolved one. #}
+
+{%- set _book = book | default(value="") | trim -%}
+{%- set _chapter = chapter | default(value="") -%}
+{%- set _verse = verse | default(value="") -%}
+{%- set _path_arg = path | default(value="") | trim -%}
+{%- set _title_arg = title | default(value="") | trim -%}
+
+{# Resolve book metadata if `book` was provided. #}
+{%- set _resolved_title = "" -%}
+{%- set _resolved_path = "" -%}
+{%- if _book -%}
+    {%- set _meta = load_data(path="data/library/" ~ _book ~ "/_meta.json", required=false) -%}
+    {%- if _meta -%}
+        {%- if _meta.titles and _meta.titles.en -%}
+            {%- set _resolved_title = _meta.titles.en -%}
+        {%- elif _meta.title -%}
+            {%- set _resolved_title = _meta.title -%}
+        {%- endif -%}
+    {%- endif -%}
+    {%- set _book_path = "library/" ~ _book -%}
+    {%- set _anchor = "" -%}
+    {%- if _chapter and _verse -%}
+        {%- set _anchor = "#c" ~ _chapter ~ "p" ~ _verse -%}
+    {%- elif _chapter -%}
+        {%- set _anchor = "#chapter-" ~ _chapter -%}
+    {%- endif -%}
+    {%- set _resolved_path = get_url(path=_book_path, lang=lang) ~ _anchor -%}
+{%- endif -%}
+
+{# Manual `path` and `title` win over resolved values. #}
+{%- if _path_arg -%}{%- set _final_path = _path_arg -%}{%- else -%}{%- set _final_path = _resolved_path -%}{%- endif -%}
+{%- if _title_arg -%}
+    {%- set _final_title = _title_arg -%}
+{%- elif _resolved_title -%}
+    {%- set _final_title = _resolved_title -%}
+{%- else -%}
+    {%- set _final_title = "Library" -%}
+{%- endif -%}
 
 <blockquote class="library-quote">
     <div class="library-quote__content">
         {{ body | markdown | safe }}
     </div>
 
-    {% if path %}
+    {% if _final_path %}
     <div class="library-quote__link">
-        <a href="{{ get_url(path=path) }}" class="library-quote__button" title="Read full text in {{ title }}">
+        <a href="{{ _final_path | safe }}" class="library-quote__button" title="Read full text in {{ _final_title }}">
             <svg class="library-quote__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
             </svg>
-            <span class="library-quote__button-text">Read in {{ title }}</span>
+            <span class="library-quote__button-text">Read in {{ _final_title }}</span>
             <svg class="library-quote__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M5 12h14"></path>
                 <path d="M12 5l7 7-7 7"></path>
@@ -25,11 +73,9 @@
     </div>
     {% endif %}
 
-    {% if book or chapter or verse %}
+    {% if _book or _chapter or _verse %}
     <cite class="library-quote__citation">
-        {% if book %}{{ book }}{% endif %}
-        {% if chapter %}, Chapter {{ chapter }}{% endif %}
-        {% if verse %}, Verse {{ verse }}{% endif %}
+        {% if _final_title and _book %}{{ _final_title }}{% elif _book %}{{ _book }}{% endif %}{% if _chapter %} {{ _chapter }}{% if _verse %}:{{ _verse }}{% endif %}{% endif %}
     </cite>
     {% endif %}
 </blockquote>

@@ -1,0 +1,28 @@
+{# Section glyph resolver — partial form.
+
+   Use this from contexts that can't import macros/section-icons.html
+   (e.g. macro files like macros/breadcrumbs.html, where Tera rejects
+   both top-level and in-macro `{% import %}`).
+
+   The caller sets `slug` first, then includes this partial. Output is
+   either the registry-bound SVG or empty for unknown slugs.
+
+   Usage:
+     {% set slug = "wiki" %}
+     {% include "partials/section-icon.html" %}
+
+   Keep in sync with macros/section-icons.html `section` macro — both
+   resolve from the same `data/icons.json` registry. #}
+
+{% set _registry = load_data(path="data/icons.json") %}
+{% set _icon_id = _registry.bindings.section[slug] | default(value="") %}
+{% if _icon_id == "book-marked" %}{% include "partials/icons/book-marked.html" %}
+{% elif _icon_id == "feather-newspaper" %}{% include "partials/icons/feather-newspaper.html" %}
+{% elif _icon_id == "game-book-pile" %}{% include "partials/icons/game-book-pile.html" %}
+{% elif _icon_id == "game-dna2" %}{% include "partials/icons/game-dna2.html" %}
+{% elif _icon_id == "game-dragon-balls" %}{% include "partials/icons/game-dragon-balls.html" %}
+{% elif _icon_id == "game-fossil" %}{% include "partials/icons/game-fossil.html" %}
+{% elif _icon_id == "game-satellite" %}{% include "partials/icons/game-satellite.html" %}
+{% elif _icon_id == "game-star-cycle" %}{% include "partials/icons/game-star-cycle.html" %}
+{% elif _icon_id == "game-wax-tablet" %}{% include "partials/icons/game-wax-tablet.html" %}
+{% endif %}

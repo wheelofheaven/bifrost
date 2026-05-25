@@ -9,19 +9,18 @@
 
    See .claude/rules/content-editing.md ("Newsroom Dispatches"). #}
 
+{% import "macros/section-icons.html" as section_icons %}
+
 {# Chip — small pill labeling the page as a Newsroom dispatch.
-   Optionally tinted by event_type. #}
+   Optionally tinted by event_type and stamped with the matching glyph. #}
 {% macro chip(event_type="", lang="en") %}
 <span class="dispatch-chip{% if event_type %} dispatch-chip--{{ event_type }}{% endif %}"
       role="note"
       aria-label="Content type: Dispatch"
       title="Newsroom dispatch — a time-anchored reading of a current event">
-    <svg class="dispatch-chip__icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path>
-        <path d="M18 14h-8"></path>
-        <path d="M15 18h-5"></path>
-        <path d="M10 6h8v4h-8z"></path>
-    </svg>
+    <span class="dispatch-chip__icon" aria-hidden="true">
+        {% if event_type %}{{ section_icons::event_type(slug=event_type) }}{% else %}<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8z"></path></svg>{% endif %}
+    </span>
     <span class="dispatch-chip__label">{{ trans(key="dispatchChipLabel", lang=lang) }}</span>
 </span>
 {% endmacro chip %}

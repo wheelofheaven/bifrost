@@ -64,15 +64,12 @@
 
         display: flex;
         flex-direction: column;
-        gap: v.$spacing-2xs;
-        // Right padding leaves room for the absolutely-positioned icon
-        // in the top-right corner; bottom padding makes room for the
-        // arrow chip that lives at the bottom-right.
-        padding: v.$spacing-xl v.$spacing-3xl v.$spacing-2xl v.$spacing-xl;
-        text-decoration: none;
-        color: var(--color-text);
+        // Padding lives on .read__path-main (link region) and on the
+        // .read__path-discover button — the wrapper itself is flush so
+        // the divider between the two zones can span edge-to-edge.
+        padding: 0;
         border-radius: v.$border-radius-lg;
-        transition: background-color 0.25s ease, transform 0.25s ease;
+        transition: box-shadow 0.25s ease, transform 0.25s ease;
 
         // Stagger each card so the three don't pulse in lock-step.
         // Negative delays start mid-cycle on page load.
@@ -89,8 +86,35 @@
             &::before { animation-delay: -24s; }
         }
 
+        // Active card — the one whose carousel is currently shown.
+        // A subtle ring so the user can read which preview is below.
+        &--active {
+            box-shadow: 0 0 0 2px var(--color-accent-primary),
+                        0 6px 18px rgb(0 0 0 / 12%);
+
+            &::before { opacity: 0.85; }
+        }
+    }
+
+    // The main click target inside the card — wraps icon + eyebrow +
+    // title + description + arrow. Carries the link styling and the
+    // hover/focus state that used to live on .read__path directly.
+    &__path-main {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        // Right padding leaves room for the absolutely-positioned icon
+        // in the top-right corner.
+        padding: v.$spacing-xl v.$spacing-3xl v.$spacing-xl v.$spacing-xl;
+        text-decoration: none;
+        color: var(--color-text);
+        flex: 1;
+        border-radius: v.$border-radius-lg v.$border-radius-lg 0 0;
+        transition: background-color 0.2s ease;
+
         @media (max-width: 900px) {
-            padding: v.$spacing-md v.$spacing-2xl v.$spacing-lg v.$spacing-md;
+            padding: v.$spacing-md v.$spacing-2xl v.$spacing-md v.$spacing-md;
         }
 
         &:hover,
@@ -110,8 +134,65 @@
 
         &:focus-visible {
             outline: 2px solid var(--color-accent-primary);
-            outline-offset: 2px;
+            outline-offset: -2px;
         }
+    }
+
+    // Discover button — clickable strip at the bottom of each card
+    // (pattern A only). Hidden in pattern B; the tab strip handles
+    // section switching there instead.
+    &__path-discover {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: v.$spacing-xs;
+        width: 100%;
+        padding: v.$spacing-sm v.$spacing-xl;
+        border: 0;
+        border-top: 1px solid var(--color-hairline);
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--font-family-body);
+        font-size: 0.8125rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-align: left;
+        border-radius: 0 0 v.$border-radius-lg v.$border-radius-lg;
+        transition: background-color 0.18s ease, color 0.18s ease;
+
+        @media (max-width: 900px) {
+            padding: v.$spacing-xs v.$spacing-md;
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            color: var(--color-text);
+            outline: none;
+        }
+
+        &:focus-visible {
+            box-shadow: inset 0 0 0 2px var(--color-accent-primary);
+        }
+
+        &--active {
+            color: var(--color-accent-primary);
+            background-color: var(--color-hover);
+
+            .read__path-discover-icon {
+                transform: rotate(180deg);
+            }
+        }
+    }
+
+    &__path-discover-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: transform 0.2s ease;
+        color: currentColor;
+
+        svg { width: 1rem; height: 1rem; }
     }
 
     // Icon sits in the top-right corner so the eyebrow + title can start
@@ -144,8 +225,8 @@
         }
     }
 
-    &__path:hover &__path-icon,
-    &__path:focus-visible &__path-icon {
+    &__path-main:hover &__path-icon,
+    &__path-main:focus-visible &__path-icon {
         transform: translateY(-2px);
     }
 
@@ -405,6 +486,146 @@
             &:hover {
                 text-decoration-thickness: 2px;
             }
+        }
+    }
+
+    // ────────────────────────────────────────────────────────────
+    // Layout-variant toggle + section-stack chrome (2026-05 update)
+    // ────────────────────────────────────────────────────────────
+
+    // A/B pattern toggle — small segmented control under the lede.
+    // Lets the user flip between pattern-A (Discover-in-card) and
+    // pattern-B (tab strip) without leaving the page.
+    &__pattern-toggle {
+        display: inline-flex;
+        gap: 1px;
+        margin-top: v.$spacing-lg;
+        padding: 2px;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-full;
+        background: var(--color-background-secondary);
+    }
+
+    &__pattern-toggle-btn {
+        padding: v.$spacing-xs v.$spacing-md;
+        border: 0;
+        border-radius: v.$border-radius-full;
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--font-family-body);
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        transition: background-color 0.18s ease, color 0.18s ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+            outline: none;
+        }
+
+        &--active {
+            background: var(--color-text);
+            color: var(--color-background);
+
+            &:hover, &:focus-visible {
+                color: var(--color-background);
+            }
+        }
+    }
+
+    // Tab strip (pattern B) — three buttons that switch the visible
+    // carousel below. Mirrors the data-section semantics of the
+    // in-card Discover buttons so one JS handler drives both.
+    &__tabs {
+        display: flex;
+        gap: v.$spacing-2xs;
+        justify-content: center;
+        margin: v.$spacing-xl 0 0;
+        padding: v.$spacing-xs;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-full;
+        background: var(--color-background-secondary);
+        max-width: max-content;
+        margin-left: auto;
+        margin-right: auto;
+
+        @media (max-width: 640px) {
+            flex-direction: column;
+            border-radius: v.$border-radius-md;
+            gap: 1px;
+        }
+    }
+
+    &__tab {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-2xs;
+        padding: v.$spacing-xs v.$spacing-md;
+        border: 0;
+        border-radius: v.$border-radius-full;
+        background: transparent;
+        cursor: pointer;
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        transition: background-color 0.18s ease, color 0.18s ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+            outline: none;
+        }
+
+        &--active {
+            background: var(--color-text);
+            color: var(--color-background);
+
+            &:hover, &:focus-visible {
+                color: var(--color-background);
+            }
+        }
+    }
+
+    &__tab-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.1em;
+        height: 1.1em;
+        line-height: 0;
+
+        svg { width: 100%; height: 100%; }
+    }
+
+    // Carousel stack — three carousels in the same slot, only the
+    // active one rendered (hidden=true on the others). The
+    // category-rail component inside each carousel handles its own
+    // visual treatment.
+    &__carousels {
+        margin-top: v.$spacing-xl;
+    }
+
+    &__carousel {
+        // Each carousel's internal .category-rail has its own margins;
+        // the wrapper just contains the rail without adding chrome.
+    }
+
+    // Pattern-specific show/hide. Default DOM has both Discover
+    // buttons AND the tab strip; the wrapper class on .read picks
+    // which is visible.
+    &--pattern-a {
+        .read__tabs { display: none; }
+    }
+
+    &--pattern-b {
+        .read__path-discover { display: none; }
+        // Cards become single-click in pattern-B: round the bottom
+        // corners on the main link so the card looks finished.
+        .read__path-main {
+            border-radius: v.$border-radius-lg;
         }
     }
 }

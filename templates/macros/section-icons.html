@@ -1,0 +1,152 @@
+{# Section / subcategory iconography.
+
+   Reads bindings from data/icons.json (the central registry), so the
+   slug → icon_id mapping lives in data. Each macro is a no-op for
+   unknown slugs.
+
+   Public API:
+     {% import "macros/section-icons.html" as section_icons %}
+     {{ section_icons::section(slug="library") }}
+     {{ section_icons::tradition(slug="raelian") }}
+     {{ section_icons::event_type(slug="announcement") }}
+     {{ section_icons::render(id="arrow-right") }}    {# generic by-id #}
+
+   Adding a new icon:
+     1. drop SVG into partials/icons/<id>.html
+     2. add an entry under `icons` in data/icons.json
+     3. add a render-branch in the relevant macro below
+
+   Adding a new binding (e.g. a new tradition):
+     1. edit `bindings` in icons.json
+     2. ensure the chosen icon_id has a render-branch in the relevant
+        macro below
+
+   Why every macro has its own if-elif chain: Tera does not support
+   computed include paths (include cannot take a variable), and Tera
+   1.x stack-overflows on self-import — so a shared render(id) macro
+   delegated to by the semantic resolvers is not possible in one
+   file. The duplication is small: each kind-macro only branches on
+   the icons actually bound to that kind. #}
+
+{% macro section(slug) %}
+{% set registry = load_data(path="data/icons.json") %}
+{% set id = registry.bindings.section[slug] | default(value="") %}
+{% if id == "game-book-pile" %}{% include "partials/icons/game-book-pile.html" %}
+{% elif id == "game-dna2" %}{% include "partials/icons/game-dna2.html" %}
+{% elif id == "game-dragon-balls" %}{% include "partials/icons/game-dragon-balls.html" %}
+{% elif id == "game-fossil" %}{% include "partials/icons/game-fossil.html" %}
+{% elif id == "game-satellite" %}{% include "partials/icons/game-satellite.html" %}
+{% elif id == "game-star-cycle" %}{% include "partials/icons/game-star-cycle.html" %}
+{% elif id == "game-wax-tablet" %}{% include "partials/icons/game-wax-tablet.html" %}
+{% endif %}
+{% endmacro section %}
+
+{# Services are off-www endpoints that live on their own FQDN
+   (api.wheelofheaven.world, assets.wheelofheaven.world, …). Distinct
+   from `section` which covers /library/, /wiki/, etc. on www. #}
+{% macro service(slug) %}
+{% set registry = load_data(path="data/icons.json") %}
+{% set id = registry.bindings.service[slug] | default(value="") %}
+{% if id == "feather-code" %}{% include "partials/icons/feather-code.html" %}
+{% elif id == "feather-globe" %}{% include "partials/icons/feather-globe.html" %}
+{% elif id == "feather-image" %}{% include "partials/icons/feather-image.html" %}
+{% endif %}
+{% endmacro service %}
+
+{% macro tradition(slug) %}
+{% set registry = load_data(path="data/icons.json") %}
+{% set id = registry.bindings.tradition[slug] | default(value="") %}
+{% if id == "game-broken-tablet" %}{% include "partials/icons/game-broken-tablet.html" %}
+{% elif id == "game-circling-fish" %}{% include "partials/icons/game-circling-fish.html" %}
+{% elif id == "game-colombian-statue" %}{% include "partials/icons/game-colombian-statue.html" %}
+{% elif id == "game-column-vase" %}{% include "partials/icons/game-column-vase.html" %}
+{% elif id == "game-egyptian-profile" %}{% include "partials/icons/game-egyptian-profile.html" %}
+{% elif id == "game-hand-of-god" %}{% include "partials/icons/game-hand-of-god.html" %}
+{% elif id == "game-lotus" %}{% include "partials/icons/game-lotus.html" %}
+{% elif id == "game-meditation" %}{% include "partials/icons/game-meditation.html" %}
+{% elif id == "game-stone-block" %}{% include "partials/icons/game-stone-block.html" %}
+{% elif id == "game-tarot-the-magician" %}{% include "partials/icons/game-tarot-the-magician.html" %}
+{% elif id == "game-trumpet" %}{% include "partials/icons/game-trumpet.html" %}
+{% elif id == "game-ufo" %}{% include "partials/icons/game-ufo.html" %}
+{% endif %}
+{% endmacro tradition %}
+
+{% macro event_type(slug) %}
+{% set registry = load_data(path="data/icons.json") %}
+{% set id = registry.bindings.event_type[slug] | default(value="") %}
+{% if id == "game-megaphone" %}{% include "partials/icons/game-megaphone.html" %}
+{% endif %}
+{% endmacro event_type %}
+
+{# Generic by-id renderer. Covers every icon in the registry so it
+   can be used for any icon-by-id rendering need (e.g. preview pages,
+   future debug/listing tooling). Templates that already know the
+   icon by name can also still use the direct partial include — the
+   registry doesn't replace direct includes, it sits on top of them. #}
+{% macro render(id) %}
+{% if id == "arrow-left" %}{% include "partials/icons/arrow-left.html" %}
+{% elif id == "arrow-right" %}{% include "partials/icons/arrow-right.html" %}
+{% elif id == "book" %}{% include "partials/icons/book.html" %}
+{% elif id == "book-marked" %}{% include "partials/icons/book-marked.html" %}
+{% elif id == "book-open" %}{% include "partials/icons/book-open.html" %}
+{% elif id == "chevron-down" %}{% include "partials/icons/chevron-down.html" %}
+{% elif id == "famicons-telescope-outline" %}{% include "partials/icons/famicons-telescope-outline.html" %}
+{% elif id == "feather-archive" %}{% include "partials/icons/feather-archive.html" %}
+{% elif id == "feather-code" %}{% include "partials/icons/feather-code.html" %}
+{% elif id == "feather-copy" %}{% include "partials/icons/feather-copy.html" %}
+{% elif id == "feather-file-text" %}{% include "partials/icons/feather-file-text.html" %}
+{% elif id == "feather-globe" %}{% include "partials/icons/feather-globe.html" %}
+{% elif id == "feather-image" %}{% include "partials/icons/feather-image.html" %}
+{% elif id == "feather-menu" %}{% include "partials/icons/feather-menu.html" %}
+{% elif id == "feather-moon" %}{% include "partials/icons/feather-moon.html" %}
+{% elif id == "feather-newspaper" %}{% include "partials/icons/feather-newspaper.html" %}
+{% elif id == "feather-search" %}{% include "partials/icons/feather-search.html" %}
+{% elif id == "feather-sun" %}{% include "partials/icons/feather-sun.html" %}
+{% elif id == "feather-x" %}{% include "partials/icons/feather-x.html" %}
+{% elif id == "fluent-building-bank" %}{% include "partials/icons/fluent-building-bank.html" %}
+{% elif id == "game-angel-trumpet" %}{% include "partials/icons/game-angel-trumpet.html" %}
+{% elif id == "game-ankh" %}{% include "partials/icons/game-ankh.html" %}
+{% elif id == "game-book-pile" %}{% include "partials/icons/game-book-pile.html" %}
+{% elif id == "game-broken-tablet" %}{% include "partials/icons/game-broken-tablet.html" %}
+{% elif id == "game-candle" %}{% include "partials/icons/game-candle.html" %}
+{% elif id == "game-circling-fish" %}{% include "partials/icons/game-circling-fish.html" %}
+{% elif id == "game-colombian-statue" %}{% include "partials/icons/game-colombian-statue.html" %}
+{% elif id == "game-column-vase" %}{% include "partials/icons/game-column-vase.html" %}
+{% elif id == "game-crescent" %}{% include "partials/icons/game-crescent.html" %}
+{% elif id == "game-dna2" %}{% include "partials/icons/game-dna2.html" %}
+{% elif id == "game-dragon-balls" %}{% include "partials/icons/game-dragon-balls.html" %}
+{% elif id == "game-egyptian-profile" %}{% include "partials/icons/game-egyptian-profile.html" %}
+{% elif id == "game-film-reel" %}{% include "partials/icons/game-film-reel.html" %}
+{% elif id == "game-fossil" %}{% include "partials/icons/game-fossil.html" %}
+{% elif id == "game-hand-of-god" %}{% include "partials/icons/game-hand-of-god.html" %}
+{% elif id == "game-hexagram-eye" %}{% include "partials/icons/game-hexagram-eye.html" %}
+{% elif id == "game-lotus" %}{% include "partials/icons/game-lotus.html" %}
+{% elif id == "game-megaphone" %}{% include "partials/icons/game-megaphone.html" %}
+{% elif id == "game-meditation" %}{% include "partials/icons/game-meditation.html" %}
+{% elif id == "game-om-lotus" %}{% include "partials/icons/game-om-lotus.html" %}
+{% elif id == "game-satellite" %}{% include "partials/icons/game-satellite.html" %}
+{% elif id == "game-sealed-scroll" %}{% include "partials/icons/game-sealed-scroll.html" %}
+{% elif id == "game-star-cycle" %}{% include "partials/icons/game-star-cycle.html" %}
+{% elif id == "game-stone-block" %}{% include "partials/icons/game-stone-block.html" %}
+{% elif id == "game-tarot-the-magician" %}{% include "partials/icons/game-tarot-the-magician.html" %}
+{% elif id == "game-trumpet" %}{% include "partials/icons/game-trumpet.html" %}
+{% elif id == "game-ufo" %}{% include "partials/icons/game-ufo.html" %}
+{% elif id == "game-wax-tablet" %}{% include "partials/icons/game-wax-tablet.html" %}
+{% elif id == "game-wreath" %}{% include "partials/icons/game-wreath.html" %}
+{% elif id == "gen-community" %}{% include "partials/icons/gen-community.html" %}
+{% elif id == "gen-knowledge" %}{% include "partials/icons/gen-knowledge.html" %}
+{% elif id == "hand" %}{% include "partials/icons/hand.html" %}
+{% elif id == "help-circle" %}{% include "partials/icons/help-circle.html" %}
+{% elif id == "language" %}{% include "partials/icons/language.html" %}
+{% elif id == "lucide-circle-dot" %}{% include "partials/icons/lucide-circle-dot.html" %}
+{% elif id == "menu" %}{% include "partials/icons/menu.html" %}
+{% elif id == "message-square" %}{% include "partials/icons/message-square.html" %}
+{% elif id == "octicon-code-of-conduct" %}{% include "partials/icons/octicon-code-of-conduct.html" %}
+{% elif id == "panel-top-open" %}{% include "partials/icons/panel-top-open.html" %}
+{% elif id == "ph-scroll-light" %}{% include "partials/icons/ph-scroll-light.html" %}
+{% elif id == "tdesign-questionnaire-double" %}{% include "partials/icons/tdesign-questionnaire-double.html" %}
+{% elif id == "user-check" %}{% include "partials/icons/user-check.html" %}
+{% elif id == "user-plus" %}{% include "partials/icons/user-plus.html" %}
+{% elif id == "x-logo" %}{% include "partials/icons/x-logo.html" %}
+{% endif %}
+{% endmacro render %}

@@ -2,6 +2,7 @@
 {% import "macros/library.html" as library_macros %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
+{% import "macros/section-icons.html" as section_icons %}
 
 {% block content %}
 {% set book_slug = page.slug %}
@@ -297,7 +298,10 @@
                     {% if tradition_name %}
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">{{ trans(key="libraryTradition", lang=detected_lang) }}</span>
-                        <span class="library-book__meta-value">{{ tradition_name }}</span>
+                        <span class="library-book__meta-value">
+                            <span class="section-mark section-mark--chip" aria-hidden="true">{{ section_icons::tradition(slug=current_book_entry.tradition) }}</span>
+                            {{ tradition_name }}
+                        </span>
                     </div>
                     {% endif %}
 

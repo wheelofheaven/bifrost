@@ -1,7 +1,22 @@
 {% extends "base.html" %}
+{% import "macros/section-icons.html" as section_icons %}
+{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
-<div class="read">
+{% set catalog = load_data(path="data/library/catalog.json") %}
+
+{# Featured wiki entries for the wiki carousel — the 8 backfilled
+   entries that have extra.featured_order set. Sorted by that order. #}
+{% set wiki_section = get_section(path="wiki/_index.md") %}
+{% set featured_wiki = wiki_section.pages | filter(attribute="extra.featured_order") | sort(attribute="extra.featured_order") %}
+
+{# Precessional ages in chronological order from oldest (Capricorn,
+   c. -21810) to current (Aquarius, c. 1950+). Hardcoded because
+   `start_year` is a string in the timeline frontmatter and Tera
+   can't sort numerics across positive/negative magnitudes. #}
+{% set age_order = ["capricorn", "sagittarius", "scorpio", "libra", "virgo", "leo", "cancer", "gemini", "taurus", "aries", "pisces", "aquarius"] %}
+
+<div class="read read--pattern-a" id="read-root">
     <header class="read__header">
         <h1 class="read__title">{{ section.title }}</h1>
         {% if section.extra.lede %}
@@ -9,109 +24,198 @@
         {% elif section.description %}
         <p class="read__lede">{{ section.description }}</p>
         {% endif %}
+
+        {# Layout-variant toggle. Two interaction patterns share the
+           same markup; CSS shows the pattern-A or pattern-B chrome
+           depending on the `read--pattern-a` / `read--pattern-b`
+           wrapper class. Kept inline at the top so the user can flip
+           between them without leaving the page. #}
+        <div class="read__pattern-toggle" role="group" aria-label="Layout variant">
+            <button type="button" class="read__pattern-toggle-btn read__pattern-toggle-btn--active" data-pattern="a">A · Discover in card</button>
+            <button type="button" class="read__pattern-toggle-btn" data-pattern="b">B · Tab strip</button>
+        </div>
     </header>
 
-    {# Three reading paths, each a fully-clickable card linking to its
-       section index. No expand state — picking a path commits you to it. #}
+    {# Three reading paths. Each is an <article> with two clickable
+       regions: the main link (top, fills most of the card) and the
+       Discover button (bottom, pattern-A only). In pattern-B the
+       Discover button is hidden and a separate tab strip below the
+       cards handles the carousel switching. #}
     <nav class="read__paths" aria-label="Reading paths">
-        <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="read__path read__path--featured">
-            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
-            <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
-            <h2 class="read__path-title">Wheel of Heaven</h2>
-            <p class="read__path-desc">{{ trans(key="readWoHDesc", lang=detected_lang) }}</p>
-            <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
-        </a>
-        <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="read__path">
-            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
-            <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
-            <h2 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h2>
-            <p class="read__path-desc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</p>
-            <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
-        </a>
-        <a href="{{ get_url(path='library', lang=detected_lang) }}" class="read__path">
-            <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
-            <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
-            <h2 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h2>
-            <p class="read__path-desc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</p>
-            <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
-        </a>
+        <article class="read__path read__path--featured" data-section="timeline">
+            <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang) }}">
+                <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
+                <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
+                <h2 class="read__path-title">Wheel of Heaven</h2>
+                <p class="read__path-desc">{{ trans(key="readWoHDesc", lang=detected_lang) }}</p>
+                <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+            </a>
+            <button type="button" class="read__path-discover read__path-discover--active" data-section="timeline" aria-pressed="true">
+                <span class="read__path-discover-label">Discover the ages</span>
+                <span class="read__path-discover-icon" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </button>
+        </article>
+        <article class="read__path" data-section="wiki">
+            <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang) }}">
+                <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+                <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
+                <h2 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h2>
+                <p class="read__path-desc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</p>
+                <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+            </a>
+            <button type="button" class="read__path-discover" data-section="wiki" aria-pressed="false">
+                <span class="read__path-discover-label">Discover entries</span>
+                <span class="read__path-discover-icon" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </button>
+        </article>
+        <article class="read__path" data-section="library">
+            <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang) }}">
+                <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
+                <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+                <h2 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h2>
+                <p class="read__path-desc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</p>
+                <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+            </a>
+            <button type="button" class="read__path-discover" data-section="library" aria-pressed="false">
+                <span class="read__path-discover-label">Discover traditions</span>
+                <span class="read__path-discover-icon" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
+            </button>
+        </article>
     </nav>
 
-    {# Featured entries — slightly separated dropdown below the three paths.
-       Curated jumps into specific Encyclopedia and Library entries that
-       give the reader a concrete starting point. #}
-    <details class="read__featured" open>
-        <summary class="read__featured-summary">
-            <span class="read__featured-label">{{ trans(key="readFeaturedLabel", lang=detected_lang) }}</span>
-            <span class="read__featured-chevron" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
-        </summary>
-        <div class="read__featured-body">
-            <div class="read__featured-group">
-                <h3 class="read__featured-group-title">
-                    <span class="read__featured-group-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
-                    <span>{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
-                </h3>
-                <ul class="read__featured-list">
-                    <li>
-                        <a href="{{ get_url(path='wiki/elohim', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Elohim</span>
-                            <span class="read__featured-item-desc">The plural beings of Genesis — read here as a small advanced human civilization from elsewhere.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='wiki/raelism', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Raëlism</span>
-                            <span class="read__featured-item-desc">The 1973 message and the movement built around it — the project's primary interpretive lens.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='wiki/precession', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Precession</span>
-                            <span class="read__featured-item-desc">The 26,000-year wobble of Earth's axis — the cosmic clock that times the Great Year.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='wiki/wheel-of-heaven', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Wheel of Heaven</span>
-                            <span class="read__featured-item-desc">The term, the project, and the forthcoming book of the same name.</span>
-                        </a>
-                    </li>
-                </ul>
+    {# Pattern-B tab strip. Hidden in pattern-A. Same data-section
+       semantics as the in-card Discover buttons so the JS can drive
+       both with one switch handler. #}
+    <div class="read__tabs" role="tablist" aria-label="Section preview">
+        <button type="button" class="read__tab read__tab--active" role="tab" data-section="timeline" aria-pressed="true">
+            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
+            <span class="read__tab-label">The Ages</span>
+        </button>
+        <button type="button" class="read__tab" role="tab" data-section="wiki" aria-pressed="false">
+            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
+            <span class="read__tab-label">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
+        </button>
+        <button type="button" class="read__tab" role="tab" data-section="library" aria-pressed="false">
+            <span class="read__tab-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
+            <span class="read__tab-label">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+        </button>
+    </div>
+
+    {# Carousel stack. Three carousels — one per section — stacked in
+       the DOM, with [hidden] applied to all but the active one. #}
+    <div class="read__carousels" aria-live="polite">
+
+        {# Timeline carousel — 12 precessional age tiles in chronological
+           order. Each tile uses the zodiac glyph and a date range. #}
+        <section class="read__carousel read__carousel--active" data-section="timeline" aria-label="The ages">
+            <div class="category-rail category-rail--glass">
+                <header class="category-rail__header">
+                    <div class="category-rail__title-wrap">
+                        <h2 class="category-rail__title">The Great Year</h2>
+                        <p class="category-rail__lede">Twelve precessional ages of approximately 2,160 years each. The corpus reads human history along this ~26,000-year clock.</p>
+                    </div>
+                    <div class="category-rail__nav" aria-label="Rail navigation">
+                        <button type="button" class="category-rail__nav-btn" data-direction="prev" aria-label="Scroll left">{% include "partials/icons/arrow-left.html" %}</button>
+                        <button type="button" class="category-rail__nav-btn" data-direction="next" aria-label="Scroll right">{% include "partials/icons/arrow-right.html" %}</button>
+                    </div>
+                </header>
+                <div class="category-rail__track">
+                    {% for slug in age_order %}
+                    {% set age_page = get_page(path="timeline/age-of-" ~ slug ~ ".md") %}
+                    {% if age_page %}
+                    <a class="category-rail__tile" data-zodiac="{{ slug }}"
+                       href="{{ get_url(path='timeline/age-of-' ~ slug, lang=detected_lang) }}">
+                        <span class="category-rail__tile-icon" aria-hidden="true">{{ zodiac::icon(name=slug, size=72) }}</span>
+                        <h3 class="category-rail__tile-title">{{ age_page.title }}</h3>
+                        {% if age_page.extra.start_year and age_page.extra.end_year %}
+                        <span class="category-rail__tile-count">{{ age_page.extra.start_year }} — {{ age_page.extra.end_year }}</span>
+                        {% endif %}
+                        {% if age_page.description %}
+                        <p class="category-rail__tile-desc">{{ age_page.description | striptags | truncate(length=120, end="…") }}</p>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
             </div>
-            <div class="read__featured-group">
-                <h3 class="read__featured-group-title">
-                    <span class="read__featured-group-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>
-                    <span>{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
-                </h3>
-                <ul class="read__featured-list">
-                    <li>
-                        <a href="{{ get_url(path='library/the-book-which-tells-the-truth', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">The Book Which Tells the Truth</span>
-                            <span class="read__featured-item-desc">The 1973 message — the founding Raëlian text and the corpus's primary lens.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='sources/extraterrestrials-took-me-to-their-planet', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Extraterrestrials Took Me to Their Planet</span>
-                            <span class="read__featured-item-desc">The 1975 sequel — the trip to the Elohim's home planet and what was shown there.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='library/genesis-woh', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Genesis (WoH Translation)</span>
-                            <span class="read__featured-item-desc">Chapters 1–9 rendered from the pointed Hebrew under the Wheel of Heaven lens — the first published text of the Translation Program.</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{{ get_url(path='library/gilgamesh-woh', lang=detected_lang) }}">
-                            <span class="read__featured-item-title">Epic of Gilgamesh (WoH Translation)</span>
-                            <span class="read__featured-item-desc">The Mesopotamian flood and creation parallel to Genesis 6–9 — planned next in the WoH Translation Program.</span>
-                        </a>
-                    </li>
-                </ul>
+        </section>
+
+        {# Wiki featured carousel — the 8 backfilled featured entries.
+           Uses the same glass-cloud treatment as the age + tradition
+           tiles for visual parity across the three carousels. Each
+           tile gets the wiki section glyph as a uniform mark in the
+           icon slot. #}
+        <section class="read__carousel" data-section="wiki" aria-label="Featured encyclopedia entries" hidden>
+            <div class="category-rail category-rail--glass">
+                <header class="category-rail__header">
+                    <div class="category-rail__title-wrap">
+                        <h2 class="category-rail__title">Featured entries</h2>
+                        <p class="category-rail__lede">Hand-picked starting points across the encyclopedia.</p>
+                    </div>
+                    <div class="category-rail__nav" aria-label="Rail navigation">
+                        <button type="button" class="category-rail__nav-btn" data-direction="prev" aria-label="Scroll left">{% include "partials/icons/arrow-left.html" %}</button>
+                        <button type="button" class="category-rail__nav-btn" data-direction="next" aria-label="Scroll right">{% include "partials/icons/arrow-right.html" %}</button>
+                    </div>
+                </header>
+                <div class="category-rail__track">
+                    {% for page in featured_wiki %}
+                    <a class="category-rail__tile category-rail__tile--wiki" href="{{ page.permalink }}">
+                        {% if page.extra.category %}
+                        <span class="category-rail__tile-badge">{{ page.extra.category }}</span>
+                        {% endif %}
+                        <h3 class="category-rail__tile-title">{{ page.title }}</h3>
+                        {% if page.description %}
+                        <p class="category-rail__tile-desc">{{ page.description | striptags | truncate(length=420, end="…") }}</p>
+                        {% endif %}
+                    </a>
+                    {% endfor %}
+                </div>
             </div>
-        </div>
-    </details>
+        </section>
+
+        {# Library traditions carousel — the glass tradition tiles
+           we built earlier, moved into the section stack. #}
+        <section class="read__carousel" data-section="library" aria-label="Library by tradition" hidden>
+            <div class="category-rail category-rail--glass">
+                <header class="category-rail__header">
+                    <div class="category-rail__title-wrap">
+                        <h2 class="category-rail__title">{{ trans(key="readRailTitle", lang=detected_lang) }}</h2>
+                        <p class="category-rail__lede">{{ trans(key="readRailLede", lang=detected_lang) }}</p>
+                    </div>
+                    <div class="category-rail__nav" aria-label="Rail navigation">
+                        <button type="button" class="category-rail__nav-btn" data-direction="prev" aria-label="Scroll left">{% include "partials/icons/arrow-left.html" %}</button>
+                        <button type="button" class="category-rail__nav-btn" data-direction="next" aria-label="Scroll right">{% include "partials/icons/arrow-right.html" %}</button>
+                    </div>
+                </header>
+                <div class="category-rail__track">
+                    {% for tradition in catalog.traditions %}
+                    {% set t_all = catalog.books | filter(attribute="tradition", value=tradition.id) %}
+                    {% set t_published = t_all | filter(attribute="status", value="complete") | length %}
+                    {% set t_partial = t_all | filter(attribute="status", value="partial") | length %}
+                    {% set t_count = t_published + t_partial %}
+                    {% if t_count > 0 %}
+                    {% set t_complete = t_all | filter(attribute="status", value="complete") %}
+                    {% set t_peek = t_complete | concat(with=t_all | filter(attribute="status", value="partial")) %}
+                    <a class="category-rail__tile"
+                       data-tradition="{{ tradition.id }}"
+                       href="{{ get_url(path='library', lang=detected_lang) }}#tradition-{{ tradition.id }}">
+                        <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
+                        <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
+                        <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
+                        {% if t_peek | length > 0 %}
+                        <ul class="category-rail__tile-entries">
+                            {% for book in t_peek | slice(end=3) %}
+                            <li class="category-rail__tile-entry" title="{{ book.originalTitle | default(value=book.slug) }}">{{ book.originalTitle | default(value=book.slug) }}</li>
+                            {% endfor %}
+                        </ul>
+                        {% endif %}
+                    </a>
+                    {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+    </div>
 
     {% if section.content %}
     <section class="read__intro" aria-label="Orientation">
@@ -119,4 +223,60 @@
     </section>
     {% endif %}
 </div>
+
+<script>
+(function () {
+    'use strict';
+    const root = document.getElementById('read-root');
+    if (!root) return;
+
+    // ── A/B pattern toggle ────────────────────────────────────────
+    const patternBtns = root.querySelectorAll('.read__pattern-toggle-btn');
+    patternBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const pattern = btn.dataset.pattern;
+            root.classList.remove('read--pattern-a', 'read--pattern-b');
+            root.classList.add('read--pattern-' + pattern);
+            patternBtns.forEach(b => b.classList.toggle('read__pattern-toggle-btn--active', b === btn));
+        });
+    });
+
+    // ── Section switcher ─────────────────────────────────────────
+    // Discover buttons (pattern A) and tab buttons (pattern B) both
+    // carry data-section. Clicking either swaps the visible carousel.
+    function setActiveSection(section) {
+        // Carousels: show one, hide the rest.
+        root.querySelectorAll('.read__carousel').forEach(c => {
+            const active = c.dataset.section === section;
+            c.classList.toggle('read__carousel--active', active);
+            if (active) c.removeAttribute('hidden');
+            else c.setAttribute('hidden', '');
+        });
+        // Discover buttons: mark the matching one active.
+        root.querySelectorAll('.read__path-discover').forEach(b => {
+            const active = b.dataset.section === section;
+            b.classList.toggle('read__path-discover--active', active);
+            b.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+        // Path cards: mark the matching one active (drives an outline ring).
+        root.querySelectorAll('.read__path').forEach(p => {
+            p.classList.toggle('read__path--active', p.dataset.section === section);
+        });
+        // Tabs (pattern B).
+        root.querySelectorAll('.read__tab').forEach(t => {
+            const active = t.dataset.section === section;
+            t.classList.toggle('read__tab--active', active);
+            t.setAttribute('aria-pressed', active ? 'true' : 'false');
+        });
+    }
+
+    root.querySelectorAll('.read__path-discover, .read__tab').forEach(el => {
+        el.addEventListener('click', (e) => {
+            e.preventDefault();
+            setActiveSection(el.dataset.section);
+        });
+    });
+})();
+</script>
+
 {% endblock content %}

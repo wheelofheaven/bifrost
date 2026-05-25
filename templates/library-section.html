@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/library.html" as library_macros %}
+{% import "macros/section-icons.html" as section_icons %}
 
 {% block content %}
 {# Load catalog for auto-discovery #}
@@ -38,6 +39,7 @@
         <!-- Header with title + count + search -->
         <header class="wiki-header">
             <div class="wiki-header__left">
+                <span class="section-mark section-mark--hero" aria-hidden="true">{{ section_icons::section(slug="library") }}</span>
                 <h1 class="wiki-header__title">{{ section.title }}</h1>
                 <span class="wiki-header__count">{{ available_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
             </div>
@@ -166,6 +168,40 @@
         </section>
         {% endif %}
 
+        {# Tradition spotlight rail — a horizontal scroll-snap showcase
+           of every tradition with at least one published book. Clicking
+           a tile scrolls to and opens the corresponding category-group
+           below. Uses the Phase-1 tradition glyphs. #}
+        <section class="category-rail" aria-labelledby="library-tradition-rail-heading">
+            <header class="category-rail__header">
+                <div class="category-rail__title-wrap">
+                    <h2 class="category-rail__title" id="library-tradition-rail-heading">{{ trans(key="libraryTraditionRailTitle", lang=detected_lang) }}</h2>
+                    <p class="category-rail__lede">{{ trans(key="libraryTraditionRailLede", lang=detected_lang) }}</p>
+                </div>
+                <div class="category-rail__nav" aria-label="Rail navigation">
+                    <button type="button" class="category-rail__nav-btn" data-direction="prev" aria-label="Scroll left">{% include "partials/icons/arrow-left.html" %}</button>
+                    <button type="button" class="category-rail__nav-btn" data-direction="next" aria-label="Scroll right">{% include "partials/icons/arrow-right.html" %}</button>
+                </div>
+            </header>
+            <div class="category-rail__track">
+                {% for tradition in catalog.traditions %}
+                {% set t_all = catalog.books | filter(attribute="tradition", value=tradition.id) %}
+                {% set t_published = t_all | filter(attribute="status", value="complete") | length %}
+                {% set t_partial = t_all | filter(attribute="status", value="partial") | length %}
+                {% set t_count = t_published + t_partial %}
+                {% if t_count > 0 %}
+                <a class="category-rail__tile"
+                   href="#tradition-{{ tradition.id }}"
+                   data-rail-jump="tradition-{{ tradition.id }}">
+                    <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
+                    <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
+                    <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
+                </a>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </section>
+
         <!-- Books grouped by tradition. Within each tradition the books
              render as wiki-cards in the same flat grid used on /wiki/.
              Tradition sections are shown/hidden by the filter dropdown,
@@ -199,11 +235,12 @@
                     {% set ordered_books = tradition_all | sort(attribute="slug") %}
                 {% endif %}
 
-                <section class="category-group" data-tradition="{{ tradition.id }}">
+                <section class="category-group" id="tradition-{{ tradition.id }}" data-tradition="{{ tradition.id }}">
                     <details class="category-group__details" data-tradition="{{ tradition.id }}" open>
                         <summary class="category-group__summary">
                             <div class="category-group__header">
                                 <h2 class="category-group__title">
+                                    <span class="section-mark section-mark--chip category-group__icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
                                     <span class="category-group__title-text">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</span>
                                     <span class="category-group__count">{{ complete_count + partial_count }}</span>
                                     <svg class="category-group__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

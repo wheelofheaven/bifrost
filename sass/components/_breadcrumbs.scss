@@ -40,6 +40,9 @@
     }
 
     &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
         color: var(--color-text-muted);
         text-decoration: none;
         padding: 0.2rem 0.4rem;
@@ -61,6 +64,25 @@
                 height: 18px;
                 opacity: 0.8;
             }
+        }
+    }
+
+    // Section glyph rendered by partials/section-icon.html in front of
+    // the section label (Wiki / Articles / News / Library / Sources /
+    // Timeline). Sized to ~1em so it scales with the surrounding font;
+    // line-height 0 keeps the inline-flex row tight; currentColor lets
+    // the same hover/active colouring on .breadcrumbs__link reach the
+    // SVG without needing duplicate colour rules here.
+    &__section-icon {
+        display: inline-flex;
+        align-items: center;
+        line-height: 0;
+        color: currentColor;
+        opacity: 0.85;
+
+        svg {
+            width: 1em;
+            height: 1em;
         }
     }
 

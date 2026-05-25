@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/dispatch.html" as dispatch %}
+{% import "macros/section-icons.html" as section_icons %}
 
 {% block content %}
 {# When the section is paginated, `all_pages` is replaced by the
@@ -14,20 +15,20 @@
 
 {# Parallel arrays for the right-rail event-type filter. (Tera doesn't
    take inline object literals in array form; loop.index0 ties the two
-   together.) #}
-{% set event_type_keys   = ["announcement", "discovery", "anniversary", "cultural-moment", "obituary"] %}
+   together.) Only `announcement` is in active use — the other four
+   types were retired in 2026-05. #}
+{% set event_type_keys   = ["announcement"] %}
 {% set event_type_labels = [
-    trans(key="eventTypeAnnouncements", lang=detected_lang),
-    trans(key="eventTypeDiscoveries", lang=detected_lang),
-    trans(key="eventTypeAnniversaries", lang=detected_lang),
-    trans(key="eventTypeCulturalMoments", lang=detected_lang),
-    trans(key="eventTypeObituaries", lang=detected_lang)
+    trans(key="eventTypeAnnouncements", lang=detected_lang)
 ] %}
 
 <div class="newsroom">
     <div class="newsroom__container">
         <header class="newsroom__header">
-            <h1 class="newsroom__title">{{ section.title }}</h1>
+            <div class="newsroom__title-row">
+                <span class="section-mark section-mark--hero" aria-hidden="true">{{ section_icons::section(slug="news") }}</span>
+                <h1 class="newsroom__title">{{ section.title }}</h1>
+            </div>
             {% if section.description %}
             <p class="newsroom__description">{{ section.description }}</p>
             {% endif %}
@@ -68,7 +69,10 @@
                         {% set matches = all_pages | filter(attribute="extra.event_type", value=key) %}
                         {% if matches | length > 0 %}
                         <li class="newsroom__filter-item">
-                            <span class="newsroom__filter-label">{{ event_type_labels[loop.index0] }}</span>
+                            <span class="newsroom__filter-label">
+                                <span class="section-mark section-mark--chip" aria-hidden="true">{{ section_icons::event_type(slug=key) }}</span>
+                                {{ event_type_labels[loop.index0] }}
+                            </span>
                             <span class="newsroom__filter-count">{{ matches | length }}</span>
                         </li>
                         {% endif %}

@@ -8,6 +8,10 @@
    {{ breadcrumbs::wiki(page=page, lang=detected_lang) }}
 #}
 
+{# Tera macro files don't allow top-level {% import %} — the
+   section_icons macro is re-imported inside each breadcrumb macro
+   below that needs to render a section glyph. #}
+
 {# Convenience macro for Wiki pages #}
 {% macro wiki(page, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -21,6 +25,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/wiki/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "wiki" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarWiki", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="2" />
@@ -59,6 +64,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/articles/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "articles" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarArticles", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="2" />
@@ -95,6 +101,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/news/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "news" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarNews", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="2" />
@@ -145,6 +152,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/library/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "library" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarLibrary", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="2" />
@@ -170,6 +178,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/sources/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "sources" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">Sources</span>
             </a>
             <meta itemprop="position" content="2" />
@@ -250,6 +259,7 @@
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='/timeline/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+                <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "timeline" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarTimeline", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="2" />

@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/article.html" as article %}
+{% import "macros/section-icons.html" as section_icons %}
 
 {% block content %}
 {# Mirror the Newsroom pattern: re-fetch the full section explicitly so
@@ -24,7 +25,10 @@
 <div class="articles-feed">
     <div class="articles-feed__container">
         <header class="articles-feed__header">
-            <h1 class="articles-feed__title">{{ section.title }}</h1>
+            <div class="articles-feed__title-row">
+                <span class="section-mark section-mark--hero" aria-hidden="true">{{ section_icons::section(slug="articles") }}</span>
+                <h1 class="articles-feed__title">{{ section.title }}</h1>
+            </div>
             {% if section.description %}
             <p class="articles-feed__description">{{ section.description }}</p>
             {% endif %}

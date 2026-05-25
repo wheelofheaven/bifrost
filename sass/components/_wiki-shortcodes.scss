@@ -444,3 +444,15 @@
         }
     }
 }
+
+// Wikilink — in-corpus link rendered by the {% wiki %} shortcode.
+// Intentionally style-light: content-area rules (e.g. .wiki__content a)
+// already apply an underline + accent colour at higher specificity, and
+// the tooltip JS adds .glossary-term which turns that underline dotted.
+// Adding our own border-bottom or text-decoration on top of that stacks
+// two visible sublines. The class still exists so future code can
+// target wikilink-only behaviour (analytics, alternate visual modes)
+// without re-grepping templates.
+.wikilink {
+    // no visual properties — defer to the cascade.
+}

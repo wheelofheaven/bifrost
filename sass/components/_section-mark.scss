@@ -1,0 +1,55 @@
+@use "../abstracts/variables" as v;
+
+// Section identity glyph — sits next to an h1 in overview headers and
+// next to card titles for subcategory marks. Sized in em so it scales
+// with the heading font-size; uses currentColor so it inherits whatever
+// color the surrounding text sets.
+.section-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    width: 1.5em;
+    height: 1.5em;
+    color: var(--color-text-muted);
+    line-height: 0;
+    vertical-align: -0.25em;
+
+    svg {
+        width: 100%;
+        height: 100%;
+    }
+
+    // Larger, more prominent variant for hero headers.
+    &--hero {
+        width: 2.5rem;
+        height: 2.5rem;
+        margin-right: v.$spacing-sm;
+        color: var(--color-text);
+    }
+
+    // Small inline variant for use inside chips, list items, or
+    // tradition group headers.
+    &--chip {
+        width: 1em;
+        height: 1em;
+        margin-right: v.$spacing-2xs;
+        vertical-align: -0.15em;
+    }
+}
+
+// When a section-mark sits inside a header__left flex row, ensure the
+// row centers vertically rather than baselining (the icon is not text).
+.wiki-header__left:has(.section-mark),
+.sources__header-left:has(.section-mark),
+.articles-feed__title-row,
+.newsroom__title-row {
+    align-items: center;
+}
+
+.articles-feed__title-row,
+.newsroom__title-row {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-sm;
+}

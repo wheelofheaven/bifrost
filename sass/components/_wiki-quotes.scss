@@ -2,7 +2,9 @@
 //
 // Enhanced blockquote styling with author profiles and revelations variant
 
+@use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
+@use "glass-cloud-button" as gcc-btn;
 
 // Enhanced Regular Blockquote with Author Profiles
 .wiki-content blockquote {
@@ -332,39 +334,14 @@
         right: 0.75rem;
     }
 
+    // "Read in <Book>" CTA — uses the shared glass-cloud-button
+    // mixin so it matches the lead-card visual language across
+    // /read/, /articles/, /news/. Override the cloud-duo here to
+    // signal "library / scripture" (warm mauve → cool cyan).
     &__button {
-        display: flex;
-        align-items: center;
-        gap: 0.375rem;
-        padding: 0.5rem 0.75rem;
-        background: var(--color-background-tertiary);
-        border: 1px solid var(--color-hairline);
-        border-radius: 0.375rem;
-        color: var(--color-text);
-        text-decoration: none;
-        font-family: typo.$font-family-tech;
-        font-size: 0.7rem;
-        font-weight: 600;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        transition: all 0.2s ease;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-
-        &:hover {
-            background: var(--color-accent-primary);
-            color: var(--color-background);
-            border-color: var(--color-accent-primary);
-            transform: translateX(2px);
-
-            .revelation-quote__arrow {
-                transform: translateX(2px);
-            }
-        }
-
-        &:focus {
-            outline: 2px solid var(--color-focus);
-            outline-offset: 2px;
-        }
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$mauve-300};
+        --cloud-b: #{c.$cyan-300};
     }
 
     &__icon {

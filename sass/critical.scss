@@ -27,3 +27,26 @@
 
 // Landing page hero (above-fold on homepage)
 @use "pages/home";
+
+// FOUC prevention — base.html renders these chrome widgets on every page,
+// but their styles live in main.css which loads async on landing pages.
+// Without an initial hidden state in critical.css, the unstyled modal /
+// popup / FAB content briefly flashes (default link blue, SVG strokes,
+// <kbd> outlines) before main.css applies. Match the hidden defaults each
+// component uses in main.scss so the corresponding --open / --visible
+// modifiers cleanly take over once main.css arrives.
+.keyboard-shortcuts-modal,
+.highlight-share,
+.glossary-tooltip {
+    position: fixed;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.reading-progress,
+.to-top,
+.search-fab,
+.reader-fab {
+    opacity: 0;
+}

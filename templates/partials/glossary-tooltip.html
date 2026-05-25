@@ -1,11 +1,18 @@
-<!-- Glossary Tooltip - Shows wiki definitions on hover -->
+<!-- Glossary Tooltip - Shows wiki definitions on hover. -->
+<!-- Renders the section glyph via the partials/section-icon.html helper
+     (caller sets `slug`, helper resolves through data/icons.json). The
+     partial pattern is used here because base.html includes this partial
+     and we can't rely on every page having section_icons imported. -->
 <div class="glossary-tooltip" id="glossaryTooltip" role="tooltip" aria-hidden="true"
      data-label-loading="{{ trans(key='glossaryLoading', lang=detected_lang) }}"
      data-label-none="{{ trans(key='glossaryNoDefinition', lang=detected_lang) }}">
     <div class="glossary-tooltip__content">
         <div class="glossary-tooltip__header">
             <span class="glossary-tooltip__term" id="glossaryTerm"></span>
-            <span class="glossary-tooltip__badge">{{ trans(key="navbarWiki", lang=detected_lang) }}</span>
+            <span class="glossary-tooltip__badge">
+                <span class="glossary-tooltip__badge-icon" aria-hidden="true">{% set slug = "wiki" %}{% include "partials/section-icon.html" %}</span>
+                {{ trans(key="navbarWiki", lang=detected_lang) }}
+            </span>
         </div>
         <p class="glossary-tooltip__definition" id="glossaryDefinition"></p>
         <a class="glossary-tooltip__hint" id="glossaryHint" href="#">{{ trans(key="glossaryClickHint", lang=detected_lang) }}</a>
@@ -43,14 +50,38 @@
         '.wiki-section',
     ].join(',');
 
+    // Derive the canonical site origin from <link rel="canonical">, which
+    // Zola sets per-page. In dev (served on 127.0.0.1) this is still the
+    // production origin (e.g. https://www.wheelofheaven.world), so any
+    // absolute URL emitted by Zola's get_url() will match it. We accept
+    // links whose origin is EITHER the current page's origin (relative
+    // links, dev-server URLs) OR the canonical site origin (absolute URLs
+    // baked from config.base_url). Anything else (e.g. wikipedia.org/wiki/…)
+    // gets skipped.
+    let canonicalOrigin = '';
+    const _canonEl = document.querySelector('link[rel="canonical"]');
+    if (_canonEl) {
+        try { canonicalOrigin = new URL(_canonEl.href).origin; } catch (_) {}
+    }
+
+    function isInCorpus(link) {
+        let parsed;
+        try { parsed = new URL(link.getAttribute('href') || '', window.location.href); }
+        catch (_) { return false; }
+        if (parsed.origin !== window.location.origin
+            && (!canonicalOrigin || parsed.origin !== canonicalOrigin)) {
+            return false;
+        }
+        // Pathname-based wiki check: matches /wiki/<slug> and /<lang>/wiki/<slug>.
+        return /\/wiki\/[^\/]+/.test(parsed.pathname);
+    }
+
     document.querySelectorAll('a[href*="/wiki/"]').forEach(link => {
         // Skip the current page
         if (link.href === window.location.href) return;
-        // Same-origin only (covers absolute URLs to our domain and root-relative paths)
-        if (!link.href.includes(window.location.hostname) && !link.href.startsWith('/')) return;
-        // Skip the wiki section index itself ("/wiki/" with no slug)
-        const path = link.getAttribute('href').replace(/[#?].*$/, '');
-        if (/\/wiki\/?$/.test(path)) return;
+        // In-corpus check (replaces the legacy hostname-includes check
+        // that broke for absolute URLs to the production domain in dev).
+        if (!isInCorpus(link)) return;
         // Skip excluded ancestors (Read Next cards, navbar, footer, etc.)
         if (link.closest(excludeSelector)) return;
 

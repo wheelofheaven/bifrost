@@ -1,0 +1,22 @@
+{# Wiki cross-link shortcode.
+
+   Paired-tag form, body is the visible label:
+       {% wiki(slug="elohim") %}Elohim{% end %}
+       {% wiki(slug="elohim") %}the Elohim{% end %}
+
+   Renders an in-corpus link to /wiki/<slug>/ with the .wikilink class
+   so canon-internal links are visually distinct from outbound links.
+   The link is language-aware (uses Zola's `lang` variable, which is
+   set per-page automatically in the shortcode rendering context).
+
+   Use this instead of writing markdown links manually:
+     bad:  [Elohim](/wiki/elohim/)
+     good: {% wiki(slug="elohim") %}Elohim{% end %}
+
+   The shortcode form keeps the path centralised — if /wiki/ ever moves
+   or gets renamed, every reference still resolves. #}
+
+{%- set _slug = slug | trim -%}
+{%- set _label = body | trim -%}
+{%- set _href = get_url(path="wiki/" ~ _slug, lang=lang) -%}
+<a class="wikilink" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

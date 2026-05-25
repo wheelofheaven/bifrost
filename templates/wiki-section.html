@@ -1,10 +1,12 @@
-{% extends "base.html" %} {% import "macros/wiki.html" as wiki_macros %} {%
-block content %}
+{% extends "base.html" %} {% import "macros/wiki.html" as wiki_macros %}
+{% import "macros/section-icons.html" as section_icons %}
+{% block content %}
 <div class="wiki-section">
     <div class="wiki-section__container">
         <!-- Minimal Header with Search -->
         <header class="wiki-header">
             <div class="wiki-header__left">
+                <span class="section-mark section-mark--hero" aria-hidden="true">{{ section_icons::section(slug="wiki") }}</span>
                 <h1 class="wiki-header__title">{{ section.title }}</h1>
                 {% if section.pages %}
                 <span class="wiki-header__count">{{ section.pages | length }} {{ trans(key="wikiCountSuffix", lang=detected_lang) }}</span>
@@ -115,6 +117,57 @@ block content %}
             {% set show_inactive = false %}
         {% else %}
             {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" | split(pat="") %}
+        {% endif %}
+
+        {# Category spotlight rail — horizontal scroll-snap of every
+           wiki category that has at least one entry, sorted by entry
+           count descending. Clicking a tile sets the category filter
+           and scrolls into the filtered view. #}
+        {% set cat_pages_raw = section.pages | filter(attribute="extra.category") %}
+        {% set rail_categories = cat_pages_raw | map(attribute="extra.category") | unique %}
+        {% if rail_categories | length > 0 %}
+        <section class="category-rail" aria-labelledby="wiki-rail-heading">
+            <header class="category-rail__header">
+                <div class="category-rail__title-wrap">
+                    <h2 class="category-rail__title" id="wiki-rail-heading">{{ trans(key="wikiCategoryRailTitle", lang=detected_lang) }}</h2>
+                    <p class="category-rail__lede">{{ trans(key="wikiCategoryRailLede", lang=detected_lang) }}</p>
+                </div>
+                <div class="category-rail__nav" aria-label="Rail navigation">
+                    <button type="button" class="category-rail__nav-btn" data-direction="prev" aria-label="Scroll left">{% include "partials/icons/arrow-left.html" %}</button>
+                    <button type="button" class="category-rail__nav-btn" data-direction="next" aria-label="Scroll right">{% include "partials/icons/arrow-right.html" %}</button>
+                </div>
+            </header>
+            <div class="category-rail__track">
+                {# Sort categories by entry count descending. We build a
+                   parallel list of "{padded-count}::{name}" strings,
+                   sort lexicographically (descending = highest count
+                   first), then re-derive the count per row by filtering
+                   again — Tera 1.x doesn't support string slicing or
+                   dict literals, so this is the cleanest workaround. #}
+                {% set_global rail_lines = [] %}
+                {% for category in rail_categories %}
+                    {% set c_count = cat_pages_raw | filter(attribute="extra.category", value=category) | length %}
+                    {% if c_count < 10 %}{% set padded = "00" ~ c_count %}
+                    {% elif c_count < 100 %}{% set padded = "0" ~ c_count %}
+                    {% else %}{% set padded = c_count | string %}{% endif %}
+                    {% set_global rail_lines = rail_lines | concat(with=padded ~ "::" ~ category) %}
+                {% endfor %}
+                {% set rail_sorted = rail_lines | sort | reverse %}
+                {% for line in rail_sorted %}
+                    {% set parts = line | split(pat="::") %}
+                    {% set category = parts[1] %}
+                    {% set c_count = cat_pages_raw | filter(attribute="extra.category", value=category) | length %}
+                <button type="button"
+                        class="category-rail__tile"
+                        data-rail-filter="wiki-category-filter"
+                        data-rail-filter-value="{{ category }}"
+                        aria-label="Filter to {{ category }}">
+                    <h3 class="category-rail__tile-title">{{ category }}</h3>
+                    <span class="category-rail__tile-count">{{ c_count }} {{ trans(key="wikiCountSuffix", lang=detected_lang) }}</span>
+                </button>
+                {% endfor %}
+            </div>
+        </section>
         {% endif %}
 
         {# Featured entries — editor-curated set of the most prominent
