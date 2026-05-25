@@ -119,6 +119,38 @@
             {% set alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" | split(pat="") %}
         {% endif %}
 
+        {# Featured entries — editor-curated set of the most prominent
+           articles. Pages opt in via `extra.featured_order` (positive
+           integer). Renders above the category rail and the A-Z
+           grouping; the same articles still appear in their letter
+           group below, so featuring an entry doesn't remove it from
+           the main flow. JS hides this section when a filter/search
+           is active or when group-by is not alpha. #}
+        {% set featured_pages_raw = section.pages | filter(attribute="extra.featured_order") %}
+        {% set featured_pages = featured_pages_raw | sort(attribute="extra.featured_order") %}
+        {% if featured_pages | length > 0 %}
+        <section class="wiki-featured" id="wiki-featured" aria-labelledby="wiki-featured-heading">
+            <header class="wiki-featured__header">
+                <h2 class="wiki-featured__title" id="wiki-featured-heading">{{ trans(key="wikiFeaturedTitle", lang=detected_lang) }}</h2>
+                <p class="wiki-featured__lede">{{ trans(key="wikiFeaturedLede", lang=detected_lang) }}</p>
+            </header>
+            <div class="wiki-featured__grid">
+                {% for page in featured_pages %}
+                <a class="wiki-featured__card" href="{{ page.permalink }}" data-featured-order="{{ page.extra.featured_order }}">
+                    {% if page.extra.category and page.extra.category != page.title %}
+                    <span class="wiki-featured__card-eyebrow">{{ page.extra.category }}</span>
+                    {% endif %}
+                    <h3 class="wiki-featured__card-title">{{ page.title }}</h3>
+                    {% if page.extra.summary or page.description %}
+                    <p class="wiki-featured__card-desc">{{ page.extra.summary | default(value=page.description) | striptags | truncate(length=140, end="…") }}</p>
+                    {% endif %}
+                    <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
         {# Category spotlight rail — horizontal scroll-snap of every
            wiki category that has at least one entry, sorted by entry
            count descending. Clicking a tile sets the category filter
@@ -173,38 +205,6 @@
                         {% endfor %}
                     </ul>
                 </button>
-                {% endfor %}
-            </div>
-        </section>
-        {% endif %}
-
-        {# Featured entries — editor-curated set of the most prominent
-           articles. Pages opt in via `extra.featured_order` (positive
-           integer). The section renders above the A-Z grouping; the
-           same articles still appear in their alphabetical letter group
-           below, so featuring an entry doesn't remove it from the main
-           flow. JS filters/Group-by hide this section when not in alpha
-           mode or when a filter/search is active. #}
-        {% set featured_pages_raw = section.pages | filter(attribute="extra.featured_order") %}
-        {% set featured_pages = featured_pages_raw | sort(attribute="extra.featured_order") %}
-        {% if featured_pages | length > 0 %}
-        <section class="wiki-featured" id="wiki-featured" aria-labelledby="wiki-featured-heading">
-            <header class="wiki-featured__header">
-                <h2 class="wiki-featured__title" id="wiki-featured-heading">{{ trans(key="wikiFeaturedTitle", lang=detected_lang) }}</h2>
-                <p class="wiki-featured__lede">{{ trans(key="wikiFeaturedLede", lang=detected_lang) }}</p>
-            </header>
-            <div class="wiki-featured__grid">
-                {% for page in featured_pages %}
-                <a class="wiki-featured__card" href="{{ page.permalink }}" data-featured-order="{{ page.extra.featured_order }}">
-                    {% if page.extra.category and page.extra.category != page.title %}
-                    <span class="wiki-featured__card-eyebrow">{{ page.extra.category }}</span>
-                    {% endif %}
-                    <h3 class="wiki-featured__card-title">{{ page.title }}</h3>
-                    {% if page.extra.summary or page.description %}
-                    <p class="wiki-featured__card-desc">{{ page.extra.summary | default(value=page.description) | striptags | truncate(length=140, end="…") }}</p>
-                    {% endif %}
-                    <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
-                </a>
                 {% endfor %}
             </div>
         </section>

@@ -172,7 +172,7 @@
            of every tradition with at least one published book. Clicking
            a tile scrolls to and opens the corresponding category-group
            below. Uses the Phase-1 tradition glyphs. #}
-        <section class="category-rail" aria-labelledby="library-tradition-rail-heading">
+        <section class="category-rail category-rail--glass" aria-labelledby="library-tradition-rail-heading">
             <header class="category-rail__header">
                 <div class="category-rail__title-wrap">
                     <h2 class="category-rail__title" id="library-tradition-rail-heading">{{ trans(key="libraryTraditionRailTitle", lang=detected_lang) }}</h2>
@@ -190,13 +190,29 @@
                 {% set t_partial = t_all | filter(attribute="status", value="partial") | length %}
                 {% set t_count = t_published + t_partial %}
                 {% if t_count > 0 %}
-                <a class="category-rail__tile"
-                   href="#tradition-{{ tradition.id }}"
-                   data-rail-jump="tradition-{{ tradition.id }}">
+                {# Peek-list of up to 3 book originalTitles for this tradition.
+                   Complete books first, then partials so each tile shows
+                   something. Tile is a <button> wired to the tradition
+                   filter dropdown — same contract as the /wiki/ rail. #}
+                {% set t_complete = t_all | filter(attribute="status", value="complete") %}
+                {% set t_peek = t_complete | concat(with=t_all | filter(attribute="status", value="partial")) %}
+                <button type="button"
+                        class="category-rail__tile category-rail__tile--filter"
+                        data-tradition="{{ tradition.id }}"
+                        data-rail-filter="library-tradition-filter"
+                        data-rail-filter-value="{{ tradition.id }}"
+                        aria-label="Filter to {{ tradition.name[detected_lang] | default(value=tradition.name.en) }}">
                     <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
                     <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
                     <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
-                </a>
+                    {% if t_peek | length > 0 %}
+                    <ul class="category-rail__tile-entries">
+                        {% for book in t_peek | slice(end=3) %}
+                        <li class="category-rail__tile-entry" title="{{ book.originalTitle | default(value=book.slug) }}">{{ book.originalTitle | default(value=book.slug) }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </button>
                 {% endif %}
                 {% endfor %}
             </div>
