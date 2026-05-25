@@ -336,6 +336,32 @@
             }
         }
 
+        // Filter-button tile variant — used by the /wiki/ category rail,
+        // where each tile is a <button> that sets a select-filter rather
+        // than an <a> that navigates. Resets browser button defaults so
+        // the glass-cloud-card backdrop reads cleanly through, and the
+        // entries peek list is left-aligned for scannability.
+        .category-rail__tile--filter {
+            appearance: none;
+            font: inherit;
+            border: 1px solid var(--color-hairline);
+            justify-content: flex-start;
+            gap: v.$spacing-sm;
+
+            .category-rail__tile-badge {
+                margin-top: v.$spacing-xs;
+            }
+
+            .category-rail__tile-entries {
+                text-align: left;
+                font-family: var(--font-family-body);
+                font-style: normal;
+                font-size: v.$font-size-sm;
+                color: var(--color-text);
+                gap: v.$spacing-2xs;
+            }
+        }
+
         // Per-tradition cloud-duos. Each tradition gets its own
         // two-colour signature from the Bifrost 300-tier palette so
         // the rail reads as 10–12 distinct mini-artifacts rather than

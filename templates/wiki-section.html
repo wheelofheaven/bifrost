@@ -126,7 +126,7 @@
         {% set cat_pages_raw = section.pages | filter(attribute="extra.category") %}
         {% set rail_categories = cat_pages_raw | map(attribute="extra.category") | unique %}
         {% if rail_categories | length > 0 %}
-        <section class="category-rail" aria-labelledby="wiki-rail-heading">
+        <section class="category-rail category-rail--glass" aria-labelledby="wiki-rail-heading">
             <header class="category-rail__header">
                 <div class="category-rail__title-wrap">
                     <h2 class="category-rail__title" id="wiki-rail-heading">{{ trans(key="wikiCategoryRailTitle", lang=detected_lang) }}</h2>
@@ -156,14 +156,22 @@
                 {% for line in rail_sorted %}
                     {% set parts = line | split(pat="::") %}
                     {% set category = parts[1] %}
-                    {% set c_count = cat_pages_raw | filter(attribute="extra.category", value=category) | length %}
+                    {% set c_pages = cat_pages_raw | filter(attribute="extra.category", value=category) %}
+                    {% set c_count = c_pages | length %}
                 <button type="button"
-                        class="category-rail__tile"
+                        class="category-rail__tile category-rail__tile--filter"
                         data-rail-filter="wiki-category-filter"
                         data-rail-filter-value="{{ category }}"
                         aria-label="Filter to {{ category }}">
-                    <h3 class="category-rail__tile-title">{{ category }}</h3>
+                    <span class="category-rail__tile-badge">{{ category }}</span>
                     <span class="category-rail__tile-count">{{ c_count }} {{ trans(key="wikiCountSuffix", lang=detected_lang) }}</span>
+                    {# Peek of up to 4 entry titles in this category so each
+                       tile reads as a category card, not just a filter chip. #}
+                    <ul class="category-rail__tile-entries">
+                        {% for page in c_pages | slice(end=4) %}
+                        <li class="category-rail__tile-entry" title="{{ page.title }}">{{ page.title }}</li>
+                        {% endfor %}
+                    </ul>
                 </button>
                 {% endfor %}
             </div>
