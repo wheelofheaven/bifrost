@@ -19,10 +19,15 @@
                 <!-- Chapter Header -->
                 <header class="timeline-page__page-header">
                     {# Age Badge — zodiac is derived from the page slug
-                       ("age-of-leo" → "leo") so the SVG matches the landing-page set. #}
+                       ("age-of-leo" → "leo") so the SVG matches the landing-page set.
+                       The zodiac glyph now appears once as the hero-glyph above
+                       the title; the badge below is dates + day only. #}
                     {% set zodiac_name = page.slug | replace(from="age-of-", to="") %}
+
+                    <span class="timeline-page__hero-glyph" aria-hidden="true">{{ zodiac::icon(name=zodiac_name, size=72) }}</span>
+                    <h1 class="timeline-page__title" id="page-title">{{ page.title }}</h1>
+
                     <div class="timeline-page__age-badge">
-                        <span class="timeline-page__symbol" aria-hidden="true">{{ zodiac::icon(name=zodiac_name, size=28) }}</span>
                         {% if page.extra.start_year and page.extra.end_year %}
                         <span class="timeline-page__dates">{{ page.extra.start_year }} — {{ page.extra.end_year }}</span>
                         {% endif %}
@@ -30,9 +35,6 @@
                         <span class="timeline-page__day">{{ trans(key="timelineDay", lang=detected_lang) }} {{ page.extra.genesis_day }}</span>
                         {% endif %}
                     </div>
-
-                    <span class="timeline-page__hero-glyph" aria-hidden="true">{{ zodiac::icon(name=zodiac_name, size=72) }}</span>
-                    <h1 class="timeline-page__title" id="page-title">{{ page.title }}</h1>
 
                     <!-- Genesis Verse — canonical scripture for the age -->
                     {% if page.extra.genesis_verse %}
