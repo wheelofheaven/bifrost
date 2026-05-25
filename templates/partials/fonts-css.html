@@ -80,18 +80,20 @@
 {% include "partials/theme-init.html" %}
 
 <!-- Stylesheet loading strategy:
-     - Landing pages: ship the small critical.css synchronously (covers
-       every .landing-* above-the-fold rule via sass/critical.scss) and
-       async-load main.css with the preload/onload swap pattern. This
-       cuts render-blocking bytes from ~455 KB to ~60 KB on the LCP-
-       critical homepage.
+     - Landing pages: INLINE critical.css (covers every .landing-* above-
+       the-fold rule via sass/critical.scss) so the page can paint
+       without any CSS roundtrip, then async-load main.css with the
+       preload/onload swap pattern. Inlining beats `<link rel=stylesheet>`
+       here because critical.css is small (~63 KB / ~10 KB gz) and
+       eliminating the extra blocking request shaves an RTT off LCP.
      - Other pages: full main.css synchronously, because critical.css
        doesn't cover wiki/library/article page-specific layouts and an
        async swap would FOUC the body.
      The sheet is aggressively cached (see _headers), so the render-
      blocking cost only applies to uncached first visits. -->
 {% if _is_landing %}
-<link rel="stylesheet" href="{{ get_url(path='critical.css') }}">
+{% set critical_css = load_data(path="public/critical.css", format="plain", required=false) %}
+{% if critical_css %}<style>{{ critical_css | safe }}</style>{% else %}<link rel="stylesheet" href="{{ get_url(path='critical.css') }}">{% endif %}
 <link rel="preload" as="style" href="{{ get_url(path='main.css') }}" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"></noscript>
 {% else %}
