@@ -97,28 +97,6 @@
         }
     }
 
-    // Large hero zodiac glyph rendered above the h1 — gives each age
-    // page its own iconic visual identity. Sits flush-left in the
-    // flex-column header.
-    &__hero-glyph {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        color: var(--color-accent-primary);
-        line-height: 0;
-        opacity: 0.9;
-
-        svg {
-            width: 4.5rem;
-            height: 4.5rem;
-
-            @media (max-width: 900px) {
-                width: 3.5rem;
-                height: 3.5rem;
-            }
-        }
-    }
-
     &__age-badge {
         display: inline-flex;
         align-items: center;
