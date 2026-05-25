@@ -273,7 +273,25 @@
     root.querySelectorAll('.read__path-discover, .read__tab').forEach(el => {
         el.addEventListener('click', (e) => {
             e.preventDefault();
-            setActiveSection(el.dataset.section);
+            const section = el.dataset.section;
+            setActiveSection(section);
+
+            // Scroll the active carousel into view. Critical on mobile,
+            // where the cards take the full first screen and the carousel
+            // is below the fold — without this, tapping Discover does
+            // nothing visible. `block: 'nearest'` is polite on desktop
+            // (no scroll if the carousel is already in viewport) but
+            // pulls it into view on phones.
+            const target = root.querySelector(
+                '.read__carousel[data-section="' + section + '"]'
+            );
+            if (target) {
+                // Defer one frame so the [hidden] removal in setActiveSection
+                // takes effect before measuring scroll position.
+                requestAnimationFrame(() => {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                });
+            }
         });
     });
 })();
