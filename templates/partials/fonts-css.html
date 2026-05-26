@@ -94,8 +94,19 @@
 {% if _is_landing %}
 {% set critical_css = load_data(path="public/critical.css", format="plain", required=false) %}
 {% if critical_css %}<style>{{ critical_css | safe }}</style>{% else %}<link rel="stylesheet" href="{{ get_url(path='critical.css') }}">{% endif %}
-<link rel="preload" as="style" href="{{ get_url(path='main.css') }}" onload="this.onload=null;this.rel='stylesheet'">
-<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"></noscript>
+{# When main.css finishes loading, flip `documentElement` so the
+   `html:not(.css-loaded)` FOUC-prevention rules in critical.scss
+   stop matching and elements they were hiding (footer, translation-
+   notice, navbar dropdowns) get their main.css styles applied.
+   `onerror` also flips the class — if main.css fails to load we'd
+   rather show unstyled chrome than leave it permanently hidden. #}
+{% set reveal = "document.documentElement.classList.add('css-loaded')" %}
+<link rel="preload" as="style" href="{{ get_url(path='main.css') }}" onload="this.onload=null;this.rel='stylesheet';{{ reveal }}" onerror="{{ reveal }}">
+{# No-JS path: load main.css render-blocking (no FOUC) and also force
+   the `.css-loaded` class on <html> via the `:root` selector so the
+   critical-css FOUC-hide rules don't keep the footer hidden forever
+   when JS can't add the class. #}
+<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"><style>:root{}html{--css-loaded:1}.translation-notice,.footer,.snackbar-container,.navbar-dropdown,.navbar__pane--lang,.navbar__pane--main{opacity:1!important;visibility:visible!important}</style></noscript>
 {% else %}
 <link rel="stylesheet" href="{{ get_url(path='main.css') }}">
 {% endif %}

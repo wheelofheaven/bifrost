@@ -50,3 +50,29 @@
 .reader-fab {
     opacity: 0;
 }
+
+// Always-rendered chrome that base.html puts in <body> outside the
+// landing hero — translation banner, footer, snackbar shell, plus any
+// navbar dropdowns / panes that browser-default-render before main.css
+// gates them with display/visibility rules. These would otherwise show
+// briefly as unstyled default-browser content (visible blue links,
+// unstyled banner text, an unstyled <footer> block) before main.css
+// promotes them.
+//
+// The `:not(.css-loaded)` gate is removed by an inline script on the
+// main.css `<link>`'s onload handler (see partials/fonts-css.html).
+// Once main.css has parsed, the html element gets `.css-loaded` and
+// every rule below stops matching, restoring whatever main.css
+// declares for these elements — no need to explicitly re-show them in
+// main.css.
+html:not(.css-loaded) {
+    .translation-notice,
+    .footer,
+    .snackbar-container,
+    .navbar-dropdown,
+    .navbar__pane--lang,
+    .navbar__pane--main {
+        opacity: 0;
+        visibility: hidden;
+    }
+}
