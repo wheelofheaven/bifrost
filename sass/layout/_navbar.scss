@@ -506,7 +506,15 @@ body.mobile-nav-open {
             min-width: 1.4rem;
             height: 1.4rem;
             padding: 0 0.4rem;
-            font-family: typo.$font-family-tech;
+            // System mono only — referencing $font-family-tech here
+            // pulls iAWriterQuattroS Regular+Bold (~91 KB) into the
+            // critical-CSS preload-scan, even though the kbd is
+            // .desktop-only and hidden on mobile. The browser fetches
+            // webfonts based on rule-match, not layout state, so a
+            // hidden element still triggers the eager fetch and
+            // bandwidth-starves the §1 landing LCP poster. The "/"
+            // glyph looks the same in any mono — webfont is overkill.
+            font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             font-size: 0.8rem;
             font-weight: 600;
             line-height: 1;
