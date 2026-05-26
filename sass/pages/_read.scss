@@ -3,6 +3,12 @@
 @use "../base/typography" as typo;
 @use "../components/glass-cloud-card" as gcc;
 
+// System mono — same rationale as _home.scss. The /read/ paths
+// section is also rendered as §7 of the landing page, so the
+// .read__path-eyebrow rule matches DOM elements on the landing
+// and would otherwise trigger the iAWriter Regular+Bold fetch.
+$_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
 // /read/ — three reading paths in a row + a featured-entries dropdown.
 // Aesthetic mirrors the landing page: hairlines instead of borders, lead-font
 // titles, tech-mono uppercase eyebrows, generous whitespace. Each path is a
@@ -231,7 +237,7 @@
     }
 
     &__path-eyebrow {
-        font-family: typo.$font-family-tech;
+        font-family: $_landing-mono;
         font-size: 0.6875rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -306,7 +312,7 @@
         align-items: center;
         gap: v.$spacing-xs;
         padding: v.$spacing-sm 0;
-        font-family: typo.$font-family-tech;
+        font-family: $_landing-mono;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -375,7 +381,7 @@
         display: inline-flex;
         align-items: center;
         gap: v.$spacing-xs;
-        font-family: typo.$font-family-tech;
+        font-family: $_landing-mono;
         font-size: 0.6875rem;
         font-weight: 600;
         text-transform: uppercase;

@@ -2,6 +2,13 @@
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
+// System mono — same rationale as _home.scss. The reader FAB is
+// included by base.html and rendered into the initial DOM on every
+// page, including the landing. Even when hidden via opacity:0 /
+// visibility:hidden, the rule-match would still trigger iAWriter
+// Regular+Bold fetch unless we use a system stack here.
+$_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
 // Reader FAB — mobile-only floating action button that replaces the
 // standalone to-top button on small screens. Sits in the same bottom-
 // right corner; when tapped, expands a glassmorphic panel to its left
@@ -253,7 +260,7 @@
         }
 
         &-meta {
-            font-family: typo.$font-family-tech;
+            font-family: $_fab-mono;
             font-size: 0.75rem;
             font-weight: 600;
             color: var(--color-text-muted);
@@ -275,7 +282,7 @@
         border: 1px solid var(--color-hairline);
         border-radius: 0.5rem;
         color: var(--color-text);
-        font-family: typo.$font-family-tech;
+        font-family: $_fab-mono;
         font-size: 0.9rem;
         font-weight: 600;
         cursor: pointer;
@@ -468,7 +475,7 @@
     &__chapter-number {
         flex-shrink: 0;
         min-width: 1.75rem;
-        font-family: typo.$font-family-tech;
+        font-family: $_fab-mono;
         font-size: 0.75rem;
         font-weight: 600;
         color: var(--color-text-muted);
