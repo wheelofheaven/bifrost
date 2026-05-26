@@ -175,7 +175,12 @@
     }
 
     &__closure {
-        font-family: typo.$font-family-tech;
+        // System mono — the footer is in the DOM on every page, so
+        // referencing $font-family-tech here pulls iAWriterQuattroS
+        // Regular+Bold into the network burst on every cold visit.
+        // The closure is one short line of small chrome text; system
+        // mono renders it cleanly without the 91 KB webfont fetch.
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         font-size: typo.$font-size-sd;
         color: var(--color-text-muted);
 

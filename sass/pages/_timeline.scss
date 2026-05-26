@@ -14,6 +14,14 @@
 @use "../abstracts/variables" as v;
 @use "../base/typography" as typo;
 
+// Shared system-mono stack — see _home.scss for the rationale.
+// _timeline.scss declares top-level .landing-section__eyebrow /
+// .landing-section__cta / .landing__nav-dot-year rules that
+// override the nested versions in _home.scss because of import
+// order in main.scss. Both files must agree to keep iAWriter out
+// of the landing critical path.
+$_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
 // ---- Image-backed sections (no video, just a fixed/cinematic image) ----
 // We piggyback on the existing `.landing-section--video` modifier, which
 // already gives us white text + overlay. The bg-image is a sibling of the
@@ -83,7 +91,7 @@
 
 // ---- Eyebrow (date range) — used by the timeline overview sections ----
 .landing-section__eyebrow {
-    font-family: typo.$font-family-tech;
+    font-family: $_landing-mono;
     font-size: 0.6875rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -105,7 +113,7 @@
     padding: v.$spacing-sm v.$spacing-lg;
     border: 1px solid currentColor;
     border-radius: v.$border-radius-full;
-    font-family: typo.$font-family-tech;
+    font-family: $_landing-mono;
     font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
@@ -161,7 +169,7 @@
 
 .landing__nav-dot-year {
     order: -1; // sit to the left of the bullet (which is a ::before pseudo with default order 0)
-    font-family: typo.$font-family-tech;
+    font-family: $_landing-mono;
     font-size: 0.625rem;
     font-weight: 500;
     letter-spacing: 0.04em;
@@ -218,7 +226,7 @@
     // tech-mono uppercase treatment so they read as a paired header row.
     .landing__nav-dot-year--label,
     .landing__nav-dot-title {
-        font-family: typo.$font-family-tech;
+        font-family: $_landing-mono;
         font-size: 0.625rem;
         font-weight: 600;
         font-style: normal;

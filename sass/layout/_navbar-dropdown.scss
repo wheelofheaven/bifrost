@@ -65,7 +65,11 @@
         color: var(--color-text-muted);
         text-transform: uppercase;
         letter-spacing: 0.05em;
-        font-family: typo.$font-family-tech;
+        // System mono — see _home.scss / _footer.scss for rationale.
+        // Dropdown markup is in the initial DOM even though it's
+        // visually hidden, so the rule-match still triggers iAWriter
+        // fetch unless we use a system stack here too.
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
 
     &__section-icon {
