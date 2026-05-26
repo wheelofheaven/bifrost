@@ -106,7 +106,7 @@
    the `.css-loaded` class on <html> via the `:root` selector so the
    critical-css FOUC-hide rules don't keep the footer hidden forever
    when JS can't add the class. #}
-<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"><style>:root{}html{--css-loaded:1}.translation-notice,.footer,.snackbar-container,.navbar-dropdown,.navbar__pane--lang,.navbar__pane--main{opacity:1!important;visibility:visible!important}</style></noscript>
+<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"><style>.translation-notice,.footer,.snackbar-container,.navbar-dropdown,.navbar__pane--lang,.navbar__pane--main,.read__paths,.claim-badges,.reader-fab-toc{opacity:1!important;visibility:visible!important}</style></noscript>
 {% else %}
 <link rel="stylesheet" href="{{ get_url(path='main.css') }}">
 {% endif %}

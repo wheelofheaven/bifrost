@@ -71,7 +71,20 @@ html:not(.css-loaded) {
     .snackbar-container,
     .navbar-dropdown,
     .navbar__pane--lang,
-    .navbar__pane--main {
+    .navbar__pane--main,
+    // .read__paths is the §7 paths nav on the landing page. Its
+    // children (.read__path cards, eyebrows, icons, titles, descs)
+    // are styled in pages/_read.scss, which isn't in critical — so
+    // they'd render as default-browser anchor links until main.css
+    // arrives.
+    .read__paths,
+    // Claim-badge pills appear in §1's framework legend on the
+    // landing. Styles live in components/_claim-badge.scss (not in
+    // critical), so the bare text spans flash before main.css.
+    .claim-badges,
+    // Separate from .reader-fab — the TOC sheet is in DOM but styled
+    // entirely in main.css.
+    .reader-fab-toc {
         opacity: 0;
         visibility: hidden;
     }
