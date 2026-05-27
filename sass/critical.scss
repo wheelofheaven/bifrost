@@ -37,7 +37,19 @@
 // modifiers cleanly take over once main.css arrives.
 .keyboard-shortcuts-modal,
 .highlight-share,
-.glossary-tooltip {
+.glossary-tooltip,
+// JS-mounted at runtime (PWA init + reading-list module in
+// core.bundle.js). They aren't in the initial HTML, so the
+// html:not(.css-loaded) gate below can't hide them — they appear
+// during script execution and briefly render with default browser
+// flow (a full-width <div> at top of body, visible "You're offline"
+// text, etc.) before main.css applies their `position: fixed;
+// opacity: 0` rules. Match those rules here so the element is
+// hidden from creation.
+.offline-indicator,
+.reading-list-panel,
+.pwa-install-banner,
+.pwa-update-banner {
     position: fixed;
     opacity: 0;
     visibility: hidden;
