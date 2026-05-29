@@ -1,285 +1,205 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
-<div class="map-page" id="map-page">
-    <!-- Breadcrumb Navigation -->
+{% set map_ages = load_data(path="data/map/ages.json") %}
+{% set map_nodes = load_data(path="data/map/nodes.json") %}
+
+<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-map-filter="all">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
-    <!-- Map Container -->
-    <div class="map-container">
-        <!-- Toolbar -->
-        <div class="map-toolbar">
-            <button class="map-toolbar__btn" id="map-fullscreen-btn" aria-label="Toggle fullscreen">
-                <svg class="icon-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="15 3 21 3 21 9"></polyline>
-                    <polyline points="9 21 3 21 3 15"></polyline>
-                    <line x1="21" y1="3" x2="14" y2="10"></line>
-                    <line x1="3" y1="21" x2="10" y2="14"></line>
-                </svg>
-                <svg class="icon-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="4 14 10 14 10 20"></polyline>
-                    <polyline points="20 10 14 10 14 4"></polyline>
-                    <line x1="14" y1="10" x2="21" y2="3"></line>
-                    <line x1="3" y1="21" x2="10" y2="14"></line>
-                </svg>
-                <span>{{ trans(key="mapFullscreen", lang=detected_lang) }}</span>
-            </button>
-            <button class="map-toolbar__btn" id="map-print-btn" aria-label="Print map">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                    <rect x="6" y="14" width="12" height="8"></rect>
-                </svg>
-                <span>{{ trans(key="mapPrint", lang=detected_lang) }}</span>
-            </button>
-        </div>
+    <header class="map-hero">
+        <p class="map-hero__eyebrow">Wheel of Heaven</p>
+        <h1 class="map-hero__title" id="map-title">{{ page.title }}</h1>
+        <p class="map-hero__lede" data-ai-summary="true">
+            {{ page.description }}
+        </p>
+    </header>
 
-        <div class="map-wrapper" id="map-wrapper">
-            <!-- Floating controls (visible in fullscreen and on mobile) -->
-            <div class="map-controls" id="map-controls">
-                <button class="map-controls__btn" id="map-zoom-in" aria-label="Zoom in">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="12" y1="5" x2="12" y2="19"></line>
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
-                <button class="map-controls__btn" id="map-zoom-out" aria-label="Zoom out">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="5" y1="12" x2="19" y2="12"></line>
-                    </svg>
-                </button>
-                <button class="map-controls__btn" id="map-zoom-reset" aria-label="Reset zoom">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                        <path d="M3 3v5h5"></path>
-                    </svg>
-                </button>
-                <button class="map-controls__btn map-controls__btn--exit" id="map-exit-fullscreen" aria-label="Exit fullscreen">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
+    <section class="map-shell" aria-labelledby="map-title">
+        <div class="map-toolbar" aria-label="Map controls">
+            <div class="map-toolbar__filters" role="group" aria-label="Filter map nodes">
+                <button type="button" class="map-toolbar__chip map-toolbar__chip--active" data-map-filter="all" aria-pressed="true">All</button>
+                <button type="button" class="map-toolbar__chip" data-map-filter="timeline" aria-pressed="false">Ages</button>
+                <button type="button" class="map-toolbar__chip" data-map-filter="concept" aria-pressed="false">Concepts</button>
+                <button type="button" class="map-toolbar__chip" data-map-filter="source" aria-pressed="false">Sources</button>
             </div>
-
-            <div class="map-svg-container" id="map-svg-container">
-                <div class="map-svg-wrapper" id="map-svg-wrapper">
-                    <object
-                        type="image/svg+xml"
-                        data="{{ get_url(path='map/narrative-map.svg') }}"
-                        class="map-svg"
-                        id="map-svg"
-                        aria-label="Wheel of Heaven Narrative Map - A visual guide through the cosmic narrative"
-                    >
-                        <img
-                            src="{{ get_url(path='map/narrative-map.svg') }}"
-                            alt="Wheel of Heaven Narrative Map"
-                            class="map-svg-fallback"
-                        />
-                    </object>
-                </div>
+            <div class="map-toolbar__actions">
+                <button class="map-toolbar__btn" id="map-fullscreen-btn" type="button">
+                    <svg class="icon-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="15 3 21 3 21 9"></polyline>
+                        <polyline points="9 21 3 21 3 15"></polyline>
+                        <line x1="21" y1="3" x2="14" y2="10"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <svg class="icon-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="4 14 10 14 10 20"></polyline>
+                        <polyline points="20 10 14 10 14 4"></polyline>
+                        <line x1="14" y1="10" x2="21" y2="3"></line>
+                        <line x1="3" y1="21" x2="10" y2="14"></line>
+                    </svg>
+                    <span>{{ trans(key="mapFullscreen", lang=detected_lang) }}</span>
+                </button>
+                <button class="map-toolbar__btn" id="map-print-btn" type="button">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                        <rect x="6" y="14" width="12" height="8"></rect>
+                    </svg>
+                    <span>{{ trans(key="mapPrint", lang=detected_lang) }}</span>
+                </button>
             </div>
         </div>
 
-        <!-- Info Section -->
-        <section class="map-info">
-            <div class="map-info__content">
-                <h2 class="map-info__title">{{ trans(key="mapAboutTitle", lang=detected_lang) }}</h2>
-                <p class="map-info__text">
-                    {{ trans(key="mapAboutText", lang=detected_lang) }}
-                </p>
-                <div class="map-info__note">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="16" x2="12" y2="12"></line>
-                        <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                    </svg>
-                    <span>{{ trans(key="mapZoomHint", lang=detected_lang) }}</span>
-                </div>
+        <div class="map-layout">
+            <div class="map-stage" id="map-stage">
+                <svg
+                    class="map-canvas"
+                    viewBox="-80 -120 1760 1280"
+                    preserveAspectRatio="xMidYMid meet"
+                    role="img"
+                    aria-labelledby="map-svg-title map-svg-desc"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <title id="map-svg-title">Wheel of Heaven interactive content map</title>
+                    <desc id="map-svg-desc">A tilted precessional ellipse with linked age segments and concept nodes clustered around the twelve ages. Earth anchors the bottom of the map.</desc>
+
+                    <defs>
+                        <radialGradient id="map-earth-glow" cx="50%" cy="18%" r="82%">
+                            <stop offset="0%" stop-color="var(--map-earth-glow-a)" stop-opacity="0.75" />
+                            <stop offset="100%" stop-color="var(--map-earth-glow-b)" stop-opacity="0.08" />
+                        </radialGradient>
+                        <clipPath id="map-earth-clip">
+                            <ellipse cx="800" cy="1068" rx="760" ry="330" />
+                        </clipPath>
+                        <filter id="map-soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="var(--map-shadow)" flood-opacity="0.18" />
+                        </filter>
+                    </defs>
+
+                    <rect class="map-canvas__bg" x="-80" y="-120" width="1760" height="1280" rx="34" />
+
+                    <g class="map-stars" aria-hidden="true">
+                        <circle cx="174" cy="166" r="1.6" />
+                        <circle cx="254" cy="314" r="1.2" />
+                        <circle cx="456" cy="96" r="1.4" />
+                        <circle cx="620" cy="258" r="1.2" />
+                        <circle cx="1065" cy="230" r="1.5" />
+                        <circle cx="1228" cy="560" r="1.2" />
+                        <circle cx="1392" cy="628" r="1.4" />
+                        <circle cx="1455" cy="116" r="1.2" />
+                    </g>
+
+                    <g class="map-earth" aria-label="Earth">
+                        <ellipse class="map-earth__atmosphere" cx="800" cy="1068" rx="790" ry="352" />
+                        <g clip-path="url(#map-earth-clip)">
+                            <image
+                                href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-blue.webp"
+                                x="40"
+                                y="736"
+                                width="1520"
+                                height="720"
+                                preserveAspectRatio="xMidYMid slice"
+                                class="map-earth__image"
+                            />
+                            <ellipse class="map-earth__shade" cx="800" cy="1068" rx="760" ry="330" />
+                        </g>
+                        <path class="map-earth__horizon" d="M 40 1068 A 760 330 0 0 1 1560 1068" />
+                        <line class="map-earth__axis" x1="662" y1="1042" x2="940" y2="760" />
+                        <text class="map-earth__label" x="800" y="1002" text-anchor="middle">Earth</text>
+                    </g>
+
+                    <g class="map-orbit" aria-label="Precessional cycle">
+                        <ellipse class="map-orbit__guide" cx="800" cy="385" rx="545" ry="285" transform="rotate(-23.44 800 385)" />
+                        <ellipse class="map-orbit__guide map-orbit__guide--inner" cx="800" cy="385" rx="475" ry="240" transform="rotate(-23.44 800 385)" />
+                        <text class="map-orbit__tilt" x="1030" y="607" transform="rotate(-23.44 1030 607)">23.44 degrees</text>
+                    </g>
+
+                    <g class="map-ages" aria-label="Twelve precessional ages">
+                        {% for age in map_ages %}
+                        <a
+                            class="map-age map-age--{{ age.color }}{% if age.id == 'age-of-aquarius' %} is-active{% endif %}"
+                            href="{{ get_url(path=age.href, lang=detected_lang) }}"
+                            data-map-age="{{ age.id }}"
+                            data-map-title="{{ age.name }}"
+                            data-map-summary="{{ age.summary }}"
+                            data-map-meta="{{ age.dates }} · {{ age.day }}"
+                        >
+                            <title>{{ age.name }} — {{ age.dates }}</title>
+                            <path class="map-age__hit" d="{{ age.path }}" />
+                            <path class="map-age__segment" d="{{ age.path }}" />
+                        </a>
+                        <a
+                            class="map-age-label map-age-label--anchor-{{ age.anchor }}"
+                            href="{{ get_url(path=age.href, lang=detected_lang) }}"
+                            data-map-age="{{ age.id }}"
+                            data-map-title="{{ age.name }}"
+                            data-map-summary="{{ age.summary }}"
+                            data-map-meta="{{ age.dates }} · {{ age.day }}"
+                            transform="translate({{ age.label_x }} {{ age.label_y }})"
+                        >
+                            <text class="map-age-label__name" text-anchor="{{ age.anchor }}">
+                                {{ age.name }}
+                            </text>
+                            <text class="map-age-label__meta" text-anchor="{{ age.anchor }}" y="22">
+                                {{ age.dates }}
+                            </text>
+                            <g class="map-age-label__glyph" transform="translate({% if age.anchor == 'end' %}-22{% elif age.anchor == 'middle' %}-11{% else %}10{% endif %} -42)">
+                                {{ zodiac::icon(name=age.zodiac, size=22) }}
+                            </g>
+                        </a>
+                        {% endfor %}
+                    </g>
+
+                    <g class="map-core" aria-label="Core framework">
+                        <circle class="map-core__ring" cx="800" cy="392" r="95" />
+                        <circle class="map-core__ring map-core__ring--inner" cx="800" cy="392" r="58" />
+                        <text class="map-core__kicker" x="800" y="366" text-anchor="middle">Precession</text>
+                        <text class="map-core__title" x="800" y="392" text-anchor="middle">of the</text>
+                        <text class="map-core__title" x="800" y="419" text-anchor="middle">Equinoxes</text>
+                    </g>
+
+                    <g class="map-nodes" aria-label="Linked concepts and sources">
+                        {% for node in map_nodes %}
+                        <a
+                            class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }} map-node--anchor-{{ node.anchor }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
+                            href="{{ get_url(path=node.href, lang=detected_lang) }}"
+                            data-node-id="{{ node.id }}"
+                            data-node-age="{{ node.age }}"
+                            data-node-type="{{ node.type }}"
+                            data-map-title="{{ node.label }}"
+                            data-map-summary="{{ node.summary }}"
+                            data-map-meta="{% if node.age == 'core' %}Core framework{% else %}{{ node.age | replace(from='age-of-', to='Age of ') | replace(from='-', to=' ') }}{% endif %}"
+                            transform="translate({{ node.x }} {{ node.y }})"
+                        >
+                            <title>{{ node.label }}</title>
+                            <circle class="map-node__halo" r="16" />
+                            <circle class="map-node__dot" r="{% if node.priority == 1 %}6{% elif node.priority == 2 %}5{% else %}4{% endif %}" />
+                            <text class="map-node__label" text-anchor="{{ node.anchor }}" x="{% if node.anchor == 'end' %}-18{% elif node.anchor == 'middle' %}0{% else %}18{% endif %}" y="5">
+                                {{ node.label }}
+                            </text>
+                        </a>
+                        {% endfor %}
+                    </g>
+                </svg>
             </div>
-        </section>
-    </div>
+
+            <aside class="map-panel" aria-live="polite">
+                <div class="map-panel__eyebrow" data-map-panel-meta>Age of Aquarius</div>
+                <h2 class="map-panel__title" data-map-panel-title>Age of Aquarius</h2>
+                <p class="map-panel__text" data-map-panel-summary>Revelation, technological maturity, and the return question.</p>
+                <a class="map-panel__link" data-map-panel-link href="{{ get_url(path='timeline/age-of-aquarius/', lang=detected_lang) }}">
+                    <span>Open page</span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                    </svg>
+                </a>
+            </aside>
+        </div>
+    </section>
 </div>
 
-<script>
-(function() {
-    const mapPage = document.getElementById('map-page');
-    const mapWrapper = document.getElementById('map-wrapper');
-    const mapSvgContainer = document.getElementById('map-svg-container');
-    const mapSvgWrapper = document.getElementById('map-svg-wrapper');
-    const fullscreenBtn = document.getElementById('map-fullscreen-btn');
-    const printBtn = document.getElementById('map-print-btn');
-    const zoomInBtn = document.getElementById('map-zoom-in');
-    const zoomOutBtn = document.getElementById('map-zoom-out');
-    const zoomResetBtn = document.getElementById('map-zoom-reset');
-    const exitFullscreenBtn = document.getElementById('map-exit-fullscreen');
-
-    // Zoom state
-    let currentScale = 1;
-    const minScale = 0.5;
-    const maxScale = 4;
-    const scaleStep = 0.25;
-
-    // Pan state
-    let isPanning = false;
-    let startX = 0;
-    let startY = 0;
-    let scrollLeft = 0;
-    let scrollTop = 0;
-
-    // Apply zoom
-    function setZoom(scale) {
-        currentScale = Math.max(minScale, Math.min(maxScale, scale));
-        mapSvgWrapper.style.transform = `scale(${currentScale})`;
-        mapSvgWrapper.style.transformOrigin = 'top left';
-    }
-
-    // Zoom controls
-    zoomInBtn.addEventListener('click', function() {
-        setZoom(currentScale + scaleStep);
-    });
-
-    zoomOutBtn.addEventListener('click', function() {
-        setZoom(currentScale - scaleStep);
-    });
-
-    zoomResetBtn.addEventListener('click', function() {
-        setZoom(1);
-        mapSvgContainer.scrollLeft = 0;
-        mapSvgContainer.scrollTop = 0;
-    });
-
-    // Mouse wheel zoom
-    mapSvgContainer.addEventListener('wheel', function(e) {
-        if (e.ctrlKey || e.metaKey) {
-            e.preventDefault();
-            const delta = e.deltaY > 0 ? -scaleStep : scaleStep;
-            setZoom(currentScale + delta);
-        }
-    }, { passive: false });
-
-    // Touch pinch zoom
-    let initialDistance = 0;
-    let initialScale = 1;
-
-    mapSvgContainer.addEventListener('touchstart', function(e) {
-        if (e.touches.length === 2) {
-            initialDistance = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            initialScale = currentScale;
-        } else if (e.touches.length === 1) {
-            // Start panning
-            isPanning = true;
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-            scrollLeft = mapSvgContainer.scrollLeft;
-            scrollTop = mapSvgContainer.scrollTop;
-        }
-    }, { passive: true });
-
-    mapSvgContainer.addEventListener('touchmove', function(e) {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(
-                e.touches[0].clientX - e.touches[1].clientX,
-                e.touches[0].clientY - e.touches[1].clientY
-            );
-            const scale = initialScale * (currentDistance / initialDistance);
-            setZoom(scale);
-        } else if (e.touches.length === 1 && isPanning && currentScale > 1) {
-            const deltaX = startX - e.touches[0].clientX;
-            const deltaY = startY - e.touches[0].clientY;
-            mapSvgContainer.scrollLeft = scrollLeft + deltaX;
-            mapSvgContainer.scrollTop = scrollTop + deltaY;
-        }
-    }, { passive: false });
-
-    mapSvgContainer.addEventListener('touchend', function() {
-        isPanning = false;
-        initialDistance = 0;
-    });
-
-    // Mouse drag to pan
-    mapSvgContainer.addEventListener('mousedown', function(e) {
-        if (currentScale > 1) {
-            isPanning = true;
-            startX = e.clientX;
-            startY = e.clientY;
-            scrollLeft = mapSvgContainer.scrollLeft;
-            scrollTop = mapSvgContainer.scrollTop;
-            mapSvgContainer.style.cursor = 'grabbing';
-        }
-    });
-
-    mapSvgContainer.addEventListener('mousemove', function(e) {
-        if (isPanning) {
-            const deltaX = startX - e.clientX;
-            const deltaY = startY - e.clientY;
-            mapSvgContainer.scrollLeft = scrollLeft + deltaX;
-            mapSvgContainer.scrollTop = scrollTop + deltaY;
-        }
-    });
-
-    mapSvgContainer.addEventListener('mouseup', function() {
-        isPanning = false;
-        mapSvgContainer.style.cursor = currentScale > 1 ? 'grab' : 'default';
-    });
-
-    mapSvgContainer.addEventListener('mouseleave', function() {
-        isPanning = false;
-        mapSvgContainer.style.cursor = currentScale > 1 ? 'grab' : 'default';
-    });
-
-    // Fullscreen toggle
-    function enterFullscreen() {
-        if (mapWrapper.requestFullscreen) {
-            mapWrapper.requestFullscreen();
-        } else if (mapWrapper.webkitRequestFullscreen) {
-            mapWrapper.webkitRequestFullscreen();
-        }
-    }
-
-    function exitFullscreen() {
-        if (document.exitFullscreen) {
-            document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        }
-    }
-
-    fullscreenBtn.addEventListener('click', function() {
-        if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-            enterFullscreen();
-        } else {
-            exitFullscreen();
-        }
-    });
-
-    exitFullscreenBtn.addEventListener('click', function() {
-        exitFullscreen();
-    });
-
-    // Update button state on fullscreen change
-    function handleFullscreenChange() {
-        const isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement);
-        mapPage.classList.toggle('is-fullscreen', isFullscreen);
-    }
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
-    document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-
-    // Print mode
-    printBtn.addEventListener('click', function() {
-        window.print();
-    });
-
-    // Update cursor based on zoom level
-    function updateCursor() {
-        mapSvgContainer.style.cursor = currentScale > 1 ? 'grab' : 'default';
-    }
-})();
-</script>
+<script src="{{ get_url(path='js/map-native.js') }}" defer></script>
 {% endblock content %}
