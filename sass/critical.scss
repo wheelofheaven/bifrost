@@ -28,6 +28,27 @@
 // Landing page hero (above-fold on homepage)
 @use "pages/home";
 
+// §7 reading-paths grid. Lives in pages/_read.scss in main.css, but the
+// landing page also renders `.read__paths` and the FOUC gate below
+// hides the element with `visibility: hidden`, which still occupies
+// flow. Without the grid layout in critical, the three .read__path
+// anchors stack as default block elements until main.css arrives,
+// then collapse into a single row when the grid kicks in — §8 below
+// jumps up by a few hundred px and Lighthouse logs the CLS. Inlining
+// just the grid keeps §7's height stable across the handoff.
+@use "abstracts/variables" as _v;
+.read__paths {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: _v.$spacing-lg;
+    margin: 0 auto;
+
+    @media (max-width: 900px) {
+        grid-template-columns: 1fr;
+        gap: _v.$spacing-md;
+    }
+}
+
 // FOUC prevention — base.html renders these chrome widgets on every page,
 // but their styles live in main.css which loads async on landing pages.
 // Without an initial hidden state in critical.css, the unstyled modal /
