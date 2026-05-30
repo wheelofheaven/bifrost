@@ -18,10 +18,10 @@ body:has(.map-page) .pwa-install-banner {
 
 .map-page {
     --map-top-clearance: 5.75rem;
-    --map-bg: color-mix(in srgb, var(--color-background) 92%, #{c.$blue-100});
-    --map-panel-bg: color-mix(in srgb, var(--color-card-bg) 88%, transparent);
-    --map-line: color-mix(in srgb, var(--color-text) 34%, transparent);
-    --map-line-soft: color-mix(in srgb, var(--color-text) 16%, transparent);
+    --map-bg: color-mix(in srgb, var(--color-background) 84%, #{c.$blue-100});
+    --map-panel-bg: color-mix(in srgb, var(--color-card-bg) 90%, transparent);
+    --map-line: color-mix(in srgb, var(--color-text) 44%, transparent);
+    --map-line-soft: color-mix(in srgb, var(--color-text) 22%, transparent);
     --map-text: var(--color-text);
     --map-muted: var(--color-text-muted);
     --map-shadow: #{c.$blue-900};
@@ -36,7 +36,10 @@ body:has(.map-page) .pwa-install-banner {
     width: 100%;
     min-width: 0;
     overflow: hidden;
-    background: var(--map-bg);
+    background:
+        radial-gradient(circle at 50% 0%, rgb(152 245 225 / 10%) 0%, rgb(152 245 225 / 0%) 38%),
+        radial-gradient(circle at 50% 18%, rgb(163 196 243 / 8%) 0%, rgb(163 196 243 / 0%) 46%),
+        var(--map-bg);
     color: var(--map-text);
 
     @media (max-width: 768px) {
@@ -50,10 +53,10 @@ body:has(.map-page) .pwa-install-banner {
 }
 
 [data-theme="dark"] .map-page {
-    --map-bg: #0b1018;
-    --map-panel-bg: rgb(13 18 28 / 78%);
-    --map-line: rgb(238 244 255 / 32%);
-    --map-line-soft: rgb(238 244 255 / 14%);
+    --map-bg: #111826;
+    --map-panel-bg: rgb(13 18 28 / 84%);
+    --map-line: rgb(238 244 255 / 42%);
+    --map-line-soft: rgb(238 244 255 / 22%);
     --map-shadow: #000;
     --map-earth-glow-a: #{c.$cyan-700};
     --map-earth-glow-b: #{c.$blue-900};
@@ -221,6 +224,7 @@ body:has(.map-page) .pwa-install-banner {
     border: 0;
     border-radius: 0;
     background: var(--map-bg);
+    background-image: radial-gradient(circle at 50% 0%, rgb(152 245 225 / 8%) 0%, rgb(152 245 225 / 0%) 44%);
     overflow: auto;
     box-shadow: none;
     -webkit-overflow-scrolling: touch;
@@ -279,7 +283,7 @@ body:has(.map-page) .pwa-install-banner {
 
 .map-stars {
     fill: var(--map-muted);
-    opacity: 0.55;
+    opacity: 0.7;
 }
 
 .map-earth {
@@ -290,7 +294,7 @@ body:has(.map-page) .pwa-install-banner {
     }
 
     &__image {
-        opacity: 0.62;
+        opacity: 0.75;
     }
 
     &__shade {
@@ -406,7 +410,7 @@ body:has(.map-page) .pwa-install-banner {
 .map-age-label {
     color: var(--map-text);
     cursor: pointer;
-    opacity: 0.8;
+    opacity: 0.92;
     transition: opacity 0.18s ease, color 0.18s ease;
 
     &:hover,
@@ -438,7 +442,7 @@ body:has(.map-page) .pwa-install-banner {
     pointer-events: none;
 
     &__ring {
-        fill: color-mix(in srgb, var(--color-card-bg) 70%, transparent);
+        fill: color-mix(in srgb, var(--color-card-bg) 58%, transparent);
         stroke: var(--map-line);
         stroke-width: 1.2;
     }
@@ -469,7 +473,7 @@ body:has(.map-page) .pwa-install-banner {
     --node-halo: var(--map-node-halo);
 
     color: var(--node-color);
-    opacity: 0.36;
+    opacity: 0.52;
     cursor: pointer;
     transition: opacity 0.18s ease, transform 0.18s ease;
 
