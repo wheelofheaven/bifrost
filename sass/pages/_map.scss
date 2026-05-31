@@ -185,6 +185,10 @@ body:has(.map-page) .to-top {
     display: flex;
     gap: 0.45rem;
 
+    @media (max-width: 760px) {
+        top: -0.75rem;
+    }
+
     &__button {
         @include gcc-btn.glass-cloud-button;
         width: 2.7rem;
@@ -221,11 +225,11 @@ body:has(.map-page) .to-top {
     }
 
     &__image {
-        opacity: 0.75;
+        opacity: 0.88;
     }
 
     &__shade {
-        fill: color-mix(in srgb, var(--map-bg) 32%, transparent);
+        fill: color-mix(in srgb, var(--map-bg) 18%, transparent);
     }
 
     &__horizon,

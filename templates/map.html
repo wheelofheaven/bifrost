@@ -37,7 +37,7 @@
                             <stop offset="100%" stop-color="var(--map-earth-glow-b)" stop-opacity="0.08" />
                         </radialGradient>
                         <clipPath id="map-earth-clip">
-                            <ellipse cx="800" cy="1068" rx="760" ry="330" />
+                            <circle cx="800" cy="2250" r="720" />
                         </clipPath>
                         <filter id="map-soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="var(--map-shadow)" flood-opacity="0.18" />
@@ -49,36 +49,54 @@
 
                     <g class="map-stars" aria-hidden="true">
                         <circle cx="174" cy="166" r="1.6" />
+                        <circle cx="346" cy="188" r="1.1" />
                         <circle cx="254" cy="314" r="1.2" />
+                        <circle cx="122" cy="486" r="1.4" />
                         <circle cx="456" cy="96" r="1.4" />
+                        <circle cx="566" cy="402" r="1.1" />
                         <circle cx="620" cy="258" r="1.2" />
+                        <circle cx="752" cy="112" r="1.3" />
+                        <circle cx="894" cy="282" r="1.1" />
                         <circle cx="1065" cy="230" r="1.5" />
+                        <circle cx="1160" cy="88" r="1.1" />
+                        <circle cx="1306" cy="258" r="1.3" />
                         <circle cx="1228" cy="560" r="1.2" />
                         <circle cx="1392" cy="628" r="1.4" />
                         <circle cx="1455" cy="116" r="1.2" />
+                        <circle cx="1510" cy="406" r="1.1" />
+                        <circle cx="84" cy="816" r="1.3" />
+                        <circle cx="260" cy="914" r="1.1" />
+                        <circle cx="1508" cy="890" r="1.5" />
+                        <circle cx="1378" cy="1074" r="1.1" />
                         <circle cx="190" cy="1220" r="1.2" />
+                        <circle cx="430" cy="1316" r="1.4" />
+                        <circle cx="1174" cy="1264" r="1.2" />
                         <circle cx="1420" cy="1390" r="1.4" />
                         <circle cx="310" cy="1640" r="1.1" />
+                        <circle cx="158" cy="1816" r="1.4" />
+                        <circle cx="522" cy="1772" r="1.2" />
+                        <circle cx="1078" cy="1698" r="1.1" />
                         <circle cx="1300" cy="1740" r="1.3" />
+                        <circle cx="1484" cy="1912" r="1.2" />
                     </g>
 
-                    <g class="map-earth" aria-label="Earth" transform="translate(0 900)">
-                        <ellipse class="map-earth__atmosphere" cx="800" cy="1068" rx="790" ry="352" />
+                    <g class="map-earth" aria-label="Earth">
+                        <circle class="map-earth__atmosphere" cx="800" cy="2250" r="748" />
                         <g clip-path="url(#map-earth-clip)">
                             <image
                                 href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-blue.webp"
-                                x="40"
-                                y="736"
-                                width="1520"
-                                height="720"
+                                x="80"
+                                y="1530"
+                                width="1440"
+                                height="1440"
                                 preserveAspectRatio="xMidYMid slice"
                                 class="map-earth__image"
                             />
-                            <ellipse class="map-earth__shade" cx="800" cy="1068" rx="760" ry="330" />
+                            <circle class="map-earth__shade" cx="800" cy="2250" r="720" />
                         </g>
-                        <path class="map-earth__horizon" d="M 40 1068 A 760 330 0 0 1 1560 1068" />
-                        <line class="map-earth__axis" x1="662" y1="1042" x2="940" y2="760" />
-                        <text class="map-earth__label" x="800" y="1002" text-anchor="middle">Earth</text>
+                        <circle class="map-earth__horizon" cx="800" cy="2250" r="720" />
+                        <line class="map-earth__axis" x1="618" y1="2370" x2="986" y2="1670" />
+                        <text class="map-earth__label" x="800" y="2115" text-anchor="middle">Earth</text>
                     </g>
 
                     <g class="map-cycle-field" transform="translate(0 180)">
