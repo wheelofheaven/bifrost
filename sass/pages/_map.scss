@@ -1,6 +1,7 @@
 // Interactive map page.
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
+@use "../components/glass-cloud-button" as gcc-btn;
 
 main:has(.map-page) {
     max-width: none;
@@ -20,6 +21,7 @@ body:has(.map-page) .to-top {
 .map-page {
     --map-top-clearance: 5.75rem;
     --map-frame: 1.25rem;
+    --map-zoom: 1;
     --map-bg: color-mix(in srgb, var(--color-background) 84%, #{c.$blue-100});
     --map-line: color-mix(in srgb, var(--color-text) 44%, transparent);
     --map-line-soft: color-mix(in srgb, var(--color-text) 22%, transparent);
@@ -139,7 +141,7 @@ body:has(.map-page) .to-top {
 
 .map-canvas {
     display: block;
-    width: 100%;
+    width: calc(100% * var(--map-zoom));
     min-width: 0;
     max-width: none;
     height: auto;
@@ -149,8 +151,8 @@ body:has(.map-page) .to-top {
     font-family: var(--font-family-body);
 
     @media (max-width: 760px) {
-        width: 48rem;
-        min-width: 48rem;
+        width: calc(48rem * var(--map-zoom));
+        min-width: calc(48rem * var(--map-zoom));
         max-width: none;
         height: auto;
         margin-inline: auto;
@@ -167,6 +169,42 @@ body:has(.map-page) .to-top {
 
     &__bg {
         fill: var(--map-bg);
+    }
+}
+
+.map-brand-title {
+    fill: var(--map-text);
+    opacity: 0.92;
+}
+
+.map-zoom-controls {
+    position: absolute;
+    top: calc(var(--map-frame) + 0.25rem);
+    right: calc(var(--map-frame) + 0.25rem);
+    z-index: 4;
+    display: flex;
+    gap: 0.45rem;
+
+    &__button {
+        @include gcc-btn.glass-cloud-button;
+        width: 2.7rem;
+        height: 2.7rem;
+        justify-content: center;
+        padding: 0;
+        --cloud-a: #{c.$cyan-300};
+        --cloud-b: #{c.$mauve-300};
+
+        &:disabled {
+            cursor: default;
+            opacity: 0.42;
+            transform: none;
+            box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+        }
+
+        svg {
+            width: 1.15rem;
+            height: 1.15rem;
+        }
     }
 }
 
@@ -480,7 +518,11 @@ body:has(.map-page) .to-top {
     }
 
     .map-canvas {
-        width: 100%;
+        width: 100% !important;
         min-height: 0;
+    }
+
+    .map-zoom-controls {
+        display: none !important;
     }
 }

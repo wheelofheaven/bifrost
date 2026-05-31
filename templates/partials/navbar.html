@@ -45,7 +45,7 @@
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="{{ trans(key='navbarKnowledgeSection', lang=detected_lang) }}">
                 <button
-                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/wiki') or current_path is starting_with('/articles') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
+                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/map') or current_path is starting_with('/wiki') or current_path is starting_with('/articles') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
                     aria-expanded="false"
                     aria-haspopup="true"
                     aria-controls="knowledge-dropdown"
@@ -60,6 +60,7 @@
                 <!-- Mobile inline links (visible only in mobile expanded menu) -->
                 <div class="navbar__dropdown-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
+                    <a href="{{ get_url(path='map', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="map">{{ trans(key="navbarMap", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
@@ -536,6 +537,7 @@
                             timeline: "Timeline",
                             news: "Newsroom",
                             map: "Map",
+                            mapDesc: "Navigate the corpus through the precessional ages.",
                             knowledge: "Knowledge",
                             community: "Community",
                             articles: "Articles",
@@ -562,6 +564,7 @@
                             timeline: "Chronologie",
                             news: "Salle de presse",
                             map: "Carte",
+                            mapDesc: "Parcourir le corpus à travers les âges précessionnels.",
                             knowledge: "Connaissance",
                             community: "Communauté",
                             articles: "Articles",
@@ -588,6 +591,7 @@
                             timeline: "Zeitleiste",
                             news: "Newsroom",
                             map: "Karte",
+                            mapDesc: "Durch die präzessionellen Zeitalter im Korpus navigieren.",
                             knowledge: "Wissen",
                             community: "Community",
                             articles: "Artikel",
@@ -612,6 +616,7 @@
                             timeline: "Cronología",
                             news: "Sala de prensa",
                             map: "Mapa",
+                            mapDesc: "Navega por el corpus a través de las eras precesionales.",
                             knowledge: "Conocimiento",
                             community: "Comunidad",
                             articles: "Artículos",
@@ -638,6 +643,7 @@
                             timeline: "タイムライン",
                             news: "ニュースルーム",
                             map: "マップ",
+                            mapDesc: "歳差運動の時代を通してコーパスを探索。",
                             knowledge: "知識",
                             community: "コミュニティ",
                             articles: "記事",
@@ -664,6 +670,7 @@
                             timeline: "Хронология",
                             news: "Новости",
                             map: "Карта",
+                            mapDesc: "Навигация по корпусу через прецессионные эпохи.",
                             knowledge: "Знания",
                             community: "Сообщество",
                             articles: "Статьи",
@@ -690,6 +697,7 @@
                             timeline: "时间线",
                             news: "新闻室",
                             map: "地图",
+                            mapDesc: "通过岁差时代浏览语料库。",
                             knowledge: "知识",
                             community: "社区",
                             articles: "文章",
@@ -716,6 +724,7 @@
                             timeline: "時間線",
                             news: "新聞室",
                             map: "地圖",
+                            mapDesc: "透過歲差時代瀏覽語料庫。",
                             knowledge: "知識",
                             community: "社群",
                             articles: "文章",
@@ -740,6 +749,7 @@
                             timeline: "타임라인",
                             news: "뉴스룸",
                             map: "지도",
+                            mapDesc: "세차 시대를 따라 코퍼스를 탐색합니다.",
                             knowledge: "지식",
                             community: "커뮤니티",
                             articles: "기사",
@@ -764,6 +774,7 @@
                             timeline: "ציר זמן",
                             news: "חדר חדשות",
                             map: "מפה",
+                            mapDesc: "ניווט בקורפוס דרך עידני הנקיפה.",
                             knowledge: "ידע",
                             community: "קהילה",
                             articles: "מאמרים",
@@ -892,6 +903,18 @@
                     <span data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</span>
                 </h3>
                 <div class="navbar-dropdown__links">
+                    <a href="{{ get_url(path='map', lang=detected_lang) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/gis-time-map.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="map">{{ trans(key="navbarMap", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="mapDesc">{{ trans(key="navbarMapDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
                     <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
                             {% include "partials/icons/game-dna2.html" %}

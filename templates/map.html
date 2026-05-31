@@ -45,6 +45,7 @@
                     </defs>
 
                     <rect class="map-canvas__bg" x="-200" y="-160" width="2000" height="2600" rx="34" />
+                    {% include "partials/brand/map-title.html" %}
 
                     <g class="map-stars" aria-hidden="true">
                         <circle cx="174" cy="166" r="1.6" />
@@ -155,6 +156,15 @@
                     </g>
                     </g>
                 </svg>
+            </div>
+
+            <div class="map-zoom-controls" aria-label="Map zoom controls">
+                <button class="map-zoom-controls__button" id="map-zoom-out" type="button" aria-label="{{ trans(key='mapZoomOut', lang=detected_lang) }}" title="{{ trans(key='mapZoomOut', lang=detected_lang) }}">
+                    {% include "partials/icons/lucide-zoom-out.html" %}
+                </button>
+                <button class="map-zoom-controls__button" id="map-zoom-in" type="button" aria-label="{{ trans(key='mapZoomIn', lang=detected_lang) }}" title="{{ trans(key='mapZoomIn', lang=detected_lang) }}">
+                    {% include "partials/icons/lucide-zoom-in.html" %}
+                </button>
             </div>
 
         </div>
