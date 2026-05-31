@@ -56,6 +56,18 @@
 // <kbd> outlines) before main.css applies. Match the hidden defaults each
 // component uses in main.scss so the corresponding --open / --visible
 // modifiers cleanly take over once main.css arrives.
+//
+// NOTE: do NOT set `pointer-events: none` here. The four JS-mounted
+// elements (.offline-indicator, .reading-list-panel, .pwa-install-banner,
+// .pwa-update-banner) don't declare `pointer-events` in main.css —
+// they rely on `visibility: hidden` to block clicks while hidden.
+// Adding `pointer-events: none` here would stick permanently through
+// the cascade and the --visible / --open modifiers (which only flip
+// opacity / visibility / transform) wouldn't restore interactivity,
+// killing the Install / Dismiss / "Read offline" buttons. The older
+// three elements above (keyboard-shortcuts-modal, highlight-share,
+// glossary-tooltip) all declare pointer-events in their own component
+// rules, so they're unaffected either way.
 .keyboard-shortcuts-modal,
 .highlight-share,
 .glossary-tooltip,
@@ -74,7 +86,6 @@
     position: fixed;
     opacity: 0;
     visibility: hidden;
-    pointer-events: none;
 }
 
 .reading-progress,
