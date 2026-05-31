@@ -52,7 +52,7 @@
         <!-- Language Alternates -->
         {% include "partials/language-alternates.html" %}
     </head>
-    <body>
+    <body{% if _p == "/map/" or _p is ending_with("/map/") %} class="map-route"{% endif %}>
         {% include "partials/reading-progress.html" %}
         {% include "partials/skip-links.html" %}
         {% include "partials/translation-notice.html" %}

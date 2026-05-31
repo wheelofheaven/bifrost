@@ -12,6 +12,21 @@ main:has(.map-page) {
     overflow: hidden;
 }
 
+body.map-route {
+    --map-surface-bg: color-mix(in srgb, var(--color-background) 84%, #{c.$blue-100});
+    background: var(--map-surface-bg);
+}
+
+body.map-route main:has(.map-page) {
+    padding: 0;
+}
+
+body.map-route:has(> .translation-notice) .map-page {
+    --map-top-clearance: calc(
+        var(--translation-notice-h) + 1rem + var(--navbar-h) + 1rem
+    );
+}
+
 body:has(.map-page) .pwa-install-banner,
 body:has(.map-page) .search-fab,
 body:has(.map-page) .to-top {
@@ -22,7 +37,7 @@ body:has(.map-page) .to-top {
     --map-top-clearance: 5.75rem;
     --map-frame: 1.25rem;
     --map-zoom: 1;
-    --map-bg: color-mix(in srgb, var(--color-background) 84%, #{c.$blue-100});
+    --map-bg: var(--map-surface-bg);
     --map-line: color-mix(in srgb, var(--color-text) 44%, transparent);
     --map-line-soft: color-mix(in srgb, var(--color-text) 22%, transparent);
     --map-text: var(--color-text);
@@ -60,6 +75,10 @@ body:has(.map-page) .to-top {
     --map-shadow: #000;
     --map-earth-glow-a: #{c.$cyan-700};
     --map-earth-glow-b: #{c.$blue-900};
+}
+
+[data-theme="dark"] body.map-route {
+    --map-surface-bg: #111826;
 }
 
 .map-hero {
@@ -330,35 +349,27 @@ body:has(.map-page) .to-top {
         --earth-accent: #{c.$yellow-300};
     }
 
-    &__halo {
-        fill: var(--earth-accent);
-        opacity: 0;
-        transition: opacity 0.18s ease;
-    }
-
-    &__dot {
-        fill: var(--earth-accent);
-        stroke: var(--map-bg);
-        stroke-width: 2;
-    }
-
     &__label {
         fill: var(--map-text);
         font-size: 17px;
         font-weight: 700;
         paint-order: stroke;
+        pointer-events: bounding-box;
         stroke: color-mix(in srgb, var(--map-bg) 86%, transparent);
         stroke-linejoin: round;
         stroke-width: 5px;
+        transition: fill 0.18s ease, filter 0.18s ease;
     }
 
     &:hover,
     &:focus-visible,
+    &:active,
     &.is-selected {
         opacity: 1;
 
-        .map-earth-node__halo {
-            opacity: 0.42;
+        .map-earth-node__label {
+            fill: var(--earth-accent);
+            filter: drop-shadow(0 0 5px color-mix(in srgb, var(--earth-accent) 64%, transparent));
         }
     }
 }
@@ -516,26 +527,16 @@ body:has(.map-page) .to-top {
     cursor: pointer;
     transition: opacity 0.18s ease, transform 0.18s ease;
 
-    &__halo {
-        fill: var(--node-halo);
-        opacity: 0;
-        transition: opacity 0.18s ease;
-    }
-
-    &__dot {
-        fill: var(--node-color);
-        stroke: var(--map-bg);
-        stroke-width: 2;
-    }
-
     &__label {
         fill: var(--map-text);
         font-size: 17px;
         font-weight: 650;
         paint-order: stroke;
+        pointer-events: bounding-box;
         stroke: var(--map-bg);
         stroke-width: 5px;
         stroke-linejoin: round;
+        transition: fill 0.18s ease, filter 0.18s ease;
     }
 
     &--source {
@@ -565,6 +566,7 @@ body:has(.map-page) .to-top {
 
     &:hover,
     &:focus-visible,
+    &:active,
     &.is-related,
     &.is-selected {
         opacity: 1;
@@ -572,9 +574,11 @@ body:has(.map-page) .to-top {
 
     &:hover,
     &:focus-visible,
+    &:active,
     &.is-selected {
-        .map-node__halo {
-            opacity: 0.46;
+        .map-node__label {
+            fill: var(--node-color);
+            filter: drop-shadow(0 0 5px color-mix(in srgb, var(--node-halo) 64%, transparent));
         }
     }
 

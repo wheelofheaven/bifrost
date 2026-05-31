@@ -6,8 +6,10 @@
 {% set map_ages = load_data(path="data/map/ages.json") %}
 {% set map_nodes = load_data(path="data/map/nodes.json") %}
 {% set earth_clusters = load_data(path="data/map/earth-nodes.json") %}
+{% set map_i18n = load_data(path="data/map/i18n.json") %}
+{% set map_copy = map_i18n[detected_lang] %}
 
-<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius">
+<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-earth-offset-y="-220">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <header class="map-hero">
@@ -29,8 +31,8 @@
                     aria-labelledby="map-svg-title map-svg-desc"
                     xmlns="http://www.w3.org/2000/svg"
                 >
-                    <title id="map-svg-title">Wheel of Heaven interactive content map</title>
-                    <desc id="map-svg-desc">A tilted precessional ellipse with linked age segments and chronological nodes. Earth anchors the bottom of the map as a thematic navigation surface.</desc>
+                    <title id="map-svg-title">{{ map_copy.svgTitle }}</title>
+                    <desc id="map-svg-desc">{{ map_copy.svgDescription }}</desc>
 
                     <defs>
                         <radialGradient id="map-earth-glow" cx="50%" cy="18%" r="82%">
@@ -81,7 +83,7 @@
                         <circle cx="1484" cy="1912" r="1.2" />
                     </g>
 
-                    <g class="map-earth" aria-label="Earth">
+                    <g class="map-earth" aria-label="{{ map_copy.earthLabel }}" transform="translate(0 -220)">
                         <circle class="map-earth__atmosphere" cx="800" cy="2250" r="748" />
                         <g clip-path="url(#map-earth-clip)">
                             <image
@@ -97,16 +99,16 @@
                         </g>
                         <circle class="map-earth__horizon" cx="800" cy="2250" r="720" />
                         <line class="map-earth__axis" x1="618" y1="2370" x2="986" y2="1670" />
-                        <text class="map-earth__label" x="800" y="1648" text-anchor="middle">GAIA</text>
-                        <text class="map-earth__sublabel" x="800" y="1678" text-anchor="middle">is alive</text>
+                        <text class="map-earth__label" x="800" y="1648" text-anchor="middle">{{ map_copy.earthLabel }}</text>
+                        <text class="map-earth__sublabel" x="800" y="1678" text-anchor="middle">{{ map_copy.earthSublabel }}</text>
                     </g>
 
                     <g class="map-earth-connectors" id="map-earth-connectors" aria-hidden="true"></g>
 
-                    <g class="map-earth-navigation" aria-label="Earth themes">
+                    <g class="map-earth-navigation" aria-label="{{ map_copy.earthThemesAria }}" transform="translate(0 -220)">
                         {% for cluster in earth_clusters %}
                         <g class="map-earth-cluster map-earth-cluster--{{ cluster.color }}" data-earth-cluster="{{ cluster.id }}">
-                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}">{{ cluster.label }}</text>
+                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}">{{ map_copy.clusters[cluster.id] }}</text>
                             <line class="map-earth-cluster__rule" x1="{{ cluster.x }}" y1="{{ cluster.y + 15 }}" x2="{{ cluster.x + 182 }}" y2="{{ cluster.y + 15 }}" />
                             {% for node in cluster.nodes %}
                             <a
@@ -116,15 +118,13 @@
                                 data-earth-node-ages="{{ node.ages | join(sep=',') }}"
                                 data-earth-node-x="{{ node.x }}"
                                 data-earth-node-y="{{ node.y }}"
-                                data-map-title="{{ node.label }}"
+                                data-map-title="{{ map_copy.earthNodes[node.id] }}"
                                 data-map-summary="{{ node.summary }}"
-                                data-map-meta="{{ cluster.label }}"
+                                data-map-meta="{{ map_copy.clusters[cluster.id] }}"
                                 transform="translate({{ node.x }} {{ node.y }})"
                             >
-                                <title>{{ node.label }}</title>
-                                <circle class="map-earth-node__halo" r="15" />
-                                <circle class="map-earth-node__dot" r="5" />
-                                <text class="map-earth-node__label" x="16" y="5">{{ node.label }}</text>
+                                <title>{{ map_copy.earthNodes[node.id] }}</title>
+                                <text class="map-earth-node__label" y="5">{{ map_copy.earthNodes[node.id] }}</text>
                             </a>
                             {% endfor %}
                         </g>
@@ -132,25 +132,25 @@
                     </g>
 
                     <g class="map-cycle-field" transform="translate(0 180)">
-                    <g class="map-orbit" aria-label="Precessional cycle">
+                    <g class="map-orbit" aria-label="{{ map_copy.orbitAria }}">
                         <ellipse class="map-orbit__guide" cx="800" cy="385" rx="545" ry="285" transform="rotate(-23.44 800 385)" />
                         <ellipse class="map-orbit__guide map-orbit__guide--inner" cx="800" cy="385" rx="475" ry="240" transform="rotate(-23.44 800 385)" />
-                        <text class="map-orbit__tilt" x="1030" y="607" transform="rotate(-23.44 1030 607)">23.44 degrees</text>
+                        <text class="map-orbit__tilt" x="1030" y="607" transform="rotate(-23.44 1030 607)">{{ map_copy.tilt }}</text>
                     </g>
 
-                    <g class="map-ages" aria-label="Twelve precessional ages">
+                    <g class="map-ages" aria-label="{{ map_copy.agesAria }}">
                         {% for age in map_ages %}
                         <a
                             class="map-age map-age--{{ age.color }}{% if age.id == 'age-of-aquarius' %} is-active{% endif %}"
                             href="{{ get_url(path=age.href, lang=detected_lang) }}"
                             data-map-age="{{ age.id }}"
-                            data-map-title="{{ age.name }}"
+                            data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
-                            data-map-meta="{{ age.dates }} · {{ age.day }}"
+                            data-map-meta="{{ age.dates }} · {{ map_copy.days[age.id] }}"
                             data-map-point-x="{{ age.x }}"
                             data-map-point-y="{{ age.y + 180 }}"
                         >
-                            <title>{{ age.name }} — {{ age.dates }}</title>
+                            <title>{{ map_copy.ages[age.id] }} — {{ age.dates }}</title>
                             <path class="map-age__hit" d="{{ age.path }}" />
                             <path class="map-age__segment" d="{{ age.path }}" />
                         </a>
@@ -158,13 +158,13 @@
                             class="map-age-label map-age-label--anchor-{{ age.anchor }}"
                             href="{{ get_url(path=age.href, lang=detected_lang) }}"
                             data-map-age="{{ age.id }}"
-                            data-map-title="{{ age.name }}"
+                            data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
-                            data-map-meta="{{ age.dates }} · {{ age.day }}"
+                            data-map-meta="{{ age.dates }} · {{ map_copy.days[age.id] }}"
                             transform="translate({{ age.label_x }} {{ age.label_y }})"
                         >
                             <text class="map-age-label__name" text-anchor="{{ age.anchor }}">
-                                {{ age.name }}
+                                {{ map_copy.ages[age.id] }}
                             </text>
                             <text class="map-age-label__meta" text-anchor="{{ age.anchor }}" y="22">
                                 {{ age.dates }}
@@ -176,32 +176,45 @@
                         {% endfor %}
                     </g>
 
-                    <g class="map-core" aria-label="Core framework">
+                    <g class="map-core" aria-label="{{ map_copy.coreAria }}">
                         <circle class="map-core__ring" cx="800" cy="392" r="95" />
                         <circle class="map-core__ring map-core__ring--inner" cx="800" cy="392" r="58" />
-                        <text class="map-core__kicker" x="800" y="366" text-anchor="middle">Precession</text>
-                        <text class="map-core__title" x="800" y="392" text-anchor="middle">of the</text>
-                        <text class="map-core__title" x="800" y="419" text-anchor="middle">Equinoxes</text>
+                        <text class="map-core__kicker" x="800" y="366" text-anchor="middle">{{ map_copy.coreKicker }}</text>
+                        <text class="map-core__title" x="800" y="392" text-anchor="middle">{{ map_copy.coreLine1 }}</text>
+                        <text class="map-core__title" x="800" y="419" text-anchor="middle">{{ map_copy.coreLine2 }}</text>
                     </g>
 
-                    <g class="map-nodes" aria-label="Linked concepts and sources">
+                    <g class="map-nodes" aria-label="{{ map_copy.nodesAria }}">
                         {% for node in map_nodes %}
+                        {% set node_title = node.label %}
+                        {% set node_summary = node.summary %}
+                        {% if node.id != "exodus-woh" %}
+                            {% set node_page_slug = node.href | trim_end_matches(pat="/") %}
+                            {% set node_page_path = node_page_slug ~ ".md" %}
+                            {% if detected_lang != "en" %}
+                                {% set node_page_path = detected_lang ~ "/" ~ node_page_path %}
+                            {% endif %}
+                            {% set node_page = get_page(path=node_page_path) %}
+                            {% set node_title = node_page.title %}
+                            {% set node_summary = node_page.description %}
+                        {% endif %}
+                        {% if node.label_key %}
+                            {% set node_title = map_copy.nodeLabels[node.label_key] %}
+                        {% endif %}
                         <a
                             class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }} map-node--anchor-{{ node.anchor }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
                             href="{{ get_url(path=node.href, lang=detected_lang) }}"
                             data-node-id="{{ node.id }}"
                             data-node-age="{{ node.age }}"
                             data-node-type="{{ node.type }}"
-                            data-map-title="{{ node.label }}"
-                            data-map-summary="{{ node.summary }}"
-                            data-map-meta="{% if node.age == 'core' %}Core framework{% else %}{{ node.age | replace(from='age-of-', to='Age of ') | replace(from='-', to=' ') }}{% endif %}"
+                            data-map-title="{{ node_title }}"
+                            data-map-summary="{{ node_summary }}"
+                            data-map-meta="{% if node.age == 'core' %}{{ map_copy.coreMeta }}{% else %}{{ map_copy.ages[node.age] }}{% endif %}"
                             transform="translate({{ node.x }} {{ node.y }})"
                         >
-                            <title>{{ node.label }}</title>
-                            <circle class="map-node__halo" r="16" />
-                            <circle class="map-node__dot" r="{% if node.priority == 1 %}6{% elif node.priority == 2 %}5{% else %}4{% endif %}" />
-                            <text class="map-node__label" text-anchor="{{ node.anchor }}" x="{% if node.anchor == 'end' %}-18{% elif node.anchor == 'middle' %}0{% else %}18{% endif %}" y="5">
-                                {{ node.label }}
+                            <title>{{ node_title }}</title>
+                            <text class="map-node__label" text-anchor="{{ node.anchor }}" y="5">
+                                {{ node_title }}
                             </text>
                         </a>
                         {% endfor %}
@@ -210,7 +223,7 @@
                 </svg>
             </div>
 
-            <div class="map-zoom-controls" aria-label="Map zoom controls">
+            <div class="map-zoom-controls" aria-label="{{ map_copy.zoomControlsAria }}">
                 <button class="map-zoom-controls__button" id="map-zoom-out" type="button" aria-label="{{ trans(key='mapZoomOut', lang=detected_lang) }}" title="{{ trans(key='mapZoomOut', lang=detected_lang) }}">
                     {% include "partials/icons/lucide-zoom-out.html" %}
                 </button>
