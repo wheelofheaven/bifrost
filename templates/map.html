@@ -5,6 +5,7 @@
 {% block content %}
 {% set map_ages = load_data(path="data/map/ages.json") %}
 {% set map_nodes = load_data(path="data/map/nodes.json") %}
+{% set earth_clusters = load_data(path="data/map/earth-nodes.json") %}
 
 <div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
@@ -29,7 +30,7 @@
                     xmlns="http://www.w3.org/2000/svg"
                 >
                     <title id="map-svg-title">Wheel of Heaven interactive content map</title>
-                    <desc id="map-svg-desc">A tilted precessional ellipse with linked age segments and concept nodes clustered around the twelve ages. Earth anchors the bottom of the map.</desc>
+                    <desc id="map-svg-desc">A tilted precessional ellipse with linked age segments and chronological nodes. Earth anchors the bottom of the map as a thematic navigation surface.</desc>
 
                     <defs>
                         <radialGradient id="map-earth-glow" cx="50%" cy="18%" r="82%">
@@ -96,7 +97,38 @@
                         </g>
                         <circle class="map-earth__horizon" cx="800" cy="2250" r="720" />
                         <line class="map-earth__axis" x1="618" y1="2370" x2="986" y2="1670" />
-                        <text class="map-earth__label" x="800" y="2115" text-anchor="middle">Earth</text>
+                        <text class="map-earth__label" x="800" y="1648" text-anchor="middle">GAIA</text>
+                        <text class="map-earth__sublabel" x="800" y="1678" text-anchor="middle">is alive</text>
+                    </g>
+
+                    <g class="map-earth-connectors" id="map-earth-connectors" aria-hidden="true"></g>
+
+                    <g class="map-earth-navigation" aria-label="Earth themes">
+                        {% for cluster in earth_clusters %}
+                        <g class="map-earth-cluster map-earth-cluster--{{ cluster.color }}" data-earth-cluster="{{ cluster.id }}">
+                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}">{{ cluster.label }}</text>
+                            <line class="map-earth-cluster__rule" x1="{{ cluster.x }}" y1="{{ cluster.y + 15 }}" x2="{{ cluster.x + 182 }}" y2="{{ cluster.y + 15 }}" />
+                            {% for node in cluster.nodes %}
+                            <a
+                                class="map-earth-node map-earth-node--{{ cluster.color }}"
+                                href="{{ get_url(path=node.href, lang=detected_lang) }}"
+                                data-earth-node-id="{{ node.id }}"
+                                data-earth-node-ages="{{ node.ages | join(sep=',') }}"
+                                data-earth-node-x="{{ node.x }}"
+                                data-earth-node-y="{{ node.y }}"
+                                data-map-title="{{ node.label }}"
+                                data-map-summary="{{ node.summary }}"
+                                data-map-meta="{{ cluster.label }}"
+                                transform="translate({{ node.x }} {{ node.y }})"
+                            >
+                                <title>{{ node.label }}</title>
+                                <circle class="map-earth-node__halo" r="15" />
+                                <circle class="map-earth-node__dot" r="5" />
+                                <text class="map-earth-node__label" x="16" y="5">{{ node.label }}</text>
+                            </a>
+                            {% endfor %}
+                        </g>
+                        {% endfor %}
                     </g>
 
                     <g class="map-cycle-field" transform="translate(0 180)">
@@ -115,6 +147,8 @@
                             data-map-title="{{ age.name }}"
                             data-map-summary="{{ age.summary }}"
                             data-map-meta="{{ age.dates }} · {{ age.day }}"
+                            data-map-point-x="{{ age.x }}"
+                            data-map-point-y="{{ age.y + 180 }}"
                         >
                             <title>{{ age.name }} — {{ age.dates }}</title>
                             <path class="map-age__hit" d="{{ age.path }}" />
