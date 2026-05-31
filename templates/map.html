@@ -6,7 +6,7 @@
 {% set map_ages = load_data(path="data/map/ages.json") %}
 {% set map_nodes = load_data(path="data/map/nodes.json") %}
 
-<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-map-filter="all">
+<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <header class="map-hero">
@@ -18,45 +18,11 @@
     </header>
 
     <section class="map-shell" aria-labelledby="map-title">
-        <div class="map-toolbar" aria-label="Map controls">
-            <div class="map-toolbar__filters" role="group" aria-label="Filter map nodes">
-                <button type="button" class="map-toolbar__chip map-toolbar__chip--active" data-map-filter="all" aria-pressed="true">All</button>
-                <button type="button" class="map-toolbar__chip" data-map-filter="timeline" aria-pressed="false">Ages</button>
-                <button type="button" class="map-toolbar__chip" data-map-filter="concept" aria-pressed="false">Concepts</button>
-                <button type="button" class="map-toolbar__chip" data-map-filter="source" aria-pressed="false">Sources</button>
-            </div>
-            <div class="map-toolbar__actions">
-                <button class="map-toolbar__btn" id="map-fullscreen-btn" type="button">
-                    <svg class="icon-expand" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="15 3 21 3 21 9"></polyline>
-                        <polyline points="9 21 3 21 3 15"></polyline>
-                        <line x1="21" y1="3" x2="14" y2="10"></line>
-                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                    </svg>
-                    <svg class="icon-collapse" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="4 14 10 14 10 20"></polyline>
-                        <polyline points="20 10 14 10 14 4"></polyline>
-                        <line x1="14" y1="10" x2="21" y2="3"></line>
-                        <line x1="3" y1="21" x2="10" y2="14"></line>
-                    </svg>
-                    <span>{{ trans(key="mapFullscreen", lang=detected_lang) }}</span>
-                </button>
-                <button class="map-toolbar__btn" id="map-print-btn" type="button">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <polyline points="6 9 6 2 18 2 18 9"></polyline>
-                        <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
-                        <rect x="6" y="14" width="12" height="8"></rect>
-                    </svg>
-                    <span>{{ trans(key="mapPrint", lang=detected_lang) }}</span>
-                </button>
-            </div>
-        </div>
-
         <div class="map-layout">
             <div class="map-stage" id="map-stage">
                 <svg
                     class="map-canvas"
-                    viewBox="-80 -120 1760 1280"
+                    viewBox="-200 -160 2000 2600"
                     preserveAspectRatio="xMidYMid meet"
                     role="img"
                     aria-labelledby="map-svg-title map-svg-desc"
@@ -78,7 +44,7 @@
                         </filter>
                     </defs>
 
-                    <rect class="map-canvas__bg" x="-80" y="-120" width="1760" height="1280" rx="34" />
+                    <rect class="map-canvas__bg" x="-200" y="-160" width="2000" height="2600" rx="34" />
 
                     <g class="map-stars" aria-hidden="true">
                         <circle cx="174" cy="166" r="1.6" />
@@ -89,9 +55,13 @@
                         <circle cx="1228" cy="560" r="1.2" />
                         <circle cx="1392" cy="628" r="1.4" />
                         <circle cx="1455" cy="116" r="1.2" />
+                        <circle cx="190" cy="1220" r="1.2" />
+                        <circle cx="1420" cy="1390" r="1.4" />
+                        <circle cx="310" cy="1640" r="1.1" />
+                        <circle cx="1300" cy="1740" r="1.3" />
                     </g>
 
-                    <g class="map-earth" aria-label="Earth">
+                    <g class="map-earth" aria-label="Earth" transform="translate(0 900)">
                         <ellipse class="map-earth__atmosphere" cx="800" cy="1068" rx="790" ry="352" />
                         <g clip-path="url(#map-earth-clip)">
                             <image
@@ -110,6 +80,7 @@
                         <text class="map-earth__label" x="800" y="1002" text-anchor="middle">Earth</text>
                     </g>
 
+                    <g class="map-cycle-field" transform="translate(0 180)">
                     <g class="map-orbit" aria-label="Precessional cycle">
                         <ellipse class="map-orbit__guide" cx="800" cy="385" rx="545" ry="285" transform="rotate(-23.44 800 385)" />
                         <ellipse class="map-orbit__guide map-orbit__guide--inner" cx="800" cy="385" rx="475" ry="240" transform="rotate(-23.44 800 385)" />
@@ -182,21 +153,10 @@
                         </a>
                         {% endfor %}
                     </g>
+                    </g>
                 </svg>
             </div>
 
-            <aside class="map-panel" aria-live="polite">
-                <div class="map-panel__eyebrow" data-map-panel-meta>Age of Aquarius</div>
-                <h2 class="map-panel__title" data-map-panel-title>Age of Aquarius</h2>
-                <p class="map-panel__text" data-map-panel-summary>Revelation, technological maturity, and the return question.</p>
-                <a class="map-panel__link" data-map-panel-link href="{{ get_url(path='timeline/age-of-aquarius/', lang=detected_lang) }}">
-                    <span>Open page</span>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-                        <line x1="5" y1="12" x2="19" y2="12"/>
-                        <polyline points="12 5 19 12 12 19"/>
-                    </svg>
-                </a>
-            </aside>
         </div>
     </section>
 </div>
