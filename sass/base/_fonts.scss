@@ -1,27 +1,14 @@
 // Fonts
 
-// iAWriterQuattroS — local() only, no url() fetch.
-//
-// Chrome's preload scanner speculatively fetches webfonts declared
-// via @font-face in inlined <style> blocks at VeryHigh priority,
-// even when no rule actually uses the font for a rendered glyph.
-// On the landing page that ~91 KB fetch (Regular + Bold) was
-// bandwidth-starving the §1 LCP poster and adding ~2s to LCP on
-// the simulated mobile profile.
-//
-// Removing url() means visitors with iAWriterQuattroS installed
-// locally still get the proper rendering; everyone else falls
-// through to the system mono in the $font-family-tech stack. The
-// 2026-05 perf pass swapped iAWriter for system mono in every
-// landing-DOM selector anyway, so the only remaining users are
-// wiki / library / article prose — and a system mono there is an
-// acceptable trade for a 91 KB cold-cache cut on every page.
 @font-face {
     font-family: iAWriterQuattroS;
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local("iAWriterQuattroS-Regular");
+    src:
+        local("iAWriterQuattroS-Regular"),
+        url("fonts/vendor/ia-writer-quattro/iAWriterQuattroS-Regular.woff2")
+            format("woff2");
 }
 
 @font-face {
@@ -29,7 +16,10 @@
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: local("iAWriterQuattroS-Bold");
+    src:
+        local("iAWriterQuattroS-Bold"),
+        url("fonts/vendor/ia-writer-quattro/iAWriterQuattroS-Bold.woff2")
+            format("woff2");
 }
 
 @font-face {
