@@ -100,6 +100,14 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
             &::before { opacity: 0.85; }
         }
+
+        // Solo card — used on the landing-page §7 where there is no
+        // .read__path-discover button below. The .read__path-main
+        // default rounds only its top corners (it sits above the
+        // discover bar on /read/); --solo asks it to round all four.
+        &--solo .read__path-main {
+            border-radius: v.$border-radius-lg;
+        }
     }
 
     // The main click target inside the card — wraps icon + eyebrow +
