@@ -1383,13 +1383,15 @@
 
         &__summary,
         &__alternatives,
-        &__program-chip {
-            // Program-chip lives below the title on grid cards; hiding it
-            // in list view keeps WoH-translation rows the same height as
-            // plain rows (every list row is one line). WoH curation is
-            // still distinguishable via the rainbow stripe on the left
-            // edge (`.wiki-card--preferred::before`) and the logomark
-            // next to the title (`.wiki-card__preferred-mark`).
+        &__program-chip,
+        &__version {
+            // Program-chip and version live below the title on grid
+            // cards; hiding them in list view keeps WoH-translation rows
+            // the same height as plain rows (every list row is one
+            // line). WoH curation is still distinguishable via the
+            // rainbow stripe on the left edge
+            // (`.wiki-card--preferred::before`) and the logomark next
+            // to the title (`.wiki-card__preferred-mark`).
             display: none;
         }
 
