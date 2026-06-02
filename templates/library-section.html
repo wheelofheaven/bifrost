@@ -203,6 +203,22 @@
                         <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
                     </button>
 
+                    <!-- Expand / Collapse all tradition groups. Pairs with
+                         the rail accordion: rail tile clicks collapse to
+                         one open group, and this button toggles between
+                         "all expanded" and "all collapsed". -->
+                    <button type="button"
+                            class="wiki-filters__expand-toggle"
+                            id="library-expand-toggle"
+                            aria-pressed="false"
+                            title="Expand all traditions"
+                            aria-label="Expand all traditions">
+                        <svg class="wiki-filters__expand-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="7 13 12 18 17 13"></polyline>
+                            <polyline points="7 6 12 11 17 6"></polyline>
+                        </svg>
+                    </button>
+
                     <!-- View Toggle -->
                     <div class="wiki-view-toggle">
                         <button class="wiki-view-toggle__btn wiki-view-toggle__btn--active" data-view="grid" title="Grid view">
@@ -596,6 +612,39 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
     viewToggle.forEach(btn => btn.addEventListener('click', () => toggleView(btn.dataset.view)));
+
+    // Expand-all / collapse-all toggle. Pairs with the tradition rail
+    // accordion: the rail click leaves only one group open; this button
+    // lets the reader pop everything back open (or collapse them all
+    // for a tighter overview). aria-pressed reflects the *target* of
+    // the next click — `false` = next click expands, `true` = next
+    // click collapses.
+    const expandToggle = document.getElementById('library-expand-toggle');
+    if (expandToggle) {
+        function reflectExpandState() {
+            const total = groupDetails.length;
+            if (!total) return;
+            const openCount = groupDetails.filter(d => d.open).length;
+            const allOpen = openCount === total;
+            expandToggle.setAttribute('aria-pressed', allOpen ? 'true' : 'false');
+            expandToggle.setAttribute('title', allOpen ? 'Collapse all traditions' : 'Expand all traditions');
+            expandToggle.setAttribute('aria-label', allOpen ? 'Collapse all traditions' : 'Expand all traditions');
+        }
+        reflectExpandState();
+        // Keep button state in sync when other things (rail accordion,
+        // user-clicked summaries) flip a group open/closed.
+        groupDetails.forEach(d => d.addEventListener('toggle', reflectExpandState));
+        expandToggle.addEventListener('click', () => {
+            const total = groupDetails.length;
+            const openCount = groupDetails.filter(d => d.open).length;
+            const shouldOpen = openCount < total;
+            groupDetails.forEach(d => {
+                if (shouldOpen) d.setAttribute('open', '');
+                else d.removeAttribute('open');
+            });
+            reflectExpandState();
+        });
+    }
 });
 </script>
 
