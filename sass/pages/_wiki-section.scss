@@ -1065,25 +1065,27 @@
     &.hidden { display: none; }
 
     &__header {
-        margin: 0 0 1rem;
+        margin: 0 0 vars.$spacing-md;
         display: flex;
         flex-direction: column;
-        gap: 0.25rem;
+        gap: vars.$spacing-2xs;
     }
 
+    // Mirror `.category-rail__title` (components/_category-rail.scss) so
+    // Featured reads as a peer section heading rather than a small
+    // uppercase eyebrow. Both blocks now share display-lead typography,
+    // size-xl, full text color.
     &__title {
-        font-family: typo.$font-family-tech;
-        font-size: 0.75rem;
-        font-weight: 700;
-        color: var(--color-text-muted);
-        text-transform: uppercase;
-        letter-spacing: 0.12em;
         margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: vars.$font-size-xl;
+        font-weight: 700;
+        color: var(--color-text);
     }
 
     &__lede {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: vars.$font-size-sm;
         line-height: 1.5;
         color: var(--color-text-muted);
     }
