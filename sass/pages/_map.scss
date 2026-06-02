@@ -244,11 +244,11 @@ body:has(.map-page) .to-top {
     }
 
     &__image {
-        opacity: 0.88;
+        opacity: 0.62;
     }
 
     &__shade {
-        fill: color-mix(in srgb, var(--map-bg) 18%, transparent);
+        fill: color-mix(in srgb, var(--map-bg) 30%, transparent);
     }
 
     &__horizon,
@@ -316,16 +316,16 @@ body:has(.map-page) .to-top {
     &__label {
         fill: var(--earth-accent);
         font-family: var(--font-family-tech, var(--font-family-body));
-        font-size: 19px;
-        font-weight: 800;
+        font-size: 15px;
+        font-style: italic;
+        font-weight: 700;
         letter-spacing: 0;
+        opacity: 0.78;
         text-transform: uppercase;
     }
 
     &__rule {
-        stroke: var(--earth-accent);
-        stroke-width: 1.4;
-        opacity: 0.72;
+        display: none;
     }
 }
 
@@ -351,14 +351,32 @@ body:has(.map-page) .to-top {
 
     &__label {
         fill: var(--map-text);
-        font-size: 17px;
-        font-weight: 700;
+        font-size: 15px;
+        font-weight: 600;
         paint-order: stroke;
         pointer-events: bounding-box;
         stroke: color-mix(in srgb, var(--map-bg) 86%, transparent);
         stroke-linejoin: round;
         stroke-width: 5px;
         transition: fill 0.18s ease, filter 0.18s ease;
+    }
+
+    &--strong {
+        opacity: 0.94;
+
+        .map-earth-node__label {
+            font-size: 17px;
+            font-weight: 800;
+        }
+    }
+
+    &--quiet {
+        opacity: 0.62;
+
+        .map-earth-node__label {
+            font-size: 14px;
+            font-weight: 550;
+        }
     }
 
     &:hover,
