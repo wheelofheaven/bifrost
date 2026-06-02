@@ -4634,11 +4634,13 @@
     }
 }
 
-// Inline confidence badge for back-rendered cuneiform. Rendered as a real
-// <span> rather than a ::after pseudo so it can carry title + aria-label
-// (pseudo-elements don't participate in the accessibility tree). The
-// half-circle vs quarter-circle distinguishes partial from low at a glance.
+// Inline confidence badge for back-rendered cuneiform. The badge itself is
+// a half-circle (partial) or quarter-circle (low) glyph; hover/focus reveals
+// a glassmorphic overlay matching the claim-badge tooltip pattern from
+// components/_claim-badge.scss. Rendered as a real <span> with role="button"
+// + tabindex so keyboard users can tab through and read the explanation.
 .library-book__cuneiform-badge {
+    position: relative;
     display: inline-block;
     margin-left: vars.$spacing-2xs;
     color: var(--color-text-muted);
@@ -4647,9 +4649,76 @@
     vertical-align: super;
     opacity: 0.7;
     cursor: help;
+    transition: opacity 0.15s ease;
 
-    &:focus,
-    &:hover {
+    &:hover,
+    &:focus-visible {
         opacity: 1;
     }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+        border-radius: vars.$border-radius-xs;
+    }
+
+    // ---- Glassmorphic explainer tooltip ----
+    // Mirrors the claim-badge tooltip: max-width 16rem, backdrop-filter
+    // glass, hidden by default, shown on parent hover/focus.
+    &__tooltip {
+        position: absolute;
+        top: calc(100% + 0.5rem);
+        left: 50%;
+        transform: translate(-50%, -4px);
+        z-index: 100;
+        width: max-content;
+        max-width: 18rem;
+        padding: 0.75rem 0.875rem;
+        border-radius: vars.$border-radius-md;
+        background: var(--color-card-bg);
+        border: 1px solid var(--color-hairline);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+        color: var(--color-text);
+        font-family: typo.$font-family-sans;
+        font-weight: 400;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        text-align: left;
+        cursor: default;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.2s ease, transform 0.2s ease,
+            visibility 0.2s ease;
+        pointer-events: none;
+    }
+
+    &__tooltip-title {
+        display: block;
+        margin-bottom: 0.25rem;
+        color: var(--color-accent-primary);
+        font-weight: 600;
+        font-size: 0.8125rem;
+    }
+
+    &__tooltip-body {
+        display: block;
+        color: var(--color-text-muted);
+    }
+
+    &:hover &__tooltip,
+    &:focus-visible &__tooltip,
+    &:focus-within &__tooltip {
+        opacity: 1;
+        visibility: visible;
+        transform: translate(-50%, 0);
+        pointer-events: auto;
+    }
+}
+
+[data-theme="dark"] .library-book__cuneiform-badge__tooltip {
+    background: rgba(27, 31, 34, 0.92);
+    border-color: rgba(255, 255, 255, 0.12);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
