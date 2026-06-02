@@ -257,7 +257,13 @@
                 {% if original_title_differs %}
                 <div class="library-book__original-title">
                     <span class="library-book__meta-label">{{ trans(key="libraryOriginalTitle", lang=detected_lang) }}</span>
-                    <span class="library-book__original-text">{{ book_data.titles[original_lang] }}</span>
+                    {# Prefer the catalog `originalTitle` when present — for
+                       Sumerian/Akkadian books this carries the cuneiform-
+                       plus-transliteration display string (e.g. "𒀭𒂗𒆠 𒅇
+                       𒀭𒊩𒈠𒅗 (den-ki u3 dnin-maḫ)"). Falls back to the bare
+                       per-language title from _meta.json, which is what
+                       Hebrew/Greek books rely on. #}
+                    <span class="library-book__original-text" lang="{{ original_lang }}">{% if current_book_entry and current_book_entry.originalTitle %}{{ current_book_entry.originalTitle }}{% else %}{{ book_data.titles[original_lang] }}{% endif %}</span>
                 </div>
                 {% endif %}
 
