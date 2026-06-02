@@ -416,6 +416,20 @@
     </div>
 </div>
 
+{# Pre-render a category-name → inline-SVG map so the dynamic "Group by
+   Topics" rebuild in regroup() can attach the matching icon to each
+   generated category-group header. Server-side macro call here means
+   the JS doesn't need its own copy of the binding table — single
+   source of truth in data/icons.json. #}
+<script>
+window.WIKI_CATEGORY_ICONS = {
+{% set all_categories = section.pages | map(attribute="extra.category") | unique | sort %}
+{% for category in all_categories %}{% if category %}
+    {{ category | json_encode | safe }}: {{ section_icons::wiki_category(slug=category) | json_encode | safe }}{% if not loop.last %},{% endif %}
+{% endif %}{% endfor %}
+};
+</script>
+
 <script>
 // Wiki Discovery JavaScript — cards are grouped by topic/A-Z/date.
 // Switching modes rebuilds the DOM groupings from the flat card list.
@@ -514,7 +528,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 header.className = 'category-group__header';
                 const title = document.createElement('h2');
                 title.className = 'category-group__title';
-                title.textContent = groupLabelFn(key);
+                // Topics mode: prepend the category's Game-Icons glyph so
+                // the dynamically-rebuilt header matches the
+                // server-rendered rail tiles and card chips. Lookup table
+                // is pre-rendered into `window.WIKI_CATEGORY_ICONS` from
+                // the same `section_icons::wiki_category` macro.
+                if (mode === 'topics') {
+                    const iconSvg = (window.WIKI_CATEGORY_ICONS || {})[key];
+                    if (iconSvg) {
+                        const iconSpan = document.createElement('span');
+                        iconSpan.className = 'section-mark section-mark--chip category-group__icon';
+                        iconSpan.setAttribute('aria-hidden', 'true');
+                        iconSpan.innerHTML = iconSvg;
+                        title.appendChild(iconSpan);
+                    }
+                    const titleText = document.createElement('span');
+                    titleText.className = 'category-group__title-text';
+                    titleText.textContent = groupLabelFn(key);
+                    title.appendChild(titleText);
+                } else {
+                    title.textContent = groupLabelFn(key);
+                }
                 header.appendChild(title);
                 section.appendChild(header);
 
