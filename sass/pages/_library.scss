@@ -1053,9 +1053,37 @@
             color: var(--color-text);
 
             &:hover {
-                background: var(--color-background);
-                border-color: var(--color-accent-primary);
-                color: var(--color-accent-primary);
+                // Subtle hover — no accent border. Tone-shift on the
+                // background is enough of a cue; the accent ring read
+                // as a heavy stroke and visually rhymed with an active
+                // state, which made the inactive button look toggled-on.
+                background: var(--color-hover);
+                color: var(--color-text);
+            }
+
+            // Active state — cloud-duo gradient fill behind the label.
+            // Same recipe as the ghost variant's active state (the
+            // sidebar Interlinear toggle uses --secondary by default and
+            // gets the gradient only when the toggle is on).
+            &.library-book__btn--active {
+                position: relative;
+                isolation: isolate;
+                overflow: hidden;
+                background: var(--color-background-secondary);
+                border-color: var(--color-hairline);
+                color: var(--color-text);
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: -25%;
+                    z-index: -1;
+                    background:
+                        radial-gradient(circle at 20% 25%, #{rgba(colors.$mint, 0.55)} 0%, transparent 60%),
+                        radial-gradient(circle at 80% 75%, #{rgba(colors.$mauve-500, 0.55)} 0%, transparent 60%);
+                    filter: blur(6px);
+                    pointer-events: none;
+                }
             }
         }
 
