@@ -213,55 +213,43 @@
     }
 }
 
-// Discovery Footer
+// "About the X" footer at the bottom of /library/ and /wiki/. Previously
+// rendered as a centered glass-panel card with a vivid gradient icon
+// block — visually a marketing-style hero that read as foreign to the
+// rest of the page (which is left-aligned cards + hairline-separated
+// sections). Now: a quiet, left-aligned section that mirrors the
+// `.category-rail` / `.wiki-featured` heading typography, separated
+// from the listings above by a single hairline rule. Stats become
+// compact factoids rather than display numbers.
 .wiki-footer {
-    margin-top: 4rem;
-    padding: 3rem 2rem;
-    background: var(--color-background-secondary);
-    border-radius: 1rem;
-    border: 1px solid var(--color-hairline);
-    text-align: center;
+    margin-top: vars.$spacing-3xl;
+    padding-top: vars.$spacing-xl;
+    border-top: 1px solid var(--color-hairline-subtle);
+    text-align: left;
 
     @media (max-width: 768px) {
-        padding: 2rem 1rem;
-        margin-top: 3rem;
+        margin-top: vars.$spacing-2xl;
+        padding-top: vars.$spacing-lg;
     }
 
-    &__icon {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 64px;
-        height: 64px;
-        margin-bottom: 1rem;
-        border-radius: 0.75rem;
-        background: linear-gradient(
-            135deg,
-            var(--color-accent-primary),
-            var(--color-accent-secondary)
-        );
-        color: white;
-
-        svg {
-            width: 32px;
-            height: 32px;
-        }
-    }
+    // Big gradient icon block retired. The markup may still ship for
+    // back-compat (older Zola cached pages), so hide it via CSS too.
+    &__icon { display: none; }
 
     &__title {
-        margin: 0 0 1rem 0;
+        margin: 0 0 vars.$spacing-2xs;
         font-family: var(--font-family-lead);
-        font-size: 1.5rem;
+        font-size: vars.$font-size-xl;
         font-weight: 700;
         color: var(--color-text);
     }
 
     &__description {
-        margin: 0 auto 2rem;
-        font-size: 1rem;
-        line-height: 1.7;
+        margin: 0 0 vars.$spacing-lg;
+        max-width: 70ch;
+        font-size: vars.$font-size-sm;
+        line-height: 1.6;
         color: var(--color-text-muted);
-        max-width: 700px;
 
         a {
             color: var(--color-accent-primary);
@@ -272,41 +260,79 @@
 
     &__stats {
         display: flex;
-        justify-content: center;
-        gap: 3rem;
-        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: vars.$spacing-lg vars.$spacing-2xl;
+        margin-bottom: vars.$spacing-lg;
+        justify-content: flex-start;
 
         @media (max-width: 480px) {
-            gap: 1.5rem;
+            gap: vars.$spacing-md vars.$spacing-xl;
         }
     }
 
     &__stat {
-        text-align: center;
+        text-align: left;
     }
 
     &__stat-number {
         display: block;
         font-family: typo.$font-family-tech;
-        font-size: 2rem;
+        font-size: vars.$font-size-2xl;
         font-weight: 700;
-        color: var(--color-accent-primary);
+        color: var(--color-text);
         line-height: 1;
 
         @media (max-width: 480px) {
-            font-size: 1.5rem;
+            font-size: vars.$font-size-xl;
         }
     }
 
     &__stat-label {
         display: block;
+        margin-top: vars.$spacing-2xs;
         font-family: typo.$font-family-tech;
-        font-size: 0.75rem;
+        font-size: vars.$font-size-xs;
         font-weight: 600;
         color: var(--color-text-muted);
         text-transform: uppercase;
-        letter-spacing: 0.1em;
-        margin-top: 0.25rem;
+        letter-spacing: 0.08em;
+    }
+
+    // Reference-format subsection — small note under the stats explaining
+    // how to address a specific verse (e.g. `GEN-WOH-1:1`). Previously
+    // unstyled (used default h3 sizing which clashed with the rest of
+    // the section). Now a small uppercase tech-label + muted body.
+    &__reference {
+        margin-top: vars.$spacing-lg;
+        padding-top: vars.$spacing-md;
+        border-top: 1px dashed var(--color-hairline-subtle);
+        max-width: 70ch;
+    }
+
+    &__reference-title {
+        margin: 0 0 vars.$spacing-2xs;
+        font-family: typo.$font-family-tech;
+        font-size: vars.$font-size-xs;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    &__reference-text {
+        margin: 0;
+        font-size: vars.$font-size-sm;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+
+        code {
+            padding: 0 0.3rem;
+            border-radius: vars.$border-radius-xs;
+            background: var(--color-hover);
+            color: var(--color-text);
+            font-family: typo.$font-family-tech;
+            font-size: 0.95em;
+        }
     }
 
     &__recent {

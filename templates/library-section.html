@@ -459,17 +459,9 @@
         </section>
         {% endif %}
 
-        <!-- Discovery Footer -->
+        <!-- About-the-Library footer — sits at the bottom of the page as
+             a quiet section, hairline-separated from the listings above. -->
         <footer class="wiki-footer">
-            <div class="wiki-footer__icon">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                    <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    <path d="M8 7h8"></path>
-                    <path d="M8 11h8"></path>
-                    <path d="M8 15h6"></path>
-                </svg>
-            </div>
             <h2 class="wiki-footer__title">{{ trans(key="libraryFooterAboutTitle", lang=detected_lang) }}</h2>
             {% if section.description %}
             <p class="wiki-footer__description">{{ section.description }}</p>
