@@ -1,3 +1,31 @@
+{# BCP-47 / ISO language code -> human-readable display name. Used by
+   library cards + book pages to surface the original language of a
+   translated work. Falls back to the upper-case code for unknown
+   codes so the field never goes silent. #}
+{% macro lang_name(code) %}
+{%- if code == "he" -%}Ancient Hebrew
+{%- elif code == "grc" -%}Ancient Greek
+{%- elif code == "akk" -%}Akkadian
+{%- elif code == "sux" -%}Sumerian
+{%- elif code == "uga" -%}Ugaritic
+{%- elif code == "arc" -%}Aramaic
+{%- elif code == "ar" or code == "arb" -%}Classical Arabic
+{%- elif code == "gez" -%}Geʿez
+{%- elif code == "egy" -%}Ancient Egyptian
+{%- elif code == "sa" -%}Sanskrit
+{%- elif code == "fr" -%}French
+{%- elif code == "en" -%}English
+{%- elif code == "de" -%}German
+{%- elif code == "es" -%}Spanish
+{%- elif code == "ru" -%}Russian
+{%- elif code == "ja" -%}Japanese
+{%- elif code == "ko" -%}Korean
+{%- elif code == "zh" -%}Chinese
+{%- elif code == "zh-Hant" -%}Traditional Chinese
+{%- else -%}{{ code | upper }}
+{%- endif -%}
+{% endmacro %}
+
 {# Macro to get the title of a book in the current language #}
 {% macro get_book_title(book_data, lang) %}
     {%- if book_data.titles[lang] -%}

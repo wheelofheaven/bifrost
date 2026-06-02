@@ -3930,6 +3930,22 @@
             margin: 0;
             flex-shrink: 0;
         }
+
+        // Multi-line variant — used for long values like the source
+        // citation that don't fit on one right-aligned line. Stacks
+        // label above value, value gets full width + left alignment.
+        &--source {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0.25rem;
+
+            .library-book__meta-value {
+                text-align: left;
+                color: var(--color-text-muted);
+                font-size: 0.8125rem;
+                line-height: 1.5;
+            }
+        }
     }
 
     &__meta-value {

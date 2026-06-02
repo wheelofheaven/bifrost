@@ -292,6 +292,40 @@
                     </div>
                     {% endif %}
 
+                    {# Original language of the source text. Distinct from
+                       `primaryLang` (which is the language this edition
+                       reads in). Only render when the field is set —
+                       most editions of canonical works (Bible books,
+                       Quran, ANE compositions, etc.) have it. #}
+                    {% if current_book_entry and current_book_entry.originalLang %}
+                    <div class="library-book__meta-row">
+                        <span class="library-book__meta-label">Original</span>
+                        <span class="library-book__meta-value" lang="{{ current_book_entry.originalLang }}">{{ library_macros::lang_name(code=current_book_entry.originalLang) }}</span>
+                    </div>
+                    {% endif %}
+
+                    {# Source / witness text — where this edition came from.
+                       Prefers the structured `versionSource` (URL or short
+                       citation, used by WoH translations). Falls back to
+                       a truncated `translationNote` for legacy imports
+                       where the source info is in prose form. #}
+                    {% if current_book_entry and (current_book_entry.versionSource or current_book_entry.translationNote) %}
+                    <div class="library-book__meta-row library-book__meta-row--source">
+                        <span class="library-book__meta-label">Source</span>
+                        <span class="library-book__meta-value">
+                            {% if current_book_entry.versionSource %}
+                                {% if current_book_entry.versionSource is starting_with("http") %}
+                                <a href="{{ current_book_entry.versionSource | safe }}" target="_blank" rel="noopener noreferrer">{{ current_book_entry.versionSource | safe }}</a>
+                                {% else %}
+                                {{ current_book_entry.versionSource }}
+                                {% endif %}
+                            {% else %}
+                                {{ current_book_entry.translationNote | truncate(length=240, end="…") }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    {% endif %}
+
                     {% if book_chapters %}
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">{{ trans(key="libraryChapters", lang=detected_lang) }}</span>

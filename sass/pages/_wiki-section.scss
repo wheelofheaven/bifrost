@@ -632,6 +632,28 @@
         white-space: nowrap;
     }
 
+    // Original-language pill on library cards. Sits next to the code
+    // (`.wiki-card__category`) in the header when the book is a
+    // translation (originalLang != primaryLang). Quieter than the code
+    // pill — muted text on the same secondary surface, no uppercase
+    // transform, no accent color — so it reads as a secondary fact, not
+    // a section/code identifier.
+    &__lang {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        background: var(--color-background-tertiary);
+        border: 1px solid var(--color-hairline);
+        padding: 0.2rem 0.45rem;
+        border-radius: 0.25rem;
+        letter-spacing: 0.02em;
+        white-space: nowrap;
+    }
+
     // Game-Icons glyph next to the category label on wiki cards. Sized to
     // match the cap-height of the surrounding tech-font label so the chip
     // doesn't grow vertically.

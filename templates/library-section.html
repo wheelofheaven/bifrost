@@ -336,6 +336,15 @@
                                         {% if book_entry.code %}
                                         <span class="wiki-card__category">{{ book_entry.code }}</span>
                                         {% endif %}
+                                        {# "From: <language>" pill — only when the original-language
+                                           differs from what the edition is in. Surfaces e.g. that the
+                                           ASV-1901 Genesis is a translation from Hebrew, that the
+                                           Sumerian Flood Story renders from Sumerian, etc. Hidden for
+                                           books written in their own original language (Raëlian
+                                           originals in French, the Bible book in its native script). #}
+                                        {% if book_entry.originalLang and book_entry.primaryLang != book_entry.originalLang %}
+                                        <span class="wiki-card__lang" lang="{{ book_entry.originalLang }}" title="Translated from {{ library_macros::lang_name(code=book_entry.originalLang) }}">{{ library_macros::lang_name(code=book_entry.originalLang) }}</span>
+                                        {% endif %}
                                     </div>
 
                                     {% if is_translation_program %}
