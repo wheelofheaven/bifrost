@@ -132,7 +132,8 @@
                         data-rail-filter="wiki-category-filter"
                         data-rail-filter-value="{{ category }}"
                         aria-label="Filter to {{ category }}">
-                    <span class="category-rail__tile-badge">{{ category }}</span>
+                    <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::wiki_category(slug=category) }}</span>
+                    <h3 class="category-rail__tile-title">{{ category }}</h3>
                     <span class="category-rail__tile-count">{{ c_count }} {{ trans(key="wikiCountSuffix", lang=detected_lang) }}</span>
                     {# Peek of up to 4 entry titles in this category so each
                        tile reads as a category card, not just a filter chip. #}
@@ -266,7 +267,10 @@
                                     <a href="{{ page.permalink }}" class="wiki-card__link">{{ page.title }}</a>
                                 </h3>
                                 {% if page.extra.category %}
-                                <span class="wiki-card__category">{{ page.extra.category }}</span>
+                                <span class="wiki-card__category">
+                                    <span class="wiki-card__category-icon" aria-hidden="true">{{ section_icons::wiki_category(slug=page.extra.category) }}</span>
+                                    <span class="wiki-card__category-text">{{ page.extra.category }}</span>
+                                </span>
                                 {% endif %}
                             </div>
 

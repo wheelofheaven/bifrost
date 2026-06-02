@@ -79,6 +79,34 @@
 {% endif %}
 {% endmacro event_type %}
 
+{# Wiki category resolver — bound to the 18 distinct categories that appear
+   on /wiki/. Slug here is the raw category string from `extra.category`
+   (e.g. "Cosmology & Framework", "Raëlism") so the macro is called as
+   `section_icons::wiki_category(slug=page.extra.category)`. #}
+{% macro wiki_category(slug) %}
+{% set registry = load_data(path="data/icons.json") %}
+{% set id = registry.bindings.wiki_category[slug] | default(value="") %}
+{% if id == "game-bookmarklet" %}{% include "partials/icons/game-bookmarklet.html" %}
+{% elif id == "game-circuitry" %}{% include "partials/icons/game-circuitry.html" %}
+{% elif id == "game-cosmic-egg" %}{% include "partials/icons/game-cosmic-egg.html" %}
+{% elif id == "game-eclipse" %}{% include "partials/icons/game-eclipse.html" %}
+{% elif id == "game-galaxy" %}{% include "partials/icons/game-galaxy.html" %}
+{% elif id == "game-inner-self" %}{% include "partials/icons/game-inner-self.html" %}
+{% elif id == "game-lotus" %}{% include "partials/icons/game-lotus.html" %}
+{% elif id == "game-lyre" %}{% include "partials/icons/game-lyre.html" %}
+{% elif id == "game-orbital" %}{% include "partials/icons/game-orbital.html" %}
+{% elif id == "game-ouroboros" %}{% include "partials/icons/game-ouroboros.html" %}
+{% elif id == "game-prayer-beads" %}{% include "partials/icons/game-prayer-beads.html" %}
+{% elif id == "game-scales" %}{% include "partials/icons/game-scales.html" %}
+{% elif id == "game-scroll-quill" %}{% include "partials/icons/game-scroll-quill.html" %}
+{% elif id == "game-scroll-unfurled" %}{% include "partials/icons/game-scroll-unfurled.html" %}
+{% elif id == "game-stone-tablet" %}{% include "partials/icons/game-stone-tablet.html" %}
+{% elif id == "game-three-friends" %}{% include "partials/icons/game-three-friends.html" %}
+{% elif id == "game-treasure-map" %}{% include "partials/icons/game-treasure-map.html" %}
+{% elif id == "game-ufo" %}{% include "partials/icons/game-ufo.html" %}
+{% endif %}
+{% endmacro wiki_category %}
+
 {# Generic by-id renderer. Covers every icon in the registry so it
    can be used for any icon-by-id rendering need (e.g. preview pages,
    future debug/listing tooling). Templates that already know the
@@ -108,28 +136,44 @@
 {% elif id == "game-angel-trumpet" %}{% include "partials/icons/game-angel-trumpet.html" %}
 {% elif id == "game-ankh" %}{% include "partials/icons/game-ankh.html" %}
 {% elif id == "game-book-pile" %}{% include "partials/icons/game-book-pile.html" %}
+{% elif id == "game-bookmarklet" %}{% include "partials/icons/game-bookmarklet.html" %}
 {% elif id == "game-broken-tablet" %}{% include "partials/icons/game-broken-tablet.html" %}
 {% elif id == "game-candle" %}{% include "partials/icons/game-candle.html" %}
 {% elif id == "game-circling-fish" %}{% include "partials/icons/game-circling-fish.html" %}
+{% elif id == "game-circuitry" %}{% include "partials/icons/game-circuitry.html" %}
 {% elif id == "game-colombian-statue" %}{% include "partials/icons/game-colombian-statue.html" %}
 {% elif id == "game-column-vase" %}{% include "partials/icons/game-column-vase.html" %}
+{% elif id == "game-cosmic-egg" %}{% include "partials/icons/game-cosmic-egg.html" %}
 {% elif id == "game-crescent" %}{% include "partials/icons/game-crescent.html" %}
 {% elif id == "game-dna2" %}{% include "partials/icons/game-dna2.html" %}
 {% elif id == "game-dragon-balls" %}{% include "partials/icons/game-dragon-balls.html" %}
+{% elif id == "game-eclipse" %}{% include "partials/icons/game-eclipse.html" %}
 {% elif id == "game-egyptian-profile" %}{% include "partials/icons/game-egyptian-profile.html" %}
 {% elif id == "game-film-reel" %}{% include "partials/icons/game-film-reel.html" %}
 {% elif id == "game-fossil" %}{% include "partials/icons/game-fossil.html" %}
+{% elif id == "game-galaxy" %}{% include "partials/icons/game-galaxy.html" %}
 {% elif id == "game-hand-of-god" %}{% include "partials/icons/game-hand-of-god.html" %}
 {% elif id == "game-hexagram-eye" %}{% include "partials/icons/game-hexagram-eye.html" %}
+{% elif id == "game-inner-self" %}{% include "partials/icons/game-inner-self.html" %}
 {% elif id == "game-lotus" %}{% include "partials/icons/game-lotus.html" %}
-{% elif id == "game-megaphone" %}{% include "partials/icons/game-megaphone.html" %}
+{% elif id == "game-lyre" %}{% include "partials/icons/game-lyre.html" %}
 {% elif id == "game-meditation" %}{% include "partials/icons/game-meditation.html" %}
+{% elif id == "game-megaphone" %}{% include "partials/icons/game-megaphone.html" %}
 {% elif id == "game-om-lotus" %}{% include "partials/icons/game-om-lotus.html" %}
+{% elif id == "game-orbital" %}{% include "partials/icons/game-orbital.html" %}
+{% elif id == "game-ouroboros" %}{% include "partials/icons/game-ouroboros.html" %}
+{% elif id == "game-prayer-beads" %}{% include "partials/icons/game-prayer-beads.html" %}
 {% elif id == "game-satellite" %}{% include "partials/icons/game-satellite.html" %}
+{% elif id == "game-scales" %}{% include "partials/icons/game-scales.html" %}
+{% elif id == "game-scroll-quill" %}{% include "partials/icons/game-scroll-quill.html" %}
+{% elif id == "game-scroll-unfurled" %}{% include "partials/icons/game-scroll-unfurled.html" %}
 {% elif id == "game-sealed-scroll" %}{% include "partials/icons/game-sealed-scroll.html" %}
 {% elif id == "game-star-cycle" %}{% include "partials/icons/game-star-cycle.html" %}
 {% elif id == "game-stone-block" %}{% include "partials/icons/game-stone-block.html" %}
+{% elif id == "game-stone-tablet" %}{% include "partials/icons/game-stone-tablet.html" %}
 {% elif id == "game-tarot-the-magician" %}{% include "partials/icons/game-tarot-the-magician.html" %}
+{% elif id == "game-three-friends" %}{% include "partials/icons/game-three-friends.html" %}
+{% elif id == "game-treasure-map" %}{% include "partials/icons/game-treasure-map.html" %}
 {% elif id == "game-trumpet" %}{% include "partials/icons/game-trumpet.html" %}
 {% elif id == "game-ufo" %}{% include "partials/icons/game-ufo.html" %}
 {% elif id == "game-wax-tablet" %}{% include "partials/icons/game-wax-tablet.html" %}
