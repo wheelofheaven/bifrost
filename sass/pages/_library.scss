@@ -4608,29 +4608,63 @@
 }
 
 // =====================================================
-// Cuneiform parallel display
-// Sits between the translation and the transliteration in
-// `library-book__para-content`. Larger size because cuneiform glyphs
-// are visually dense and need vertical room; the unicode-range-bounded
-// Noto Sans Cuneiform face loads automatically for codepoints in the
-// Cuneiform block via the font stack. Confidence modifiers signal
-// where the OGSL mapper produced an incomplete or low-quality render.
+// Interlinear word-column layout (cuneiform + transliteration aligned)
+// Used by `__para-original--interlinear` (Sumerian / future Akkadian
+// books). Each word renders as a vertical column: cuneiform sign(s) on
+// top, transliteration beneath, baseline-aligned within the column. The
+// row wraps as a normal flex line so reading flows left-to-right and
+// breaks per the available measure. Both layers ride the same
+// interlinear gate — they're inside `__para-original`, which is hidden
+// until `.library-book--interlinear` is on the root.
 // =====================================================
-.library-book__para-cuneiform {
-    margin-top: vars.$spacing-xs;
+.library-book__interlinear-row {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 0.4rem 0.75rem;
+}
+
+.library-book__interlinear-word {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    white-space: nowrap;
+    line-height: 1;
+}
+
+.library-book__interlinear-cun {
     font-family: typo.$font-family-cuneiform;
     font-size: 1.5rem;
-    line-height: 1.6;
+    line-height: 1.4;
     color: var(--color-text);
-    word-break: keep-all;
+    min-height: 1.4em; // reserves the row even when this word is a gap
 
-    &--partial {
+    // Empty cuneiform slots (under a `[…]` or unmapped sign-name)
+    // render as a subtle horizontal rule so the gap is legible without
+    // distracting from the surrounding signs.
+    &[aria-hidden="true"]::before {
+        content: "·";
         color: var(--color-text-muted);
+        opacity: 0.4;
     }
+}
 
-    &--low {
-        color: var(--color-text-muted);
-        opacity: 0.7;
+.library-book__interlinear-translit {
+    margin-top: 0.15rem;
+    font-family: typo.$font-family-sans;
+    font-size: 0.8125rem;
+    line-height: 1.3;
+    color: var(--color-text-muted);
+    font-feature-settings: "kern" 1, "liga" 0;
+    text-align: center;
+}
+
+// Confidence-modifier hooks — colour cue the whole interlinear block
+// when the back-rendering is partial or low confidence.
+.library-book__para-original--interlinear {
+    .library-book__cuneiform-badge {
+        margin-left: 0.5rem;
+        align-self: center;
     }
 }
 
