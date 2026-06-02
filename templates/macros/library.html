@@ -131,8 +131,19 @@
             {% if has_translation and (has_cuneiform or source_text) %}
             <div class="library-book__para-original{% if has_cuneiform %} library-book__para-original--interlinear{% endif %}" lang="{{ original_lang }}">
                 {% if has_cuneiform %}
+                {# Per-script tokenization for interlinear word-pair alignment.
+                   Ugaritic uses the alphabetic-cuneiform word divider 𐎟
+                   (U+1039F) and the KTU dot separator " . " in translit —
+                   neither matches the Sumero-Akkadian space convention.
+                   Strip the KTU dot from translit and split cuneiform on
+                   the word divider so the token counts align 1:1. #}
+                {% if original_lang == "uga" %}
+                {% set cun_tokens = verse.cuneiform | split(pat="𐎟") %}
+                {% set translit_tokens = source_text | replace(from=" . ", to=" ") | split(pat=" ") %}
+                {% else %}
                 {% set cun_tokens = verse.cuneiform | split(pat=" ") %}
                 {% set translit_tokens = source_text | split(pat=" ") %}
+                {% endif %}
                 <span class="library-book__interlinear-row">
                     {% for cun_token in cun_tokens %}
                     <span class="library-book__interlinear-word">
