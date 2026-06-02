@@ -65,6 +65,74 @@
     {%- endif -%}
 {% endmacro %}
 
+{# Macro to render a single verse (paragraph or line) for library-book.html.
+   Supports both `paragraphs`-shape chapters (source in `verse.text`) and
+   `lines`-shape chapters (source in `verse.translit`). The caller computes
+   `ref_paragraph_text` for the parallel-reference display. #}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text) %}
+    {% set has_commentary = verse.commentary | default(value="") | trim != "" %}
+    {% set source_text = verse.text | default(value=verse.translit | default(value="")) %}
+    {% set has_translation = verse.i18n and verse.i18n[lang] %}
+    {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
+    {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
+    <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
+         id="c{{ chapter_n }}p{{ verse.n }}"
+         data-ref-id="{{ verse.refId | default(value='') }}"
+         onclick="selectParagraph('c{{ chapter_n }}p{{ verse.n }}')">
+        <div class="library-book__para-num">{{ verse.n }}</div>
+        <div class="library-book__para-content">
+            <div class="library-book__para-translation">
+                {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" aria-label="Open commentary for verse {{ verse.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
+            </div>
+            {% if ref_paragraph_text %}
+            <div class="library-book__para-reference" aria-label="Reference translation">{{ ref_paragraph_text }}</div>
+            {% endif %}
+            {% if has_cuneiform %}
+            <div class="library-book__para-cuneiform{% if cuneiform_confidence %} library-book__para-cuneiform--{{ cuneiform_confidence }}{% endif %}" lang="{{ original_lang }}-Xsux" aria-label="Cuneiform">{{ verse.cuneiform }}</div>
+            {% endif %}
+            {% if has_translation and source_text %}
+            <div class="library-book__para-original" lang="{{ original_lang }}">{{ source_text }}</div>
+            {% endif %}
+        </div>
+        <div class="library-book__para-actions">
+            <button class="library-book__share-btn" onclick="event.stopPropagation(); shareParagraph('c{{ chapter_n }}p{{ verse.n }}')" title="Share this paragraph" aria-label="Share this paragraph">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16,6 12,2 8,6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                </svg>
+            </button>
+        </div>
+        {% if has_commentary %}
+        <div class="library-book__commentary-popover"
+             id="commentary-c{{ chapter_n }}p{{ verse.n }}"
+             role="dialog"
+             aria-label="Commentary on verse {{ verse.n }}"
+             aria-hidden="true"
+             onclick="event.stopPropagation()">
+            <header class="library-book__commentary-popover-header">
+                <div class="library-book__commentary-popover-heading">
+                    <span class="library-book__commentary-popover-title">Translation Commentary</span>
+                    <span class="library-book__commentary-popover-ref">Verse {{ verse.n }}</span>
+                </div>
+                <button class="library-book__commentary-popover-close"
+                        type="button"
+                        onclick="closeCommentary('c{{ chapter_n }}p{{ verse.n }}')"
+                        aria-label="Close commentary">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </header>
+            <div class="library-book__commentary-popover-body">
+                {{ verse.commentary | markdown | safe }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endmacro %}
+
 {# Macro to render a single paragraph with speaker and text #}
 {% macro render_paragraph(paragraph, lang, primary_lang) %}
     <div class="paragraph-container" id="para-{{ paragraph.n }}">

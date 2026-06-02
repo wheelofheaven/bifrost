@@ -143,72 +143,39 @@
                         </header>
 
                         <div class="library-book__text" id="text-content-{{ chapter.n }}">
-                            {% for paragraph in chapter.paragraphs %}
-                            {% set has_commentary = paragraph.commentary | default(value="") | trim != "" %}
-                            {# Look up matching reference paragraph by verse number (n). #}
-                            {% set ref_paragraph_text = "" %}
-                            {% if ref_chapter and ref_chapter.paragraphs %}
-                                {% set ref_paragraph_matches = ref_chapter.paragraphs | filter(attribute="n", value=paragraph.n) %}
-                                {% if ref_paragraph_matches | length > 0 %}
-                                    {% set first_match = ref_paragraph_matches | first %}
-                                    {% set ref_paragraph_text = first_match.text | default(value="") %}
-                                {% endif %}
+                            {# Chapter shape can be `paragraphs` (verse books like Genesis),
+                               `lines` (Sumerian compositions like Enki and Ninmah), or
+                               `segments` (fragmentary tablets like the Sumerian Flood Story,
+                               where preserved line-blocks are interleaved with lacunae). #}
+                            {% if chapter.segments %}
+                                {% for segment in chapter.segments %}
+                                    {% if segment.preceding_lacuna %}
+                                    <div class="library-book__lacuna" role="note" aria-label="Lacuna in the source text">
+                                        {% if segment.preceding_lacuna.i18n and segment.preceding_lacuna.i18n[detected_lang] %}{{ segment.preceding_lacuna.i18n[detected_lang] }}{% else %}{{ segment.preceding_lacuna.text }}{% endif %}
+                                    </div>
+                                    {% endif %}
+                                    {% if segment.id %}
+                                    <div class="library-book__segment-label" aria-label="Segment {{ segment.id }}">Segment {{ segment.id }}</div>
+                                    {% endif %}
+                                    {% for verse in segment.lines %}
+                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="") }}
+                                    {% endfor %}
+                                {% endfor %}
+                            {% else %}
+                                {% set verses = chapter.paragraphs | default(value=chapter.lines | default(value=[])) %}
+                                {% for verse in verses %}
+                                    {# Look up matching reference verse by number (n). #}
+                                    {% set ref_paragraph_text = "" %}
+                                    {% if ref_chapter and ref_chapter.paragraphs %}
+                                        {% set ref_paragraph_matches = ref_chapter.paragraphs | filter(attribute="n", value=verse.n) %}
+                                        {% if ref_paragraph_matches | length > 0 %}
+                                            {% set first_match = ref_paragraph_matches | first %}
+                                            {% set ref_paragraph_text = first_match.text | default(value="") %}
+                                        {% endif %}
+                                    {% endif %}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text) }}
+                                {% endfor %}
                             {% endif %}
-                            <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
-                                 id="c{{ chapter.n }}p{{ paragraph.n }}"
-                                 data-ref-id="{{ paragraph.refId | default(value='') }}"
-                                 onclick="selectParagraph('c{{ chapter.n }}p{{ paragraph.n }}')">
-                                <div class="library-book__para-num">{{ paragraph.n }}</div>
-                                <div class="library-book__para-content">
-                                    {% set has_translation = paragraph.i18n and paragraph.i18n[detected_lang] %}
-                                    <div class="library-book__para-translation">
-                                        {% if has_translation %}{{ paragraph.i18n[detected_lang] }}{% else %}{{ paragraph.text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter.n }}p{{ paragraph.n }}', this)" aria-label="Open commentary for verse {{ paragraph.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
-                                    </div>
-                                    {% if ref_paragraph_text %}
-                                    <div class="library-book__para-reference" aria-label="Reference translation">{{ ref_paragraph_text }}</div>
-                                    {% endif %}
-                                    {% if has_translation %}
-                                    <div class="library-book__para-original" lang="{{ original_lang }}">{{ paragraph.text }}</div>
-                                    {% endif %}
-                                </div>
-                                <div class="library-book__para-actions">
-                                    <button class="library-book__share-btn" onclick="event.stopPropagation(); shareParagraph('c{{ chapter.n }}p{{ paragraph.n }}')" title="Share this paragraph" aria-label="Share this paragraph">
-                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                                            <polyline points="16,6 12,2 8,6"></polyline>
-                                            <line x1="12" y1="2" x2="12" y2="15"></line>
-                                        </svg>
-                                    </button>
-                                </div>
-                                {% if has_commentary %}
-                                <div class="library-book__commentary-popover"
-                                     id="commentary-c{{ chapter.n }}p{{ paragraph.n }}"
-                                     role="dialog"
-                                     aria-label="Commentary on verse {{ paragraph.n }}"
-                                     aria-hidden="true"
-                                     onclick="event.stopPropagation()">
-                                    <header class="library-book__commentary-popover-header">
-                                        <div class="library-book__commentary-popover-heading">
-                                            <span class="library-book__commentary-popover-title">Translation Commentary</span>
-                                            <span class="library-book__commentary-popover-ref">Verse {{ paragraph.n }}</span>
-                                        </div>
-                                        <button class="library-book__commentary-popover-close"
-                                                type="button"
-                                                onclick="closeCommentary('c{{ chapter.n }}p{{ paragraph.n }}')"
-                                                aria-label="Close commentary">
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                                            </svg>
-                                        </button>
-                                    </header>
-                                    <div class="library-book__commentary-popover-body">
-                                        {{ paragraph.commentary | markdown | safe }}
-                                    </div>
-                                </div>
-                                {% endif %}
-                            </div>
-                            {% endfor %}
                         </div>
                     </section>
                     {% endfor %}

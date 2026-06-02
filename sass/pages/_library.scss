@@ -2,7 +2,6 @@
 @use "../abstracts/variables" as vars;
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
-@use "../components/glass-cloud-button" as gcc-btn;
 
 // Shared category-group header used by /library/ (grouping by tradition)
 // and /wiki/ (grouping by category). Mirrors the wiki section card style
@@ -1171,6 +1170,25 @@
                 width: 3px;
                 background: var(--color-accent-primary);
                 border-radius: 1.5px;
+            }
+        }
+
+        // Audio reading position (driven by the Listen feature). Distinct
+        // from --selected (tap selection): a tinted accent wash plus a
+        // thicker left bar marks the verse currently being read aloud, so
+        // it reads as "the player is here" rather than "you picked this".
+        &--reading {
+            background: color-mix(in srgb, var(--color-accent-primary) 12%, transparent);
+
+            &::before {
+                content: "";
+                position: absolute;
+                left: -0.75rem;
+                top: 0;
+                bottom: 0;
+                width: 4px;
+                background: var(--color-accent-primary);
+                border-radius: 2px;
             }
         }
     }
@@ -2818,10 +2836,22 @@
 // =====================================================
 .library-no-results {
     &__reset {
-        @include gcc-btn.glass-cloud-button;
         margin-top: 1rem;
-        --cloud-a: #{colors.$lavender-300};
-        --cloud-b: #{colors.$blue-300};
+        padding: 0.75rem 1.5rem;
+        background: var(--color-accent-primary);
+        border: none;
+        border-radius: 0.5rem;
+        color: white;
+        font-family: var(--font-family-tech);
+        font-size: 0.875rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+
+        &:hover {
+            background: var(--color-accent-secondary);
+            transform: translateY(-2px);
+        }
     }
 }
 
@@ -3007,9 +3037,13 @@
     }
 
     &--primary {
-        @include gcc-btn.glass-cloud-button;
-        --cloud-a: #{colors.$yellow-300};
-        --cloud-b: #{colors.$mint-300};
+        background: var(--color-accent-primary);
+        border-color: var(--color-accent-primary);
+        color: white;
+
+        &:hover {
+            background: var(--color-accent-secondary);
+        }
     }
 }
 
@@ -3118,11 +3152,21 @@
 }
 
 .library-reader__shortcuts-close {
-    @include gcc-btn.glass-cloud-button;
     width: 100%;
-    justify-content: center;
-    --cloud-a: #{colors.$mint-300};
-    --cloud-b: #{colors.$blue-300};
+    padding: 0.75rem;
+    background: var(--color-accent-primary);
+    border: none;
+    border-radius: 0.5rem;
+    color: white;
+    font-family: var(--font-family-tech);
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: var(--color-accent-secondary);
+    }
 }
 
 @keyframes fadeIn {
@@ -3712,16 +3756,25 @@
         flex-wrap: wrap;
     }
 
-    &__history-link {
-        @include gcc-btn.glass-cloud-button;
-        --cloud-a: #{colors.$blue-300};
-        --cloud-b: #{colors.$mauve-300};
-    }
-
+    &__history-link,
     &__edit-btn {
-        @include gcc-btn.glass-cloud-button;
-        --cloud-a: #{colors.$mint-300};
-        --cloud-b: #{colors.$blue-300};
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        padding: 0.375rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        transition: all 0.15s ease;
+
+        &:hover {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
     }
 
     // Related books — link-list, no card hierarchy
@@ -4339,14 +4392,13 @@
         flex-direction: column;
         overflow: hidden;
 
-        // Glass surface — chrome (border, shadow, radius) lives on the
-        // popover itself; the translucent tint + backdrop-filter live
-        // on `::before` so they aren't on the same element as the
-        // entrance `transform` below. iOS Safari has a long-standing
-        // regression where backdrop-filter silently fails to paint
-        // when the element carries a non-identity transform, which
-        // collapses the glass to whatever fallback background is set —
-        // here, ~28% alpha — and the popover reads as fully see-through.
+        // Glass surface. ~28% tint of the theme's surface colour means
+        // the underlying page bleeds through and the backdrop-filter
+        // has something to act on; a hairline border + dual shadow
+        // give the card its edge.
+        background: color-mix(in srgb,
+            var(--color-card-bg, var(--color-background, #1a1a1a)) 28%,
+            transparent);
         color: var(--color-text, inherit);
         border: 1px solid color-mix(in srgb,
             var(--color-text, currentColor) 14%,
@@ -4356,34 +4408,8 @@
             0 24px 60px rgba(0, 0, 0, 0.28),
             0 2px 10px rgba(0, 0, 0, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 0.08);
-
-        &::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            z-index: -1;
-            border-radius: inherit;
-            background: color-mix(in srgb,
-                var(--color-card-bg, var(--color-background, #1a1a1a)) 28%,
-                transparent);
-            backdrop-filter: blur(28px) saturate(180%);
-            -webkit-backdrop-filter: blur(28px) saturate(180%);
-
-            // Fallback for browsers without backdrop-filter (or where
-            // it fails to paint): opaque the surface so legibility is
-            // preserved. The `prefers-reduced-transparency` branch
-            // covers users who've asked iOS/macOS to skip glass.
-            @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-                background: color-mix(in srgb,
-                    var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
-                    transparent);
-            }
-            @media (prefers-reduced-transparency: reduce) {
-                background: color-mix(in srgb,
-                    var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
-                    transparent);
-            }
-        }
+        backdrop-filter: blur(28px) saturate(180%);
+        -webkit-backdrop-filter: blur(28px) saturate(180%);
 
         // Entrance state — fades + slides in from a touch above.
         opacity: 0;
@@ -4394,6 +4420,14 @@
             transform 0.2s cubic-bezier(0.32, 0.72, 0, 1),
             visibility 0.2s ease;
         pointer-events: none;
+
+        // Fallback for browsers without backdrop-filter: opaque the
+        // surface so legibility is preserved.
+        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+            background: color-mix(in srgb,
+                var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
+                transparent);
+        }
 
         &.is-open {
             opacity: 1;
@@ -4542,6 +4576,80 @@
         .library-book__commentary-link {
             opacity: 1;
             color: var(--color-accent-primary, currentColor);
+        }
+    }
+}
+
+// =====================================================
+// Lacuna marker and segment label
+// Used by fragmentary tablets (e.g. Sumerian Flood Story) where
+// preserved line-blocks (segments) are interleaved with unrecoverable
+// gaps in the source. The lacuna sits between segments and signals
+// that a stretch of the composition is missing rather than untranslated.
+// =====================================================
+.library-book__lacuna {
+    margin: vars.$spacing-lg 0;
+    padding: vars.$spacing-md vars.$spacing-lg;
+    border-left: 3px solid var(--color-border);
+    background: var(--color-surface-subtle, transparent);
+    color: var(--color-text-muted);
+    font-style: italic;
+    font-size: vars.$font-size-sm;
+    text-align: center;
+}
+
+.library-book__segment-label {
+    margin: vars.$spacing-lg 0 vars.$spacing-sm;
+    color: var(--color-text-muted);
+    font-size: vars.$font-size-xs;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+// =====================================================
+// Cuneiform parallel display
+// Sits between the translation and the transliteration in
+// `library-book__para-content`. Larger size because cuneiform glyphs
+// are visually dense and need vertical room; the unicode-range-bounded
+// Noto Sans Cuneiform face loads automatically for codepoints in the
+// Cuneiform block via the font stack. Confidence modifiers signal
+// where the OGSL mapper produced an incomplete or low-quality render.
+// =====================================================
+.library-book__para-cuneiform {
+    margin-top: vars.$spacing-xs;
+    font-family: typo.$font-family-cuneiform;
+    font-size: 1.5rem;
+    line-height: 1.6;
+    color: var(--color-text);
+    word-break: keep-all;
+
+    &--partial {
+        color: var(--color-text-muted);
+
+        &::after {
+            content: " ◑";
+            margin-left: vars.$spacing-2xs;
+            color: var(--color-text-muted);
+            font-family: typo.$font-family-sans;
+            font-size: vars.$font-size-xs;
+            vertical-align: super;
+            opacity: 0.7;
+        }
+    }
+
+    &--low {
+        color: var(--color-text-muted);
+        opacity: 0.7;
+
+        &::after {
+            content: " ◔";
+            margin-left: vars.$spacing-2xs;
+            color: var(--color-text-muted);
+            font-family: typo.$font-family-sans;
+            font-size: vars.$font-size-xs;
+            vertical-align: super;
+            opacity: 0.7;
         }
     }
 }

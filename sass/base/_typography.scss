@@ -124,6 +124,22 @@ $font-family-greek:
     "Times New Roman",
     serif;
 
+// Cuneiform font stack — Noto Sans Cuneiform is the de-facto open
+// cuneiform font (Sumerian, Akkadian, Hittite, etc.). Self-hosted via
+// _fonts.scss with unicode-range bounded to the Cuneiform Unicode
+// blocks (U+12000–U+1247F + U+12480–U+12543 Early Dynastic), so the
+// file is never loaded for non-cuneiform pages. macOS and modern Linux
+// systems ship Apple Symbols / Noto Sans Cuneiform as fallback; older
+// Windows lacks a system cuneiform font, so the self-hosted face is
+// what actually ensures consistent rendering. Used in library-book
+// for the parallel cuneiform display alongside ETCSL transliteration.
+$font-family-cuneiform:
+    "Noto Sans Cuneiform",
+    "Akkadian",
+    "Segoe UI Historic",
+    "Apple Symbols",
+    serif;
+
 // Main font stacks with comprehensive fallbacks.
 //
 // "GFS Didot" and "Noto Sans IPA" sit right after the primary Latin

@@ -139,6 +139,25 @@
     unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC,
         U+FB1D-FB4F;
 }
+
+// ─── Noto Sans Cuneiform (self-hosted) ────────────────────────────
+//
+// Sumerian / Akkadian cuneiform script (𒀭, 𒆠, 𒈗). Self-hosted from
+// Google Fonts (Noto family, OFL). The unicode-range is the Cuneiform
+// block proper plus Cuneiform Numbers and Punctuation — the file is
+// never loaded for non-cuneiform pages because no codepoint outside
+// these ranges triggers it.
+
+@font-face {
+    font-family: "Noto Sans Cuneiform";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-sans-cuneiform/noto-sans-cuneiform-regular.woff2")
+        format("woff2");
+    unicode-range: U+12000-123FF, U+12400-1246E, U+12470-12474,
+        U+12480-12543;
+}
 @font-face {
     font-family: "Frank Ruhl Libre";
     font-style: normal;
