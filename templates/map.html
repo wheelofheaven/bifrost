@@ -9,7 +9,7 @@
 {% set map_i18n = load_data(path="data/map/i18n.json") %}
 {% set map_copy = map_i18n[detected_lang] %}
 
-<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-earth-offset-y="-220" data-earth-rotation="-30" data-earth-center-x="800" data-earth-center-y="2250">
+<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-earth-offset-y="-220">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <header class="map-hero">
@@ -105,10 +105,10 @@
 
                     <g class="map-earth-connectors" id="map-earth-connectors" aria-hidden="true"></g>
 
-                    <g class="map-earth-navigation" aria-label="{{ map_copy.earthThemesAria }}" transform="translate(0 -220) rotate(-30 800 2250)">
+                    <g class="map-earth-navigation" aria-label="{{ map_copy.earthThemesAria }}" transform="translate(0 -220)">
                         {% for cluster in earth_clusters %}
                         <g class="map-earth-cluster map-earth-cluster--{{ cluster.color }} map-earth-cluster--{{ cluster.id }}" data-earth-cluster="{{ cluster.id }}">
-                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}" transform="rotate(30 {{ cluster.x }} {{ cluster.y }})">{{ map_copy.clusters[cluster.id] }}</text>
+                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}">{{ map_copy.clusters[cluster.id] }}</text>
                             {% for node in cluster.nodes %}
                             <a
                                 class="map-earth-node map-earth-node--{{ cluster.color }} map-earth-node--{{ node.emphasis | default(value='normal') }}"
@@ -120,7 +120,7 @@
                                 data-map-title="{{ map_copy.earthNodes[node.id] }}"
                                 data-map-summary="{{ node.summary }}"
                                 data-map-meta="{{ map_copy.clusters[cluster.id] }}"
-                                transform="translate({{ node.x }} {{ node.y }}) rotate(30)"
+                                transform="translate({{ node.x }} {{ node.y }})"
                             >
                                 <title>{{ map_copy.earthNodes[node.id] }}</title>
                                 <text class="map-earth-node__label" y="5">{{ map_copy.earthNodes[node.id] }}</text>
