@@ -1049,28 +1049,24 @@
 
         &--secondary {
             background: var(--color-background-secondary);
-            border: 1px solid var(--color-hairline);
+            border: 0;
             color: var(--color-text);
 
             &:hover {
-                // Subtle hover — no accent border. Tone-shift on the
-                // background is enough of a cue; the accent ring read
-                // as a heavy stroke and visually rhymed with an active
-                // state, which made the inactive button look toggled-on.
+                // No accent ring, no border. Background tone-shift only.
                 background: var(--color-hover);
                 color: var(--color-text);
             }
 
             // Active state — cloud-duo gradient fill behind the label.
-            // Same recipe as the ghost variant's active state (the
-            // sidebar Interlinear toggle uses --secondary by default and
-            // gets the gradient only when the toggle is on).
+            // Background-secondary stays the base so the gradient reads
+            // as a tinted wash over the same surface, not a re-skinned
+            // pill. No border in either state.
             &.library-book__btn--active {
                 position: relative;
                 isolation: isolate;
                 overflow: hidden;
                 background: var(--color-background-secondary);
-                border-color: var(--color-hairline);
                 color: var(--color-text);
 
                 &::before {
@@ -3654,9 +3650,12 @@
         gap: 1px;
     }
 
-    // Main button keeps the standard ghost-button box; only the right
-    // edge gets squared off so the caret docks against it.
-    &__interlinear-main {
+    // Main button keeps full border-radius on its own. Squares its
+    // right edge only when a caret sits directly after it so the two
+    // dock as one visual unit. Sumerian books (no reference translation)
+    // render no caret, so the Interlinear button stays fully rounded —
+    // visually matching the Notes button beside it.
+    &__interlinear-main:has(+ .library-book__interlinear-caret) {
         border-top-right-radius: 0;
         border-bottom-right-radius: 0;
     }
