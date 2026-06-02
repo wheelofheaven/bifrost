@@ -4626,30 +4626,30 @@
 
     &--partial {
         color: var(--color-text-muted);
-
-        &::after {
-            content: " ◑";
-            margin-left: vars.$spacing-2xs;
-            color: var(--color-text-muted);
-            font-family: typo.$font-family-sans;
-            font-size: vars.$font-size-xs;
-            vertical-align: super;
-            opacity: 0.7;
-        }
     }
 
     &--low {
         color: var(--color-text-muted);
         opacity: 0.7;
+    }
+}
 
-        &::after {
-            content: " ◔";
-            margin-left: vars.$spacing-2xs;
-            color: var(--color-text-muted);
-            font-family: typo.$font-family-sans;
-            font-size: vars.$font-size-xs;
-            vertical-align: super;
-            opacity: 0.7;
-        }
+// Inline confidence badge for back-rendered cuneiform. Rendered as a real
+// <span> rather than a ::after pseudo so it can carry title + aria-label
+// (pseudo-elements don't participate in the accessibility tree). The
+// half-circle vs quarter-circle distinguishes partial from low at a glance.
+.library-book__cuneiform-badge {
+    display: inline-block;
+    margin-left: vars.$spacing-2xs;
+    color: var(--color-text-muted);
+    font-family: typo.$font-family-sans;
+    font-size: vars.$font-size-xs;
+    vertical-align: super;
+    opacity: 0.7;
+    cursor: help;
+
+    &:focus,
+    &:hover {
+        opacity: 1;
     }
 }
