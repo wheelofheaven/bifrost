@@ -137,9 +137,8 @@
                 <button type="button"
                         class="category-rail__tile category-rail__tile--filter"
                         data-tradition="{{ tradition.id }}"
-                        data-rail-filter="library-tradition-filter"
-                        data-rail-filter-value="{{ tradition.id }}"
-                        aria-label="Filter to {{ tradition.name[detected_lang] | default(value=tradition.name.en) }}">
+                        data-rail-jump="tradition-{{ tradition.id }}"
+                        aria-label="Jump to {{ tradition.name[detected_lang] | default(value=tradition.name.en) }}">
                     <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
                     <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
                     <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>
