@@ -27,69 +27,6 @@
         </header>
 
         {% if section.pages %}
-        <!-- Quick Filters Bar -->
-        <div class="wiki-filters">
-            <div class="wiki-filters__left">
-                <!-- Category Filter -->
-                {% set all_categories = section.pages | map(attribute="extra.category") | unique | sort %}
-                {% if all_categories %}
-                <select class="wiki-filters__select" id="wiki-category-filter" aria-label="{{ trans(key='wikiFilterAllTopics', lang=detected_lang) }}">
-                    <option value="">{{ trans(key="wikiFilterAllTopics", lang=detected_lang) }}</option>
-                    {% for category in all_categories %}
-                    {% if category %}
-                    <option value="{{ category }}">{{ category }}</option>
-                    {% endif %}
-                    {% endfor %}
-                </select>
-                {% endif %}
-
-                <!-- Group By -->
-                <select class="wiki-filters__select" id="wiki-group-by" aria-label="{{ trans(key='wikiFilterGroupBy', lang=detected_lang) }}">
-
-                    <option value="alpha" selected>{{ trans(key="wikiFilterGroupAlpha", lang=detected_lang) }}</option>
-                    <option value="topics">{{ trans(key="wikiFilterGroupTopic", lang=detected_lang) }}</option>
-                    <option value="date">{{ trans(key="wikiFilterGroupDate", lang=detected_lang) }}</option>
-                </select>
-
-            </div>
-
-            <div class="wiki-filters__right">
-                <!-- Random Article -->
-                <button class="wiki-filters__random" id="random-article-btn" title="Random article">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 3h5v5"></path>
-                        <path d="M4 20L21 3"></path>
-                        <path d="M21 16v5h-5"></path>
-                        <path d="M15 15l6 6"></path>
-                        <path d="M4 4l5 5"></path>
-                    </svg>
-                    <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
-                </button>
-
-                <!-- View Toggle -->
-                <div class="wiki-view-toggle">
-                    <button class="wiki-view-toggle__btn wiki-view-toggle__btn--active" data-view="grid" title="Grid view">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                        </svg>
-                    </button>
-                    <button class="wiki-view-toggle__btn" data-view="list" title="List view">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
         {# Compute the set of first letters present in pages, in document
            scope so both the alphabet bar and the article-groups loop below
            can iterate it. #}
@@ -209,6 +146,75 @@
             </div>
         </section>
         {% endif %}
+
+        {# Browse zone — filter bar + alphabet quick-nav + article grid.
+           Sits below the curated showcase (Featured, Category rail) so
+           the controls that affect this region are adjacent to it
+           instead of sandwiched between the showcase blocks above and
+           the cards they operate on. Carries a hairline top divider to
+           mark the transition from "discovery" to "browse all". #}
+        <div class="wiki-section__browse-zone">
+            <!-- Quick Filters Bar -->
+            <div class="wiki-filters">
+                <div class="wiki-filters__left">
+                    <!-- Category Filter -->
+                    {% set all_categories = section.pages | map(attribute="extra.category") | unique | sort %}
+                    {% if all_categories %}
+                    <select class="wiki-filters__select" id="wiki-category-filter" aria-label="{{ trans(key='wikiFilterAllTopics', lang=detected_lang) }}">
+                        <option value="">{{ trans(key="wikiFilterAllTopics", lang=detected_lang) }}</option>
+                        {% for category in all_categories %}
+                        {% if category %}
+                        <option value="{{ category }}">{{ category }}</option>
+                        {% endif %}
+                        {% endfor %}
+                    </select>
+                    {% endif %}
+
+                    <!-- Group By -->
+                    <select class="wiki-filters__select" id="wiki-group-by" aria-label="{{ trans(key='wikiFilterGroupBy', lang=detected_lang) }}">
+                        <option value="alpha" selected>{{ trans(key="wikiFilterGroupAlpha", lang=detected_lang) }}</option>
+                        <option value="topics">{{ trans(key="wikiFilterGroupTopic", lang=detected_lang) }}</option>
+                        <option value="date">{{ trans(key="wikiFilterGroupDate", lang=detected_lang) }}</option>
+                    </select>
+                </div>
+
+                <div class="wiki-filters__right">
+                    <!-- Random Article -->
+                    <button class="wiki-filters__random" id="random-article-btn" title="Random article">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 3h5v5"></path>
+                            <path d="M4 20L21 3"></path>
+                            <path d="M21 16v5h-5"></path>
+                            <path d="M15 15l6 6"></path>
+                            <path d="M4 4l5 5"></path>
+                        </svg>
+                        <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
+                    </button>
+
+                    <!-- View Toggle -->
+                    <div class="wiki-view-toggle">
+                        <button class="wiki-view-toggle__btn wiki-view-toggle__btn--active" data-view="grid" title="Grid view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button class="wiki-view-toggle__btn" data-view="list" title="List view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Alphabetical Quick Navigation — shown only when the Group-by
              selector is set to "alpha" (the default). -->
