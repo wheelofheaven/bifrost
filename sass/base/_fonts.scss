@@ -158,6 +158,25 @@
     unicode-range: U+12000-123FF, U+12400-1246E, U+12470-12474,
         U+12480-12543;
 }
+
+// ─── Noto Sans Ugaritic (self-hosted) ─────────────────────────────
+//
+// Ugaritic alphabetic cuneiform (𐎀, 𐎁, 𐎂, ...). 30-letter abjad in
+// wedges, used by Late Bronze Age Northwest-Semitic literature from
+// Ras Shamra (Baal Cycle, Aqhat, Kirta). Unicode block U+10380–U+1039F
+// is distinct from Sumero-Akkadian cuneiform (U+12000–U+1247F) so
+// browsers select the right face automatically via unicode-range.
+// Self-hosted from Google Fonts (Noto family, OFL).
+
+@font-face {
+    font-family: "Noto Sans Ugaritic";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-sans-ugaritic/noto-sans-ugaritic-regular.woff2")
+        format("woff2");
+    unicode-range: U+10380-1039F;
+}
 @font-face {
     font-family: "Frank Ruhl Libre";
     font-style: normal;

@@ -108,7 +108,7 @@
                 <span class="library-book__interlinear-row">
                     {% for cun_token in cun_tokens %}
                     <span class="library-book__interlinear-word">
-                        <span class="library-book__interlinear-cun" lang="{{ original_lang }}-Xsux" aria-hidden="{% if cun_token %}false{% else %}true{% endif %}">{{ cun_token | default(value="") }}</span>
+                        <span class="library-book__interlinear-cun" lang="{% if original_lang == 'uga' %}uga-Ugar{% else %}{{ original_lang }}-Xsux{% endif %}" aria-hidden="{% if cun_token %}false{% else %}true{% endif %}">{{ cun_token | default(value="") }}</span>
                         <span class="library-book__interlinear-translit">{{ translit_tokens[loop.index0] | default(value="") }}</span>
                     </span>
                     {% endfor %}
