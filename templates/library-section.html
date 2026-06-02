@@ -57,68 +57,6 @@
             </div>
         </header>
 
-        {% if available_count > 0 %}
-        <!-- Quick Filters Bar -->
-        <div class="wiki-filters">
-            <div class="wiki-filters__left">
-                <!-- Tradition Filter -->
-                <select class="wiki-filters__select" id="library-tradition-filter" aria-label="{{ trans(key='libraryFilterAllTraditions', lang=detected_lang) }}">
-                    <option value="">{{ trans(key="libraryFilterAllTraditions", lang=detected_lang) }}</option>
-                    {% for tradition in catalog.traditions %}
-                    <option value="{{ tradition.id }}">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</option>
-                    {% endfor %}
-                </select>
-
-                <!-- WoH curation toggle: filters the listing down to in-house
-                     Wheel of Heaven translations/editions (cards flagged with
-                     data-preferred="true"). -->
-                <button type="button"
-                        class="library-curation-toggle"
-                        id="library-curation-toggle"
-                        aria-pressed="false"
-                        title="Show only Wheel of Heaven editions">
-                    <span class="library-curation-toggle__icon" aria-hidden="true">{% include "partials/brand/logomark.html" %}</span>
-                    <span class="library-curation-toggle__label">Wheel of Heaven curation</span>
-                </button>
-            </div>
-
-            <div class="wiki-filters__right">
-                <!-- Random Book -->
-                <button class="wiki-filters__random" id="random-book-btn" title="Random text">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M16 3h5v5"></path>
-                        <path d="M4 20L21 3"></path>
-                        <path d="M21 16v5h-5"></path>
-                        <path d="M15 15l6 6"></path>
-                        <path d="M4 4l5 5"></path>
-                    </svg>
-                    <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
-                </button>
-
-                <!-- View Toggle -->
-                <div class="wiki-view-toggle">
-                    <button class="wiki-view-toggle__btn wiki-view-toggle__btn--active" data-view="grid" title="Grid view">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="3" width="7" height="7"></rect>
-                            <rect x="14" y="14" width="7" height="7"></rect>
-                            <rect x="3" y="14" width="7" height="7"></rect>
-                        </svg>
-                    </button>
-                    <button class="wiki-view-toggle__btn" data-view="list" title="List view">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="8" y1="6" x2="21" y2="6"></line>
-                            <line x1="8" y1="12" x2="21" y2="12"></line>
-                            <line x1="8" y1="18" x2="21" y2="18"></line>
-                            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-                            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-                            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-        </div>
-
         {# Featured texts — editor-curated set of the most prominent
            books. Books opt in via `featuredOrder` (positive integer) in
            catalog.json. The section renders above the tradition groups;
@@ -217,6 +155,79 @@
                 {% endfor %}
             </div>
         </section>
+
+        {# Browse zone — filter bar + filterable card grid. Sits below the
+           curated showcase (Featured, Tradition rail) so the controls
+           that affect this region are adjacent to it instead of
+           sandwiched between the showcase blocks above and the cards
+           they operate on. The wrapper carries a subtle top divider to
+           mark the transition from "discovery" to "browse all". The
+           original `{% if available_count > 0 %}` guard wrapping the
+           old filter-bar + cards region is still in force — its
+           closing `{% endif %}` sits after the no-results block below. #}
+        {% if available_count > 0 %}
+        <div class="wiki-section__browse-zone">
+            <!-- Quick Filters Bar -->
+            <div class="wiki-filters">
+                <div class="wiki-filters__left">
+                    <!-- Tradition Filter -->
+                    <select class="wiki-filters__select" id="library-tradition-filter" aria-label="{{ trans(key='libraryFilterAllTraditions', lang=detected_lang) }}">
+                        <option value="">{{ trans(key="libraryFilterAllTraditions", lang=detected_lang) }}</option>
+                        {% for tradition in catalog.traditions %}
+                        <option value="{{ tradition.id }}">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <!-- WoH curation toggle: filters the listing down to in-house
+                         Wheel of Heaven translations/editions (cards flagged with
+                         data-preferred="true"). -->
+                    <button type="button"
+                            class="library-curation-toggle"
+                            id="library-curation-toggle"
+                            aria-pressed="false"
+                            title="Show only Wheel of Heaven editions">
+                        <span class="library-curation-toggle__icon" aria-hidden="true">{% include "partials/brand/logomark.html" %}</span>
+                        <span class="library-curation-toggle__label">Wheel of Heaven curation</span>
+                    </button>
+                </div>
+
+                <div class="wiki-filters__right">
+                    <!-- Random Book -->
+                    <button class="wiki-filters__random" id="random-book-btn" title="Random text">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 3h5v5"></path>
+                            <path d="M4 20L21 3"></path>
+                            <path d="M21 16v5h-5"></path>
+                            <path d="M15 15l6 6"></path>
+                            <path d="M4 4l5 5"></path>
+                        </svg>
+                        <span class="wiki-filters__random-text">{{ trans(key="filterRandom", lang=detected_lang) }}</span>
+                    </button>
+
+                    <!-- View Toggle -->
+                    <div class="wiki-view-toggle">
+                        <button class="wiki-view-toggle__btn wiki-view-toggle__btn--active" data-view="grid" title="Grid view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="3" width="7" height="7"></rect>
+                                <rect x="14" y="14" width="7" height="7"></rect>
+                                <rect x="3" y="14" width="7" height="7"></rect>
+                            </svg>
+                        </button>
+                        <button class="wiki-view-toggle__btn" data-view="list" title="List view">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="8" y1="6" x2="21" y2="6"></line>
+                                <line x1="8" y1="12" x2="21" y2="12"></line>
+                                <line x1="8" y1="18" x2="21" y2="18"></line>
+                                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <!-- Books grouped by tradition. Within each tradition the books
              render as wiki-cards in the same flat grid used on /wiki/.

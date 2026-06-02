@@ -4783,3 +4783,29 @@
     border-color: rgba(255, 255, 255, 0.12);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
 }
+
+// =====================================================
+// Library browse-zone — visual separation between the curated
+// discovery sections above (Featured cards, Tradition spotlight rail)
+// and the filterable card listing below. The filter bar lives inside
+// this wrapper now that it's been moved down to sit adjacent to the
+// cards it actually operates on. A hairline top border and generous
+// margin-top mark the transition from "discovery" to "browse all"
+// without needing an explicit heading.
+// =====================================================
+.wiki-section__browse-zone {
+    margin-top: vars.$spacing-2xl;
+    padding-top: vars.$spacing-xl;
+    border-top: 1px solid var(--color-hairline-subtle);
+
+    @media (max-width: 768px) {
+        margin-top: vars.$spacing-xl;
+        padding-top: vars.$spacing-lg;
+    }
+
+    // Pull the filter bar tight to the top of the zone so the divider
+    // visually belongs to the filter bar rather than floating in space.
+    .wiki-filters {
+        margin-top: 0;
+    }
+}
