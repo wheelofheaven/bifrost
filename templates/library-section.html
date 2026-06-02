@@ -406,10 +406,27 @@
         </div>
         {% endif %}
 
-        {# Planned (Coming Soon) section preserved as a smaller block below the main grid #}
+        {# Planned (Coming Soon) section preserved as a smaller block below
+           the main grid. Wrapped in the shared `.category-group` collapsible
+           so it sits in the same accordion as the tradition groups above —
+           no `open` attribute means it defaults to closed. The expand /
+           collapse-all toggle in the filter bar picks it up via the shared
+           `.category-group__details` selector; per-user state persists to
+           localStorage via the `data-tradition` key. #}
         {% if planned_books %}
-        <section class="wiki-section__subsections">
-            <h2 class="wiki-section__subsections-title">{{ trans(key="libraryComingSoon", lang=detected_lang) }}</h2>
+        <section class="category-group category-group--coming-soon" id="tradition-coming-soon">
+            <details class="category-group__details" data-tradition="coming-soon">
+                <summary class="category-group__summary">
+                    <div class="category-group__header">
+                        <h2 class="category-group__title">
+                            <span class="category-group__title-text">{{ trans(key="libraryComingSoon", lang=detected_lang) }}</span>
+                            <span class="category-group__count">{{ planned_books | length }}</span>
+                            <svg class="category-group__chevron" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                <polyline points="6 9 12 15 18 9"></polyline>
+                            </svg>
+                        </h2>
+                    </div>
+                </summary>
             <div class="wiki-section__grid" data-view="grid">
                 {% for entry in planned_books %}
                 {% set tradition_name = "" %}
@@ -438,6 +455,7 @@
                 </article>
                 {% endfor %}
             </div>
+            </details>
         </section>
         {% endif %}
 
