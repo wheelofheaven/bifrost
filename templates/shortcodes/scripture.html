@@ -84,7 +84,12 @@
                         {%- elif p.text -%}
                             <p class="scripture__translation">{{ p.text }}</p>
                         {%- endif -%}
-                        {%- if p.i18n and p.i18n.en and p.text -%}
+                        {# Skip the auto-Hebrew render when the caller passed a
+                           body (overriding the translation) without an explicit
+                           translit. The body is usually a sub-clause and the
+                           JSON's Hebrew is the full verse — pairing them would
+                           mislead. Keep just the body + cite link in that case. #}
+                        {%- if p.i18n and p.i18n.en and p.text and (not _body or _translit) -%}
                             {%- if _translit and p.n == _verse -%}
                                 {# Word-level interlinear, matching the library reader's
                                    `__interlinear-row` shape: tokenize the original line and
