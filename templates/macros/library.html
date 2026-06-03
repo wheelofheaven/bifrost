@@ -99,9 +99,10 @@
    `ref_paragraph_text` for the parallel-reference display. #}
 {% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text) %}
     {% set has_commentary = verse.commentary | default(value="") | trim != "" %}
-    {% set source_text = verse.text | default(value=verse.translit | default(value="")) %}
+    {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
+    {% set has_hebrew_pair = verse.he | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
     <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
          id="c{{ chapter_n }}p{{ verse.n }}"
@@ -128,8 +129,8 @@
                  - Plain: Hebrew/Greek/etc. books just have one source
                    line — render it directly. No alignment pass needed
                    because there's only one layer. #}
-            {% if has_translation and (has_cuneiform or source_text) %}
-            <div class="library-book__para-original{% if has_cuneiform %} library-book__para-original--interlinear{% endif %}" lang="{{ original_lang }}">
+            {% if has_translation and (has_cuneiform or has_hebrew_pair or source_text) %}
+            <div class="library-book__para-original{% if has_cuneiform or has_hebrew_pair %} library-book__para-original--interlinear{% endif %}" lang="{{ original_lang }}">
                 {% if has_cuneiform %}
                 {# Per-script tokenization for interlinear word-pair alignment.
                    Ugaritic uses the alphabetic-cuneiform word divider 𐎟
@@ -152,6 +153,21 @@
                     </span>
                     {% endfor %}
                     {% if cuneiform_confidence == "partial" %}<span class="library-book__cuneiform-badge library-book__cuneiform-badge--partial" role="button" tabindex="0" aria-label="Partial cuneiform back-rendering">◑<span class="library-book__cuneiform-badge__tooltip" role="tooltip" aria-hidden="true"><span class="library-book__cuneiform-badge__tooltip-title">Partial back-rendering</span><span class="library-book__cuneiform-badge__tooltip-body">The source transliteration carries editorial restorations, damaged-sign markers, or uncertain readings the OGSL mapper could not fully resolve. The cuneiform shown is rendered for everything the mapper could map — treat as a reading aid, not an attested tablet score.</span></span></span>{% elif cuneiform_confidence == "low" %}<span class="library-book__cuneiform-badge library-book__cuneiform-badge--low" role="button" tabindex="0" aria-label="Low-confidence cuneiform back-rendering">◔<span class="library-book__cuneiform-badge__tooltip" role="tooltip" aria-hidden="true"><span class="library-book__cuneiform-badge__tooltip-title">Low-confidence back-rendering</span><span class="library-book__cuneiform-badge__tooltip-body">Most of this line is broken or unmappable in the source transliteration. The cuneiform shown is a fragmentary reconstruction; the underlying tablet is too damaged for a confident reading.</span></span></span>{% endif %}
+                </span>
+                {% elif has_hebrew_pair %}
+                {# Hebrew + transliteration word-pair (Shi'ur Qomah and other
+                   Hebrew-with-translit books). Hebrew script on top (RTL),
+                   SBL/academic transliteration beneath. Word boundary is the
+                   space character in both fields. #}
+                {% set heb_tokens = verse.he | split(pat=" ") %}
+                {% set translit_tokens = verse.translit | split(pat=" ") %}
+                <span class="library-book__interlinear-row">
+                    {% for heb_token in heb_tokens %}
+                    <span class="library-book__interlinear-word">
+                        <span class="library-book__interlinear-cun" lang="he" dir="rtl">{{ heb_token }}</span>
+                        <span class="library-book__interlinear-translit">{{ translit_tokens[loop.index0] | default(value="") }}</span>
+                    </span>
+                    {% endfor %}
                 </span>
                 {% else %}
                 {{ source_text }}
