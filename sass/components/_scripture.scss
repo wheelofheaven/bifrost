@@ -1,57 +1,43 @@
-// Scripture quote — verse cards used by the {% scripture %} shortcode.
+// Scripture quote — verse cards used by the {{ scripture }} shortcode.
 //
-// Mirrors the library reader's interlinear view (translation above,
-// original-language line beneath, muted) so a verse pulled into a
-// /timeline/ chapter reads as the same artefact the reader meets in
-// /library/.
+// Mirrors the library reader's interlinear stacking (translation,
+// original-language, optional transliteration) so a verse pulled into
+// a /timeline/ chapter reads as the same artefact the reader meets in
+// /library/. The deep link to the library reader is a quiet text-only
+// citation rather than a bold CTA — it should not steal the eye from
+// the surrounding prose.
 
 @use "../abstracts/colors" as c;
 @use "../abstracts/variables" as v;
-@use "glass-cloud-button" as gcc-btn;
+@use "../base/typography" as typo;
 
 .scripture {
     position: relative;
     margin: 2rem 0;
-    padding: 1.5rem 1.75rem 1rem;
+    padding: 1.25rem 1.5rem 0.875rem;
     border: none;
     border-left: 3px solid var(--color-accent-primary, #{c.$mauve-300});
-    border-radius: 0.75rem;
+    border-radius: 0.5rem;
     background: var(--color-surface-subtle, rgba(0, 0, 0, 0.02));
     font-family: var(--font-family-citation);
     line-height: 1.6;
     color: var(--color-text);
 
-    &::before {
-        content: "📜";
-        position: absolute;
-        top: 0.75rem;
-        right: 0.875rem;
-        font-size: 1rem;
-        opacity: 0.3;
-        pointer-events: none;
-    }
-
     &__verse {
         display: flex;
         gap: 0.875rem;
         align-items: baseline;
-        padding-bottom: 0.875rem;
+        padding-bottom: 0.625rem;
 
         & + & {
-            padding-top: 0.875rem;
+            padding-top: 0.625rem;
             border-top: 1px dashed var(--color-hairline-subtle);
-        }
-
-        &:last-of-type {
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--color-hairline-subtle);
-            margin-bottom: 0.75rem;
         }
     }
 
     &__verse-num {
         flex-shrink: 0;
-        min-width: 1.5rem;
+        min-width: 1.25rem;
         font-family: var(--font-family-body);
         font-size: 0.75rem;
         font-weight: 600;
@@ -86,56 +72,128 @@
         }
     }
 
-    &__footer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        align-items: center;
-        gap: 0.75rem;
+    // Fallback transliteration line — used when the original-language
+    // tokens don't align 1:1 with the translit tokens and the
+    // word-level interlinear can't be rendered. Same typography as
+    // the interlinear translit so the fallback doesn't read as a
+    // different artefact.
+    &__translit {
+        margin: 0.15rem 0 0;
+        font-family: typo.$font-family-sans;
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        color: var(--color-text-muted);
+        font-feature-settings: "kern" 1, "liga" 0;
+        unicode-bidi: isolate;
     }
 
-    &__citation {
-        font-family: var(--font-family-body);
-        font-size: 0.875rem;
-        font-style: italic;
-        color: var(--color-text-muted);
+    // Word-level interlinear. Mirrors the library reader's
+    // `.library-book__interlinear-*` exactly so a verse pulled into a
+    // /timeline/ chapter reads as the same artefact the reader meets
+    // in /library/ — original-language token on top, translit
+    // beneath, centre-aligned in each column, wrapped flex row.
+    //
+    // Only difference: the top token uses the source's own native
+    // typography (Hebrew square script, not cuneiform), so the size
+    // and font-family are tuned for that rather than copied from
+    // `.library-book__interlinear-cun`.
+    // Block-level (not inline-flex) so an RTL row anchors to the
+    // right edge of the verse body rather than the inline-content
+    // start of an LTR document. With `direction: rtl`, flex items
+    // pack right-to-left and wrap with the right edge as the
+    // primary axis start — i.e. Hebrew reading flow, naturally.
+    &__interlinear {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.4rem 0.75rem;
+        margin: 0.5rem 0 0;
+        padding-top: 0.5rem;
+        border-top: 1px dashed var(--color-hairline-subtle);
 
-        &::before {
-            content: "— ";
-            font-weight: 300;
+        &[dir="rtl"] {
+            direction: rtl;
         }
     }
 
-    &__link {
-        @include gcc-btn.glass-cloud-button;
-        --cloud-a: #{c.$mauve-300};
-        --cloud-b: #{c.$cyan-300};
-        font-size: 0.8125rem;
-        padding: 0.4rem 0.875rem;
-    }
-
-    &__link-icon,
-    &__link-arrow {
-        flex-shrink: 0;
-        opacity: 0.85;
-    }
-
-    &__link-text {
+    &__interlinear-word {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
         white-space: nowrap;
+        line-height: 1;
+    }
+
+    // Original-language token. Matches the library reader's
+    // `.library-book__para-original` typography exactly (citation
+    // font stack — Plex Serif + Frank Ruhl Libre for Hebrew via
+    // unicode-range — reader-controlled size, kerning + ligatures
+    // + contextual alternates, 1.8 line-height) so a Hebrew word
+    // rendered here is the same glyph at the same metrics as the
+    // one the reader meets in the library reader.
+    &__interlinear-orig {
+        font-family: var(--font-family-citation);
+        font-size: var(--reader-font-size, 1.3125rem);
+        line-height: 1.8;
+        color: var(--color-text);
+        min-height: 1.4em;
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+        text-rendering: optimizeLegibility;
+        unicode-bidi: isolate;
+
+        &:lang(he),
+        &:lang(ar) {
+            hyphens: manual;
+            -webkit-hyphens: manual;
+        }
+    }
+
+    &__interlinear-translit {
+        margin-top: 0.15rem;
+        font-family: typo.$font-family-sans;
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        color: var(--color-text-muted);
+        font-feature-settings: "kern" 1, "liga" 0;
+        text-align: center;
+    }
+
+    // Quiet text-only deep link to the library reader. Same visual
+    // weight as a footnote / citation — never a button.
+    &__citation {
+        display: block;
+        margin-top: 0.625rem;
+        font-family: var(--font-family-body);
+        font-size: 0.8125rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+        text-align: right;
+    }
+
+    &__cite-link {
+        color: inherit;
+        text-decoration: none;
+        transition: color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+        }
+    }
+
+    &__cite-arrow {
+        margin-left: 0.125rem;
+        opacity: 0.7;
     }
 }
 
 @media (max-width: 640px) {
     .scripture {
         margin: 1.5rem 0;
-        padding: 1.25rem 1rem 0.75rem;
+        padding: 1rem 0.875rem 0.75rem;
 
         &__verse {
             gap: 0.5rem;
-        }
-
-        &__footer {
-            justify-content: flex-start;
         }
     }
 }

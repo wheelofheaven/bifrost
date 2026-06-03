@@ -13,10 +13,19 @@
        {% scripture(book="genesis-woh", chapter=1, verse=6) %}
        {% scripture(book="genesis-woh", chapter=1, verse=6, to_verse=8) %}
 
+   Optional `translit=` argument — a romanised pronunciation of the
+   original. Rendered between the original-language line and the
+   translation when present, italicised, single-line:
+
+       {{ scripture(
+            book="genesis-woh", chapter=1, verse=6,
+            translit="Vayomer Elohim yehi raqia betokh ha-mayim, vihi mavdil bein mayim la-mayim."
+       ) }}
+
    Body form (paired) — overrides the displayed translation with the
-   author's own rendering (transliteration, a more literal gloss, an
-   intentional ellipsis…) while still showing the canonical original
-   line and the library link.
+   author's own rendering (a more literal gloss, an intentional
+   ellipsis…) while still showing the canonical original line and the
+   library link.
 
        {% scripture(book="genesis-woh", chapter=1, verse=6) %}
        And Elohim said: let there be a firmament in the midst of the waters.
@@ -38,6 +47,7 @@
 {%- set _verse = verse -%}
 {%- set _to_verse = to_verse | default(value=_verse) -%}
 {%- set _body = body | default(value="") | trim -%}
+{%- set _translit = translit | default(value="") | trim -%}
 
 {%- set _meta = load_data(path="data/library/" ~ _book ~ "/_meta.json", required=false) -%}
 {%- set _book_title = _book -%}
@@ -75,7 +85,35 @@
                             <p class="scripture__translation">{{ p.text }}</p>
                         {%- endif -%}
                         {%- if p.i18n and p.i18n.en and p.text -%}
-                            <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
+                            {%- if _translit and p.n == _verse -%}
+                                {# Word-level interlinear, matching the library reader's
+                                   `__interlinear-row` shape: tokenize the original line and
+                                   the translit on whitespace and pair them in
+                                   `__interlinear-word` columns. Falls back to plain stacked
+                                   lines if the token counts don't align. #}
+                                {# Strip the Hebrew sof pasuq (׃) and the Masoretic
+                                   paragraph markers (פ) / (ס) before tokenising
+                                   so they don't appear as phantom tokens that
+                                   knock the translit alignment off by one. #}
+                                {%- set _orig_clean = p.text | trim | replace(from="׃", to="") | replace(from="(פ)", to="") | replace(from="(ס)", to="") | trim -%}
+                                {%- set _orig_tokens = _orig_clean | split(pat=" ") -%}
+                                {%- set _translit_tokens = _translit | split(pat=" ") -%}
+                                {%- if _orig_tokens | length == _translit_tokens | length -%}
+                                    <div class="scripture__interlinear"{% if _is_rtl %} dir="rtl"{% endif %} lang="{{ _original_lang }}">
+                                        {%- for tok in _orig_tokens -%}
+                                            <span class="scripture__interlinear-word">
+                                                <span class="scripture__interlinear-orig">{{ tok }}</span>
+                                                <span class="scripture__interlinear-translit">{{ _translit_tokens[loop.index0] }}</span>
+                                            </span>
+                                        {%- endfor -%}
+                                    </div>
+                                {%- else -%}
+                                    <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
+                                    <p class="scripture__translit">{{ _translit }}</p>
+                                {%- endif -%}
+                            {%- else -%}
+                                <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
+                            {%- endif -%}
                         {%- endif -%}
                     </div>
                 </div>
@@ -88,17 +126,5 @@
             </div>
         </div>
     {%- endif -%}
-    <footer class="scripture__footer">
-        <cite class="scripture__citation">{{ _verse_ref }}</cite>
-        <a class="scripture__link" href="{{ _book_url ~ _anchor | safe }}" title="Read this passage in {{ _book_title }}">
-            <svg class="scripture__link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-            </svg>
-            <span class="scripture__link-text">Read in {{ _book_title }}</span>
-            <svg class="scripture__link-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M5 12h14"></path>
-                <path d="M12 5l7 7-7 7"></path>
-            </svg>
-        </a>
-    </footer>
+    <cite class="scripture__citation"><a class="scripture__cite-link" href="{{ _book_url ~ _anchor | safe }}" title="Read this passage in {{ _book_title }}">{{ _verse_ref }}<span class="scripture__cite-arrow" aria-hidden="true"> →</span></a></cite>
 </blockquote>
