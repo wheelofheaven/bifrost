@@ -1,0 +1,141 @@
+// Scripture quote — verse cards used by the {% scripture %} shortcode.
+//
+// Mirrors the library reader's interlinear view (translation above,
+// original-language line beneath, muted) so a verse pulled into a
+// /timeline/ chapter reads as the same artefact the reader meets in
+// /library/.
+
+@use "../abstracts/colors" as c;
+@use "../abstracts/variables" as v;
+@use "glass-cloud-button" as gcc-btn;
+
+.scripture {
+    position: relative;
+    margin: 2rem 0;
+    padding: 1.5rem 1.75rem 1rem;
+    border: none;
+    border-left: 3px solid var(--color-accent-primary, #{c.$mauve-300});
+    border-radius: 0.75rem;
+    background: var(--color-surface-subtle, rgba(0, 0, 0, 0.02));
+    font-family: var(--font-family-citation);
+    line-height: 1.6;
+    color: var(--color-text);
+
+    &::before {
+        content: "📜";
+        position: absolute;
+        top: 0.75rem;
+        right: 0.875rem;
+        font-size: 1rem;
+        opacity: 0.3;
+        pointer-events: none;
+    }
+
+    &__verse {
+        display: flex;
+        gap: 0.875rem;
+        align-items: baseline;
+        padding-bottom: 0.875rem;
+
+        & + & {
+            padding-top: 0.875rem;
+            border-top: 1px dashed var(--color-hairline-subtle);
+        }
+
+        &:last-of-type {
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--color-hairline-subtle);
+            margin-bottom: 0.75rem;
+        }
+    }
+
+    &__verse-num {
+        flex-shrink: 0;
+        min-width: 1.5rem;
+        font-family: var(--font-family-body);
+        font-size: 0.75rem;
+        font-weight: 600;
+        line-height: 1.7;
+        color: var(--color-text-muted);
+        text-align: right;
+        user-select: none;
+    }
+
+    &__verse-body {
+        flex: 1;
+        min-width: 0;
+    }
+
+    &__translation {
+        margin: 0;
+        font-size: 1.0625rem;
+        color: var(--color-text);
+    }
+
+    &__original {
+        margin: 0.5rem 0 0;
+        padding-top: 0.5rem;
+        border-top: 1px dashed var(--color-hairline-subtle);
+        font-size: 1.125rem;
+        line-height: 1.8;
+        color: var(--color-text-muted);
+        unicode-bidi: isolate;
+
+        &[dir="rtl"] {
+            text-align: right;
+        }
+    }
+
+    &__footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    &__citation {
+        font-family: var(--font-family-body);
+        font-size: 0.875rem;
+        font-style: italic;
+        color: var(--color-text-muted);
+
+        &::before {
+            content: "— ";
+            font-weight: 300;
+        }
+    }
+
+    &__link {
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$mauve-300};
+        --cloud-b: #{c.$cyan-300};
+        font-size: 0.8125rem;
+        padding: 0.4rem 0.875rem;
+    }
+
+    &__link-icon,
+    &__link-arrow {
+        flex-shrink: 0;
+        opacity: 0.85;
+    }
+
+    &__link-text {
+        white-space: nowrap;
+    }
+}
+
+@media (max-width: 640px) {
+    .scripture {
+        margin: 1.5rem 0;
+        padding: 1.25rem 1rem 0.75rem;
+
+        &__verse {
+            gap: 0.5rem;
+        }
+
+        &__footer {
+            justify-content: flex-start;
+        }
+    }
+}

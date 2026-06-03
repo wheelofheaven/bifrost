@@ -1,0 +1,104 @@
+{# Scripture quote shortcode.
+
+   Pulls one verse, or a verse range, from a hosted book in /library/
+   and renders it in a styled block that mirrors the library reader's
+   interlinear view: the canonical translation above, the
+   original-language source beneath, plus a "Read in <Book>" deep link
+   to the verse anchor.
+
+   Inline form (no body) — the canonical translation and original are
+   loaded from the library JSON, so the timeline source never duplicates
+   the verse text:
+
+       {% scripture(book="genesis-woh", chapter=1, verse=6) %}
+       {% scripture(book="genesis-woh", chapter=1, verse=6, to_verse=8) %}
+
+   Body form (paired) — overrides the displayed translation with the
+   author's own rendering (transliteration, a more literal gloss, an
+   intentional ellipsis…) while still showing the canonical original
+   line and the library link.
+
+       {% scripture(book="genesis-woh", chapter=1, verse=6) %}
+       And Elohim said: let there be a firmament in the midst of the waters.
+       {% end %}
+
+   Hidden behaviour:
+   - The book title and original-language code are looked up from
+     `data/library/<book>/_meta.json`. Missing meta = quiet fallback to
+     the slug as the title and `und` as the language.
+   - If `data/library/<book>/chapter-<chapter>.json` is missing, only
+     the body text and the link are rendered — useful for traditions
+     we cite but don't (yet) host.
+   - Verse numbers track the JSON's `paragraph.n` field, which is the
+     same identifier the library reader uses for its `#c<ch>p<vs>`
+     anchors, so deep links and shortcode citations stay aligned. #}
+
+{%- set _book = book | trim -%}
+{%- set _chapter = chapter -%}
+{%- set _verse = verse -%}
+{%- set _to_verse = to_verse | default(value=_verse) -%}
+{%- set _body = body | default(value="") | trim -%}
+
+{%- set _meta = load_data(path="data/library/" ~ _book ~ "/_meta.json", required=false) -%}
+{%- set _book_title = _book -%}
+{%- set _original_lang = "und" -%}
+{%- if _meta -%}
+    {%- if _meta.titles and _meta.titles.en -%}{%- set _book_title = _meta.titles.en -%}
+    {%- elif _meta.title -%}{%- set _book_title = _meta.title -%}{%- endif -%}
+    {%- if _meta.originalLang -%}{%- set _original_lang = _meta.originalLang -%}{%- endif -%}
+{%- endif -%}
+
+{%- set _chapter_data = load_data(path="data/library/" ~ _book ~ "/chapter-" ~ _chapter ~ ".json", required=false) -%}
+
+{%- set _anchor = "#c" ~ _chapter ~ "p" ~ _verse -%}
+{%- set _book_url = get_url(path="library/" ~ _book, lang=lang, trailing_slash=true) -%}
+{%- set _verse_ref = _book_title ~ " " ~ _chapter ~ ":" ~ _verse -%}
+{%- if _to_verse != _verse -%}{%- set _verse_ref = _verse_ref ~ "-" ~ _to_verse -%}{%- endif -%}
+
+{# RTL scripts get an explicit `dir` so the original line lays out
+   correctly even inside an LTR document. Extend this list when we add
+   new RTL source languages (currently Hebrew and Arabic). #}
+{%- set _is_rtl = _original_lang == "he" or _original_lang == "ar" -%}
+
+<blockquote class="scripture" cite="{{ _book_url ~ _anchor | safe }}" data-book="{{ _book }}" data-chapter="{{ _chapter }}" data-verse="{{ _verse }}">
+    {%- if _chapter_data and _chapter_data.paragraphs -%}
+        {%- for p in _chapter_data.paragraphs -%}
+            {%- if p.n >= _verse and p.n <= _to_verse -%}
+                <div class="scripture__verse" id="scripture-{{ _book }}-{{ _chapter }}-{{ p.n }}">
+                    <span class="scripture__verse-num" aria-hidden="true">{{ p.n }}</span>
+                    <div class="scripture__verse-body">
+                        {%- if _body and p.n == _verse and _to_verse == _verse -%}
+                            <p class="scripture__translation">{{ _body | markdown(inline=true) | safe }}</p>
+                        {%- elif p.i18n and p.i18n.en -%}
+                            <p class="scripture__translation">{{ p.i18n.en }}</p>
+                        {%- elif p.text -%}
+                            <p class="scripture__translation">{{ p.text }}</p>
+                        {%- endif -%}
+                        {%- if p.i18n and p.i18n.en and p.text -%}
+                            <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
+                        {%- endif -%}
+                    </div>
+                </div>
+            {%- endif -%}
+        {%- endfor -%}
+    {%- elif _body -%}
+        <div class="scripture__verse">
+            <div class="scripture__verse-body">
+                <p class="scripture__translation">{{ _body | markdown(inline=true) | safe }}</p>
+            </div>
+        </div>
+    {%- endif -%}
+    <footer class="scripture__footer">
+        <cite class="scripture__citation">{{ _verse_ref }}</cite>
+        <a class="scripture__link" href="{{ _book_url ~ _anchor | safe }}" title="Read this passage in {{ _book_title }}">
+            <svg class="scripture__link-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
+            </svg>
+            <span class="scripture__link-text">Read in {{ _book_title }}</span>
+            <svg class="scripture__link-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14"></path>
+                <path d="M12 5l7 7-7 7"></path>
+            </svg>
+        </a>
+    </footer>
+</blockquote>
