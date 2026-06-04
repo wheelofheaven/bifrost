@@ -937,17 +937,19 @@
 
     // [N] back-link from each reference item to the place in the
     // prose where the reference was first cited (anchor `#citeref-N`).
-    // Mirrors the visual register of the `[N]` superscript that the
-    // cite shortcode produces, so the round-trip — `[N]` in the prose
-    // → reference list → `[N]` back to the prose — reads as a single
-    // matched pair.
+    // This is the *visible* reference number — the original CSS
+    // `::before` decimal counter was removed because this anchor
+    // supersedes it (the counter wasn't clickable). The back-link
+    // matches the cite shortcode's [N] superscript so the round-trip
+    // [N] → ref → back to [N] reads as a single matched pair.
     &__reference-backlink {
         display: inline-block;
         margin-right: 0.5rem;
         font-family: var(--font-family-tech);
         font-size: 0.875rem;
+        font-weight: 700;
         line-height: 1.4;
-        color: var(--color-text-muted);
+        color: var(--color-accent-primary);
         text-decoration: none;
         border-bottom: none;
         transition: color 0.15s ease;
@@ -955,7 +957,7 @@
 
         &:hover,
         &:focus-visible {
-            color: var(--color-accent-primary);
+            color: var(--color-text);
         }
     }
 
@@ -1061,17 +1063,20 @@
     // Reference List
     &__reference-list {
         list-style: none;
-        counter-reset: reference-counter;
         margin: 0;
         padding: 0;
     }
 
     &__reference-item {
-        counter-increment: reference-counter;
         margin-bottom: 0;
-        padding: 1rem 0 1rem 2.5rem;
+        padding: 1rem 0;
         position: relative;
         transition: all 0.2s ease;
+
+        // Numbering is now provided by the inline `.wiki__reference-backlink`
+        // anchor that the template emits (a clickable [N] that jumps back to
+        // `#citeref-N` in the prose). The pseudo-element decimal was removed
+        // because the back-link supersedes it.
 
         &::after {
             content: "";
@@ -1084,40 +1089,8 @@
             transition: background 0.2s ease;
         }
 
-        &:hover {
-            padding-left: 3rem;
-
-            &::after {
-                background: var(--color-accent-primary);
-            }
-        }
-
         &:last-child::after {
             display: none;
-        }
-
-        &::before {
-            content: "[" counter(reference-counter) "]";
-            position: absolute;
-            left: -1.5rem;
-            top: 1rem;
-            width: 1.25rem;
-            text-align: right;
-            font-family: typo.$font-family-tech;
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--color-accent-primary);
-
-            @media (max-width: 768px) {
-                position: static;
-                display: inline-block;
-                margin-right: 0.5rem;
-                width: auto;
-            }
-        }
-
-        @media (max-width: 768px) {
-            margin-left: 0;
         }
     }
 
