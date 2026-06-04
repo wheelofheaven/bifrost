@@ -6,41 +6,44 @@
    original-language source beneath, plus a "Read in <Book>" deep link
    to the verse anchor.
 
-   Inline form (no body) — the canonical translation and original are
-   loaded from the library JSON, so the timeline source never duplicates
-   the verse text:
+   Inline form (no body):
 
-       {% scripture(book="genesis-woh", chapter=1, verse=6) %}
-       {% scripture(book="genesis-woh", chapter=1, verse=6, to_verse=8) %}
+       {{ scripture(book="genesis-woh", chapter=1, verse=6) }}
+       {{ scripture(book="genesis-woh", chapter=1, verse=6, to_verse=8) }}
 
-   Optional `translit=` argument — a romanised pronunciation of the
-   original. Rendered between the original-language line and the
-   translation when present, italicised, single-line:
+   With per-verse translit override — pairs each Hebrew/source token
+   with its romanisation in a word-level interlinear row matching the
+   library reader's `__interlinear-word` pattern:
 
-       {{ scripture(
-            book="genesis-woh", chapter=1, verse=6,
-            translit="Vayomer Elohim yehi raqia betokh ha-mayim, vihi mavdil bein mayim la-mayim."
-       ) }}
+       {{ scripture(book="genesis-woh", chapter=1, verse=6,
+                    translit="Vayomer Elohim yehi raqia ...") }}
 
-   Body form (paired) — overrides the displayed translation with the
-   author's own rendering (a more literal gloss, an intentional
-   ellipsis…) while still showing the canonical original line and the
-   library link.
+   With explicit Hebrew + English overrides — for books whose chapter
+   JSON isn't (yet) hosted in a WoH translation. Hebrew + translit
+   still produce the word-level interlinear; the cite link points to
+   the verse anchor in the book's library entry:
+
+       {{ scripture(book="jeremiah", chapter=1, verse=14,
+                    hebrew="וְהָיָה ...",
+                    translit="Ve-hayah ...",
+                    english="And it shall come to pass...") }}
+
+   Body form (paired) — overrides the displayed translation. When
+   `body` is set without an explicit `translit`, the auto-Hebrew is
+   skipped because the body is usually a partial clause and the
+   JSON's Hebrew is the full verse — pairing them would mislead.
 
        {% scripture(book="genesis-woh", chapter=1, verse=6) %}
        And Elohim said: let there be a firmament in the midst of the waters.
        {% end %}
 
    Hidden behaviour:
-   - The book title and original-language code are looked up from
-     `data/library/<book>/_meta.json`. Missing meta = quiet fallback to
-     the slug as the title and `und` as the language.
-   - If `data/library/<book>/chapter-<chapter>.json` is missing, only
-     the body text and the link are rendered — useful for traditions
-     we cite but don't (yet) host.
-   - Verse numbers track the JSON's `paragraph.n` field, which is the
-     same identifier the library reader uses for its `#c<ch>p<vs>`
-     anchors, so deep links and shortcode citations stay aligned. #}
+   - Book title + original-language code come from
+     `data/library/<book>/_meta.json`. Missing meta = fall back to the
+     slug as title and `und` as language (overridden to `he` when
+     `hebrew=` is supplied).
+   - If chapter JSON is missing, the shortcode renders from the
+     explicit overrides alone — useful for non-hosted books. #}
 
 {%- set _book = book | trim -%}
 {%- set _chapter = chapter -%}
@@ -48,6 +51,8 @@
 {%- set _to_verse = to_verse | default(value=_verse) -%}
 {%- set _body = body | default(value="") | trim -%}
 {%- set _translit = translit | default(value="") | trim -%}
+{%- set _hebrew_override = hebrew | default(value="") | trim -%}
+{%- set _english_override = english | default(value="") | trim -%}
 
 {%- set _meta = load_data(path="data/library/" ~ _book ~ "/_meta.json", required=false) -%}
 {%- set _book_title = _book -%}
@@ -65,69 +70,112 @@
 {%- set _verse_ref = _book_title ~ " " ~ _chapter ~ ":" ~ _verse -%}
 {%- if _to_verse != _verse -%}{%- set _verse_ref = _verse_ref ~ "-" ~ _to_verse -%}{%- endif -%}
 
-{# RTL scripts get an explicit `dir` so the original line lays out
-   correctly even inside an LTR document. Extend this list when we add
-   new RTL source languages (currently Hebrew and Arabic). #}
+{# If the caller supplied an explicit `hebrew=` override but the book's
+   _meta.json didn't carry originalLang (typical for the ASV-only Bible
+   books we use as link targets), treat the source as Hebrew so RTL +
+   lang attributes are correct. #}
+{%- if _original_lang == "und" and _hebrew_override -%}
+    {%- set _original_lang = "he" -%}
+{%- endif -%}
 {%- set _is_rtl = _original_lang == "he" or _original_lang == "ar" -%}
 
+{%- set _have_json = _chapter_data and _chapter_data.paragraphs -%}
+
 <blockquote class="scripture" cite="{{ _book_url ~ _anchor | safe }}" data-book="{{ _book }}" data-chapter="{{ _chapter }}" data-verse="{{ _verse }}">
-    {%- if _chapter_data and _chapter_data.paragraphs -%}
+    {%- if _have_json -%}
         {%- for p in _chapter_data.paragraphs -%}
             {%- if p.n >= _verse and p.n <= _to_verse -%}
-                <div class="scripture__verse" id="scripture-{{ _book }}-{{ _chapter }}-{{ p.n }}">
+                {%- set _is_target = p.n == _verse and _to_verse == _verse -%}
+
+                {# Resolve translation: body > english_override > JSON i18n.en > JSON text.
+                   The local-scope rule in Tera means each `set` inside an if-branch
+                   doesn't leak to the outer scope unless the branch's set is the
+                   only assignment. So we re-evaluate inline at the use site. #}
+                {%- set _p_translation_initial = "" -%}
+                {%- if p.i18n and p.i18n.en -%}{%- set _p_translation_initial = p.i18n.en -%}
+                {%- elif p.text -%}{%- set _p_translation_initial = p.text -%}{%- endif -%}
+
+                {%- set _p_original_initial = "" -%}
+                {%- if p.i18n and p.i18n.en and p.text -%}{%- set _p_original_initial = p.text -%}{%- endif -%}
+
+                <div class="scripture__verse">
                     <span class="scripture__verse-num" aria-hidden="true">{{ p.n }}</span>
                     <div class="scripture__verse-body">
-                        {%- if _body and p.n == _verse and _to_verse == _verse -%}
+                        {%- if _is_target and _body -%}
                             <p class="scripture__translation">{{ _body | markdown(inline=true) | safe }}</p>
-                        {%- elif p.i18n and p.i18n.en -%}
-                            <p class="scripture__translation">{{ p.i18n.en }}</p>
-                        {%- elif p.text -%}
-                            <p class="scripture__translation">{{ p.text }}</p>
+                        {%- elif _is_target and _english_override -%}
+                            <p class="scripture__translation">{{ _english_override | markdown(inline=true) | safe }}</p>
+                        {%- elif _p_translation_initial -%}
+                            <p class="scripture__translation">{{ _p_translation_initial | safe }}</p>
                         {%- endif -%}
-                        {# Skip the auto-Hebrew render when the caller passed a
-                           body (overriding the translation) without an explicit
-                           translit. The body is usually a sub-clause and the
-                           JSON's Hebrew is the full verse — pairing them would
-                           mislead. Keep just the body + cite link in that case. #}
-                        {%- if p.i18n and p.i18n.en and p.text and (not _body or _translit) -%}
-                            {%- if _translit and p.n == _verse -%}
-                                {# Word-level interlinear, matching the library reader's
-                                   `__interlinear-row` shape: tokenize the original line and
-                                   the translit on whitespace and pair them in
-                                   `__interlinear-word` columns. Falls back to plain stacked
-                                   lines if the token counts don't align. #}
-                                {# Strip the Hebrew sof pasuq (׃) and the Masoretic
-                                   paragraph markers (פ) / (ס) before tokenising
-                                   so they don't appear as phantom tokens that
-                                   knock the translit alignment off by one. #}
-                                {%- set _orig_clean = p.text | trim | replace(from="׃", to="") | replace(from="(פ)", to="") | replace(from="(ס)", to="") | trim -%}
-                                {%- set _orig_tokens = _orig_clean | split(pat=" ") -%}
-                                {%- set _translit_tokens = _translit | split(pat=" ") -%}
-                                {%- if _orig_tokens | length == _translit_tokens | length -%}
-                                    <div class="scripture__interlinear"{% if _is_rtl %} dir="rtl"{% endif %} lang="{{ _original_lang }}">
-                                        {%- for tok in _orig_tokens -%}
-                                            <span class="scripture__interlinear-word">
-                                                <span class="scripture__interlinear-orig">{{ tok }}</span>
-                                                <span class="scripture__interlinear-translit">{{ _translit_tokens[loop.index0] }}</span>
-                                            </span>
-                                        {%- endfor -%}
-                                    </div>
-                                {%- else -%}
-                                    <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
-                                    <p class="scripture__translit">{{ _translit }}</p>
-                                {%- endif -%}
+
+                        {# Original-language + translit. Determine the effective
+                           original-language source for this verse: hebrew= override
+                           on the target verse, else the JSON Hebrew when paired
+                           with an i18n translation. #}
+                        {%- set _p_original = "" -%}
+                        {%- if _is_target and _hebrew_override -%}{%- set _p_original = _hebrew_override -%}
+                        {%- elif _p_original_initial -%}{%- set _p_original = _p_original_initial -%}{%- endif -%}
+                        {# Skip auto-Hebrew under body-form sub-clauses without
+                           translit. hebrew= override re-enables it. #}
+                        {%- if _is_target and _body and not _translit and not _hebrew_override -%}
+                            {%- set _p_original = "" -%}
+                        {%- endif -%}
+
+                        {%- if _p_original and _is_target and _translit -%}
+                            {%- set _orig_clean = _p_original | trim | replace(from="׃", to="") | replace(from="(פ)", to="") | replace(from="(ס)", to="") | replace(from="׀", to="") | trim -%}
+                            {%- set _orig_tokens = _orig_clean | split(pat=" ") -%}
+                            {%- set _translit_tokens = _translit | split(pat=" ") -%}
+                            {%- if _orig_tokens | length == _translit_tokens | length -%}
+                                <div class="scripture__interlinear"{% if _is_rtl %} dir="rtl"{% endif %} lang="{{ _original_lang }}">
+                                    {%- for tok in _orig_tokens -%}
+                                        <span class="scripture__interlinear-word">
+                                            <span class="scripture__interlinear-orig">{{ tok }}</span>
+                                            <span class="scripture__interlinear-translit">{{ _translit_tokens[loop.index0] }}</span>
+                                        </span>
+                                    {%- endfor -%}
+                                </div>
                             {%- else -%}
-                                <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ p.text }}</p>
+                                <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ _p_original }}</p>
+                                <p class="scripture__translit">{{ _translit }}</p>
                             {%- endif -%}
+                        {%- elif _p_original -%}
+                            <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ _p_original }}</p>
                         {%- endif -%}
                     </div>
                 </div>
             {%- endif -%}
         {%- endfor -%}
-    {%- elif _body -%}
+    {%- elif _hebrew_override or _english_override or _body -%}
+        {# No chapter JSON. Render a single virtual verse from overrides. #}
         <div class="scripture__verse">
+            <span class="scripture__verse-num" aria-hidden="true">{{ _verse }}</span>
             <div class="scripture__verse-body">
-                <p class="scripture__translation">{{ _body | markdown(inline=true) | safe }}</p>
+                {%- if _body -%}
+                    <p class="scripture__translation">{{ _body | markdown(inline=true) | safe }}</p>
+                {%- elif _english_override -%}
+                    <p class="scripture__translation">{{ _english_override | markdown(inline=true) | safe }}</p>
+                {%- endif -%}
+                {%- if _hebrew_override and _translit -%}
+                    {%- set _orig_clean = _hebrew_override | trim | replace(from="׃", to="") | replace(from="(פ)", to="") | replace(from="(ס)", to="") | replace(from="׀", to="") | trim -%}
+                    {%- set _orig_tokens = _orig_clean | split(pat=" ") -%}
+                    {%- set _translit_tokens = _translit | split(pat=" ") -%}
+                    {%- if _orig_tokens | length == _translit_tokens | length -%}
+                        <div class="scripture__interlinear"{% if _is_rtl %} dir="rtl"{% endif %} lang="{{ _original_lang }}">
+                            {%- for tok in _orig_tokens -%}
+                                <span class="scripture__interlinear-word">
+                                    <span class="scripture__interlinear-orig">{{ tok }}</span>
+                                    <span class="scripture__interlinear-translit">{{ _translit_tokens[loop.index0] }}</span>
+                                </span>
+                            {%- endfor -%}
+                        </div>
+                    {%- else -%}
+                        <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ _hebrew_override }}</p>
+                        <p class="scripture__translit">{{ _translit }}</p>
+                    {%- endif -%}
+                {%- elif _hebrew_override -%}
+                    <p class="scripture__original" lang="{{ _original_lang }}"{% if _is_rtl %} dir="rtl"{% endif %}>{{ _hebrew_override }}</p>
+                {%- endif -%}
             </div>
         </div>
     {%- endif -%}
