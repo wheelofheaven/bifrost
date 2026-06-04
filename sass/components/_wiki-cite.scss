@@ -50,6 +50,35 @@
     }
 }
 
+// Footnote inline reference — the small superscript letter the
+// {{ footnote(id="N") }} shortcode emits. Visually distinct from
+// `.wiki-cite` (which uses bracketed numbers in a pill) so a reader
+// can tell at a glance that the [N] points at a bibliographic
+// reference and a plain superscript letter points at an editorial
+// note. Both anchor to the chapter footer with round-trip back-links.
+.wiki-footnote {
+    display: inline;
+    vertical-align: super;
+    font-size: 0.7em;
+    line-height: 1;
+    margin-left: 0.1em;
+
+    &__link {
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-family: typo.$font-family-tech;
+        font-style: italic;
+        font-weight: 600;
+        padding: 0 0.15em;
+        transition: color 0.15s ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+        }
+    }
+}
+
 // Back-to-reference links in footnotes
 .footnote-definition {
     position: relative;

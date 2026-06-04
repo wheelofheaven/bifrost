@@ -1,0 +1,36 @@
+{# Footnote inline reference.
+
+   Use:
+       The prose continues{{ footnote(id="1") }} with explanatory
+       material in the footer.
+
+   The `id` is a 1-based index into `page.extra.footnotes` in the
+   page's frontmatter. The shortcode renders a small superscript
+   letter (a, b, c, …) that anchors the round-trip:
+
+       {{ footnote(id="1") }}  →  <sup id="fnref-1">a</sup> →
+       jumps to  <li id="fn-1">a — note content</li>  at the
+       chapter footer  →  the back-link in that <li> jumps back
+       to fnref-1.
+
+   Why letters rather than numbers: the cite shortcode already uses
+   bracketed numbers `[N]` for bibliographic citations. Footnotes use
+   plain superscript letters to keep the two systems visually distinct
+   in the prose. Both have the same round-trip behaviour.
+
+   IDs above 26 fall through to the raw id text — if a chapter ever
+   needs more than 26 footnotes, the rendering still works but the
+   letter sequence stops being meaningful. #}
+
+{%- set ref_id = id | default(value="") | trim -%}
+{%- if ref_id -%}
+    {%- set letters_str = "a b c d e f g h i j k l m n o p q r s t u v w x y z" -%}
+    {%- set letters = letters_str | split(pat=" ") -%}
+    {%- set idx = ref_id | int - 1 -%}
+    {%- if idx >= 0 and idx < 26 -%}
+        {%- set display = letters[idx] -%}
+    {%- else -%}
+        {%- set display = ref_id -%}
+    {%- endif -%}
+<sup class="wiki-footnote" id="fnref-{{ ref_id }}"><a href="#fn-{{ ref_id }}" class="wiki-footnote__link" title="Footnote {{ display }}">{{ display }}</a></sup>
+{%- endif -%}

@@ -935,6 +935,66 @@
         border-bottom-color: var(--color-accent-primary);
     }
 
+    // Footnotes section — rendered above References when both are
+    // present. Visually quieter than References (smaller, italic
+    // back-link, no accent color) so the bibliographic apparatus
+    // remains the primary reference structure and editorial notes
+    // sit below as supporting matter.
+    &__footnotes {
+        margin: 2.5rem 0 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--color-hairline-subtle);
+    }
+
+    &__footnote-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__footnote-item {
+        margin-bottom: 0.625rem;
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text);
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__footnote-backlink {
+        display: inline-block;
+        margin-right: 0.5rem;
+        font-family: var(--font-family-tech);
+        font-size: 0.875rem;
+        font-style: italic;
+        font-weight: 600;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        transition: color 0.15s ease;
+        user-select: none;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+        }
+    }
+
+    &__footnote-content {
+        // Inline so the footnote letter and the note body read as a
+        // single paragraph.
+        display: inline;
+
+        // Markdown rendering can produce <p> wrapping; flatten so the
+        // backlink and content stay on the same line.
+        p {
+            display: inline;
+            margin: 0;
+        }
+    }
+
     // [N] back-link from each reference item to the place in the
     // prose where the reference was first cited (anchor `#citeref-N`).
     // This is the *visible* reference number — the original CSS
