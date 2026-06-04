@@ -57,6 +57,28 @@
                 </div>
                 {% endif %}
 
+                <!-- References Section -->
+                {% if page.extra.references %}
+                <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
+                    <h2 class="wiki__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
+                    <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
+                        {% for ref in page.extra.references %}
+                        <li class="wiki__reference-item" id="ref-{{ loop.index }}">
+                            {% if ref.url %}
+                            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                            {% else %}
+                            <span class="wiki__reference-title">{{ ref.title }}</span>
+                            {% endif %}
+                            {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
+                            {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
+                            {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
+                            {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </section>
+                {% endif %}
+
                 <!-- Chapter Navigation -->
                 <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
                     <div class="timeline-page__prev-next">
