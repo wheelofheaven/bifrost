@@ -111,6 +111,7 @@
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
                         {% for ref in page.extra.references %}
                         <li class="wiki__reference-item" id="ref-{{ loop.index }}">
+                            <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
                             {% if ref.url %}
                             <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                             {% else %}
