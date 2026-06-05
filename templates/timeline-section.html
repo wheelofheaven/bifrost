@@ -12,6 +12,11 @@
             in chronological order.
 #}
 {% set ages_data = load_data(path="data/ages.json") %}
+{# Per-language strings for age names and event descriptions. Keyed by lang
+   code then by slug (in-the-beginning, age-of-capricorn, …). Falls back to
+   EN when a lang or a slug is missing. #}
+{% set ages_i18n = load_data(path="data/ages.i18n.json") %}
+{% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
 
 <div class="landing landing--timeline-overview" data-landing>
 
@@ -44,11 +49,12 @@
                horizontal space. Aquarius (1950) prints as is. #}
             {% set start_label = age.start | replace(from="−", to="") | replace(from="-", to="") %}
             {% set zslug = slug | replace(from="age-of-", to="") %}
+            {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
             <li class="landing__nav-item">
                 <a href="#{{ slug }}"
                    class="landing__nav-dot"
                    data-section-link="{{ loop.index + 1 }}"
-                   aria-label="{{ age.name }} — {{ start_label }}">
+                   aria-label="{{ age_name }} — {{ start_label }}">
                     <span class="landing__nav-dot-year" aria-hidden="true">{{ start_label }}</span>
                     <span class="landing__nav-dot-glyph" aria-hidden="true">
                         {% if age.link == "/timeline/in-the-beginning" %}
@@ -57,7 +63,7 @@
                         {{ zodiac::icon(name=zslug, size=12) }}
                         {% endif %}
                     </span>
-                    <span class="landing__nav-dot-title">{{ age.name }}</span>
+                    <span class="landing__nav-dot-title">{{ age_name }}</span>
                 </a>
             </li>
             {% endfor %}
@@ -153,9 +159,11 @@
                 {{ zodiac::icon(name=zslug, size=72) }}
                 {% endif %}
             </div>
+            {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+            {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
             <span class="landing-section__eyebrow">{{ start_label }} → {{ end_label }}</span>
-            <h2 class="landing-section__heading">{{ age.name }}</h2>
-            <p class="landing-section__sub">{{ age.event }}</p>
+            <h2 class="landing-section__heading">{{ age_name }}</h2>
+            <p class="landing-section__sub">{{ age_event }}</p>
             <a href="{{ age.link }}/" class="landing-section__cta">
                 <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
