@@ -6,17 +6,38 @@
 
    Renders an in-corpus link to /wiki/<slug>/ with the .wikilink class
    so canon-internal links are visually distinct from outbound links.
-   The link is language-aware (uses Zola's `lang` variable, which is
-   set per-page automatically in the shortcode rendering context).
+   The link is language-aware — resolves to /<lang>/wiki/<slug>/ for
+   translated pages.
 
    Use this instead of writing markdown links manually:
      bad:  [Elohim](/wiki/elohim/)
      good: {% wiki(slug="elohim") %}Elohim{% end %}
 
    The shortcode form keeps the path centralised — if /wiki/ ever moves
-   or gets renamed, every reference still resolves. #}
+   or gets renamed, every reference still resolves.
+
+   --- Language detection note ---
+   Zola's bare `lang` and `page.lang` variables both report the site
+   default ("en") inside shortcode rendering context, regardless of
+   the page's actual language. `page.path` IS correct, so we detect
+   the language from the path prefix here — matching the
+   `detected_lang` logic in base.html. #}
 
 {%- set _slug = slug | trim -%}
 {%- set _label = body | trim -%}
-{%- set _href = get_url(path="wiki/" ~ _slug, lang=lang) -%}
+
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _detected = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _detected = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _detected = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _detected = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _detected = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _detected = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _detected = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _detected = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _detected = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
+{%- endif -%}
+
+{%- set _href = get_url(path="wiki/" ~ _slug, lang=_detected) -%}
 <a class="wikilink" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

@@ -1,0 +1,54 @@
+{# Library inline-reference shortcode.
+
+   Paired-tag form, body is the visible label:
+       {% libref(book="genesis-woh", chapter=1, verse=1) %}Genesis 1:1{% end %}
+       {% libref(book="zephaniah", chapter=1, verse=10) %}Zephaniah 1:10{% end %}
+       {% libref(book="acts") %}the book of Acts{% end %}
+
+   Renders an in-corpus inline link to the library entry in the current
+   language. This is the *inline* counterpart to the {% library %}
+   blockquote shortcode — use libref when you want a small reference
+   tucked into prose, use library when you want to display the quoted
+   text as a pulled blockquote with a "Read in" button.
+
+   When `chapter` and `verse` are both set, appends the deep-link anchor
+   `#c<chapter>p<verse>` (matches the verse-anchor scheme rendered by
+   library-book.html). When only `chapter` is set, appends
+   `#chapter-<chapter>`. When neither is set, links to the book root.
+
+   Use this instead of writing markdown links manually:
+     bad:  [Genesis 1:1](/library/genesis-woh/#c1p1)
+     good: {% libref(book="genesis-woh", chapter=1, verse=1) %}Genesis 1:1{% end %}
+
+   The shortcode form keeps the path centralised (a future move/rename
+   of /library/ doesn't require global content sweeps) and resolves to
+   the reader's language automatically. See wiki.html for the language-
+   detection note. #}
+
+{%- set _book = book | trim -%}
+{%- set _chapter = chapter | default(value="") -%}
+{%- set _verse = verse | default(value="") -%}
+{%- set _label = body | trim -%}
+
+{%- set _anchor = "" -%}
+{%- if _chapter and _verse -%}
+    {%- set _anchor = "#c" ~ _chapter ~ "p" ~ _verse -%}
+{%- elif _chapter -%}
+    {%- set _anchor = "#chapter-" ~ _chapter -%}
+{%- endif -%}
+
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _detected = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _detected = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _detected = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _detected = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _detected = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _detected = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _detected = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _detected = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _detected = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
+{%- endif -%}
+
+{%- set _href = get_url(path="library/" ~ _book, lang=_detected) ~ _anchor -%}
+<a class="libref" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

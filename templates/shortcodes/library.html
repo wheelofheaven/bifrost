@@ -21,6 +21,22 @@
 {%- set _path_arg = path | default(value="") | trim -%}
 {%- set _title_arg = title | default(value="") | trim -%}
 
+{# Detect page language from path. Zola's bare `lang` and `page.lang`
+   both report the site default ("en") inside shortcode context — see
+   wiki.html for the full note. #}
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _detected = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _detected = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _detected = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _detected = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _detected = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _detected = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _detected = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _detected = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _detected = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
+{%- endif -%}
+
 {# Resolve book metadata if `book` was provided. #}
 {%- set _resolved_title = "" -%}
 {%- set _resolved_path = "" -%}
@@ -40,7 +56,7 @@
     {%- elif _chapter -%}
         {%- set _anchor = "#chapter-" ~ _chapter -%}
     {%- endif -%}
-    {%- set _resolved_path = get_url(path=_book_path, lang=lang) ~ _anchor -%}
+    {%- set _resolved_path = get_url(path=_book_path, lang=_detected) ~ _anchor -%}
 {%- endif -%}
 
 {# Manual `path` and `title` win over resolved values. #}

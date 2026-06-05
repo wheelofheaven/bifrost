@@ -456,3 +456,10 @@
 .wikilink {
     // no visual properties — defer to the cascade.
 }
+
+// Libref — inline library-reference link rendered by the {% libref %}
+// shortcode. Same style-light approach as .wikilink; the class exists
+// so future code can target libref-only behaviour without re-grepping.
+.libref {
+    // no visual properties — defer to the cascade.
+}
