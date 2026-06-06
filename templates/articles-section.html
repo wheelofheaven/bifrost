@@ -6,8 +6,15 @@
 {# Mirror the Newsroom pattern: re-fetch the full section explicitly so
    the right-rail aggregations see all entries, not just the current
    paginator slice. `entries` feeds the main column; `all_pages` feeds
-   the rail. If the section is unpaginated, both are the same. #}
-{% set full_section = get_section(path="articles/_index.md") %}
+   the rail. If the section is unpaginated, both are the same.
+
+   Lang-aware: prefix the lang dir on non-default-language renders so the
+   rail's article permalinks stay in the current language. #}
+{% set _lang_prefix = "" %}
+{% if detected_lang and detected_lang != config.default_language %}
+    {% set _lang_prefix = detected_lang ~ "/" %}
+{% endif %}
+{% set full_section = get_section(path=_lang_prefix ~ "articles/_index.md") %}
 {% set all_pages = full_section.pages %}
 {% set entries = paginator.pages | default(value=all_pages) %}
 {% set total = all_pages | length %}

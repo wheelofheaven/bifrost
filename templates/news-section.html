@@ -7,8 +7,16 @@
    current paginator slice — so for the right-rail aggregations we
    re-fetch the full section explicitly. `entries` is what we render
    in the main column (the current paginator page); `all_pages` is
-   what feeds the rail. #}
-{% set full_section = get_section(path="news/_index.md") %}
+   what feeds the rail.
+
+   Lang-aware: get_section paths are relative to /content, so on a
+   non-default-language render we prefix the lang dir so the right rail
+   shows same-language dispatches (and their .permalink stays in lang). #}
+{% set _lang_prefix = "" %}
+{% if detected_lang and detected_lang != config.default_language %}
+    {% set _lang_prefix = detected_lang ~ "/" %}
+{% endif %}
+{% set full_section = get_section(path=_lang_prefix ~ "news/_index.md") %}
 {% set all_pages = full_section.pages %}
 {% set entries = paginator.pages | default(value=all_pages) %}
 {% set total = all_pages | length %}

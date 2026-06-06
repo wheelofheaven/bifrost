@@ -115,11 +115,13 @@
 {% macro breadcrumbs(page, lang="en") %}
     <nav class="wiki__breadcrumbs" aria-label="Breadcrumb">
         <ol class="wiki__breadcrumb-list">
+            {# Leading slashes on the path cause get_url to emit a
+               "/de//..." double slash on translated pages. Drop them. #}
             <li class="wiki__breadcrumb-item">
-                <a href="{{ get_url(path="/", lang=detected_lang) }}" class="wiki__breadcrumb-link">Home</a>
+                <a href="{{ get_url(path="", lang=detected_lang) }}" class="wiki__breadcrumb-link">Home</a>
             </li>
             <li class="wiki__breadcrumb-item">
-                <a href="{{ get_url(path="/wiki/", lang=detected_lang) }}" class="wiki__breadcrumb-link">Wiki</a>
+                <a href="{{ get_url(path="wiki/", lang=detected_lang) }}" class="wiki__breadcrumb-link">Wiki</a>
             </li>
             {% if page.extra.category %}
             <li class="wiki__breadcrumb-item">
