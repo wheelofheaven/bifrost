@@ -104,8 +104,12 @@
                 <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
                     <div class="timeline-page__prev-next">
                         {% if page.extra.prev_age %}
-                        {% set prev_zodiac = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) | replace(from="age-of-", to="") %}
-                        <a href="{{ page.extra.prev_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
+                        {# prev_age.link is the raw EN path in every language's
+                           frontmatter; rebuild via get_url so the link stays
+                           in the current language. #}
+                        {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
+                        {% set prev_zodiac = prev_slug | replace(from="age-of-", to="") %}
+                        <a href="{{ get_url(path='timeline/' ~ prev_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="15,18 9,12 15,6"></polyline>
                             </svg>
@@ -120,8 +124,9 @@
                         {% endif %}
 
                         {% if page.extra.next_age %}
-                        {% set next_zodiac = page.extra.next_age[0].link | split(pat="/") | nth(n=2) | replace(from="age-of-", to="") %}
-                        <a href="{{ page.extra.next_age[0].link }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
+                        {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
+                        {% set next_zodiac = next_slug | replace(from="age-of-", to="") %}
+                        <a href="{{ get_url(path='timeline/' ~ next_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
                                 <span class="timeline-page__nav-label">{{ trans(key="timelineNext", lang=detected_lang) }}</span>
                                 <span class="timeline-page__nav-title">
@@ -150,16 +155,22 @@
 
                 {# ---- Read Next: chapter spine (prev_age + next_age) ----
                    Sequential reading of the Great Year. Cards show the actual
-                   page (looked up via get_page) so the description renders. #}
+                   page (looked up via get_page) so the description renders.
+
+                   The get_page lookup always uses the English path so the build
+                   doesn't break when a neighbouring chapter hasn't been
+                   translated yet. The card href is rebuilt via get_url so the
+                   link still lands on the current language, and the displayed
+                   name comes from extra.prev_age (translated in frontmatter). #}
                 {% set neighbors = [] %}
                 {% if page.extra.prev_age %}
-                    {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
-                    {% set prev_page_obj = get_page(path="timeline/" ~ prev_slug ~ ".md") %}
+                    {% set prev_slug_rn = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set prev_page_obj = get_page(path="timeline/" ~ prev_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[prev_page_obj]) %}
                 {% endif %}
                 {% if page.extra.next_age %}
-                    {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
-                    {% set next_page_obj = get_page(path="timeline/" ~ next_slug ~ ".md") %}
+                    {% set next_slug_rn = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set next_page_obj = get_page(path="timeline/" ~ next_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[next_page_obj]) %}
                 {% endif %}
                 {% if neighbors | length > 0 %}
@@ -169,7 +180,12 @@
                     </h2>
                     <div class="related-content__grid">
                         {% for related in neighbors %}
-                        <a href="{{ related.permalink }}" class="related-content__card">
+                        {# related.permalink is always the English permalink (the
+                           page object is fetched without a lang prefix above).
+                           Rebuild the href so it lands on the same-language
+                           chapter when one exists. #}
+                        {% set rel_href = get_url(path='timeline/' ~ related.slug, lang=detected_lang) %}
+                        <a href="{{ rel_href }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
                             {% endif %}
@@ -227,7 +243,14 @@
                     </h2>
                     <div class="related-content__grid">
                         {% for related in also_pages %}
-                        <a href="{{ related.permalink }}" class="related-content__card">
+                        {# also_pages comes from the English wiki section
+                           (above), so related.permalink would always point at
+                           the English entry. Rebuild via get_url so the link
+                           stays in the current language; related.components
+                           gives us ["wiki", "<slug>"]. #}
+                        {% set rel_section = related.components | first %}
+                        {% set rel_href = get_url(path=rel_section ~ '/' ~ related.slug, lang=detected_lang) %}
+                        <a href="{{ rel_href }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
                             {% endif %}
