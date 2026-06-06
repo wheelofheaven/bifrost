@@ -86,7 +86,12 @@
                             {% if ref.url %}
                             <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                             {% elif ref.path %}
-                            <a href="{{ ref.path }}" class="wiki__reference-link">{{ ref.title }}</a>
+                            {# ref.path is a raw EN path from frontmatter
+                               (e.g. "/library/genesis-woh/"); strip the
+                               leading slash and route via get_url so internal
+                               reference links land in the current language. #}
+                            {% set ref_path = ref.path | trim_start_matches(pat="/") %}
+                            <a href="{{ get_url(path=ref_path, lang=detected_lang) }}" class="wiki__reference-link">{{ ref.title }}</a>
                             {% else %}
                             <span class="wiki__reference-title">{{ ref.title }}</span>
                             {% endif %}
@@ -104,10 +109,14 @@
                 <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
                     <div class="timeline-page__prev-next">
                         {% if page.extra.prev_age %}
-                        {# prev_age.link is the raw EN path in every language's
-                           frontmatter; rebuild via get_url so the link stays
-                           in the current language. #}
-                        {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
+                        {# prev_age.link is the raw EN path in most translations
+                           (e.g. "/timeline/age-of-leo/") but some have a lang
+                           prefix (e.g. "/ru/timeline/age-of-leo/"). Take the
+                           last non-empty path segment to get the slug, then
+                           rebuild via get_url so the link stays in the current
+                           language regardless of the source form. #}
+                        {% set prev_parts = page.extra.prev_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
+                        {% set prev_slug = prev_parts | last %}
                         {% set prev_zodiac = prev_slug | replace(from="age-of-", to="") %}
                         <a href="{{ get_url(path='timeline/' ~ prev_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -124,7 +133,8 @@
                         {% endif %}
 
                         {% if page.extra.next_age %}
-                        {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
+                        {% set next_parts = page.extra.next_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
+                        {% set next_slug = next_parts | last %}
                         {% set next_zodiac = next_slug | replace(from="age-of-", to="") %}
                         <a href="{{ get_url(path='timeline/' ~ next_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
@@ -164,12 +174,14 @@
                    name comes from extra.prev_age (translated in frontmatter). #}
                 {% set neighbors = [] %}
                 {% if page.extra.prev_age %}
-                    {% set prev_slug_rn = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set prev_parts_rn = page.extra.prev_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
+                    {% set prev_slug_rn = prev_parts_rn | last %}
                     {% set prev_page_obj = get_page(path="timeline/" ~ prev_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[prev_page_obj]) %}
                 {% endif %}
                 {% if page.extra.next_age %}
-                    {% set next_slug_rn = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
+                    {% set next_parts_rn = page.extra.next_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
+                    {% set next_slug_rn = next_parts_rn | last %}
                     {% set next_page_obj = get_page(path="timeline/" ~ next_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[next_page_obj]) %}
                 {% endif %}

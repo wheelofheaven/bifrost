@@ -124,7 +124,13 @@
                             <ul class="source-card__cites-list">
                                 {% for cite in src.cited_by %}
                                 <li>
-                                    <a href="{{ cite.path }}">{{ cite.title }}</a>
+                                    {# cite.path is a raw EN path from
+                                       data/sources.json (e.g. "/timeline/
+                                       preamble"); strip leading slash and
+                                       route via get_url so cited-by links
+                                       land in the current language. #}
+                                    {% set cite_path = cite.path | trim_start_matches(pat="/") %}
+                                    <a href="{{ get_url(path=cite_path, lang=detected_lang) }}">{{ cite.title }}</a>
                                     <span class="source-card__cite-section">{{ cite.section }}</span>
                                 </li>
                                 {% endfor %}

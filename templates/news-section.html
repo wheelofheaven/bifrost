@@ -117,7 +117,11 @@
                     <ul class="newsroom__canon-list">
                         {% for item in canon_recent | slice(end=8) %}
                         <li class="newsroom__canon-list-item">
-                            <a href="{{ item.path }}" class="newsroom__canon-list-link">{{ item.title }}</a>
+                            {# item.path is a raw EN path from canon_links
+                               frontmatter (e.g. "/wiki/elohim/"); strip the
+                               leading slash and route via get_url for i18n. #}
+                            {% set item_path = item.path | trim_start_matches(pat="/") %}
+                            <a href="{{ get_url(path=item_path, lang=detected_lang) }}" class="newsroom__canon-list-link">{{ item.title }}</a>
                         </li>
                         {% endfor %}
                     </ul>

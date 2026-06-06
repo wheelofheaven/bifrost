@@ -52,7 +52,11 @@
     <div class="dispatch-card__canon-pills">
         <span class="dispatch-card__attribution-label">{{ trans(key="dispatchCanon", lang=lang) }}</span>
         {% for item in canon | slice(end=4) %}
-        <a class="dispatch-card__canon-pill" href="{{ item.path }}">{{ item.title }}</a>
+        {# item.path is a raw EN path from canon_links frontmatter
+           (e.g. "/wiki/elohim/"); strip the leading slash and route via
+           get_url so the pill links to the same-language entry. #}
+        {% set item_path = item.path | trim_start_matches(pat="/") %}
+        <a class="dispatch-card__canon-pill" href="{{ get_url(path=item_path, lang=lang) }}">{{ item.title }}</a>
         {% endfor %}
         {% if canon | length > 4 %}
         <span class="dispatch-card__attribution-overflow">+{{ canon | length - 4 }} {{ trans(key="wikiCardMore", lang=lang) }}</span>
