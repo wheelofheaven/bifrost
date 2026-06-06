@@ -151,7 +151,7 @@
 <meta name="ai.related_content" content="{% for item in page.extra.see_also %}{{ item.title }}{% if not loop.last %}, {% endif %}{% endfor %}">
 {% endif %}
 {% if page.extra.references %}
-<meta name="ai.citations" content="{% for ref in page.extra.references %}{{ ref.title }}{% if ref.author %} by {{ ref.author }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}">
+<meta name="ai.citations" content="{% for ref in page.extra.references %}{% if ref.title %}{{ ref.title }}{% elif ref.id %}{{ ref.id }}{% endif %}{% if ref.author %} by {{ ref.author }}{% endif %}{% if not loop.last %}; {% endif %}{% endfor %}">
 {% endif %}
 <meta name="ai.language" content="{{ detected_lang | default(value='en') }}">
 <meta name="ai.publisher" content="{{ config.title }}">

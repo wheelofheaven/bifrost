@@ -82,15 +82,40 @@
             {% endif %}
 
             {% if page.extra.references %}
+            {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
             <section class="article__references" role="doc-bibliography" aria-label="References and citations">
                 <h2 class="article__section-title">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                 <ol class="article__source-list">
                     {% for ref in page.extra.references %}
                     <li class="article__source-item" id="ref-{{ loop.index }}">
-                        {% if ref.url %}
+                        {% if ref.id and not ref.title %}
+                        {% set source_matches = [] %}
+                        {% if sources_manifest and sources_manifest.sources %}
+                        {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}
+                        {% endif %}
+                        {% if source_matches | length > 0 %}
+                        {% set source = source_matches[0] %}
+                        {% if source.follow_url %}
+                        <a href="{{ source.follow_url }}" class="article__source-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
+                        {% else %}
+                        <span>{{ source.title }}</span>
+                        {% endif %}
+                        {% if source.authored_by %}
+                        <span class="article__source-outlet">{{ source.authored_by | join(sep=", ") }}</span>
+                        {% endif %}
+                        {% if source.publish_date %}
+                        <span class="article__source-date">({{ source.publish_date }})</span>
+                        {% endif %}
+                        {% else %}
+                        <span>{{ ref.id }}</span>
+                        {% endif %}
+                        {% elif ref.url %}
                         <a href="{{ ref.url }}" class="article__source-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                         {% else %}
                         <span>{{ ref.title }}</span>
+                        {% endif %}
+                        {% if ref.locator %}
+                        <span class="article__source-outlet">{{ ref.locator }}</span>
                         {% endif %}
                         {% if ref.author %}
                         <span class="article__source-outlet">{{ ref.author }}</span>
@@ -103,6 +128,9 @@
                         {% endif %}
                         {% if ref.description %}
                         <p class="article__source-description">{{ ref.description }}</p>
+                        {% endif %}
+                        {% if ref.note %}
+                        <p class="article__source-description">{{ ref.note }}</p>
                         {% endif %}
                     </li>
                     {% endfor %}

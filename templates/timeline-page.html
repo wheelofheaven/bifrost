@@ -77,13 +77,31 @@
 
                 <!-- References Section -->
                 {% if page.extra.references %}
+                {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
                 <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
                     <h2 class="wiki__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
                         {% for ref in page.extra.references %}
                         <li class="wiki__reference-item" id="ref-{{ loop.index }}">
                             <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
-                            {% if ref.url %}
+                            {% if ref.id and not ref.title %}
+                            {% set source_matches = [] %}
+                            {% if sources_manifest and sources_manifest.sources %}
+                            {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}
+                            {% endif %}
+                            {% if source_matches | length > 0 %}
+                            {% set source = source_matches[0] %}
+                            {% if source.follow_url %}
+                            <a href="{{ source.follow_url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
+                            {% else %}
+                            <span class="wiki__reference-title">{{ source.title }}</span>
+                            {% endif %}
+                            {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
+                            {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}
+                            {% else %}
+                            <span class="wiki__reference-title">{{ ref.id }}</span>
+                            {% endif %}
+                            {% elif ref.url %}
                             <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                             {% elif ref.path %}
                             {# ref.path is a raw EN path from frontmatter
@@ -95,9 +113,11 @@
                             {% else %}
                             <span class="wiki__reference-title">{{ ref.title }}</span>
                             {% endif %}
+                            {% if ref.locator %}<span class="wiki__reference-publication">{{ ref.locator }}</span>{% endif %}
                             {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
                             {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
                             {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
+                            {% if ref.note %}<p class="wiki__reference-description">{{ ref.note }}</p>{% endif %}
                             {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
                         </li>
                         {% endfor %}
