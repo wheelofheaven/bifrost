@@ -158,6 +158,10 @@
         cursor: pointer;
         border-radius: 3px;
         min-width: 100px;
+        // v4.1: drag-to-seek wires pointer events here. touch-action:none
+        // stops the browser from interpreting horizontal drag as a scroll
+        // gesture on mobile, so the user can scrub during playback.
+        touch-action: none;
 
         @media (max-width: 768px) {
             height: 4px;
