@@ -43,10 +43,20 @@
 
         <span class="audio-player__time audio-player__time--total" id="audioTimeTotal">0:00</span>
 
-        <!-- Title -->
-        <div class="audio-player__title" id="audioTitle">
-            <span class="audio-player__title-text"></span>
-        </div>
+        <!-- Title — clickable on library pages to open the chapter jump
+             overlay. Book and chapter rows crossfade every few seconds so
+             both names surface during playback. -->
+        <button class="audio-player__title" id="audioTitle" type="button" aria-haspopup="menu" aria-expanded="false">
+            <span class="audio-player__title-row audio-player__title-row--book is-active">
+                <span class="audio-player__title-text"></span>
+            </span>
+            <span class="audio-player__title-row audio-player__title-row--chapter">
+                <span class="audio-player__chapter-text"></span>
+            </span>
+        </button>
+
+        <!-- Chapter jump overlay — populated at runtime from the manifest -->
+        <div class="audio-player__chapter-menu" id="audioChapterMenu" role="menu" aria-hidden="true" hidden></div>
 
         <!-- Engine toggle (System / Studio) -->
         <button

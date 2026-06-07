@@ -41,8 +41,10 @@
     bottom: 1rem;
     left: 50%;
     z-index: 100;
-    width: calc(100% - 2rem);
-    max-width: 800px;
+    // Match the navbar's footprint exactly (90% width up to 80rem max-width).
+    // Keeps the visual rhythm symmetric — bar at top, bar at bottom, same span.
+    width: 90%;
+    max-width: 80rem;
     transform: translate(-50%, calc(100% + 2rem));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
@@ -56,7 +58,6 @@
 
     @media (max-width: 640px) {
         bottom: 0.75rem;
-        width: calc(100% - 1.5rem);
         border-radius: 0.75rem;
     }
 
@@ -216,18 +217,51 @@
         transform: translate(-50%, -50%) scale(1.2);
     }
 
-    // Title
+    // Title — clickable, opens the chapter jump overlay. Two rows
+    // (book + chapter) stack at the same position and crossfade between
+    // each other every few seconds so both names surface during playback.
     &__title {
-        flex: 0 1 200px;
+        position: relative;
+        flex: 0 1 220px;
         min-width: 0;
+        height: 1.1rem;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+        padding: 0;
+        text-align: left;
+        font: inherit;
+        color: inherit;
         overflow: hidden;
+
+        &:hover .audio-player__title-row.is-active {
+            color: var(--color-accent-primary);
+        }
 
         @media (max-width: 640px) {
             display: none;
         }
     }
 
-    &__title-text {
+    &__title-row {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        opacity: 0;
+        transform: translateY(0.6rem);
+        transition: opacity 0.4s ease, transform 0.4s ease, color 0.2s ease;
+        white-space: nowrap;
+        overflow: hidden;
+
+        &.is-active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    &__title-text,
+    &__chapter-text {
         display: block;
         font-size: 0.875rem;
         font-weight: 500;
@@ -235,6 +269,92 @@
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
+        max-width: 100%;
+    }
+
+    &__chapter-text {
+        color: var(--color-text-muted);
+    }
+
+    // Chapter jump overlay — popover that anchors above the title button.
+    // Built from the manifest at runtime: one row per chapter, click to
+    // seek the engine to that chapter's start.
+    &__chapter-menu {
+        position: absolute;
+        bottom: calc(100% + 0.5rem);
+        left: 50%;
+        transform: translateX(-50%);
+        min-width: 14rem;
+        max-width: 22rem;
+        max-height: min(60vh, 22rem);
+        overflow-y: auto;
+        padding: 0.5rem;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.75rem;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.18s ease;
+
+        &.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    &__chapter-item {
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+        padding: 0.4rem 0.6rem;
+        background: transparent;
+        border: none;
+        border-radius: 0.4rem;
+        cursor: pointer;
+        font: inherit;
+        color: var(--color-text);
+        text-align: left;
+        width: 100%;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        &:hover, &:focus-visible {
+            background-color: var(--color-hover);
+            color: var(--color-accent-primary);
+            outline: none;
+        }
+
+        &.is-current {
+            color: var(--color-accent-primary);
+            font-weight: 600;
+        }
+    }
+
+    &__chapter-item-num {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.7rem;
+        color: var(--color-text-subtle);
+        min-width: 1.5rem;
+    }
+
+    &__chapter-item-name {
+        flex: 1;
+        font-size: 0.85rem;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    &__chapter-item-dur {
+        font-family: var(--font-mono, monospace);
+        font-size: 0.7rem;
+        color: var(--color-text-subtle);
     }
 
     // Engine toggle (System / Studio voice)

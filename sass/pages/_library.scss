@@ -1222,12 +1222,23 @@
     // chapter timing exposes word-level alignment (timing v2). Subtle by
     // design: just a colour shift so the eye follows the audio without
     // layout shift or distracting backgrounds.
+    //
+    // v4.3 trail: the word currently being spoken gets --reading (full
+    // accent + bold). The word that just finished gets --reading-prev
+    // (same accent at lower opacity) — gives the eye a small read-trail
+    // so it's easy to track where the playhead is without losing sight
+    // of the immediately-prior word.
     &__word {
-        transition: color 0.1s ease;
+        transition: color 0.15s ease, opacity 0.15s ease;
 
         &--reading {
             color: var(--color-accent-primary);
             font-weight: 600;
+        }
+
+        &--reading-prev {
+            color: var(--color-accent-primary);
+            opacity: 0.45;
         }
     }
 
