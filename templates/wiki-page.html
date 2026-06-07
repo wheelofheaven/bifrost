@@ -128,8 +128,12 @@
                     <h2 id="references">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
                         {% for ref in page.extra.references %}
-                        <li class="wiki__reference-item" id="ref-{{ loop.index }}">
-                            <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
+                        {% set ref_anchor = loop.index %}
+                        {% if ref.id %}
+                        {% set ref_anchor = ref.id %}
+                        {% endif %}
+                        <li class="wiki__reference-item" id="ref-{{ ref_anchor }}">
+                            <a href="#citeref-{{ ref_anchor }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
                             {% if ref.id and not ref.title %}
                             {# Source-ID lookup via filter() so a missing match falls through to the {% else %}
                                branch (renders the bare ref.id rather than a gap). #}
