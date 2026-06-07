@@ -393,6 +393,147 @@
                     {% endif %}
                 </div>
 
+                {% set book_version_meta = book_data.version | default(value=false) %}
+                {% if book_version_meta %}
+                {% set version_license = book_version_meta.license | default(value=false) %}
+                {% set version_provenance = book_version_meta.provenance | default(value=false) %}
+                {% set version_responsibility = book_version_meta.responsibility | default(value=false) %}
+                <section class="library-book__provenance-section" aria-labelledby="book-provenance-heading" data-ai-cite="true">
+                    <h2 class="library-book__provenance-title" id="book-provenance-heading">Version provenance</h2>
+                    <dl class="library-book__provenance-list">
+                        {% if book_version_meta.title %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">Title</dt>
+                            <dd class="library-book__provenance-description">{{ book_version_meta.title }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if book_version_meta.type %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">Type</dt>
+                            <dd class="library-book__provenance-description">{{ book_version_meta.type | replace(from="-", to=" ") }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if book_version_meta.scope %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">Scope</dt>
+                            <dd class="library-book__provenance-description">{{ book_version_meta.scope }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if book_version_meta.sourceLanguage %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">Source language</dt>
+                            <dd class="library-book__provenance-description" lang="{{ book_version_meta.sourceLanguage }}">{{ library_macros::lang_name(code=book_version_meta.sourceLanguage) }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_license %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">License</dt>
+                            <dd class="library-book__provenance-description">
+                                {% if version_license.url %}
+                                <a href="{{ version_license.url | safe }}" target="_blank" rel="noopener noreferrer">{% if version_license.spdx %}{{ version_license.spdx }}{% elif version_license.status %}{{ version_license.status }}{% else %}License{% endif %}</a>
+                                {% elif version_license.spdx %}
+                                {{ version_license.spdx }}
+                                {% elif version_license.status %}
+                                {{ version_license.status }}
+                                {% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_provenance and version_provenance.sourceRecordId %}
+                        {% set source_record_matches = catalog.books | filter(attribute="slug", value=version_provenance.sourceRecordId) %}
+                        <div class="library-book__provenance-item">
+                            <dt class="library-book__provenance-term">Source record</dt>
+                            <dd class="library-book__provenance-description">
+                                {% if source_record_matches | length > 0 %}
+                                <a href="{{ get_url(path='library/' ~ version_provenance.sourceRecordId, lang=detected_lang) }}"><code>{{ version_provenance.sourceRecordId }}</code></a>
+                                {% else %}
+                                <code>{{ version_provenance.sourceRecordId }}</code>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_provenance and version_provenance.sourceUrl %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Source URL</dt>
+                            <dd class="library-book__provenance-description">
+                                {% if version_provenance.sourceUrl is starting_with("http") %}
+                                <a href="{{ version_provenance.sourceUrl | safe }}" target="_blank" rel="noopener noreferrer">{{ version_provenance.sourceUrl | truncate(length=72, end="...") }}</a>
+                                {% else %}
+                                {{ version_provenance.sourceUrl }}
+                                {% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_provenance and version_provenance.baseText %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Base text</dt>
+                            <dd class="library-book__provenance-description">{{ version_provenance.baseText }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_provenance and version_provenance.method %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Method</dt>
+                            <dd class="library-book__provenance-description">{{ version_provenance.method }}</dd>
+                        </div>
+                        {% endif %}
+
+                        {% set show_version_citation = version_provenance and version_provenance.citation and version_provenance.citation != "See sourceCitation for bibliography." %}
+                        {% if show_version_citation or book_data.sourceCitation %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Citation</dt>
+                            <dd class="library-book__provenance-description">
+                                {% if show_version_citation %}
+                                <span>{{ version_provenance.citation }}</span>
+                                {% endif %}
+                                {% if book_data.sourceCitation %}
+                                <details class="library-book__provenance-details">
+                                    <summary>Bibliography</summary>
+                                    <p>{{ book_data.sourceCitation }}</p>
+                                </details>
+                                {% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if version_responsibility and (version_responsibility.translator or version_responsibility.editor or version_responsibility.reviewer) %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Responsibility</dt>
+                            <dd class="library-book__provenance-description library-book__provenance-roles">
+                                {% if version_responsibility.translator %}<span>Translator: {{ version_responsibility.translator }}</span>{% endif %}
+                                {% if version_responsibility.editor %}<span>Editor: {{ version_responsibility.editor }}</span>{% endif %}
+                                {% if version_responsibility.reviewer %}<span>Reviewer: {{ version_responsibility.reviewer }}</span>{% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+
+                    {% if version_provenance and version_provenance.witnesses %}
+                    <div class="library-book__witnesses">
+                        <div class="library-book__provenance-term">Witnesses</div>
+                        <ol class="library-book__witness-list">
+                            {% for witness in version_provenance.witnesses %}
+                            <li class="library-book__witness">
+                                {% if witness.role %}<span class="library-book__witness-role">{{ witness.role }}</span>{% endif %}
+                                <span class="library-book__witness-body">
+                                    {% if witness.language %}<span class="library-book__witness-language" lang="{{ witness.language }}">{{ library_macros::lang_name(code=witness.language) }}</span>{% endif %}
+                                    {% if witness.label %}<span class="library-book__witness-label">{{ witness.label }}</span>{% endif %}
+                                </span>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+                    {% endif %}
+                </section>
+                {% endif %}
+
                 {# Translation provenance — surfaces Wheel of Heaven's
                    AI-assisted translation practice when the reader is
                    viewing a language other than the book's original.

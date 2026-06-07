@@ -3989,6 +3989,171 @@
         margin: 0 0 1.5rem;
     }
 
+    &__provenance-section {
+        margin: 0 0 1.5rem;
+        padding: 1rem 0 0;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__provenance-title {
+        margin: 0 0 0.875rem;
+        color: var(--color-text);
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        font-weight: 700;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    &__provenance-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.625rem;
+        margin: 0;
+    }
+
+    &__provenance-item {
+        display: grid;
+        grid-template-columns: minmax(5.5rem, max-content) minmax(0, 1fr);
+        gap: 0.75rem;
+        align-items: baseline;
+
+        &--stack {
+            grid-template-columns: minmax(0, 1fr);
+            gap: 0.25rem;
+
+            .library-book__provenance-description {
+                color: var(--color-text-muted);
+                font-size: 0.8125rem;
+                line-height: 1.5;
+                text-align: left;
+            }
+        }
+    }
+
+    &__provenance-term {
+        display: block;
+        margin: 0;
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    &__provenance-description {
+        min-width: 0;
+        margin: 0;
+        color: var(--color-text);
+        font-family: var(--font-family-body);
+        font-size: 0.875rem;
+        line-height: 1.45;
+        text-align: right;
+        overflow-wrap: anywhere;
+
+        a {
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
+        code {
+            display: inline-block;
+            max-width: 100%;
+            padding: 0.125rem 0.375rem;
+            border: 1px solid var(--color-hairline);
+            border-radius: 0.25rem;
+            background: var(--color-background-secondary);
+            font-family: typo.$font-family-tech;
+            font-size: 0.8125rem;
+            line-height: 1.4;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+    }
+
+    &__provenance-roles {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+    }
+
+    &__provenance-details {
+        margin: 0.375rem 0 0;
+
+        summary {
+            display: inline-flex;
+            color: var(--color-accent-primary);
+            font-family: typo.$font-family-tech;
+            font-size: 0.75rem;
+            cursor: pointer;
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+
+        p {
+            margin: 0.5rem 0 0;
+            color: var(--color-text-muted);
+            font-size: 0.8125rem;
+            line-height: 1.55;
+        }
+    }
+
+    &__witnesses {
+        margin: 0.875rem 0 0;
+    }
+
+    &__witness-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin: 0.5rem 0 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__witness {
+        display: grid;
+        grid-template-columns: max-content minmax(0, 1fr);
+        gap: 0.5rem;
+        align-items: baseline;
+        min-width: 0;
+    }
+
+    &__witness-role {
+        display: inline-flex;
+        align-items: center;
+        min-height: 1.375rem;
+        padding: 0.0625rem 0.375rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.25rem;
+        background: var(--color-background-secondary);
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        letter-spacing: 0;
+        text-transform: uppercase;
+        white-space: nowrap;
+    }
+
+    &__witness-body {
+        display: flex;
+        min-width: 0;
+        flex-direction: column;
+        gap: 0.125rem;
+        color: var(--color-text-muted);
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        overflow-wrap: anywhere;
+    }
+
+    &__witness-language {
+        color: var(--color-text);
+        font-weight: 600;
+    }
+
     // Translation provenance — sidebar chip + hover/focus tooltip.
     // The chip carries the credit ("AI-assisted · Claude Opus 4.7"); the
     // longer explanation of Wheel of Heaven's practice lives in the
