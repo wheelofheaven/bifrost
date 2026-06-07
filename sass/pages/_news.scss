@@ -548,6 +548,55 @@
         a {
             color: var(--color-link);
         }
+
+        code {
+            font-family: typo.$font-family-tech;
+            background: var(--color-background-tertiary);
+            padding: 0.15em 0.35em;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        pre {
+            background: var(--color-background-tertiary);
+            padding: v.$spacing-md;
+            border-radius: v.$border-radius-md;
+            overflow-x: auto;
+            margin: v.$spacing-md 0;
+            font-size: 0.9em;
+            line-height: 1.6;
+
+            code {
+                background: none;
+                padding: 0;
+                font-size: inherit;
+            }
+        }
+
+        table {
+            width: 100%;
+            margin: v.$spacing-lg 0;
+            border-collapse: collapse;
+            font-size: 0.95em;
+        }
+
+        th,
+        td {
+            padding: v.$spacing-xs v.$spacing-sm;
+            text-align: left;
+            border-bottom: 1px solid var(--color-hairline);
+            vertical-align: top;
+        }
+
+        th {
+            font-weight: 700;
+            color: var(--color-text);
+            border-bottom: 2px solid var(--color-border);
+        }
+
+        td {
+            color: var(--color-text);
+        }
     }
 
     &__canon,
