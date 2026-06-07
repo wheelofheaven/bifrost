@@ -89,6 +89,8 @@
                     {% for ref in page.extra.references %}
                     <li class="article__source-item" id="ref-{{ loop.index }}">
                         {% if ref.id and not ref.title %}
+                        {# Source-ID lookup via filter() so a missing match falls through to the {% else %}
+                           branch (renders the bare ref.id rather than a gap). #}
                         {% set source_matches = [] %}
                         {% if sources_manifest and sources_manifest.sources %}
                         {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}

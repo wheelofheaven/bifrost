@@ -257,12 +257,14 @@
                 {% if complete_count + partial_count > 0 %}
 
                 {# Per-tradition ordering:
-                   • raelian  → chronological by publicationYear (TBWTT first)
-                   • biblical → WoH (in-house) editions pinned to top, others alphabetical
-                   • others   → alphabetical by slug #}
+                   • raelian → chronological by publicationYear (TBWTT first;
+                     the raelian list reads as a publication-date timeline).
+                   • everything else → WoH (in-house) editions pinned to top,
+                     then the rest alphabetical by slug. WoH translations
+                     always lead their tradition section. #}
                 {% if tradition.id == "raelian" %}
                     {% set ordered_books = tradition_all | sort(attribute="publicationYear") %}
-                {% elif tradition.id == "biblical" %}
+                {% else %}
                     {% set preferred_books = tradition_all | filter(attribute="wohCurated", value=true) | sort(attribute="slug") %}
                     {% set tradition_sorted = tradition_all | sort(attribute="slug") %}
                     {# set_global is required so the accumulator survives the inner-for scope #}
@@ -273,8 +275,6 @@
                         {% endif %}
                     {% endfor %}
                     {% set ordered_books = preferred_books | concat(with=rest_books) %}
-                {% else %}
-                    {% set ordered_books = tradition_all | sort(attribute="slug") %}
                 {% endif %}
 
                 <section class="category-group" id="tradition-{{ tradition.id }}" data-tradition="{{ tradition.id }}">
@@ -325,7 +325,7 @@
                                          data-tradition-name="{{ tradition_name | lower }}"
                                          data-code="{{ book_entry.code | lower }}"
                                          data-year="{{ book_entry.publicationYear | default(value='') }}"
-                                         data-tags="{{ book_entry.tags | join(sep=',') | lower }}"
+                                         data-tags="{{ book_entry.tags | default(value=[]) | join(sep=',') | lower }}"
                                          {% if is_preferred %}data-preferred="true"{% endif %}
                                          {% if is_translation_program %}data-translation-program="true"{% endif %}>
 

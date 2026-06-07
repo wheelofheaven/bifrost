@@ -54,89 +54,91 @@
                 {% if page.content %}
                 <div class="timeline-page__content">
                     {{ page.content | safe }}
+
+                    {# Footnotes and References are rendered inside the
+                       content wrapper so their h2 / list typography
+                       inherits the same chapter-section styling as the
+                       prose headings above. #}
+
+                    {% if page.extra.footnotes %}
+                    <section class="wiki__footnotes" role="doc-endnotes" aria-label="Footnotes" data-ai-cite="true">
+                        <h2 id="notes">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</h2>
+                        <ol class="wiki__footnote-list">
+                            {% set letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split(pat=" ") %}
+                            {% for fn in page.extra.footnotes %}
+                            {% set idx = loop.index0 %}
+                            {% set display = letters[idx] | default(value=loop.index) %}
+                            <li class="wiki__footnote-item" id="fn-{{ loop.index }}">
+                                <a href="#fnref-{{ loop.index }}" class="wiki__footnote-backlink" aria-label="Jump back to footnote {{ display }} in the text" title="Jump back to footnote">{{ display }}.</a>
+                                <span class="wiki__footnote-content">{{ fn.content | markdown(inline=true) | safe }}</span>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </section>
+                    {% endif %}
+
+                    {% if page.extra.references %}
+                    {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+                    <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
+                        <h2 id="references">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
+                        <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
+                            {% for ref in page.extra.references %}
+                            <li class="wiki__reference-item" id="ref-{{ loop.index }}">
+                                <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
+                                {% if ref.id and not ref.title %}
+                                {# Source-ID lookup: resolve ref.id against data/sources.json via filter() so a missing
+                                   match falls through to the {% else %} branch (renders the bare ref.id rather than
+                                   a gap). Filter pattern preferred over nested {% for %} so we can return a single
+                                   source and a clean else-branch. #}
+                                {% set source_matches = [] %}
+                                {% if sources_manifest and sources_manifest.sources %}
+                                {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}
+                                {% endif %}
+                                {% if source_matches | length > 0 %}
+                                {% set source = source_matches[0] %}
+                                {% if source.follow_url %}
+                                <a href="{{ source.follow_url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
+                                {% else %}
+                                <span class="wiki__reference-title">{{ source.title }}</span>
+                                {% endif %}
+                                {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
+                                {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}
+                                {% else %}
+                                <span class="wiki__reference-title">{{ ref.id }}</span>
+                                {% endif %}
+                                {% elif ref.url %}
+                                <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                                {% elif ref.path %}
+                                {# ref.path is a raw EN path from frontmatter (e.g. "/library/genesis-woh/"); strip
+                                   the leading slash and route via get_url so internal reference links land in the
+                                   current language. #}
+                                {% set ref_path = ref.path | trim_start_matches(pat="/") %}
+                                <a href="{{ get_url(path=ref_path, lang=detected_lang) }}" class="wiki__reference-link">{{ ref.title }}</a>
+                                {% else %}
+                                <span class="wiki__reference-title">{{ ref.title }}</span>
+                                {% endif %}
+                                {% if ref.locator %}<span class="wiki__reference-publication">{{ ref.locator }}</span>{% endif %}
+                                {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
+                                {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
+                                {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
+                                {% if ref.note %}<p class="wiki__reference-description">{{ ref.note }}</p>{% endif %}
+                                {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </section>
+                    {% endif %}
                 </div>
-                {% endif %}
-
-                <!-- Footnotes Section -->
-                {% if page.extra.footnotes %}
-                <section class="wiki__footnotes" role="doc-endnotes" aria-label="Footnotes" data-ai-cite="true">
-                    <h2 class="wiki__section-title" id="footnotes-heading">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</h2>
-                    <ol class="wiki__footnote-list">
-                        {% set letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split(pat=" ") %}
-                        {% for fn in page.extra.footnotes %}
-                        {% set idx = loop.index0 %}
-                        {% set display = letters[idx] | default(value=loop.index) %}
-                        <li class="wiki__footnote-item" id="fn-{{ loop.index }}">
-                            <a href="#fnref-{{ loop.index }}" class="wiki__footnote-backlink" aria-label="Jump back to footnote {{ display }} in the text" title="Jump back to footnote">{{ display }}</a>
-                            <span class="wiki__footnote-content">{{ fn.content | markdown(inline=true) | safe }}</span>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </section>
-                {% endif %}
-
-                <!-- References Section -->
-                {% if page.extra.references %}
-                {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
-                <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
-                    <h2 class="wiki__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
-                    <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
-                        {% for ref in page.extra.references %}
-                        <li class="wiki__reference-item" id="ref-{{ loop.index }}">
-                            <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
-                            {% if ref.id and not ref.title %}
-                            {% set source_matches = [] %}
-                            {% if sources_manifest and sources_manifest.sources %}
-                            {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}
-                            {% endif %}
-                            {% if source_matches | length > 0 %}
-                            {% set source = source_matches[0] %}
-                            {% if source.follow_url %}
-                            <a href="{{ source.follow_url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
-                            {% else %}
-                            <span class="wiki__reference-title">{{ source.title }}</span>
-                            {% endif %}
-                            {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
-                            {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}
-                            {% else %}
-                            <span class="wiki__reference-title">{{ ref.id }}</span>
-                            {% endif %}
-                            {% elif ref.url %}
-                            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
-                            {% elif ref.path %}
-                            {# ref.path is a raw EN path from frontmatter
-                               (e.g. "/library/genesis-woh/"); strip the
-                               leading slash and route via get_url so internal
-                               reference links land in the current language. #}
-                            {% set ref_path = ref.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=ref_path, lang=detected_lang) }}" class="wiki__reference-link">{{ ref.title }}</a>
-                            {% else %}
-                            <span class="wiki__reference-title">{{ ref.title }}</span>
-                            {% endif %}
-                            {% if ref.locator %}<span class="wiki__reference-publication">{{ ref.locator }}</span>{% endif %}
-                            {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
-                            {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
-                            {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
-                            {% if ref.note %}<p class="wiki__reference-description">{{ ref.note }}</p>{% endif %}
-                            {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </section>
                 {% endif %}
 
                 <!-- Chapter Navigation -->
                 <nav class="timeline-page__navigation" role="navigation" aria-label="Chapter navigation">
                     <div class="timeline-page__prev-next">
                         {% if page.extra.prev_age %}
-                        {# prev_age.link is the raw EN path in most translations
-                           (e.g. "/timeline/age-of-leo/") but some have a lang
-                           prefix (e.g. "/ru/timeline/age-of-leo/"). Take the
-                           last non-empty path segment to get the slug, then
-                           rebuild via get_url so the link stays in the current
-                           language regardless of the source form. #}
-                        {% set prev_parts = page.extra.prev_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
-                        {% set prev_slug = prev_parts | last %}
+                        {# prev_age.link is the raw EN path in every language's
+                           frontmatter; rebuild via get_url so the link stays
+                           in the current language. #}
+                        {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
                         {% set prev_zodiac = prev_slug | replace(from="age-of-", to="") %}
                         <a href="{{ get_url(path='timeline/' ~ prev_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -153,8 +155,7 @@
                         {% endif %}
 
                         {% if page.extra.next_age %}
-                        {% set next_parts = page.extra.next_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
-                        {% set next_slug = next_parts | last %}
+                        {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
                         {% set next_zodiac = next_slug | replace(from="age-of-", to="") %}
                         <a href="{{ get_url(path='timeline/' ~ next_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
@@ -194,14 +195,12 @@
                    name comes from extra.prev_age (translated in frontmatter). #}
                 {% set neighbors = [] %}
                 {% if page.extra.prev_age %}
-                    {% set prev_parts_rn = page.extra.prev_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
-                    {% set prev_slug_rn = prev_parts_rn | last %}
+                    {% set prev_slug_rn = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
                     {% set prev_page_obj = get_page(path="timeline/" ~ prev_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[prev_page_obj]) %}
                 {% endif %}
                 {% if page.extra.next_age %}
-                    {% set next_parts_rn = page.extra.next_age[0].link | trim_end_matches(pat="/") | split(pat="/") %}
-                    {% set next_slug_rn = next_parts_rn | last %}
+                    {% set next_slug_rn = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
                     {% set next_page_obj = get_page(path="timeline/" ~ next_slug_rn ~ ".md") %}
                     {% set_global neighbors = neighbors | concat(with=[next_page_obj]) %}
                 {% endif %}
@@ -460,6 +459,21 @@
                             {% endif %}
                         </li>
                         {% endfor %}
+                        {# Footnotes + References appear at the chapter
+                           footer. The headings live inside `page.content`
+                           but Zola's `page.toc` is built only from the
+                           markdown body, so we append them manually here
+                           so the ToC reflects the full chapter outline. #}
+                        {% if page.extra.footnotes %}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                            <a href="#notes" class="timeline-page__toc-link">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</a>
+                        </li>
+                        {% endif %}
+                        {% if page.extra.references %}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                            <a href="#references" class="timeline-page__toc-link">{{ trans(key="sectionReferences", lang=detected_lang) }}</a>
+                        </li>
+                        {% endif %}
 
                         {# Mirror the Read Next + Read Also discovery blocks
                            in the TOC so the reader sees the full reading flow. #}
