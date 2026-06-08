@@ -26,7 +26,6 @@
                     {% if page.reading_time %}
                     <span class="article__reading-time">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>
                     {% endif %}
-                    {% include "partials/listen-button.html" %}
                 </div>
 
                 <h1 class="article__title" id="article-title">{{ page.title }}</h1>

@@ -641,11 +641,16 @@
                     </div>
                 </div>
 
-                <!-- Listen -->
+                <!-- Listen — gated on the audiobook frontmatter flag
+                     (v4.5). The prerecorded ElevenLabs audiobook is the
+                     only Listen surface; pages without one don't show the
+                     UI at all. -->
+                {% if page.extra.audiobook %}
                 <div class="library-book__listen-section">
                     <div class="library-book__meta-label">{{ trans(key="pageListen", lang=detected_lang) }}</div>
                     {% include "partials/listen-button.html" %}
                 </div>
+                {% endif %}
 
                 <!-- Share -->
                 <div class="library-book__share-section">
