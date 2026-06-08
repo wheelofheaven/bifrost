@@ -111,21 +111,30 @@
         }
     }
 
-    // v4.4 — progress ring around the play button. SVG sits OUTSIDE the
-    // 36px solid circle (inset:-6px → 48px outer diameter, ~12px gap from
-    // accent fill to ring) and rotates -90deg so stroke-dashoffset fills
-    // clockwise from the top. Track + fill share the same stroke width
-    // so the seam where fill meets track is invisible. r=46 leaves room
-    // for the stroke without clipping at the viewBox edge (with
-    // overflow:visible just in case).
+    // v4.4 — progress ring around the play button. The SVG is sized
+    // explicitly and centered via top:50%/left:50% + translate(-50%,-50%)
+    // rather than `inset`, because the inset approach was reportedly
+    // rendering off-center in some browsers — probably box-sizing or
+    // sub-pixel rounding interacting with the play button's hover scale.
+    // The translate-based centering is bullet-proof: SVG center always
+    // aligns with the play button's center regardless of px/% maths.
+    // Rotated -90deg so stroke-dashoffset fills clockwise from the top.
     &__play-ring {
         position: absolute;
-        inset: -6px;
-        width: calc(100% + 12px);
-        height: calc(100% + 12px);
+        top: 50%;
+        left: 50%;
+        width: 48px;
+        height: 48px;
         pointer-events: none;
-        transform: rotate(-90deg);
+        transform: translate(-50%, -50%) rotate(-90deg);
         overflow: visible;
+
+        @media (max-width: 768px) {
+            // Play button shrinks to 32px on mobile; keep the ring
+            // proportional (44px outer = ~6px breathing room).
+            width: 44px;
+            height: 44px;
+        }
     }
 
     &__play-ring-track,
