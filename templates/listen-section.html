@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/library.html" as library_macros %}
+
+{#
+   /listen/ landing — lists every prerecorded ElevenLabs audiobook in the
+   project, with per-language availability surfaced as pills on each card.
+   Data flow:
+     - data/audiobooks.json — per-book per-language inventory of audiobook
+       artifacts (slug + languages[]).
+     - data/library/catalog.json — book metadata (title, tradition, code).
+     - data/library/{slug}.json — book payload (titles, descriptions).
+
+   The page itself is i18n; the page-language determines which translation
+   strings we render. The audiobook cards still surface all languages so a
+   French visitor learns there's an English audiobook even if French isn't
+   ready yet — clicking the language pill jumps to that language's book
+   page where the Listen button is wired.
+#}
+
+{% block content %}
+{% set audiobooks_data = load_data(path="data/audiobooks.json") %}
+{% set catalog = load_data(path="data/library/catalog.json") %}
+
+<div class="listen-section">
+    {{ breadcrumbs::generic(title=section.title, lang=detected_lang) }}
+
+    <header class="listen-section__header">
+        <h1 class="listen-section__title" id="page-title">{{ section.title }}</h1>
+        {% if section.extra.summary %}
+        <p class="listen-section__summary" data-ai-summary="true">{{ section.extra.summary }}</p>
+        {% elif section.description %}
+        <p class="listen-section__summary" data-ai-summary="true">{{ section.description }}</p>
+        {% endif %}
+    </header>
+
+    {% if section.content %}
+    <div class="listen-section__lede">
+        {{ section.content | safe }}
+    </div>
+    {% endif %}
+
+    {% if audiobooks_data.books and audiobooks_data.books | length > 0 %}
+    <div class="listen-section__grid">
+        {% for ab in audiobooks_data.books %}
+        {# Cross-reference the catalog so we don't duplicate metadata
+           (title/tradition/code live in one place: catalog.json). #}
+        {% set book_entry = catalog.books | filter(attribute="slug", value=ab.slug) | first %}
+        {% if book_entry %}
+        {% set book_data = load_data(path="data/library/" ~ ab.slug ~ ".json", required=false) %}
+        {% if book_data %}
+        {% set title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
+        {% set langs = ab.languages | default(value=[]) %}
+        {% set page_lang_has = detected_lang in langs %}
+        {# Link to the book in the visitor's language if available; otherwise
+           link to whatever the first available audiobook language is so
+           the click always lands on a working Listen button. #}
+        {% if page_lang_has %}
+            {% set target_lang = detected_lang %}
+        {% else %}
+            {% set target_lang = langs | first %}
+        {% endif %}
+
+        <article class="listen-card" data-slug="{{ ab.slug }}" data-langs="{{ langs | join(sep=',') }}">
+            <a class="listen-card__link" href="{{ get_url(path='library/' ~ ab.slug, lang=target_lang) }}">
+                <header class="listen-card__header">
+                    <h2 class="listen-card__title">{{ title }}</h2>
+                    {% if book_entry.code %}
+                    <span class="listen-card__code">{{ book_entry.code }}</span>
+                    {% endif %}
+                </header>
+
+                {% set desc = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
+                {% if desc %}
+                <p class="listen-card__desc">{{ desc | truncate(length=180) }}</p>
+                {% endif %}
+
+                <footer class="listen-card__footer">
+                    <span class="listen-card__langs-label">
+                        {{ trans(key="listenAvailableIn", lang=detected_lang) }}
+                    </span>
+                    <ul class="listen-card__langs">
+                        {% for l in langs %}
+                        <li class="listen-card__lang{% if l == detected_lang %} listen-card__lang--current{% endif %}">
+                            {{ l | upper }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </footer>
+            </a>
+        </article>
+        {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+    {% else %}
+    <p class="listen-section__empty">{{ trans(key="listenNoneYet", lang=detected_lang) }}</p>
+    {% endif %}
+</div>
+{% endblock content %}
