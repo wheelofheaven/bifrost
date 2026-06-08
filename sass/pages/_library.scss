@@ -1229,16 +1229,22 @@
     // so it's easy to track where the playhead is without losing sight
     // of the immediately-prior word.
     &__word {
-        transition: color 0.15s ease, opacity 0.15s ease;
+        transition: color 0.15s ease, font-weight 0.15s ease;
 
         &--reading {
             color: var(--color-accent-primary);
             font-weight: 600;
         }
 
+        // v4.4 trail: not a dimmed accent (which fades INTO the
+        // background and reads as "darker"), but the body text colour
+        // itself with a weight bump. Dark theme body text is light so
+        // the trail looks lighter than the surrounding faded words;
+        // light theme body text is dark so the trail looks darker. The
+        // bold keeps it differentiated from the unread runs around it.
         &--reading-prev {
-            color: var(--color-accent-primary);
-            opacity: 0.45;
+            color: var(--color-text);
+            font-weight: 600;
         }
     }
 

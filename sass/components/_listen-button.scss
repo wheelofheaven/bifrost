@@ -77,8 +77,12 @@
         }
     }
 
-    // Play/Pause button
+    // Play/Pause button — solid accent circle. The progress ring (v4.4)
+    // is an SVG sibling layered around it via absolute positioning that
+    // fills clockwise as audio progresses (driven by --progress 0..100
+    // set in JS on this element).
     &__play {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -105,6 +109,41 @@
             width: 32px;
             height: 32px;
         }
+    }
+
+    // v4.4 — progress ring around the play button. SVG sits OUTSIDE the
+    // 36px solid circle (inset:-5px → ~46px outer diameter) and rotates
+    // -90deg so stroke-dashoffset fills clockwise from the top. Track is
+    // a low-opacity neutral so the full perimeter is always visible;
+    // fill is the accent colour and shrinks its dashoffset as progress
+    // approaches 100%.
+    &__play-ring {
+        position: absolute;
+        inset: -5px;
+        width: calc(100% + 10px);
+        height: calc(100% + 10px);
+        pointer-events: none;
+        transform: rotate(-90deg);
+        overflow: visible;
+    }
+
+    &__play-ring-track {
+        fill: none;
+        stroke: var(--color-border);
+        stroke-width: 2;
+        opacity: 0.6;
+    }
+
+    &__play-ring-fill {
+        fill: none;
+        stroke: var(--color-accent-primary);
+        stroke-width: 2.5;
+        stroke-linecap: round;
+        stroke-dasharray: 100;
+        // --progress is 0..100, set on the .audio-player__play element.
+        // dashoffset 100 = empty, 0 = full.
+        stroke-dashoffset: calc(100 - var(--progress, 0));
+        transition: stroke-dashoffset 0.15s linear;
     }
 
     &__icon {
@@ -289,12 +328,14 @@
         max-height: min(60vh, 22rem);
         overflow-y: auto;
         padding: 0.5rem;
-        background-color: var(--color-navbar-bg);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid var(--color-hairline);
+        // Fully opaque foreground card. --color-navbar-bg is rgba ~0.1 which
+        // stacks transparently inside the already-glassy player; using
+        // --color-background-secondary gives a solid panel that reads as
+        // "foreground" instead of "ghost of the page behind."
+        background-color: var(--color-background-secondary);
+        border: 1px solid var(--color-border);
         border-radius: 0.75rem;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
         opacity: 0;
         pointer-events: none;
         transition: opacity 0.18s ease;
