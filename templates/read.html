@@ -70,6 +70,24 @@
                 <span class="read__path-discover-icon" aria-hidden="true">{% include "partials/icons/chevron-down.html" %}</span>
             </button>
         </article>
+        {# v4.7 — Listen path. No carousel below (audiobook catalog is its
+           own page); the --solo modifier rounds all four corners of the
+           main link since there's no discover bar underneath. #}
+        <article class="read__path read__path--solo" data-section="listen">
+            <a class="read__path-main" href="{{ get_url(path='listen', lang=detected_lang) }}">
+                <span class="read__path-icon" aria-hidden="true">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                        <path d="M21 19a2 2 0 0 1-2 2h-1v-7h3v5z"/>
+                        <path d="M3 19a2 2 0 0 0 2 2h1v-7H3v5z"/>
+                    </svg>
+                </span>
+                <span class="read__path-eyebrow">{{ trans(key="readListenEyebrow", lang=detected_lang) }}</span>
+                <h2 class="read__path-title">{{ trans(key="navbarListen", lang=detected_lang) }}</h2>
+                <p class="read__path-desc">{{ trans(key="readListenDesc", lang=detected_lang) }}</p>
+                <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+            </a>
+        </article>
     </nav>
 
     {# Carousel stack. Three carousels — one per section — stacked in
