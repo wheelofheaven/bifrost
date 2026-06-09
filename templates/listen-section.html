@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/library.html" as library_macros %}
 {% import "macros/section-icons.html" as section_icons %}
 
@@ -22,8 +21,6 @@
 {% set catalog = load_data(path="data/library/catalog.json") %}
 
 <div class="listen" id="listen-root">
-    {{ breadcrumbs::generic(title=section.title, lang=detected_lang) }}
-
     <header class="listen__header">
         <h1 class="listen__title">{{ section.title }}</h1>
         {% if section.extra.summary %}
