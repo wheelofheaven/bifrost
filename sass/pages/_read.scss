@@ -55,18 +55,16 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     // that used to live in the outline.
     &__paths {
         display: grid;
-        // v4.7 — four cards now (Timeline, Wiki, Library, Listen).
-        // 4 columns wide; 2x2 at medium; 1 column on mobile. Uses
-        // minmax(0, 1fr) so long titles don't blow out the columns.
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        // v4.7 — three reading paths in a row (Timeline / Wiki / Library)
+        // with a fourth card (Listen) on a row of its own that spans the
+        // full width. The full-width Listen card uses .read__path--solo
+        // + grid-column: 1 / -1, so it takes the whole grid row regardless
+        // of how many columns the breakpoint resolved to.
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: v.$spacing-lg;
         margin: 0 auto;
 
-        @media (max-width: 1100px) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-
-        @media (max-width: 600px) {
+        @media (max-width: 900px) {
             grid-template-columns: 1fr;
             gap: v.$spacing-md;
         }
@@ -100,7 +98,10 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         }
         // v4.7 — Listen card. Mauve / teal duo — distinct from the other
         // three so it reads as its own surface, not a sibling rephrase.
+        // Sits on its own row beneath the three reading paths and spans
+        // the full grid width (`1 / -1` = first to last column line).
         &:nth-child(4) {
+            grid-column: 1 / -1;
             --cloud-a: #{c.$mauve-300};
             --cloud-b: #{c.$teal-300};
 
