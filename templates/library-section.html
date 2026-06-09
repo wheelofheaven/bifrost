@@ -189,16 +189,16 @@
                         <span class="library-curation-toggle__label">Wheel of Heaven curation</span>
                     </button>
 
-                    <!-- Audiobook toggle (v4.5): filters the listing down to
-                         books with a prerecorded ElevenLabs audiobook
-                         (cards flagged with data-audiobook="true", which
+                    <!-- Audio-play toggle (v4.5): filters the listing down
+                         to books with a prerecorded ElevenLabs audio play
+                         (cards flagged with data-audioplay="true", which
                          the template emits when catalog.books[].hasAudio
                          is true). -->
                     <button type="button"
-                            class="library-curation-toggle library-audiobook-toggle"
-                            id="library-audiobook-toggle"
+                            class="library-curation-toggle library-audioplay-toggle"
+                            id="library-audioplay-toggle"
                             aria-pressed="false"
-                            title="{{ trans(key='libraryAudiobookFilterTitle', lang=detected_lang) }}">
+                            title="{{ trans(key='libraryAudioPlayFilterTitle', lang=detected_lang) }}">
                         <span class="library-curation-toggle__icon" aria-hidden="true">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
@@ -206,7 +206,7 @@
                                 <path d="M3 19a2 2 0 0 0 2 2h1v-7H3v5z"/>
                             </svg>
                         </span>
-                        <span class="library-curation-toggle__label">{{ trans(key='libraryAudiobookFilterLabel', lang=detected_lang) }}</span>
+                        <span class="library-curation-toggle__label">{{ trans(key='libraryAudioPlayFilterLabel', lang=detected_lang) }}</span>
                     </button>
                 </div>
 
@@ -338,9 +338,9 @@
                                 {% set tradition_name = tradition.name[detected_lang] | default(value=tradition.name.en) %}
                                 {% set is_preferred = book_entry.wohCurated | default(value=false) %}
                                 {% set is_translation_program = book_entry.translationProgram | default(value=false) %}
-                                {% set has_audiobook = book_entry.hasAudio | default(value=false) %}
+                                {% set has_audioplay = book_entry.hasAudio | default(value=false) %}
 
-                                <article class="wiki-card{% if is_preferred %} wiki-card--preferred{% endif %}{% if is_translation_program %} wiki-card--translation-program{% endif %}{% if has_audiobook %} wiki-card--audiobook{% endif %}"
+                                <article class="wiki-card{% if is_preferred %} wiki-card--preferred{% endif %}{% if is_translation_program %} wiki-card--translation-program{% endif %}{% if has_audioplay %} wiki-card--audioplay{% endif %}"
                                          data-title="{{ title | lower }}"
                                          data-tradition="{{ book_entry.tradition }}"
                                          data-tradition-name="{{ tradition_name | lower }}"
@@ -349,7 +349,7 @@
                                          data-tags="{{ book_entry.tags | default(value=[]) | join(sep=',') | lower }}"
                                          {% if is_preferred %}data-preferred="true"{% endif %}
                                          {% if is_translation_program %}data-translation-program="true"{% endif %}
-                                         {% if has_audiobook %}data-audiobook="true"{% endif %}>
+                                         {% if has_audioplay %}data-audioplay="true"{% endif %}>
 
                                     <div class="wiki-card__header">
                                         <h3 class="wiki-card__title">
@@ -535,8 +535,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.getElementById('library-search');
     const traditionFilter = document.getElementById('library-tradition-filter');
     const curationToggle = document.getElementById('library-curation-toggle');
-    // v4.5 — audiobook filter toggle (parallel to curation toggle).
-    const audiobookToggle = document.getElementById('library-audiobook-toggle');
+    // v4.5 — audio-play filter toggle (parallel to curation toggle).
+    const audioplayToggle = document.getElementById('library-audioplay-toggle');
     const viewToggle = document.querySelectorAll('.wiki-view-toggle__btn');
     const booksContainer = document.getElementById('library-books');
     const noResults = document.getElementById('library-no-results');
@@ -582,7 +582,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchTerm = searchInput?.value.toLowerCase() || '';
         const selectedTradition = traditionFilter?.value || '';
         const curationOnly = curationToggle?.getAttribute('aria-pressed') === 'true';
-        const audiobookOnly = audiobookToggle?.getAttribute('aria-pressed') === 'true';
+        const audioplayOnly = audioplayToggle?.getAttribute('aria-pressed') === 'true';
         let visibleCount = 0;
 
         books.forEach(book => {
@@ -592,7 +592,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const code = book.dataset.code || '';
             const tags = book.dataset.tags || '';
             const isPreferred = book.dataset.preferred === 'true';
-            const hasAudiobook = book.dataset.audiobook === 'true';
+            const hasAudioplay = book.dataset.audioplay === 'true';
 
             const matchesSearch = !searchTerm ||
                 title.includes(searchTerm) ||
@@ -602,9 +602,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             const matchesTradition = !selectedTradition || tradition === selectedTradition;
             const matchesCuration = !curationOnly || isPreferred;
-            const matchesAudiobook = !audiobookOnly || hasAudiobook;
+            const matchesAudioplay = !audioplayOnly || hasAudioplay;
 
-            if (matchesSearch && matchesTradition && matchesCuration && matchesAudiobook) {
+            if (matchesSearch && matchesTradition && matchesCuration && matchesAudioplay) {
                 book.style.display = '';
                 visibleCount++;
             } else {
@@ -612,7 +612,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        const filtersActive = !!(searchTerm || selectedTradition || curationOnly || audiobookOnly);
+        const filtersActive = !!(searchTerm || selectedTradition || curationOnly || audioplayOnly);
 
         // Hide tradition groups with no visible books left; auto-open
         // any group that has matches while a filter is active so users
@@ -657,10 +657,10 @@ document.addEventListener('DOMContentLoaded', function() {
             filterBooks();
         });
     }
-    if (audiobookToggle) {
-        audiobookToggle.addEventListener('click', () => {
-            const next = audiobookToggle.getAttribute('aria-pressed') !== 'true';
-            audiobookToggle.setAttribute('aria-pressed', String(next));
+    if (audioplayToggle) {
+        audioplayToggle.addEventListener('click', () => {
+            const next = audioplayToggle.getAttribute('aria-pressed') !== 'true';
+            audioplayToggle.setAttribute('aria-pressed', String(next));
             filterBooks();
         });
     }

@@ -3,21 +3,21 @@
 {% import "macros/section-icons.html" as section_icons %}
 
 {#
-   /listen/ landing — directory of every prerecorded ElevenLabs audiobook.
+   /listen/ landing — directory of every prerecorded ElevenLabs audio play.
    Look-and-feel mirrors /read/: centered hero header + a grid of large
    glass-cloud-card tiles, each linking to the book page where the
    Listen button is wired. Per-language availability surfaces as small
    pills in the card footer.
 
    Data flow:
-     - data/audiobooks.json — per-book per-language inventory of audiobook
+     - data/audioplays.json — per-book per-language inventory of audio-play
        artifacts (slug + languages[]).
      - data/library/catalog.json — book metadata (title, tradition, code).
      - data/library/{slug}.json — book payload (titles, descriptions).
 #}
 
 {% block content %}
-{% set audiobooks_data = load_data(path="data/audiobooks.json") %}
+{% set audioplays_data = load_data(path="data/audioplays.json") %}
 {% set catalog = load_data(path="data/library/catalog.json") %}
 
 <div class="listen" id="listen-root">
@@ -30,9 +30,9 @@
         {% endif %}
     </header>
 
-    {% if audiobooks_data.books and audiobooks_data.books | length > 0 %}
+    {% if audioplays_data.books and audioplays_data.books | length > 0 %}
     <nav class="listen__shelf" aria-label="{{ section.title }}">
-        {% for ab in audiobooks_data.books %}
+        {% for ab in audioplays_data.books %}
         {# Cross-reference the catalog so we don't duplicate metadata
            (title / tradition / code live in catalog.json). #}
         {% set book_entry = catalog.books | filter(attribute="slug", value=ab.slug) | first %}
