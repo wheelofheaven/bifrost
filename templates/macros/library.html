@@ -105,9 +105,16 @@
     {% set has_hebrew_pair = verse.he | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set has_text_translit_pair = verse.text | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
-    <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
+    {# Paragraph kind — see docs.wheelofheaven.world Audio Play Cue Sheets.
+       Absent means "body" (default verse). "title" renders as a heading;
+       "continuation" tightens the top margin to flow against the previous
+       paragraph (the source split a quotation across two paragraphs and
+       we want them to read as one). #}
+    {% set kind = verse.kind | default(value="body") %}
+    <div class="library-book__paragraph library-book__paragraph--{{ kind }}{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
          id="c{{ chapter_n }}p{{ verse.n }}"
          data-ref-id="{{ verse.refId | default(value='') }}"
+         data-kind="{{ kind }}"
          onclick="selectParagraph('c{{ chapter_n }}p{{ verse.n }}')">
         <div class="library-book__para-num">{{ verse.n }}</div>
         <div class="library-book__para-content">
