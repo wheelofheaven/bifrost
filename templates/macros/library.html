@@ -26,6 +26,19 @@
 {%- endif -%}
 {% endmacro %}
 
+{# Render a licence as a badge. `label` is the human display string
+   (e.g. "CC0 1.0", "CC BY-NC-SA 4.0"); `url` links to the canonical
+   licence deed when present. Used by the library-book sidebar's
+   Licensing section for both the WoH text's own licence and, when it
+   differs, the underlying source text's licence. #}
+{% macro license_badge(label, url="") %}
+{%- if url -%}
+<a class="library-book__license-badge" href="{{ url | safe }}" target="_blank" rel="license noopener noreferrer">{{ label }}</a>
+{%- else -%}
+<span class="library-book__license-badge">{{ label }}</span>
+{%- endif -%}
+{% endmacro %}
+
 {# Macro to get the title of a book in the current language #}
 {% macro get_book_title(book_data, lang) %}
     {%- if book_data.titles[lang] -%}

@@ -393,6 +393,60 @@
                     {% endif %}
                 </div>
 
+                {# ---- Licensing ----------------------------------------------
+                   Authoritative rights display, always rendered so every book
+                   states its licence openly. Output-licence resolution order:
+                   `licensing.output` → `version.license` → flat `versionLicense`
+                   → CC0-1.0 default (the library's standard dedication). A
+                   `source` licence + `note` render only when the underlying
+                   source text carries terms that differ from CC0 — e.g. an
+                   eBL CC-BY-NC-SA transliteration whose ShareAlike term the
+                   WoH text inherits as a documented exception. #}
+                {% set lic = book_data.licensing | default(value=false) %}
+                {% set_global out_spdx = "" %}
+                {% set_global out_label = "" %}
+                {% set_global out_url = "" %}
+                {% if lic and lic.output %}
+                    {% set_global out_spdx = lic.output.spdx | default(value="") %}
+                    {% set_global out_label = lic.output.label | default(value="") %}
+                    {% set_global out_url = lic.output.url | default(value="") %}
+                {% elif book_data.version and book_data.version.license %}
+                    {% set_global out_spdx = book_data.version.license.spdx | default(value="") %}
+                    {% set_global out_label = book_data.version.license.label | default(value="") %}
+                    {% set_global out_url = book_data.version.license.url | default(value="") %}
+                {% elif book_data.versionLicense %}
+                    {% set_global out_spdx = book_data.versionLicense %}
+                {% endif %}
+                {% if not out_spdx %}{% set_global out_spdx = "CC0-1.0" %}{% endif %}
+                {% if not out_label %}
+                    {% if out_spdx == "CC0-1.0" %}{% set_global out_label = "CC0 1.0" %}{% else %}{% set_global out_label = out_spdx %}{% endif %}
+                {% endif %}
+                {% if not out_url and out_spdx == "CC0-1.0" %}{% set_global out_url = "https://creativecommons.org/publicdomain/zero/1.0/" %}{% endif %}
+                <section class="library-book__licensing" aria-labelledby="book-licensing-heading" data-ai-cite="true">
+                    <h2 class="library-book__licensing-title" id="book-licensing-heading">Licensing</h2>
+                    <dl class="library-book__licensing-list">
+                        <div class="library-book__licensing-item">
+                            <dt class="library-book__provenance-term">This text</dt>
+                            <dd class="library-book__licensing-value">{{ library_macros::license_badge(label=out_label, url=out_url) }}</dd>
+                        </div>
+                        {% if lic and lic.source %}
+                        <div class="library-book__licensing-item">
+                            <dt class="library-book__provenance-term">Source text</dt>
+                            <dd class="library-book__licensing-value">
+                                {{ library_macros::license_badge(label=lic.source.label | default(value=lic.source.spdx | default(value="—")), url=lic.source.url | default(value="")) }}
+                                {% if lic.source.attribution %}<span class="library-book__license-attribution">{{ lic.source.attribution }}</span>{% endif %}
+                            </dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                    {% if lic and lic.note %}
+                    <details class="library-book__licensing-note">
+                        <summary>About this licence</summary>
+                        <p>{{ lic.note }}</p>
+                    </details>
+                    {% endif %}
+                </section>
+
                 {% set book_version_meta = book_data.version | default(value=false) %}
                 {% if book_version_meta %}
                 {% set version_license = book_version_meta.license | default(value=false) %}
@@ -426,21 +480,6 @@
                         <div class="library-book__provenance-item">
                             <dt class="library-book__provenance-term">Source language</dt>
                             <dd class="library-book__provenance-description" lang="{{ book_version_meta.sourceLanguage }}">{{ library_macros::lang_name(code=book_version_meta.sourceLanguage) }}</dd>
-                        </div>
-                        {% endif %}
-
-                        {% if version_license %}
-                        <div class="library-book__provenance-item">
-                            <dt class="library-book__provenance-term">License</dt>
-                            <dd class="library-book__provenance-description">
-                                {% if version_license.url %}
-                                <a href="{{ version_license.url | safe }}" target="_blank" rel="noopener noreferrer">{% if version_license.spdx %}{{ version_license.spdx }}{% elif version_license.status %}{{ version_license.status }}{% else %}License{% endif %}</a>
-                                {% elif version_license.spdx %}
-                                {{ version_license.spdx }}
-                                {% elif version_license.status %}
-                                {{ version_license.status }}
-                                {% endif %}
-                            </dd>
                         </div>
                         {% endif %}
 
