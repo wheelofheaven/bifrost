@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
-{% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
 {% set map_ages = load_data(path="data/map/ages.json") %}
 {% set map_nodes = load_data(path="data/map/nodes.json") %}
 {% set earth_clusters = load_data(path="data/map/earth-nodes.json") %}
+{% set map_notes = load_data(path="data/map/notes.json") %}
 {% set map_i18n = load_data(path="data/map/i18n.json") %}
 {% set map_copy = map_i18n[detected_lang] %}
 
-<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius" data-earth-offset-y="-220">
+<div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius">
     {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <header class="map-hero">
@@ -25,7 +25,7 @@
             <div class="map-stage" id="map-stage">
                 <svg
                     class="map-canvas"
-                    viewBox="-200 -160 2000 2600"
+                    viewBox="0 0 1668 2388"
                     preserveAspectRatio="xMidYMid meet"
                     role="img"
                     aria-labelledby="map-svg-title map-svg-desc"
@@ -40,76 +40,108 @@
                             <stop offset="100%" stop-color="var(--map-earth-glow-b)" stop-opacity="0.08" />
                         </radialGradient>
                         <clipPath id="map-earth-clip">
-                            <circle cx="800" cy="2250" r="720" />
+                            <circle cx="834" cy="2174.6" r="699.59" />
                         </clipPath>
                         <filter id="map-soft-shadow" x="-20%" y="-20%" width="140%" height="140%">
                             <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="var(--map-shadow)" flood-opacity="0.18" />
                         </filter>
+                        {% for age in map_ages %}
+                        <path id="map-age-arc-{{ age.id }}" d="{{ age.label_path }}" />
+                        {% endfor %}
+                        <path id="map-genesis-arc" d="M 1273.3 876.66 A 566.78 349.55 140.39 0 0 1352.45 620.31" />
+                        <path id="map-humanity-arc" d="M 487.42 740.7 A 565.52 351.5 135.78 0 1 692.7 528.62" />
+                        <path id="map-today-arc" d="m 871.28 1266.9 a 565.52 351.5 135.78 0 0 62.35 -34" />
+                        <path id="map-golden-arc" d="m 1022.75 1170.71 c 6.81 -5.42 13.56 -10.95 20.23 -16.58 2.8 -2.36 5.58 -4.74 8.36 -7.14 13.47 -11.66 26.63 -23.74 39.43 -36.22" />
                     </defs>
 
-                    <rect class="map-canvas__bg" x="-200" y="-160" width="2000" height="2600" rx="34" />
+                    <rect class="map-canvas__bg" x="0" y="0" width="1668" height="2388" />
+                    <rect class="map-canvas__frame" x="134.4" y="213.4" width="1399.2" height="1961.2" />
                     {% include "partials/brand/map-title.html" %}
 
                     <g class="map-stars" aria-hidden="true">
-                        <circle cx="174" cy="166" r="1.6" />
-                        <circle cx="346" cy="188" r="1.1" />
-                        <circle cx="254" cy="314" r="1.2" />
-                        <circle cx="122" cy="486" r="1.4" />
-                        <circle cx="456" cy="96" r="1.4" />
-                        <circle cx="566" cy="402" r="1.1" />
-                        <circle cx="620" cy="258" r="1.2" />
-                        <circle cx="752" cy="112" r="1.3" />
-                        <circle cx="894" cy="282" r="1.1" />
-                        <circle cx="1065" cy="230" r="1.5" />
-                        <circle cx="1160" cy="88" r="1.1" />
-                        <circle cx="1306" cy="258" r="1.3" />
-                        <circle cx="1228" cy="560" r="1.2" />
-                        <circle cx="1392" cy="628" r="1.4" />
-                        <circle cx="1455" cy="116" r="1.2" />
-                        <circle cx="1510" cy="406" r="1.1" />
-                        <circle cx="84" cy="816" r="1.3" />
-                        <circle cx="260" cy="914" r="1.1" />
-                        <circle cx="1508" cy="890" r="1.5" />
-                        <circle cx="1378" cy="1074" r="1.1" />
-                        <circle cx="190" cy="1220" r="1.2" />
-                        <circle cx="430" cy="1316" r="1.4" />
-                        <circle cx="1174" cy="1264" r="1.2" />
-                        <circle cx="1420" cy="1390" r="1.4" />
-                        <circle cx="310" cy="1640" r="1.1" />
-                        <circle cx="158" cy="1816" r="1.4" />
-                        <circle cx="522" cy="1772" r="1.2" />
-                        <circle cx="1078" cy="1698" r="1.1" />
-                        <circle cx="1300" cy="1740" r="1.3" />
-                        <circle cx="1484" cy="1912" r="1.2" />
+                        <circle cx="214" cy="306" r="1.6" />
+                        <circle cx="386" cy="328" r="1.1" />
+                        <circle cx="294" cy="454" r="1.2" />
+                        <circle cx="172" cy="626" r="1.4" />
+                        <circle cx="496" cy="266" r="1.4" />
+                        <circle cx="606" cy="442" r="1.1" />
+                        <circle cx="660" cy="298" r="1.2" />
+                        <circle cx="792" cy="252" r="1.3" />
+                        <circle cx="934" cy="322" r="1.1" />
+                        <circle cx="1105" cy="270" r="1.5" />
+                        <circle cx="1200" cy="248" r="1.1" />
+                        <circle cx="1346" cy="298" r="1.3" />
+                        <circle cx="1268" cy="600" r="1.2" />
+                        <circle cx="1432" cy="568" r="1.4" />
+                        <circle cx="1495" cy="276" r="1.2" />
+                        <circle cx="1550" cy="446" r="1.1" />
+                        <circle cx="164" cy="956" r="1.3" />
+                        <circle cx="300" cy="1054" r="1.1" />
+                        <circle cx="1548" cy="930" r="1.5" />
+                        <circle cx="1418" cy="1114" r="1.1" />
+                        <circle cx="230" cy="1360" r="1.2" />
+                        <circle cx="470" cy="1356" r="1.4" />
+                        <circle cx="1214" cy="1304" r="1.2" />
+                        <circle cx="1460" cy="1430" r="1.4" />
+                        <circle cx="350" cy="1780" r="1.1" />
+                        <circle cx="198" cy="1956" r="1.4" />
+                        <circle cx="1118" cy="1438" r="1.1" />
+                        <circle cx="1340" cy="1380" r="1.3" />
+                        <circle cx="1524" cy="1852" r="1.2" />
+                        <circle cx="1500" cy="2052" r="1.2" />
                     </g>
 
-                    <g class="map-earth" aria-label="{{ map_copy.earthLabel }}" transform="translate(0 -220)">
-                        <circle class="map-earth__atmosphere" cx="800" cy="2250" r="748" />
+                    <g class="map-sun" aria-hidden="true">
+                        <path class="map-sun__disc" d="m 767.96264,1478.0916 a 70.77565,69.257317 0 0 1 21.43515,-82.2764 70.77565,69.257317 0 0 1 86.7694,-0.1273 70.77565,69.257317 0 0 1 21.68701,82.2133" />
+                        <text class="map-rim-label map-rim-label--lead" x="834" y="1396" text-anchor="middle">{{ map_copy.sunLabel }}</text>
+                        <text class="map-rim-label map-rim-label--script" x="834" y="1409" text-anchor="middle">SOL</text>
+                        <text class="map-rim-label map-rim-label--script" x="834" y="1422" text-anchor="middle">日</text>
+                        <circle class="map-sun__venus-dot" cx="834" cy="1430.7" r="2.2" />
+                    </g>
+
+                    <circle class="map-moon" cx="834" cy="1196.3" r="30.3" aria-hidden="true" />
+
+                    <g class="map-venus" aria-hidden="true">
+                        <circle class="map-venus__dot" cx="1008.6" cy="1339.3" r="7.6" />
+                    </g>
+
+                    <g class="map-earth" aria-label="{{ map_copy.earthLabel }}">
+                        <circle class="map-earth__atmosphere" cx="834" cy="2174.6" r="726" />
                         <g clip-path="url(#map-earth-clip)">
                             <image
                                 href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-blue.webp"
-                                x="80"
-                                y="1530"
-                                width="1440"
-                                height="1440"
+                                x="134"
+                                y="1474.6"
+                                width="1400"
+                                height="1400"
                                 preserveAspectRatio="xMidYMid slice"
                                 class="map-earth__image"
                             />
-                            <circle class="map-earth__shade" cx="800" cy="2250" r="720" />
+                            <circle class="map-earth__shade" cx="834" cy="2174.6" r="699.59" />
                         </g>
-                        <circle class="map-earth__horizon" cx="800" cy="2250" r="720" />
-                        <line class="map-earth__axis" x1="618" y1="2370" x2="986" y2="1670" />
-                        <text class="map-earth__label" x="1150" y="1650" text-anchor="middle">{{ map_copy.earthLabel }}</text>
-                        <text class="map-earth__sublabel" x="1150" y="1680" text-anchor="middle">{{ map_copy.earthSublabel }}</text>
+                        <circle class="map-earth__horizon" cx="834" cy="2174.6" r="699.59" />
+                    </g>
+
+                    <g class="map-rim-marks">
+                        <g class="map-rim-block" aria-hidden="true">
+                            <text class="map-rim-label map-rim-label--script" x="603" y="1480" text-anchor="middle">天 𒀭</text>
+                            <text class="map-rim-label map-rim-label--lead" x="603" y="1506" text-anchor="middle">{{ map_copy.skyLabel }}</text>
+                        </g>
+                        <a class="map-rim-block map-rim-block--link" href="{{ get_url(path='wiki/living-earth/', lang=detected_lang) }}"
+                           data-map-title="{{ map_copy.earthWord }}">
+                            <title>{{ map_copy.earthWord }}</title>
+                            <text class="map-rim-label map-rim-label--lead" x="1045" y="1521" text-anchor="middle">{{ map_copy.earthWord }}</text>
+                            <text class="map-rim-label map-rim-label--script" x="1045" y="1537" text-anchor="middle">地 𒆠 🜨</text>
+                        </a>
                     </g>
 
                     <g class="map-earth-connectors" id="map-earth-connectors" aria-hidden="true"></g>
 
-                    <g class="map-earth-navigation" aria-label="{{ map_copy.earthThemesAria }}" transform="translate(0 -220)">
+                    <g class="map-earth-navigation" aria-label="{{ map_copy.earthThemesAria }}">
                         {% for cluster in earth_clusters %}
                         <g class="map-earth-cluster map-earth-cluster--{{ cluster.color }} map-earth-cluster--{{ cluster.id }}" data-earth-cluster="{{ cluster.id }}">
-                            <text class="map-earth-cluster__label" x="{{ cluster.x }}" y="{{ cluster.y }}">{{ map_copy.clusters[cluster.id] }}</text>
                             {% for node in cluster.nodes %}
+                            {% set node_label = map_copy.earthNodes[node.id] %}
                             <a
                                 class="map-earth-node map-earth-node--{{ cluster.color }} map-earth-node--{{ node.emphasis | default(value='normal') }}"
                                 href="{{ get_url(path=node.href, lang=detected_lang) }}"
@@ -117,25 +149,31 @@
                                 data-earth-node-ages="{{ node.ages | join(sep=',') }}"
                                 data-earth-node-x="{{ node.x }}"
                                 data-earth-node-y="{{ node.y }}"
-                                data-map-title="{{ map_copy.earthNodes[node.id] }}"
+                                data-map-title="{{ node_label }}"
                                 data-map-summary="{{ node.summary }}"
-                                data-map-meta="{{ map_copy.clusters[cluster.id] }}"
                                 transform="translate({{ node.x }} {{ node.y }})"
                             >
-                                <title>{{ map_copy.earthNodes[node.id] }}</title>
-                                <text class="map-earth-node__label" y="5">{{ map_copy.earthNodes[node.id] }}</text>
+                                <title>{{ node_label | replace(from="\n", to=" ") }}</title>
+                                <text class="map-earth-node__label" text-anchor="{{ node.anchor | default(value='middle') }}" y="5">
+                                    {%- for line in node_label | split(pat="\n") -%}
+                                    <tspan x="0" {% if not loop.first %}dy="1.25em"{% endif %}>{{ line }}</tspan>
+                                    {%- endfor -%}
+                                </text>
                             </a>
                             {% endfor %}
                         </g>
                         {% endfor %}
                     </g>
 
-                    <g class="map-cycle-field" transform="translate(0 180)">
-                    <g class="map-orbit" aria-label="{{ map_copy.orbitAria }}">
-                        <ellipse class="map-orbit__guide" cx="800" cy="385" rx="545" ry="285" transform="rotate(-23.44 800 385)" />
-                        <ellipse class="map-orbit__guide map-orbit__guide--inner" cx="800" cy="385" rx="475" ry="240" transform="rotate(-23.44 800 385)" />
-                        <text class="map-orbit__tilt" x="1030" y="607" transform="rotate(-23.44 1030 607)">{{ map_copy.tilt }}</text>
+                    <g class="map-strip" aria-hidden="true">
+                        {% for word in map_copy.strip %}
+                        <text class="map-strip__word{% if loop.index == 3 %} map-strip__word--lead{% endif %}" x="{{ 434 + (loop.index0 * 160) }}" y="2160" text-anchor="middle">{{ word }}</text>
+                        {% endfor %}
                     </g>
+
+                    <ellipse class="map-rim" cx="834" cy="864.7" rx="671.35" ry="414.05" transform="rotate(140.39 834 864.7)" aria-hidden="true" />
+
+                    {% include "partials/map/constellations.html" %}
 
                     <g class="map-ages" aria-label="{{ map_copy.agesAria }}">
                         {% for age in map_ages %}
@@ -145,49 +183,98 @@
                             data-map-age="{{ age.id }}"
                             data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
-                            data-map-meta="{{ age.dates }} · {{ map_copy.days[age.id] }}"
                             data-map-point-x="{{ age.x }}"
-                            data-map-point-y="{{ age.y + 180 }}"
+                            data-map-point-y="{{ age.y }}"
                         >
                             <title>{{ map_copy.ages[age.id] }} — {{ age.dates }}</title>
                             <path class="map-age__hit" d="{{ age.path }}" />
                             <path class="map-age__segment" d="{{ age.path }}" />
                         </a>
                         <a
-                            class="map-age-label map-age-label--anchor-{{ age.anchor }}"
+                            class="map-age-label"
                             href="{{ get_url(path=age.href, lang=detected_lang) }}"
                             data-map-age="{{ age.id }}"
                             data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
-                            data-map-meta="{{ age.dates }} · {{ map_copy.days[age.id] }}"
-                            transform="translate({{ age.label_x }} {{ age.label_y }})"
                         >
-                            <text class="map-age-label__name" text-anchor="{{ age.anchor }}">
-                                {{ map_copy.ages[age.id] }}
+                            <text class="map-age-label__name">
+                                <textPath href="#map-age-arc-{{ age.id }}" startOffset="50%" text-anchor="middle">{{ map_copy.ages[age.id] }}</textPath>
                             </text>
-                            <text class="map-age-label__meta" text-anchor="{{ age.anchor }}" y="22">
-                                {{ age.dates }}
-                            </text>
-                            <g class="map-age-label__glyph" transform="translate({% if age.anchor == 'end' %}-22{% elif age.anchor == 'middle' %}-11{% else %}10{% endif %} -42)">
-                                {{ zodiac::icon(name=age.zodiac, size=22) }}
-                            </g>
                         </a>
+                        <text class="map-age-stamp" data-map-age="{{ age.id }}" x="{{ age.stamp.x }}" y="{{ age.stamp.y }}" transform="rotate({{ age.stamp.rotate }})" aria-hidden="true">{{ age.stamp.text }}</text>
                         {% endfor %}
                     </g>
 
-                    <g class="map-core" aria-label="{{ map_copy.coreAria }}">
-                        <circle class="map-core__ring" cx="800" cy="392" r="95" />
-                        <circle class="map-core__ring map-core__ring--inner" cx="800" cy="392" r="58" />
-                        <text class="map-core__kicker" x="800" y="366" text-anchor="middle">{{ map_copy.coreKicker }}</text>
-                        <text class="map-core__title" x="800" y="392" text-anchor="middle">{{ map_copy.coreLine1 }}</text>
-                        <text class="map-core__title" x="800" y="419" text-anchor="middle">{{ map_copy.coreLine2 }}</text>
+                    <g class="map-genesis" aria-hidden="false">
+                        <path class="map-genesis__arc" d="M 1273.3 876.66 A 566.78 349.55 140.39 0 0 1352.45 620.31" aria-hidden="true" />
+                        <text class="map-genesis__arc-label" aria-hidden="true">
+                            <textPath href="#map-genesis-arc" startOffset="50%" text-anchor="middle">{{ map_copy.sixDays }}</textPath>
+                        </text>
+                        {% for age in map_ages %}
+                        {% if age.day_box %}
+                        <g class="map-day" data-map-age="{{ age.id }}" aria-hidden="true">
+                            <rect class="map-day__box" x="{{ age.day_box.x }}" y="{{ age.day_box.y }}" width="{{ age.day_box.w }}" height="{{ age.day_box.h }}" rx="2" />
+                            <text class="map-day__label" x="{{ age.day_box.x + age.day_box.w / 2 }}" y="{{ age.day_box.y + age.day_box.h / 2 + 5 }}" text-anchor="middle">{{ map_copy.days[age.id] }}</text>
+                        </g>
+                        {% endif %}
+                        {% endfor %}
+                        <a class="map-genesis-box" href="{{ get_url(path='wiki/genesis/', lang=detected_lang) }}" data-map-title="{{ map_copy.genesisTitle }}">
+                            <title>{{ map_copy.genesisTitle }}</title>
+                            <rect class="map-genesis-box__frame" x="1104.6" y="951.7" width="114" height="48.1" rx="2" />
+                            <text class="map-genesis-box__kicker" x="1161.6" y="966" text-anchor="middle">{{ map_copy.genesisKicker }}</text>
+                            <text class="map-genesis-box__title" x="1161.6" y="983" text-anchor="middle">{{ map_copy.genesisTitle }}</text>
+                            <text class="map-genesis-box__hebrew" x="1161.6" y="996" text-anchor="middle">{{ map_copy.genesisHebrew }}</text>
+                        </a>
+                    </g>
+
+                    <g class="map-humanity" aria-hidden="true">
+                        <path class="map-humanity__guide" d="M 487.42 740.7 A 565.52 351.5 135.78 0 1 692.7 528.62" />
+                        <text class="map-humanity__label">
+                            <textPath href="#map-humanity-arc" startOffset="50%" text-anchor="middle">{{ map_copy.humanSpecies }}</textPath>
+                        </text>
+                        <text class="map-humanity__label map-humanity__label--today">
+                            <textPath href="#map-today-arc" startOffset="50%" text-anchor="middle">{{ map_copy.today }}</textPath>
+                        </text>
+                    </g>
+
+                    <a class="map-golden" href="{{ get_url(path='wiki/golden-age/', lang=detected_lang) }}" data-map-title="{{ map_copy.goldenAge }}">
+                        <title>{{ map_copy.goldenAge }}</title>
+                        <path class="map-golden__guide" d="m 1022.75 1170.71 c 6.81 -5.42 13.56 -10.95 20.23 -16.58 2.8 -2.36 5.58 -4.74 8.36 -7.14 13.47 -11.66 26.63 -23.74 39.43 -36.22" aria-hidden="true" />
+                        <text class="map-golden__label">
+                            <textPath href="#map-golden-arc" startOffset="50%" text-anchor="middle">{{ map_copy.goldenAge }}</textPath>
+                        </text>
+                    </a>
+
+                    <a class="map-core" href="{{ get_url(path='wiki/precession/', lang=detected_lang) }}" data-map-title="{{ map_copy.coreKicker }} {{ map_copy.coreLine1 }} {{ map_copy.coreLine2 }}">
+                        <title>{{ map_copy.coreKicker }} {{ map_copy.coreLine1 }} {{ map_copy.coreLine2 }}</title>
+                        <ellipse class="map-core__ring" cx="834" cy="869.3" rx="62.9" ry="38.8" transform="rotate(140.39 834 869.3)" />
+                        <text class="map-core__title" x="834" y="856" text-anchor="middle">{{ map_copy.coreKicker }}</text>
+                        <text class="map-core__kicker" x="834" y="872" text-anchor="middle">{{ map_copy.coreLine1 }}</text>
+                        <text class="map-core__title" x="834" y="888" text-anchor="middle">{{ map_copy.coreLine2 }}</text>
+                    </a>
+
+                    <g class="map-notes" aria-hidden="true">
+                        {% for note in map_notes %}
+                        {% set note_text = map_copy.notes[note.id] %}
+                        <text
+                            class="map-note map-note--{{ note.size }}{% if note.style %} map-note--{{ note.style }}{% endif %}"
+                            x="{{ note.x }}" y="{{ note.y }}"
+                            text-anchor="{{ note.anchor }}"
+                        >
+                            {%- for line in note_text | split(pat="\n") -%}
+                            <tspan x="{{ note.x }}" {% if not loop.first %}dy="1.3em"{% endif %}>{{ line }}</tspan>
+                            {%- endfor -%}
+                        </text>
+                        {% endfor %}
                     </g>
 
                     <g class="map-nodes" aria-label="{{ map_copy.nodesAria }}">
                         {% for node in map_nodes %}
-                        {% set node_title = node.label %}
+                        {% set node_title = "" %}
                         {% set node_summary = node.summary %}
-                        {% if node.id != "exodus-woh" %}
+                        {% if node.label_key %}
+                            {% set node_title = map_copy.nodeLabels[node.label_key] %}
+                        {% else %}
                             {% set node_page_slug = node.href | trim_end_matches(pat="/") %}
                             {% set node_page_path = node_page_slug ~ ".md" %}
                             {% if detected_lang != "en" %}
@@ -197,32 +284,50 @@
                             {% set node_title = node_page.title %}
                             {% set node_summary = node_page.description %}
                         {% endif %}
-                        {% if node.label_key %}
-                            {% set node_title = map_copy.nodeLabels[node.label_key] %}
-                        {% endif %}
                         <a
-                            class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }} map-node--anchor-{{ node.anchor }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
+                            class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
                             href="{{ get_url(path=node.href, lang=detected_lang) }}"
                             data-node-id="{{ node.id }}"
                             data-node-age="{{ node.age }}"
                             data-node-type="{{ node.type }}"
                             data-map-title="{{ node_title }}"
                             data-map-summary="{{ node_summary }}"
-                            data-map-meta="{% if node.age == 'core' %}{{ map_copy.coreMeta }}{% else %}{{ map_copy.ages[node.age] }}{% endif %}"
                             transform="translate({{ node.x }} {{ node.y }})"
                         >
-                            <title>{{ node_title }}</title>
+                            <title>{{ node_title | replace(from="\n", to=" ") }}</title>
                             <text class="map-node__label" text-anchor="{{ node.anchor }}" y="5">
-                                {{ node_title }}
+                                {%- for line in node_title | split(pat="\n") -%}
+                                <tspan x="0" {% if not loop.first %}dy="1.25em"{% endif %}>{{ line }}</tspan>
+                                {%- endfor -%}
                             </text>
                         </a>
                         {% endfor %}
                     </g>
+
+                    <g class="map-elohim-vignette">
+                        <g class="map-elohim-vignette__planets" aria-hidden="true">
+                            <ellipse cx="1358.5" cy="1208.9" rx="17" ry="17.2" class="map-elohim-vignette__planet" />
+                            <ellipse cx="1374.5" cy="1221.6" rx="6.7" ry="6.7" class="map-elohim-vignette__planet map-elohim-vignette__planet--filled" />
+                            <ellipse cx="1399" cy="1188.4" rx="9.8" ry="9.8" class="map-elohim-vignette__planet map-elohim-vignette__planet--filled" />
+                        </g>
+                        <a class="map-elohim-vignette__link" href="{{ get_url(path='wiki/elohim/', lang=detected_lang) }}" data-map-title="Elohim" data-node-age="core">
+                            <title>Elohim</title>
+                            <text class="map-elohim-vignette__script" x="1455" y="1243" text-anchor="middle">𒀭</text>
+                            <text class="map-elohim-vignette__translit" x="1455" y="1257" text-anchor="middle">i-lum</text>
+                            <text class="map-elohim-vignette__name" x="1455" y="1272" text-anchor="middle">ELOHIM</text>
+                            <text class="map-elohim-vignette__hebrew" x="1455" y="1287" text-anchor="middle">אֱלֹהִים</text>
+                            <text class="map-elohim-vignette__sub" x="1455" y="1300" text-anchor="middle">{{ map_copy.celestials }}</text>
+                        </a>
                     </g>
+
+                    {% include "partials/map/icons.html" %}
                 </svg>
             </div>
 
             <div class="map-zoom-controls" aria-label="{{ map_copy.zoomControlsAria }}">
+                <button class="map-zoom-controls__button" id="map-poster-toggle" type="button" aria-pressed="false" aria-label="{{ map_copy.posterToggle }}" title="{{ map_copy.posterToggle }}">
+                    {% include "partials/icons/feather-image.html" %}
+                </button>
                 <button class="map-zoom-controls__button" id="map-zoom-out" type="button" aria-label="{{ trans(key='mapZoomOut', lang=detected_lang) }}" title="{{ trans(key='mapZoomOut', lang=detected_lang) }}">
                     {% include "partials/icons/lucide-zoom-out.html" %}
                 </button>

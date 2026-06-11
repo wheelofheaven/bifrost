@@ -13,7 +13,7 @@ main:has(.map-page) {
 }
 
 body.map-route {
-    --map-surface-bg: color-mix(in srgb, var(--color-background) 84%, #{c.$blue-100});
+    --map-surface-bg: #fff;
     background: var(--map-surface-bg);
 }
 
@@ -21,11 +21,6 @@ body.map-route main:has(.map-page) {
     padding: 0;
 }
 
-body.map-route:has(> .translation-notice) .map-page {
-    --map-top-clearance: calc(
-        var(--translation-notice-h) + 1rem + var(--navbar-h) + 1rem
-    );
-}
 
 body:has(.map-page) .pwa-install-banner,
 body:has(.map-page) .search-fab,
@@ -34,7 +29,9 @@ body:has(.map-page) .to-top {
 }
 
 .map-page {
-    --map-top-clearance: 5.75rem;
+    // No top clearance: the canvas slides beneath the floating glass navbar
+    // so its backdrop blur actually has map content to sample.
+    --map-top-clearance: 0rem;
     --map-frame: 1.25rem;
     --map-zoom: 1;
     --map-bg: var(--map-surface-bg);
@@ -58,7 +55,6 @@ body:has(.map-page) .to-top {
     color: var(--map-text);
 
     @media (max-width: 768px) {
-        --map-top-clearance: 5.25rem;
         --map-frame: 0.75rem;
         min-height: 42rem;
     }
@@ -69,16 +65,16 @@ body:has(.map-page) .to-top {
 }
 
 [data-theme="dark"] .map-page {
-    --map-bg: #111826;
-    --map-line: rgb(238 244 255 / 42%);
-    --map-line-soft: rgb(238 244 255 / 22%);
+    --map-bg: #000;
+    --map-line: rgb(238 244 255 / 46%);
+    --map-line-soft: rgb(238 244 255 / 24%);
     --map-shadow: #000;
     --map-earth-glow-a: #{c.$cyan-700};
     --map-earth-glow-b: #{c.$blue-900};
 }
 
 [data-theme="dark"] body.map-route {
-    --map-surface-bg: #111826;
+    --map-surface-bg: #000;
 }
 
 .map-hero {
@@ -166,7 +162,7 @@ body:has(.map-page) .to-top {
     height: auto;
     min-height: 0;
     margin-inline: auto;
-    aspect-ratio: 10 / 13;
+    aspect-ratio: 1668 / 2388;
     font-family: var(--font-family-body);
 
     @media (max-width: 760px) {
@@ -189,6 +185,15 @@ body:has(.map-page) .to-top {
     &__bg {
         fill: var(--map-bg);
     }
+
+    &__frame {
+        fill: none;
+        stroke: var(--map-line-soft);
+        stroke-width: 1;
+        stroke-dasharray: 1 6;
+        stroke-linecap: round;
+        opacity: 0.8;
+    }
 }
 
 .map-brand-title {
@@ -198,15 +203,11 @@ body:has(.map-page) .to-top {
 
 .map-zoom-controls {
     position: absolute;
-    top: calc(var(--map-frame) + 0.25rem);
+    top: calc(var(--navbar-h, 4rem) + 1.25rem);
     right: calc(var(--map-frame) + 0.25rem);
     z-index: 4;
     display: flex;
     gap: 0.45rem;
-
-    @media (max-width: 760px) {
-        top: -0.75rem;
-    }
 
     &__button {
         @include gcc-btn.glass-cloud-button;
@@ -236,6 +237,313 @@ body:has(.map-page) .to-top {
     opacity: 0.7;
 }
 
+.map-rim {
+    fill: none;
+    stroke: var(--map-line-soft);
+    stroke-width: 1.4;
+}
+
+.map-const {
+    color: var(--map-muted);
+    opacity: 0.62;
+    pointer-events: none;
+    transition: opacity 0.18s ease, color 0.18s ease;
+
+    &.is-active,
+    &.is-earth-related {
+        color: var(--color-accent-primary);
+        opacity: 1;
+    }
+}
+
+.map-icons {
+    color: var(--map-muted);
+    opacity: 0.8;
+    pointer-events: none;
+}
+
+.map-sun {
+    &__disc {
+        fill: none;
+        stroke: var(--map-line);
+        stroke-width: 1.2;
+    }
+
+    &__venus-dot {
+        fill: var(--map-text);
+    }
+}
+
+.map-moon {
+    fill: none;
+    stroke: var(--map-line);
+    stroke-width: 1.2;
+}
+
+.map-venus__dot {
+    fill: none;
+    stroke: var(--map-line);
+    stroke-width: 1.2;
+}
+
+.map-rim-label {
+    fill: var(--map-text);
+
+    &--lead {
+        font-family: var(--font-family-lead);
+        font-size: 17px;
+        font-weight: 700;
+        font-style: italic;
+    }
+
+    &--script {
+        fill: var(--map-muted);
+        font-size: 11px;
+        letter-spacing: 2px;
+    }
+}
+
+.map-rim-block--link {
+    cursor: pointer;
+
+    .map-rim-label {
+        transition: fill 0.18s ease;
+    }
+
+    &:hover .map-rim-label,
+    &:focus-visible .map-rim-label {
+        fill: var(--color-accent-primary);
+    }
+}
+
+.map-strip__word {
+    fill: var(--map-muted);
+    font-family: var(--font-family-tech, var(--font-family-body));
+    font-size: 15px;
+    letter-spacing: 4px;
+    opacity: 0.78;
+
+    &--lead {
+        fill: var(--map-text);
+        font-weight: 700;
+        opacity: 0.94;
+    }
+}
+
+.map-age-stamp {
+    fill: var(--map-muted);
+    font-family: var(--font-family-tech, var(--font-family-body));
+    font-size: 13px;
+    font-style: italic;
+    letter-spacing: 1px;
+    opacity: 0.8;
+    transition: fill 0.18s ease, opacity 0.18s ease;
+
+    &.is-active,
+    &.is-earth-related {
+        fill: var(--color-accent-primary);
+        opacity: 1;
+    }
+}
+
+.map-genesis {
+    &__arc {
+        fill: none;
+        stroke: var(--map-line-soft);
+        stroke-width: 1;
+    }
+
+    &__arc-label {
+        fill: var(--map-text);
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 700;
+        opacity: 0.85;
+    }
+}
+
+.map-day {
+    &__box {
+        fill: var(--map-bg);
+        stroke: var(--map-line);
+        stroke-width: 1.3;
+        transition: stroke 0.18s ease;
+    }
+
+    &__label {
+        fill: var(--map-text);
+        font-family: var(--font-family-tech, var(--font-family-body));
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 700;
+    }
+
+    &.is-active &__box,
+    &.is-earth-related &__box {
+        stroke: var(--color-accent-primary);
+    }
+}
+
+.map-genesis-box {
+    cursor: pointer;
+
+    &__frame {
+        fill: var(--map-bg);
+        stroke: var(--map-line);
+        stroke-width: 1.4;
+        transition: stroke 0.18s ease;
+    }
+
+    &__kicker {
+        fill: var(--map-muted);
+        font-size: 10px;
+        font-style: italic;
+    }
+
+    &__title {
+        fill: var(--map-text);
+        font-family: var(--font-family-tech, var(--font-family-body));
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    &__hebrew {
+        fill: var(--map-muted);
+        font-size: 11px;
+    }
+
+    &:hover &__frame,
+    &:focus-visible &__frame {
+        stroke: var(--color-accent-primary);
+    }
+}
+
+.map-humanity {
+    &__guide {
+        fill: none;
+        stroke: var(--map-line-soft);
+        stroke-width: 1;
+        stroke-dasharray: 6 8;
+    }
+
+    &__label {
+        fill: var(--map-text);
+        font-size: 13px;
+        font-style: italic;
+        font-weight: 700;
+        opacity: 0.85;
+    }
+}
+
+.map-golden {
+    cursor: pointer;
+
+    &__guide {
+        fill: none;
+        stroke: var(--map-line-soft);
+        stroke-width: 1;
+        stroke-dasharray: 2 6;
+    }
+
+    &__label {
+        fill: var(--map-text);
+        font-size: 14px;
+        font-style: italic;
+        font-weight: 700;
+        transition: fill 0.18s ease;
+    }
+
+    &:hover &__label,
+    &:focus-visible &__label {
+        fill: var(--color-accent-primary);
+    }
+}
+
+.map-note {
+    fill: var(--map-muted);
+    font-size: 12px;
+    opacity: 0.85;
+
+    &--xs {
+        font-size: 10px;
+    }
+
+    &--sm {
+        font-size: 12px;
+    }
+
+    &--md {
+        font-size: 14px;
+    }
+
+    &--em {
+        font-style: italic;
+    }
+
+    &--display {
+        font-family: var(--font-family-tech, var(--font-family-body));
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+    }
+}
+
+.map-elohim-vignette {
+    &__planet {
+        fill: none;
+        stroke: var(--map-line);
+        stroke-width: 1.2;
+
+        &--filled {
+            fill: var(--map-bg);
+        }
+    }
+
+    &__link {
+        cursor: pointer;
+
+        text {
+            transition: fill 0.18s ease;
+        }
+    }
+
+    &__script {
+        fill: var(--map-text);
+        font-size: 16px;
+    }
+
+    &__translit {
+        fill: var(--map-muted);
+        font-size: 10px;
+        font-style: italic;
+    }
+
+    &__name {
+        fill: var(--map-text);
+        font-family: var(--font-family-tech, var(--font-family-body));
+        font-size: 16px;
+        font-weight: 700;
+        letter-spacing: 2px;
+    }
+
+    &__hebrew {
+        fill: var(--map-text);
+        font-size: 13px;
+    }
+
+    &__sub {
+        fill: var(--map-muted);
+        font-size: 10px;
+        font-style: italic;
+    }
+
+    &__link:hover text,
+    &__link:focus-visible text {
+        fill: var(--color-accent-primary);
+    }
+}
+
 .map-earth {
     filter: url("#map-soft-shadow");
 
@@ -260,28 +568,6 @@ body:has(.map-page) .to-top {
 
     &__horizon {
         stroke-width: 2.4;
-    }
-
-    &__axis {
-        stroke-width: 1.2;
-        stroke-dasharray: 7 9;
-        opacity: 0.72;
-    }
-
-    &__label {
-        fill: var(--map-text);
-        font-family: var(--font-family-lead);
-        font-size: 30px;
-        font-weight: 700;
-        letter-spacing: 0;
-    }
-
-    &__sublabel {
-        fill: var(--map-text);
-        font-family: var(--font-family-lead);
-        font-size: 18px;
-        font-style: italic;
-        opacity: 0.84;
     }
 }
 
@@ -311,21 +597,6 @@ body:has(.map-page) .to-top {
 
     &--yellow {
         --earth-accent: #{c.$yellow-300};
-    }
-
-    &__label {
-        fill: var(--earth-accent);
-        font-family: var(--font-family-tech, var(--font-family-body));
-        font-size: 15px;
-        font-style: italic;
-        font-weight: 700;
-        letter-spacing: 0;
-        opacity: 0.78;
-        text-transform: uppercase;
-    }
-
-    &__rule {
-        display: none;
     }
 }
 
@@ -370,6 +641,17 @@ body:has(.map-page) .to-top {
         }
     }
 
+    &--caps {
+        opacity: 0.94;
+
+        .map-earth-node__label {
+            font-size: 16px;
+            font-weight: 800;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+    }
+
     &--quiet {
         opacity: 0.62;
 
@@ -389,26 +671,6 @@ body:has(.map-page) .to-top {
             fill: var(--earth-accent);
             filter: drop-shadow(0 0 5px color-mix(in srgb, var(--earth-accent) 64%, transparent));
         }
-    }
-}
-
-.map-orbit {
-    &__guide {
-        fill: none;
-        stroke: var(--map-line-soft);
-        stroke-width: 1.4;
-        stroke-dasharray: 10 12;
-    }
-
-    &__guide--inner {
-        stroke-width: 1;
-        opacity: 0.72;
-    }
-
-    &__tilt {
-        fill: var(--map-muted);
-        font-family: var(--font-family-tech, var(--font-family-body));
-        font-size: 15px;
     }
 }
 
@@ -491,48 +753,50 @@ body:has(.map-page) .to-top {
     &__name {
         fill: currentColor;
         font-family: var(--font-family-lead);
-        font-size: 24px;
-        font-weight: 700;
-    }
-
-    &__meta {
-        fill: var(--map-muted);
-        font-family: var(--font-family-tech, var(--font-family-body));
-        font-size: 15px;
-    }
-
-    &__glyph {
-        color: currentColor;
+        font-size: 27px;
+        font-style: italic;
+        font-weight: 350;
+        letter-spacing: 2px;
     }
 }
 
 .map-core {
-    pointer-events: none;
+    cursor: pointer;
 
     &__ring {
-        fill: color-mix(in srgb, var(--color-card-bg) 58%, transparent);
+        fill: var(--map-bg);
         stroke: var(--map-line);
         stroke-width: 1.2;
-    }
-
-    &__ring--inner {
-        fill: none;
-        stroke: var(--map-line-soft);
+        transition: stroke 0.18s ease;
     }
 
     &__kicker,
     &__title {
         fill: var(--map-text);
         font-family: var(--font-family-lead);
+        font-style: italic;
         font-weight: 700;
+        transition: fill 0.18s ease;
     }
 
     &__kicker {
-        font-size: 19px;
+        font-size: 12px;
     }
 
     &__title {
-        font-size: 21px;
+        font-size: 15px;
+    }
+
+    &:hover,
+    &:focus-visible {
+        .map-core__ring {
+            stroke: var(--color-accent-primary);
+        }
+
+        .map-core__kicker,
+        .map-core__title {
+            fill: var(--color-accent-primary);
+        }
     }
 }
 
@@ -609,6 +873,60 @@ body:has(.map-page) .to-top {
 
     &--timeline {
         --node-color: #{c.$green-300};
+    }
+}
+
+// Poster mode: monochrome line work, like the original print poster.
+// Toggled via the #map-poster-toggle button (class on .map-page).
+.map-page.is-poster {
+    --color-accent-primary: var(--map-text);
+    --map-node: var(--map-text);
+    --map-node-halo: transparent;
+
+    .map-earth {
+        filter: none;
+    }
+
+    .map-earth__image,
+    .map-earth__atmosphere,
+    .map-earth__shade {
+        display: none;
+    }
+
+    .map-earth__horizon {
+        stroke-width: 1.6;
+    }
+
+    .map-age {
+        --map-accent: var(--map-text);
+        --map-accent-soft: var(--map-text);
+    }
+
+    .map-age__segment {
+        stroke-width: 2.5;
+        opacity: 0.8;
+    }
+
+    .map-age:hover .map-age__segment,
+    .map-age:focus-visible .map-age__segment,
+    .map-age.is-active .map-age__segment,
+    .map-age.is-earth-related .map-age__segment {
+        stroke-width: 5;
+        opacity: 1;
+    }
+
+    .map-earth-cluster,
+    .map-earth-node {
+        --earth-accent: var(--map-text);
+    }
+
+    .map-earth-connectors .map-earth-connector {
+        stroke: var(--map-line);
+    }
+
+    .map-node--source,
+    .map-node--timeline {
+        --node-color: var(--map-text);
     }
 }
 
