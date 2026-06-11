@@ -1,0 +1,135 @@
+{# Notification stack — one container above the navbar that holds the
+   project's three persistent-ish notifications as a deck of cards:
+
+       front  → urgent / actionable (Update available, after a SW update)
+       mid    → soft CTA            (Install this app)
+       back   → contextual          (Translation in progress)
+
+   The translation card is server-rendered on non-English pages. The
+   install + update cards are present in the DOM at all times but
+   hidden until the JS controller (notification-stack.js) reveals
+   them — install on `beforeinstallprompt`, update on SW state change.
+
+   Dismissals are written to localStorage by the controller:
+     - translation: woh-banner-dismissed.translation              (forever)
+     - install:     woh-banner-dismissed.install                  (until next prompt)
+     - update:      woh-banner-dismissed.update.<sw-revision>     (until next SW rev)
+
+   See sass/components/_notification-stack.scss for the visual rules.
+#}
+<div class="notification-stack" data-notification-stack data-visible-count="0">
+
+    {# UPDATE card — created hidden; revealed by JS when a new SW is
+       installed. The reload action is the primary CTA. Localized
+       string `newVersionAvailable` exists in all 9 langs; "Reload"
+       and the dismiss aria-label fall back to English for now (key
+       additions tracked separately). #}
+    <article class="notification-card notification-card--update"
+             data-card-id="update"
+             role="alert"
+             aria-live="polite"
+             hidden>
+        <div class="notification-card__inner">
+            <span class="notification-card__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"></polyline>
+                    <polyline points="1 20 1 14 7 14"></polyline>
+                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                </svg>
+            </span>
+            <p class="notification-card__text">
+                <strong>{{ trans(key="newVersionAvailable", lang=detected_lang) }}</strong>
+            </p>
+            <div class="notification-card__actions">
+                <button type="button"
+                        class="notification-card__cta"
+                        data-card-action="reload">
+                    {{ trans(key="refresh", lang=detected_lang) | default(value="Reload") }}
+                </button>
+                <button type="button"
+                        class="notification-card__dismiss"
+                        data-card-action="dismiss"
+                        aria-label="Dismiss update notice">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </article>
+
+    {# INSTALL card — created hidden; revealed by JS on
+       `beforeinstallprompt`. Uses the same i18n keys (installAppTitle,
+       installAppDescription, installApp, installAppDismiss) the prior
+       standalone install banner used. #}
+    <article class="notification-card notification-card--install"
+             data-card-id="install"
+             role="region"
+             aria-label="{{ trans(key='installAppTitle', lang=detected_lang) }}"
+             hidden>
+        <div class="notification-card__inner">
+            <span class="notification-card__icon" aria-hidden="true">
+                {# Logomark from the standalone banner — inlined so it
+                   inherits currentColor and renders on both themes. #}
+                <svg xmlns="http://www.w3.org/2000/svg" version="1.1" fill="currentColor" stroke="currentColor" viewBox="0 0 49 49" preserveAspectRatio="xMidYMid meet">
+                    <g transform="translate(0,48) scale(0.02,-0.02)" fill="currentColor" stroke="currentColor">
+                        <path d="M1155 2041 c-44 -26 -177 -103 -295 -171 -118 -67 -225 -129 -237 -137 l-23 -13 0 -330 c0 -182 -3 -330 -6 -330 -3 0 -35 16 -70 36 l-64 36 0 253 0 254 -30 -17 -30 -17 0 -377 0 -376 285 -164 c156 -89 285 -165 285 -168 0 -3 -29 -20 -65 -39 -77 -41 -47 -51 -304 98 -104 61 -192 111 -195 111 -3 0 -6 -17 -6 -37 l0 -38 308 -177 c169 -97 315 -180 324 -183 15 -6 199 95 516 281 l72 43 0 -79 0 -78 -221 -128 -220 -127 31 -18 c17 -11 34 -19 38 -19 4 0 149 83 322 183 l315 182 3 333 c1 197 6 332 12 332 5 0 36 -16 69 -35 l61 -36 2 -254 3 -255 33 20 32 20 0 374 0 374 -62 35 c-97 53 -502 288 -508 294 -3 2 2 9 10 13 8 5 38 23 66 39 l50 29 215 -124 c118 -68 217 -124 222 -124 4 0 7 18 7 39 0 27 -5 41 -16 45 -9 4 -153 85 -319 181 -166 96 -306 175 -312 175 -6 0 -136 -72 -289 -160 -153 -88 -282 -160 -286 -160 -5 0 -8 33 -8 74 l0 74 205 117 c262 150 246 139 207 159 -17 9 -35 16 -39 16 -4 0 -44 -22 -88 -49z"/>
+                    </g>
+                </svg>
+            </span>
+            <p class="notification-card__text">
+                <strong>{{ trans(key="installAppTitle", lang=detected_lang) }}</strong>
+                {{ trans(key="installAppDescription", lang=detected_lang) }}
+            </p>
+            <div class="notification-card__actions">
+                <button type="button"
+                        class="notification-card__cta"
+                        data-card-action="install">
+                    {{ trans(key="installApp", lang=detected_lang) }}
+                </button>
+                <button type="button"
+                        class="notification-card__dismiss"
+                        data-card-action="dismiss"
+                        aria-label="{{ trans(key='installAppDismiss', lang=detected_lang) }}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </article>
+
+    {# TRANSLATION card — rendered visible (no `hidden`) on non-English
+       pages, hidden entirely (the whole element absent) on English
+       pages so the back-of-stack slot is empty. The JS controller
+       sees this on first paint and slots it into the back position. #}
+    {% if detected_lang and detected_lang != "en" %}
+    <article class="notification-card notification-card--translation"
+             data-card-id="translation"
+             role="status"
+             aria-live="polite">
+        <div class="notification-card__inner">
+            <p class="notification-card__text">
+                {{ trans(key="translationNotice", lang=detected_lang) | safe }}
+            </p>
+            <div class="notification-card__actions">
+                <a class="notification-card__link"
+                   href="{{ get_url(path='', lang='en') }}"
+                   hreflang="en"
+                   lang="en">{{ trans(key="translationNoticeReadEnglish", lang=detected_lang) }}</a>
+                <button type="button"
+                        class="notification-card__dismiss"
+                        data-card-action="dismiss"
+                        aria-label="Dismiss translation notice">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </article>
+    {% endif %}
+</div>

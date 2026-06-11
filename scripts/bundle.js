@@ -27,6 +27,9 @@ const bundles = {
     'navbar-mobile-toggle.js',
     'search-loader.js',
     'reading-list.js',
+    // notification-stack must precede pwa.js so the controller is on
+    // the window before pwa.js wires its install/update card actions.
+    'notification-stack.js',
     'pwa.js',
     'toc-scroll-spy.js',
     'to-top.js',

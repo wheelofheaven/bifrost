@@ -1,0 +1,374 @@
+// Notification Stack
+//
+// A single deck-of-cards container at the top of the document that holds
+// the project's three persistent-ish notifications:
+//
+//   1. The translation-in-progress notice  (rendered on non-English pages)
+//   2. The "install this app" PWA prompt   (shown when beforeinstallprompt fires)
+//   3. The "new version available" notice  (shown after SW update is installed)
+//
+// Only the *front* card is interactive; the cards behind it peek above
+// the front card's top edge as a hint that more notifications are queued.
+// The user dismisses the front card via its `[×]` button; the next card
+// in the queue eases forward into the front slot.
+//
+// Positioning mirrors the old standalone `.translation-notice`:
+//   - `position: absolute`, anchored to the document (not the viewport)
+//     so the stack scrolls upward with the page and is gone after the
+//     user has scrolled past it.
+//   - z-index 49, one below the navbar (50), so during the brief
+//     scroll-overlap window the navbar wins visually.
+//
+// JS controller: `static/js/notification-stack.js` (bundled into
+// core.bundle.js). Server-rendered partial: `partials/notification-stack.html`.
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+// `--notification-stack-h` is the stack's actual rendered height,
+// written by the JS controller from its measured `offsetHeight`. The
+// navbar's `top` and `main`'s `padding-top` consume this so the layout
+// adapts to wrapped strings and (post-dismissal) collapses cleanly.
+//
+// `--navbar-h` is the navbar's height, also written by the controller —
+// inherited from the previous translation-notice-script behaviour.
+//
+// Defaults are pessimistic first-paint estimates.
+:root {
+    --notification-stack-h: 3rem;
+    --navbar-h: 4.5rem;
+}
+@media (max-width: 767px) {
+    :root {
+        --notification-stack-h: 4.5rem;
+        --navbar-h: 4rem;
+    }
+}
+
+.notification-stack {
+    // Anchor to the document so the stack scrolls with the page; the
+    // navbar's `top` is animated separately so it rises to its
+    // English-page position as the user scrolls past the stack.
+    position: absolute;
+    top: 0.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 80rem;
+    z-index: 49;
+
+    // Grid layout with every card in the same cell. Cards naturally
+    // stack visually and the container's height tracks the tallest
+    // visible child — so `offsetHeight` reflects what's actually
+    // rendered. Transforms on individual cards create the peek effect
+    // without touching the layout box.
+    //
+    // We deliberately avoid `position: absolute` on cards: switching
+    // a card's `position` mode while transitioning (e.g. when the
+    // mid card promotes to front) is jarring because `position` is
+    // not animatable, so cards appeared to "snap" mid-dismissal.
+    display: grid;
+    grid-template-columns: 1fr;
+
+    // Reserve vertical room above the cards so the back card's peek
+    // (translateY(-0.8rem)) doesn't overlap the navbar's vertical band.
+    padding-top: 0.8rem;
+
+    &[data-visible-count="0"] {
+        display: none;
+    }
+}
+
+.notification-card {
+    // Every card occupies the same grid cell (row 1 / column 1) so
+    // they stack visually without any of them being out-of-flow.
+    // Z-index controls layer order; transforms create the peek effect.
+    //
+    // Glass pill geometry mirrors the navbar and the old
+    // `.translation-notice` so the stack reads as part of the same
+    // chrome family.
+    grid-column: 1;
+    grid-row: 1;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    transform-origin: top center;
+    transition:
+        transform 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.25s ease,
+        filter 0.25s ease;
+
+    // Backdrop-filter glass via ::before — same trick the navbar uses
+    // so backdrop-filtered children of the card don't clip the blur.
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: -1;
+    }
+
+    // Bifrost-rainbow hairline along the top edge — visual cue that
+    // this is a notification, not just another navbar segment. Same
+    // gradient as the old translation-notice ::after.
+    &::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 1rem;
+        right: 1rem;
+        height: 1px;
+        background: linear-gradient(
+            90deg,
+            transparent 0%,
+            #{c.$yellow-500} 12%,
+            #{c.$pink-500} 22%,
+            #{c.$lavender-500} 32%,
+            #{c.$mauve-500} 42%,
+            #{c.$blue-500} 52%,
+            #{c.$cyan-500} 62%,
+            #{c.$teal-500} 72%,
+            #{c.$mint-500} 82%,
+            #{c.$green-500} 92%,
+            transparent 100%
+        );
+        opacity: 0.7;
+    }
+
+    // Hidden by default; the JS controller adds --stack-front /
+    // --stack-mid / --stack-back to mark which slot each visible card
+    // occupies. Cards without a stack-position class are not in the
+    // visible queue.
+    &:not(.notification-card--stack-front):not(.notification-card--stack-mid):not(.notification-card--stack-back) {
+        display: none;
+    }
+
+    &--stack-front {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+        z-index: 3;
+    }
+
+    &--stack-mid {
+        transform: translateY(-0.4rem) scale(0.97);
+        opacity: 0.78;
+        z-index: 2;
+        // Cards behind the front are visual hints only — block them
+        // from receiving pointer events so the user can't accidentally
+        // dismiss a card they can barely see.
+        pointer-events: none;
+    }
+
+    &--stack-back {
+        transform: translateY(-0.8rem) scale(0.94);
+        opacity: 0.55;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    // Outgoing animation — applied for one frame before the card is
+    // removed from the visible queue (slides up + fades out).
+    &--leaving {
+        transform: translateY(-2rem) scale(0.92);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &__inner {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-sm;
+        padding: 0.625rem 1.25rem;
+        position: relative;
+        flex-wrap: wrap;
+
+        @media (max-width: 767px) {
+            padding: 0.5rem 0.875rem;
+            gap: v.$spacing-xs;
+        }
+    }
+
+    // Icon slot — optional; the translation card omits it.
+    &__icon {
+        flex-shrink: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--color-text);
+
+        svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    }
+
+    &__text {
+        margin: 0;
+        flex: 1 1 auto;
+        min-width: 12rem;
+        color: var(--color-text-muted);
+
+        strong {
+            display: block;
+            color: var(--color-text);
+            font-weight: 600;
+            margin-bottom: 0.125rem;
+        }
+    }
+
+    &__actions {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-xs;
+        flex-shrink: 0;
+        margin-left: auto;
+    }
+
+    // Primary action (Install / Reload / Read in English).
+    //
+    // Mirrors the look-and-feel of the prior `.pwa-install-banner__btn--install`
+    // — mint→mauve glassmorphic surface with a gradient ring — so the
+    // install/update cards still read as part of the same family that
+    // the old standalone banners established.
+    &__cta {
+        position: relative;
+        overflow: hidden;
+        min-height: 2rem;
+        padding: 0.375rem 0.875rem;
+        border: none;
+        border-radius: 0.5rem;
+        background-image: linear-gradient(
+            135deg,
+            #{rgba(c.$mint, 0.25)},
+            #{rgba(c.$mauve-500, 0.25)}
+        );
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+        color: var(--color-on-accent, #fff);
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+        text-decoration: none;
+        white-space: nowrap;
+        transition:
+            filter 0.2s ease,
+            transform 0.2s ease;
+
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            padding: 1px;
+            background: linear-gradient(
+                135deg,
+                #{rgba(c.$mint, 0.6)},
+                #{rgba(c.$mauve-500, 0.6)}
+            );
+            -webkit-mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            -webkit-mask-composite: xor;
+            mask:
+                linear-gradient(#000 0 0) content-box,
+                linear-gradient(#000 0 0);
+            mask-composite: exclude;
+            pointer-events: none;
+        }
+
+        &:hover {
+            filter: brightness(1.12) saturate(1.1);
+        }
+        &:active {
+            transform: translateY(1px);
+        }
+
+        [data-theme="light"] & {
+            color: var(--color-accent-primary);
+
+            &:hover {
+                filter: brightness(1.04) saturate(1.05);
+            }
+        }
+    }
+
+    // The translation card's "Read in English" link is a subtler link
+    // style — it's not a CTA, it's a fallback path. Underline-with-
+    // -yellow keeps it consistent with the old standalone notice.
+    &__link {
+        flex-shrink: 0;
+        font-weight: 500;
+        color: var(--color-text);
+        text-decoration: underline;
+        text-decoration-color: c.$yellow-500;
+        text-underline-offset: 3px;
+        text-decoration-thickness: 1px;
+        transition: opacity v.$transition-base ease;
+
+        &:hover,
+        &:focus-visible {
+            opacity: 0.7;
+        }
+    }
+
+    // Dismiss button — 44×44 hit target (WCAG 2.5.5), 20×20 visible
+    // icon. Mirrors the standalone install banner's dismiss button.
+    &__dismiss {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: 0;
+        margin: -0.5rem -0.5rem -0.5rem 0;
+        background: transparent;
+        color: var(--color-text-muted);
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: color 0.2s ease, background-color 0.2s ease;
+
+        &:hover {
+            color: var(--color-text);
+            background: var(--color-hover);
+        }
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    }
+}
+
+// When the stack is present, the navbar starts docked beneath it and
+// `main` is offset by the rendered stack height. The JS controller
+// updates these CSS vars as cards appear / disappear so the layout
+// reflows cleanly.
+//
+// We key on the stack having at least one visible card. The
+// `data-visible-count` attribute is written by the controller and is
+// "0" when every card has been dismissed (or none was ever rendered).
+body:has(.notification-stack:not([data-visible-count="0"])) {
+    // The stack sits at `top: 0.5rem` and has `--notification-stack-h` of
+    // rendered height; the navbar docks below it with a 1rem gap, then
+    // `main` clears the navbar with another 1rem buffer. All four terms
+    // matter — without the 0.5rem the navbar would land inside the
+    // stack's visible band.
+    .navbar {
+        top: calc(0.5rem + var(--notification-stack-h) + 1rem);
+    }
+
+    main {
+        padding-top: calc(
+            0.5rem + var(--notification-stack-h) + 1rem +
+            var(--navbar-h) + 1rem
+        );
+    }
+}
