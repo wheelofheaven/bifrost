@@ -88,7 +88,14 @@
    `section_icons::wiki_category(slug=page.extra.category)`. #}
 {% macro wiki_category(slug) %}
 {% set registry = load_data(path="data/icons.json") %}
-{% set id = registry.bindings.wiki_category[slug] | default(value="") %}
+{# Tera 1.20 bracket-access (`dict[key]`) panics on multi-byte UTF-8 keys
+   (e.g. CJK category strings landed via accidental translation of
+   `extra.category` on a few zh/ja/zh-Hant pages). Iterate the dict
+   instead so missing-or-non-ASCII keys silently fall through to "". #}
+{% set_global id = "" %}
+{% for k, v in registry.bindings.wiki_category %}
+    {% if k == slug %}{% set_global id = v %}{% endif %}
+{% endfor %}
 {% if id == "game-bookmarklet" %}{% include "partials/icons/game-bookmarklet.html" %}
 {% elif id == "game-circuitry" %}{% include "partials/icons/game-circuitry.html" %}
 {% elif id == "game-cosmic-egg" %}{% include "partials/icons/game-cosmic-egg.html" %}
