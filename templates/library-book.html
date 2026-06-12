@@ -387,7 +387,7 @@
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">Source:</span>
                         <span class="library-book__meta-value">
-                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang='en') }}">{{ src_title }}</a>
+                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang=detected_lang) }}">{{ src_title }}</a>
                         </span>
                     </div>
                     {% endif %}

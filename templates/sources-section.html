@@ -74,7 +74,7 @@
 
         <ul class="sources__list" id="sources-list">
             {% for src in data.sources %}
-            {% set source_url = get_url(path="sources/" ~ src.id, lang="en") %}
+            {% set source_url = get_url(path="sources/" ~ src.id, lang=detected_lang) %}
             <li class="source-card"
                 data-title="{{ src.title | lower }}"
                 data-author="{{ src.authored_by | join(sep=' ') | lower }}"

@@ -79,7 +79,7 @@
                         {% endif %}
                         <li class="tradition-hub__source-item">
                             {% if src_record %}
-                            <a href="{{ get_url(path='sources/' ~ src_record.id, lang='en') }}" class="tradition-hub__source-link">
+                            <a href="{{ get_url(path='sources/' ~ src_record.id, lang=detected_lang) }}" class="tradition-hub__source-link">
                                 <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             </a>
                             {% else %}
