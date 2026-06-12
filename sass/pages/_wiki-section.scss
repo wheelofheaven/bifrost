@@ -630,6 +630,21 @@
         text-transform: uppercase;
         letter-spacing: 0.05em;
         white-space: nowrap;
+
+        // Tradition variant — used on planned ("Coming Soon") cards
+        // where the chip displays a tradition name ("Hittite & Hurrian
+        // Texts") rather than a short technical code ("GEN", "TBWTT").
+        // Drops the uppercase / letter-spacing of the code chip so
+        // multi-word tradition names read as a label, and switches to
+        // the muted text colour since this is contextual signal, not
+        // a primary identifier.
+        &--tradition {
+            color: var(--color-text-muted);
+            text-transform: none;
+            letter-spacing: 0;
+            font-weight: 600;
+            white-space: normal;
+        }
     }
 
     // Original-language pill on library cards. Sits next to the code

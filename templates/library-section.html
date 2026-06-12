@@ -460,19 +460,28 @@
                 </summary>
             <div class="wiki-section__grid" data-view="grid">
                 {% for entry in planned_books %}
+                {# Resolve the entry's tradition object by id. Use
+                   selectattr | first instead of a for-loop with
+                   set_global: Tera's set_global writes to the outermost
+                   scope but the local `set tradition_name = ""` at the
+                   for-entry scope shadows it at read time, so the chip
+                   silently failed to render. #}
+                {% set tradition_obj = catalog.traditions | filter(attribute="id", value=entry.tradition) | first %}
                 {% set tradition_name = "" %}
-                {% for t in catalog.traditions %}
-                    {% if t.id == entry.tradition %}
-                        {% set_global tradition_name = t.name[detected_lang] | default(value=t.name.en) %}
-                    {% endif %}
-                {% endfor %}
+                {% if tradition_obj %}
+                    {% set tradition_name = tradition_obj.name[detected_lang] | default(value=tradition_obj.name.en) %}
+                {% endif %}
                 {% set is_preferred = entry.wohCurated | default(value=false) %}
                 {% set is_translation_program = entry.translationProgram | default(value=false) %}
-                <article class="wiki-card wiki-card--planned{% if is_preferred %} wiki-card--preferred{% endif %}{% if is_translation_program %} wiki-card--translation-program{% endif %}">
+                <article class="wiki-card wiki-card--planned{% if is_preferred %} wiki-card--preferred{% endif %}{% if is_translation_program %} wiki-card--translation-program{% endif %}"
+                         data-tradition="{{ entry.tradition }}">
                     <div class="wiki-card__header">
                         <h3 class="wiki-card__title">{{ entry.originalTitle }}{% if is_preferred %}<span class="wiki-card__preferred-mark" role="img" aria-label="Wheel of Heaven preferred edition" title="Wheel of Heaven preferred edition">{% include "partials/brand/logomark.html" %}</span>{% endif %}</h3>
                         {% if tradition_name %}
-                        <span class="wiki-card__category">{{ tradition_name }}</span>
+                        <span class="wiki-card__category wiki-card__category--tradition" data-tradition="{{ entry.tradition }}">
+                            <span class="section-mark section-mark--inline wiki-card__category-icon" aria-hidden="true">{{ section_icons::tradition(slug=entry.tradition) }}</span>
+                            <span class="wiki-card__category-text">{{ tradition_name }}</span>
+                        </span>
                         {% endif %}
                     </div>
                     {% if is_translation_program %}
@@ -549,9 +558,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const STORAGE_KEY_PREFIX = 'woh.library.group.';
 
     // Restore collapsed/expanded state from localStorage.
+    // Exception: the "Coming Soon" group is always collapsed by default
+    // on page load — a returning visitor who once expanded it should not
+    // be greeted with a long list of unfinished work. Per-session click
+    // still opens it (no persistence either way).
     groupDetails.forEach(d => {
         const id = d.dataset.tradition;
         if (!id) return;
+        if (id === 'coming-soon') {
+            d.removeAttribute('open');
+            return;
+        }
         let stored = null;
         try { stored = localStorage.getItem(STORAGE_KEY_PREFIX + id); } catch (e) {}
         if (stored === 'closed') {
