@@ -96,11 +96,7 @@
                         {% endif %}
                         {% if source_matches | length > 0 %}
                         {% set source = source_matches[0] %}
-                        {% if source.follow_url %}
-                        <a href="{{ source.follow_url }}" class="article__source-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
-                        {% else %}
-                        <span>{{ source.title }}</span>
-                        {% endif %}
+                        <a href="{{ get_url(path='sources/' ~ source.id, lang='en') }}" class="article__source-link">{{ source.title }}</a>
                         {% if source.authored_by %}
                         <span class="article__source-outlet">{{ source.authored_by | join(sep=", ") }}</span>
                         {% endif %}

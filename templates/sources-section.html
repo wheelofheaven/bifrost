@@ -74,6 +74,7 @@
 
         <ul class="sources__list" id="sources-list">
             {% for src in data.sources %}
+            {% set source_url = get_url(path="sources/" ~ src.id, lang="en") %}
             <li class="source-card"
                 data-title="{{ src.title | lower }}"
                 data-author="{{ src.authored_by | join(sep=' ') | lower }}"
@@ -82,7 +83,9 @@
                 <details class="source-card__details">
                     <summary class="source-card__summary">
                         <div class="source-card__header">
-                            <h2 class="source-card__title">{{ src.title }}</h2>
+                            <h2 class="source-card__title">
+                                <a href="{{ source_url }}" class="source-card__title-link">{{ src.title }}</a>
+                            </h2>
                             <div class="source-card__chips">
                                 {% if src.cite_count > 0 %}
                                 <span class="source-card__cite-badge" title="Cited in {{ src.cite_count }} corpus page{% if src.cite_count != 1 %}s{% endif %}">{{ src.cite_count }}×</span>

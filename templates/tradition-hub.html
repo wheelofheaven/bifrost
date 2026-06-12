@@ -78,12 +78,10 @@
                             {% endif %}
                         {% endif %}
                         <li class="tradition-hub__source-item">
-                            {% if src_record and src_record.follow_url %}
-                            <a href="{{ src_record.follow_url | safe }}" class="tradition-hub__source-link" target="_blank" rel="noopener noreferrer">
+                            {% if src_record %}
+                            <a href="{{ get_url(path='sources/' ~ src_record.id, lang='en') }}" class="tradition-hub__source-link">
                                 <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             </a>
-                            {% elif src_record %}
-                            <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             {% else %}
                             <span class="tradition-hub__source-title">{{ source_slug }}</span>
                             {% endif %}

@@ -1,0 +1,146 @@
+{% extends "base.html" %}
+{% import "macros/section-icons.html" as section_icons %}
+
+{% block content %}
+{% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+{% set cited_by_manifest = load_data(path="data/sources/cited-by.json", required=false) %}
+{% set source_id = page.extra.source_id | default(value=page.slug) %}
+
+{% set_global source = false %}
+{% if sources_manifest and sources_manifest.sources %}
+    {% set source_matches = sources_manifest.sources | filter(attribute="id", value=source_id) %}
+    {% if source_matches | length > 0 %}
+        {% set_global source = source_matches | first %}
+    {% endif %}
+{% endif %}
+
+{% set_global backlinks = [] %}
+{% if cited_by_manifest and cited_by_manifest.sources %}
+    {% set backlink_matches = cited_by_manifest.sources | filter(attribute="id", value=source_id) %}
+    {% if backlink_matches | length > 0 %}
+        {% set backlink_record = backlink_matches | first %}
+        {% if backlink_record.cited_by %}
+            {% set_global backlinks = backlink_record.cited_by %}
+        {% endif %}
+    {% endif %}
+{% endif %}
+
+{% set source_title = page.title %}
+{% if source and source.title %}
+    {% set source_title = source.title %}
+{% endif %}
+{% set source_description = page.description | default(value="") %}
+{% if source and source.description %}
+    {% set source_description = source.description %}
+{% endif %}
+
+<div class="source-page">
+    <div class="source-page__container">
+        <header class="source-page__header">
+            <div class="source-page__kind-row">
+                <span class="section-mark section-mark--hero" aria-hidden="true">{{ section_icons::section(slug="sources") }}</span>
+                <span class="source-page__kind">Source</span>
+                {% if source and source.cite_count > 0 %}
+                <span class="source-page__kind">Cited {{ source.cite_count }} time{% if source.cite_count != 1 %}s{% endif %}</span>
+                {% endif %}
+            </div>
+            <h1 class="source-page__title" id="page-title">{{ source_title }}</h1>
+            {% if source and source.authored_by and source.authored_by | length > 0 %}
+            <p class="source-page__summary">{{ source.authored_by | join(sep=", ") }}{% if source.publish_date %} · {{ source.publish_date }}{% endif %}</p>
+            {% elif source and source.publish_date %}
+            <p class="source-page__summary">{{ source.publish_date }}</p>
+            {% elif source_description %}
+            <p class="source-page__summary">{{ source_description }}</p>
+            {% endif %}
+        </header>
+
+        <div class="source-page__layout">
+            <article class="source-page__article" role="article" aria-labelledby="page-title">
+                {% if source_description or page.content %}
+                <div class="source-page__content">
+                    {% if source_description %}
+                    <p>{{ source_description }}</p>
+                    {% endif %}
+                    {% if page.content %}
+                    {{ page.content | safe }}
+                    {% endif %}
+                </div>
+                {% endif %}
+            </article>
+
+            <aside class="source-page__aside" role="complementary" aria-label="Source metadata">
+                {% if source %}
+                <section class="source-page__aside-block">
+                    <h2 class="source-page__aside-title">Record</h2>
+                    <dl class="source-page__fact-list">
+                        {% if source.authored_by and source.authored_by | length > 0 %}
+                        <div class="source-page__fact">
+                            <dt class="source-page__fact-label">By</dt>
+                            <dd class="source-page__fact-value">{{ source.authored_by | join(sep=", ") }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if source.publish_date %}
+                        <div class="source-page__fact">
+                            <dt class="source-page__fact-label">Date</dt>
+                            <dd class="source-page__fact-value">{{ source.publish_date }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if source.medium %}
+                        <div class="source-page__fact">
+                            <dt class="source-page__fact-label">Type</dt>
+                            <dd class="source-page__fact-value">{{ source.medium | replace(from="-", to=" ") }}</dd>
+                        </div>
+                        {% endif %}
+                    </dl>
+                </section>
+                {% endif %}
+
+                {% if source and source.topics and source.topics | length > 0 %}
+                <section class="source-page__aside-block">
+                    <h2 class="source-page__aside-title">Topics</h2>
+                    <ul class="source-page__chip-list">
+                        {% for topic in source.topics %}
+                        <li class="source-page__chip">{{ topic }}</li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {% if backlinks and backlinks | length > 0 %}
+                <section class="source-page__aside-block">
+                    <h2 class="source-page__aside-title">Cited by</h2>
+                    <ul class="source-page__source-list">
+                        {% for cite in backlinks %}
+                        <li class="source-page__source-item">
+                            {% set cite_path = cite.path | trim_start_matches(pat="/") %}
+                            <a href="{{ get_url(path=cite_path, lang=detected_lang) }}" class="source-page__source-link">
+                                <span class="source-page__source-title">{{ cite.title }}</span>
+                                <span class="source-page__source-family">{{ cite.section }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
+
+                {% if source and source.follow_url %}
+                <section class="source-page__aside-block">
+                    <h2 class="source-page__aside-title">External link</h2>
+                    <a class="source-page__visit"
+                       href="{{ source.follow_url | safe }}"
+                       target="_blank"
+                       rel="noopener noreferrer">
+                        {{ trans(key="resourcesVisitSource", lang=detected_lang) }}
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                            <polyline points="15 3 21 3 21 9"></polyline>
+                            <line x1="10" y1="14" x2="21" y2="3"></line>
+                        </svg>
+                    </a>
+                </section>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+</div>
+{% endblock content %}

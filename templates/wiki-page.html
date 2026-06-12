@@ -143,11 +143,7 @@
                             {% endif %}
                             {% if source_matches | length > 0 %}
                             {% set source = source_matches[0] %}
-                            {% if source.follow_url %}
-                            <a href="{{ source.follow_url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ source.title }}</a>
-                            {% else %}
-                            <span class="wiki__reference-title">{{ source.title }}</span>
-                            {% endif %}
+                            <a href="{{ get_url(path='sources/' ~ source.id, lang='en') }}" class="wiki__reference-link">{{ source.title }}</a>
                             {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
                             {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}
                             {% else %}
