@@ -37,7 +37,12 @@
            (title / tradition / code live in catalog.json). #}
         {% set book_entry = catalog.books | filter(attribute="slug", value=ab.slug) | first %}
         {% if book_entry %}
+        {# Split-format books (directory with _meta.json) have no {slug}.json
+           bundle — try _meta.json first, mirroring library-book.html. #}
+        {% set book_data = load_data(path="data/library/" ~ ab.slug ~ "/_meta.json", required=false) %}
+        {% if not book_data %}
         {% set book_data = load_data(path="data/library/" ~ ab.slug ~ ".json", required=false) %}
+        {% endif %}
         {% if book_data %}
         {% set title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
         {% set desc = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
