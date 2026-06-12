@@ -56,7 +56,10 @@
 
                     <rect class="map-canvas__bg" x="0" y="0" width="1668" height="2388" />
                     <rect class="map-canvas__frame" x="134.4" y="213.4" width="1399.2" height="1961.2" />
-                    {% include "partials/brand/map-title.html" %}
+                    <a class="map-brand-link" href="{{ get_url(path='wiki/wheel-of-heaven/', lang=detected_lang) }}" data-map-title="Wheel of Heaven">
+                        <title>Wheel of Heaven</title>
+                        {% include "partials/brand/map-title.html" %}
+                    </a>
 
                     <g class="map-stars" aria-hidden="true">
                         <circle cx="214" cy="306" r="1.6" />

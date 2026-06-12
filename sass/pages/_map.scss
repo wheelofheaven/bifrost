@@ -598,6 +598,10 @@ body:has(.map-page) .to-top {
     &--yellow {
         --earth-accent: #{c.$yellow-300};
     }
+
+    &--teal {
+        --earth-accent: #{c.$teal-300};
+    }
 }
 
 .map-earth-node {
@@ -618,6 +622,10 @@ body:has(.map-page) .to-top {
 
     &--yellow {
         --earth-accent: #{c.$yellow-300};
+    }
+
+    &--teal {
+        --earth-accent: #{c.$teal-300};
     }
 
     &__label {
@@ -824,6 +832,18 @@ body:has(.map-page) .to-top {
     &--source {
         --node-color: #{c.$mauve-700};
         --node-halo: #{c.$mauve-300};
+    }
+
+    &--list {
+        opacity: 0.8;
+
+        .map-node__label {
+            font-family: var(--font-family-tech, var(--font-family-body));
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
     }
 
     &--timeline {
