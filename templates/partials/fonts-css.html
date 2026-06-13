@@ -91,9 +91,11 @@
        async swap would FOUC the body.
      The sheet is aggressively cached (see _headers), so the render-
      blocking cost only applies to uncached first visits. -->
+{% set critical_css_url = get_url(path='critical.css', cachebust=true) %}
+{% set main_css_url = get_url(path='main.css', cachebust=true) %}
 {% if _is_landing %}
 {% set critical_css = load_data(path="public/critical.css", format="plain", required=false) %}
-{% if critical_css %}<style>{{ critical_css | safe }}</style>{% else %}<link rel="stylesheet" href="{{ get_url(path='critical.css') }}">{% endif %}
+{% if critical_css %}<style>{{ critical_css | safe }}</style>{% else %}<link rel="stylesheet" href="{{ critical_css_url }}">{% endif %}
 {# When main.css finishes loading, flip `documentElement` so the
    `html:not(.css-loaded)` FOUC-prevention rules in critical.scss
    stop matching and elements they were hiding (footer, translation-
@@ -101,12 +103,12 @@
    `onerror` also flips the class — if main.css fails to load we'd
    rather show unstyled chrome than leave it permanently hidden. #}
 {% set reveal = "document.documentElement.classList.add('css-loaded')" %}
-<link rel="preload" as="style" href="{{ get_url(path='main.css') }}" onload="this.onload=null;this.rel='stylesheet';{{ reveal }}" onerror="{{ reveal }}">
+<link rel="preload" as="style" href="{{ main_css_url }}" onload="this.onload=null;this.rel='stylesheet';{{ reveal }}" onerror="{{ reveal }}">
 {# No-JS path: load main.css render-blocking (no FOUC) and also force
    the `.css-loaded` class on <html> via the `:root` selector so the
    critical-css FOUC-hide rules don't keep the footer hidden forever
    when JS can't add the class. #}
-<noscript><link rel="stylesheet" href="{{ get_url(path='main.css') }}"><style>.translation-notice,.footer,.snackbar-container,.navbar-dropdown,.navbar__pane--lang,.navbar__pane--main,.read__paths,.claim-badges,.reader-fab-toc{opacity:1!important;visibility:visible!important}</style></noscript>
+<noscript><link rel="stylesheet" href="{{ main_css_url }}"><style>.translation-notice,.footer,.snackbar-container,.navbar-dropdown,.navbar__pane--lang,.navbar__pane--main,.read__paths,.claim-badges,.reader-fab-toc{opacity:1!important;visibility:visible!important}</style></noscript>
 {% else %}
-<link rel="stylesheet" href="{{ get_url(path='main.css') }}">
+<link rel="stylesheet" href="{{ main_css_url }}">
 {% endif %}

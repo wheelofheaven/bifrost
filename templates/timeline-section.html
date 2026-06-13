@@ -141,10 +141,10 @@
     {# Preamble — framed as the interpretive door before the age sequence. #}
     <section id="preamble" class="landing-section landing-section--timeline-story landing-section--video" data-section="2">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__slideshow">
+            <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set preamble_slides = timeline_slides.preamble %}
                 {% for frame in preamble_slides %}
-                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
                     <picture class="landing-section__slide-picture">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
@@ -220,10 +220,10 @@
              data-section="{{ idx }}"
              data-age-color="{{ age.color }}">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__slideshow">
+            <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
                 {% for frame in age_slides %}
-                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
                     <picture class="landing-section__slide-picture">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
@@ -277,10 +277,10 @@
 
     <section id="wheel" class="landing-section landing-section--timeline-story landing-section--video landing-section--coda" data-section="16">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__slideshow">
+            <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set wheel_slides = timeline_slides.wheel %}
                 {% for frame in wheel_slides %}
-                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
                     <picture class="landing-section__slide-picture">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
                         <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
@@ -401,6 +401,23 @@
         }
     };
     seedActive();
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const slideshows = document.querySelectorAll('[data-timeline-slideshow]');
+    if (!reduceMotion && slideshows.length) {
+        const advanceSlides = () => {
+            slideshows.forEach((show) => {
+                const slides = Array.from(show.querySelectorAll('.landing-section__slide'));
+                if (slides.length < 2) return;
+
+                const current = Math.max(0, slides.findIndex((slide) => slide.classList.contains('is-current')));
+                const next = (current + 1) % slides.length;
+                slides[current].classList.remove('is-current');
+                slides[next].classList.add('is-current');
+            });
+        };
+        window.setInterval(advanceSlides, 6500);
+    }
 })();
 </script>
 {% endblock content %}

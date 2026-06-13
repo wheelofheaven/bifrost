@@ -17,7 +17,7 @@
         <link rel="apple-touch-icon" sizes="180x180" href="{{ get_url(path='icons/apple-touch-icon.png') }}">
 
         <!-- CSS -->
-        <link rel="stylesheet" href="{{ get_url(path='main.css') }}">
+        <link rel="stylesheet" href="{{ get_url(path='main.css', cachebust=true) }}">
     </head>
     <body>
         {# The 404 is rendered once at site root, so detected_lang is always "en"

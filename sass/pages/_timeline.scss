@@ -21,9 +21,9 @@
 // of the landing critical path.
 $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-// ---- Full-viewport illustration crossfade ----
+// ---- Full-viewport illustration dissolve ----
 // `.landing-section__media` is already a fixed, opacity-faded viewport layer
-// in _home.scss. The timeline slideshow fills that layer and crossfades three
+// in _home.scss. The timeline slideshow fills that layer and dissolves through
 // chapter illustrations in place, so every section reads like the opening hero
 // instead of a framed carousel or collage.
 .landing-section__slideshow,
@@ -36,14 +36,17 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
 .landing-section__slideshow {
     overflow: hidden;
-    perspective: 1600px;
     background: #000;
 }
 
 .landing-section__slide {
     opacity: 0;
-    animation: timeline-hero-crossfade 18s ease-in-out infinite;
-    animation-delay: calc(var(--slide-index) * 6s);
+    transition: opacity 1.6s ease-in-out;
+    will-change: opacity;
+}
+
+.landing-section__slide.is-current {
+    opacity: 1;
 }
 
 .landing-section__slide-image {
@@ -62,29 +65,9 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     max-width: 42rem;
 }
 
-@keyframes timeline-hero-crossfade {
-    0%,
-    27% {
-        opacity: 1;
-    }
-
-    33%,
-    94% {
-        opacity: 0;
-    }
-
-    100% {
-        opacity: 1;
-    }
-}
-
 @media (prefers-reduced-motion: reduce) {
     .landing-section__slide {
-        animation: none;
-    }
-
-    .landing-section__slide:first-child {
-        opacity: 1;
+        transition: none;
     }
 }
 
