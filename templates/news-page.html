@@ -39,7 +39,7 @@
                 <h1 class="dispatch__title" id="dispatch-title">{{ page.title }}</h1>
 
                 {% if page.extra.summary or page.description %}
-                <div class="dispatch__summary" data-ai-summary="true">
+                <div class="dispatch__summary" data-ai-summary="true" data-summary-label="{{ trans(key='summaryLabel', lang=detected_lang) }}">
                     <p>{{ page.extra.summary | default(value=page.description) }}</p>
                 </div>
                 {% endif %}
@@ -96,6 +96,72 @@
             </section>
             {% endif %}
 
+            {# Read as Agent — copy/view raw markdown for LLM use #}
+            {% set md_url = "https://raw.githubusercontent.com/wheelofheaven/data-content/main/" ~ page.relative_path %}
+            <div class="dispatch__agent-section">
+                <div class="dispatch__agent-label">{{ trans(key="agentReadAs", lang=detected_lang) }}</div>
+                <div class="dispatch__agent-buttons">
+                    <button type="button"
+                            class="dispatch__agent-btn"
+                            data-md-url="{{ md_url | safe }}"
+                            data-action="copy-md"
+                            aria-label="Copy this page as Markdown for an LLM">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                        </svg>
+                        <span class="dispatch__agent-btn-label" data-agent-label>{{ trans(key="agentCopyForLLMs", lang=detected_lang) }}</span>
+                    </button>
+                    <a class="dispatch__agent-btn"
+                       href="{{ md_url | safe }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="Open this page as raw Markdown in a new tab">
+                        <svg width="18" height="11" viewBox="0 0 208 128" fill="none" aria-hidden="true">
+                            <rect x="5" y="5" width="198" height="118" rx="10" ry="10" stroke="currentColor" stroke-width="10" fill="none"></rect>
+                            <path fill="currentColor" d="M30 98V30h20l20 25 20-25h20v68H90V59L70 84 50 59v39zm125 0l-30-33h20V30h20v35h20z"></path>
+                        </svg>
+                        <span class="dispatch__agent-btn-label">{{ trans(key="agentViewMarkdown", lang=detected_lang) }}</span>
+                    </a>
+                </div>
+            </div>
+
+            {# Maintained-doc footer: last-edited (left) + history/edit CTAs (right) #}
+            {% set edit_url = "https://github.com/wheelofheaven/data-content/edit/main/" ~ page.relative_path %}
+            {% set history_url = "https://github.com/wheelofheaven/data-content/commits/main/" ~ page.relative_path %}
+            <div class="dispatch__edit-footer">
+                <div class="dispatch__history" data-history-path="{{ page.relative_path }}">
+                    <span class="dispatch__history-meta" data-history-meta hidden>
+                        <span class="dispatch__history-label">{{ trans(key="pageLastEdited", lang=detected_lang) }}</span>
+                        <time class="dispatch__history-date" data-history-date datetime=""></time>
+                        <span class="dispatch__history-author" data-history-author></span>
+                    </span>
+                    <a class="dispatch__history-link"
+                       href="{{ history_url | safe }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="View edit history on GitHub">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 3v5h5"></path>
+                            <path d="M3.05 13A9 9 0 1 0 6 5.3L3 8"></path>
+                            <polyline points="12 7 12 12 15 14"></polyline>
+                        </svg>
+                        <span>{{ trans(key="pageViewHistory", lang=detected_lang) }}</span>
+                    </a>
+                </div>
+                <a class="dispatch__edit-btn"
+                   href="{{ edit_url | safe }}"
+                   target="_blank"
+                   rel="noopener noreferrer"
+                   aria-label="Edit this page on GitHub">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                    </svg>
+                    <span>{{ trans(key="pageEditThis", lang=detected_lang) }}</span>
+                </a>
+            </div>
+
             <footer class="dispatch__footer">
                 <a href="{{ get_url(path='news', lang=detected_lang) }}" class="dispatch__back-link">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -108,4 +174,6 @@
         </article>
     </div>
 </div>
+
+{% include "partials/doc-chrome-script.html" %}
 {% endblock content %}

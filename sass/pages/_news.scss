@@ -8,6 +8,7 @@
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 @use "../components/glass-cloud-card" as gcc;
+@use "../components/glass-cloud-button" as gcc-btn;
 
 // ---- Section: .newsroom ----
 
@@ -508,18 +509,57 @@
         }
     }
 
+    // Summary / lede — mirrors the wiki & timeline lede treatment (accent
+    // rule + rotated "Summary" label) so the Dispatch carries the same
+    // reference-page identity as the rest of the site.
     &__summary {
+        position: relative;
         margin-top: v.$spacing-md;
-        padding: v.$spacing-md v.$spacing-lg;
-        background: var(--color-background-secondary);
-        border-left: 3px solid c.$mint-500;
-        border-radius: v.$border-radius-sm;
+        padding: 1.25rem 2rem 1.75rem;
+        min-height: 5.5rem; // room for the rotated label
+
+        @media (max-width: 768px) {
+            padding: 1rem 1.25rem 1.5rem;
+        }
 
         p {
             margin: 0;
+            padding-left: 0.875rem;
             font-size: v.$font-size-lg;
             line-height: 1.6;
             color: var(--color-text);
+        }
+
+        &::before {
+            content: "";
+            position: absolute;
+            left: 1.75rem;
+            top: 1.25rem;
+            bottom: 1.75rem;
+            width: 4px;
+            background: var(--color-accent-primary);
+            border-radius: 2px;
+        }
+
+        &::after {
+            content: attr(data-summary-label);
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translate(-50%, -50%) rotate(-90deg);
+            transform-origin: 50% 50%;
+            text-transform: uppercase;
+            letter-spacing: 0.18em;
+            font-size: 0.6875rem;
+            font-weight: 700;
+            color: var(--color-accent-primary);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            &::before { left: 1rem; top: 1rem; bottom: 1.5rem; }
+            &::after { left: 0.125rem; }
         }
     }
 
@@ -636,10 +676,145 @@
         letter-spacing: 0.02em;
     }
 
-    &__footer {
+    // ---- Read as Agent (copy/view raw Markdown for LLM use) ----
+    &__agent-section {
         margin-top: v.$spacing-2xl;
         padding-top: v.$spacing-lg;
         border-top: 1px solid var(--color-hairline);
+    }
+
+    &__agent-label {
+        display: block;
+        margin: 0 0 0.5rem;
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+    }
+
+    &__agent-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+    }
+
+    &__agent-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.625rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.375rem;
+        background: var(--color-background);
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: left;
+        text-decoration: none;
+        cursor: pointer;
+        transition: all 0.15s ease;
+
+        svg { flex-shrink: 0; }
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+            outline: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+
+        // State feedback is driven by data-state so the shared script in
+        // partials/doc-chrome-script.html stays block-agnostic.
+        &[data-state="ok"] {
+            border-color: var(--color-accent-primary);
+            color: var(--color-accent-primary);
+        }
+
+        &[data-state="err"] {
+            border-color: var(--color-accent-secondary, var(--color-text-muted));
+            color: var(--color-accent-secondary, var(--color-text-muted));
+        }
+
+        &[disabled] {
+            opacity: 0.6;
+            cursor: progress;
+        }
+    }
+
+    // ---- Maintained-doc footer (mirrors wiki/timeline edit-footer) ----
+    &__edit-footer {
+        margin-top: v.$spacing-xl;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-hairline);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: v.$spacing-md;
+        flex-wrap: wrap;
+    }
+
+    &__history {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.125rem;
+        color: var(--color-text-muted);
+        font-family: var(--font-family-body);
+        font-size: 0.8125rem;
+        line-height: 1.4;
+    }
+
+    &__history-meta {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.375rem;
+
+        &[hidden] { display: none; }
+    }
+
+    &__history-label {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-muted);
+    }
+
+    &__history-date {
+        color: var(--color-text);
+        font-weight: 500;
+    }
+
+    &__history-author {
+        color: var(--color-text-muted);
+
+        &:empty { display: none; }
+    }
+
+    &__history-link {
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$blue-300};
+        --cloud-b: #{c.$mauve-300};
+    }
+
+    &__edit-btn {
+        @include gcc-btn.glass-cloud-button;
+        --cloud-a: #{c.$mint-300};
+        --cloud-b: #{c.$blue-300};
+    }
+
+    &__footer {
+        margin-top: v.$spacing-lg;
     }
 
     &__back-link {
