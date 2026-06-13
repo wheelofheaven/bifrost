@@ -27,6 +27,10 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     align-items: center;
     flex-direction: row-reverse; // panel sits to the left of the toggle
     gap: 0.5rem;
+    // Animate the `bottom` offset so the FAB rises smoothly when the
+    // audio player bar appears (body.has-audio-player) and falls back
+    // when it closes. See _listen-button.scss for the lifted offset.
+    transition: bottom 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
     @media (min-width: 1000px) {
         display: none;

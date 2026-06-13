@@ -108,7 +108,24 @@
 
                 <!-- Page Header (title + version + subtitle + claim badge), mirroring wiki-page layout. -->
                 <header class="library-book__page-header">
-                    <h1 class="library-book__title" id="book-title">{{ book_title }}</h1>
+                    <div class="library-book__title-row">
+                        <h1 class="library-book__title" id="book-title">{{ book_title }}</h1>
+                        {# Featured Listen button — only revealed by
+                           listen-button.js once the prerecorded audio play
+                           manifest is confirmed for this book + language.
+                           Renders as a circular play button on the right of
+                           the title. Shares behaviour with the sidebar
+                           `.listen-trigger` via the .listen-trigger class. #}
+                        <button type="button"
+                                class="listen-trigger listen-trigger--featured library-book__title-listen"
+                                aria-label="{{ trans(key='listenToPage', lang=detected_lang) }}"
+                                title="{{ trans(key='listenToPage', lang=detected_lang) }}"
+                                hidden>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                <polygon points="5 3 19 12 5 21 5 3"/>
+                            </svg>
+                        </button>
+                    </div>
                     {% if book_version_title %}
                     <p class="library-book__version" aria-label="Translation / edition">{{ book_version_title }}</p>
                     {% endif %}

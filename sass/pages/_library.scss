@@ -3559,6 +3559,19 @@
         align-items: flex-start;
     }
 
+    // Title row — holds the H1 and the featured Listen play button
+    // (revealed only when a prerecorded audio play is detected for the
+    // book + language). Lays them side-by-side with the button pinned to
+    // the right; the H1 grows to fill the remaining space and wraps as
+    // needed. When the button is `[hidden]` flexbox treats it as absent
+    // and the title takes the full row.
+    &__title-row {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        width: 100%;
+    }
+
     &__title {
         margin: 0;
         font-family: var(--font-family-lead);
@@ -3567,10 +3580,21 @@
         color: var(--color-text);
         line-height: 1.15;
         word-wrap: break-word;
+        flex: 1 1 auto;
+        min-width: 0;
 
         @media (max-width: 900px) {
             font-size: 1.875rem;
         }
+    }
+
+    // Featured Listen button slot — actual chrome lives on
+    // `.listen-trigger--featured` in components/_listen-button.scss.
+    // Hidden until JS sets `body.woh-audio-available` (we let the
+    // browser's `[hidden]` attribute drive the initial state; this
+    // rule just locks the vertical alignment once revealed).
+    &__title-listen {
+        align-self: center;
     }
 
     // Subtitle — localized, rendered below the title. Same Space Grotesk
@@ -4041,6 +4065,33 @@
     &__share-section,
     &__agent-section {
         margin: 0 0 1.5rem;
+    }
+
+    // Library-book pages hide the sidebar listen affordance (label +
+    // trigger) by default. listen-button.js eagerly probes the
+    // prerecorded-audio manifest at load; when it resolves, it sets
+    // `body.woh-audio-available` and the override below restores them.
+    // Books without a published audio play never see the affordance.
+    //
+    // We can't blanket-hide `__listen-section` because the audio player
+    // bar markup is rendered as a sibling inside the same wrapper, and
+    // it must remain reachable (its visibility is driven by JS via
+    // `.audio-player--visible`). So we scope the hide to the label and
+    // trigger button only.
+    &__listen-section {
+        > .library-book__meta-label,
+        > .listen-trigger {
+            display: none;
+        }
+
+        body.woh-audio-available & {
+            > .library-book__meta-label {
+                display: block;
+            }
+            > .listen-trigger {
+                display: inline-flex;
+            }
+        }
     }
 
     // Licensing — rights display in the sidebar, mirroring the

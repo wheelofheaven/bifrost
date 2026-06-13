@@ -33,6 +33,48 @@
     &:active {
         transform: scale(0.98);
     }
+
+    // Featured variant — circular play-button shown next to a page title
+    // (library-book uses this on the right of `.library-book__title`).
+    // Carries no label, just the play glyph. Filled with the accent
+    // colour so it reads as the primary call-to-action on books that
+    // have a prerecorded audio play.
+    &--featured {
+        padding: 0;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 50%;
+        background-color: var(--color-accent-primary);
+        color: var(--color-background);
+        border-color: transparent;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+
+        svg {
+            width: 22px;
+            height: 22px;
+            // Optical centering of the play triangle.
+            transform: translateX(1px);
+        }
+
+        &:hover {
+            background-color: var(--color-accent-primary);
+            color: var(--color-background);
+            border-color: transparent;
+            transform: scale(1.05);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+        }
+
+        @media (max-width: 600px) {
+            width: 2.5rem;
+            height: 2.5rem;
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+    }
 }
 
 // Audio Player - Floating bottom bar (SoundCloud style)
@@ -529,12 +571,38 @@
     }
 }
 
-// Add padding to body when player is visible
+// Add padding to body when player is visible so the bar doesn't cover
+// the bottom of the content.
 body.has-audio-player {
     padding-bottom: 80px;
 
     @media (max-width: 768px) {
         padding-bottom: 70px;
+    }
+
+    // Lift fixed bottom-right controls clear of the player bar so they
+    // don't overlap. The reader-fab and to-top both default to
+    // `bottom: 1.5rem`; player bar is ~64px tall + 16px gap, so a
+    // ~5rem offset lands them just above. Animated via transitions
+    // declared on each component, so the lift is smooth both ways —
+    // controls rise when the player opens, fall back when it closes.
+    .reader-fab {
+        bottom: 6rem;
+    }
+
+    .to-top {
+        bottom: 6rem;
+    }
+
+    // search-fab follows the same stacking. The existing rule
+    // `.to-top--visible ~ .search-fab` keeps it one slot above the
+    // to-top button when both are present.
+    .search-fab {
+        bottom: 6rem;
+    }
+
+    .to-top--visible ~ .search-fab {
+        bottom: 9.5rem;
     }
 }
 
