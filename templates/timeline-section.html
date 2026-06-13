@@ -7,9 +7,11 @@
    the IntersectionObserver-driven active state all work without duplication.
 
    Sections:
-   §1  Opening — "Twelve precessional ages" (intro)
-   §2..§14  One section per ages.json entry (In-the-beginning + 12 ages),
+   §1  Opening — "Timeline" (intro)
+   §2  Preamble
+   §3..§15  One section per ages.json entry (In-the-beginning + 12 ages),
             in chronological order.
+   §16  The Wheel Keeps Turning (outro)
 #}
 {% set ages_data = load_data(path="data/ages.json") %}
 {# Per-language strings for age names and event descriptions. Keyed by lang
@@ -17,6 +19,8 @@
    EN when a lang or a slug is missing. #}
 {% set ages_i18n = load_data(path="data/ages.i18n.json") %}
 {% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
+{% set preamble_page = get_page(path="timeline/preamble.md") %}
+{% set wheel_page = get_page(path="timeline/the-wheel-keeps-turning.md") %}
 
 <div class="landing landing--timeline-overview" data-landing>
 
@@ -40,6 +44,16 @@
                     <span class="landing__nav-dot-title">{{ section.title }}</span>
                 </a>
             </li>
+            <li class="landing__nav-item">
+                <a href="#preamble"
+                   class="landing__nav-dot"
+                   data-section-link="2"
+                   aria-label="{{ preamble_page.title }}">
+                    <span class="landing__nav-dot-year" aria-hidden="true">I</span>
+                    <span class="landing__nav-dot-glyph" aria-hidden="true">✦</span>
+                    <span class="landing__nav-dot-title">{{ preamble_page.title }}</span>
+                </a>
+            </li>
             {% for age in ages_data %}
             {# Slug-based anchors so URLs are speakable: /timeline/#age-of-capricorn,
                /timeline/#in-the-beginning, etc. #}
@@ -53,7 +67,7 @@
             <li class="landing__nav-item">
                 <a href="#{{ slug }}"
                    class="landing__nav-dot"
-                   data-section-link="{{ loop.index + 1 }}"
+                   data-section-link="{{ loop.index + 2 }}"
                    aria-label="{{ age_name }} — {{ start_label }}">
                     <span class="landing__nav-dot-year" aria-hidden="true">{{ start_label }}</span>
                     <span class="landing__nav-dot-glyph" aria-hidden="true">
@@ -67,6 +81,16 @@
                 </a>
             </li>
             {% endfor %}
+            <li class="landing__nav-item">
+                <a href="#wheel"
+                   class="landing__nav-dot"
+                   data-section-link="16"
+                   aria-label="{{ wheel_page.title }}">
+                    <span class="landing__nav-dot-year" aria-hidden="true">∞</span>
+                    <span class="landing__nav-dot-glyph" aria-hidden="true">∞</span>
+                    <span class="landing__nav-dot-title">{{ wheel_page.title }}</span>
+                </a>
+            </li>
         </ol>
     </nav>
 
@@ -79,7 +103,7 @@
     </div>
 
     {# Opening — id="start" so the URL anchor is typeable.
-       The hint targets the first age's slug (in-the-beginning). #}
+       The hint targets the preamble section. #}
     {% set first_age = ages_data | first %}
     {% set first_slug = first_age.link | split(pat="/") | nth(n=2) %}
     <section id="start" class="landing-section landing-section--timeline-opening landing-section--video" data-section="1">
@@ -104,6 +128,51 @@
             <p class="landing-section__sub">{{ section.description }}</p>
             {% endif %}
         </div>
+        <a href="#preamble" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
+
+    {# Preamble — framed as the interpretive door before the age sequence. #}
+    <section id="preamble" class="landing-section landing-section--timeline-story landing-section--video" data-section="2">
+        <div class="landing-section__media" aria-hidden="true">
+            <div class="landing-section__reel">
+                <div class="landing-section__reel-track">
+                    {% for frame in [
+                        "timeline/preamble-recurring-shape",
+                        "timeline/preamble-cross-cultural-pattern",
+                        "timeline/preamble-chaos-polarity",
+                        "timeline/preamble-recurring-shape",
+                        "timeline/preamble-cross-cultural-pattern",
+                        "timeline/preamble-chaos-polarity"
+                    ] %}
+                    <div class="landing-section__reel-frame">
+                        <img class="landing-section__reel-image"
+                             src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
+                             alt=""
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="landing-section__overlay"></div>
+        </div>
+        <div class="landing-section__inner landing-section__inner--story">
+            <span class="landing-section__eyebrow">{{ preamble_page.title }}</span>
+            <h2 class="landing-section__heading">{{ preamble_page.title }}</h2>
+            <p class="landing-section__body">{{ preamble_page.description | truncate(length=200) }}</p>
+            <a href="{{ get_url(path='timeline/preamble', lang=detected_lang) }}" class="landing-section__cta">
+                <span>{{ trans(key="readMore", lang=detected_lang) }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+        </div>
         <a href="#{{ first_slug }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -114,13 +183,23 @@
 
     {# One section per age, chronological.
        id is the chapter slug (in-the-beginning, age-of-capricorn, …) so URL
-       anchors are speakable. data-section stays as DOM position (1..14) so
+       anchors are speakable. data-section stays as DOM position (1..16) so
        the IntersectionObserver maths and the progress-bar fill stay simple. #}
     {% for age in ages_data %}
-    {% set idx = loop.index + 1 %}
+    {% set idx = loop.index + 2 %}
     {% set is_last = loop.last %}
     {% set slug = age.link | split(pat="/") | nth(n=2) %}
     {% set zslug = slug | replace(from="age-of-", to="") %}
+    {% if loop.first %}
+        {% set prev_age = ages_data | last %}
+    {% else %}
+        {% set prev_age = ages_data | nth(n=loop.index0 - 1) %}
+    {% endif %}
+    {% if loop.last %}
+        {% set next_age = ages_data | first %}
+    {% else %}
+        {% set next_age = ages_data | nth(n=loop.index) %}
+    {% endif %}
     {# Look-ahead for the hint anchor pointing at the next age (if any). #}
     {% if not is_last %}
         {% set next_age = ages_data | nth(n=loop.index) %}
@@ -142,13 +221,19 @@
              data-section="{{ idx }}"
              data-age-color="{{ age.color }}">
         <div class="landing-section__media" aria-hidden="true">
-            {% if age.earth_texture %}
-            <img class="landing-section__bg-image"
-                 src="{{ age.earth_texture }}"
-                 alt=""
-                 loading="lazy"
-                 decoding="async">
-            {% endif %}
+            <div class="landing-section__reel">
+                <div class="landing-section__reel-track">
+                    {% for frame in [prev_age.earth_texture, age.earth_texture, next_age.earth_texture, prev_age.earth_texture, age.earth_texture, next_age.earth_texture] %}
+                    <div class="landing-section__reel-frame">
+                        <img class="landing-section__reel-image"
+                             src="{{ frame }}"
+                             alt=""
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -186,6 +271,50 @@
         {% endif %}
     </section>
     {% endfor %}
+
+    <section id="wheel" class="landing-section landing-section--timeline-story landing-section--video landing-section--coda" data-section="16">
+        <div class="landing-section__media" aria-hidden="true">
+            <div class="landing-section__reel">
+                <div class="landing-section__reel-track">
+                    {% for frame in [
+                        "timeline/wheel-keeps-turning-infinity",
+                        "timeline/wheel-keeps-turning-lens-synthesis",
+                        "timeline/wheel-keeps-turning-future-cycle",
+                        "timeline/wheel-keeps-turning-infinity",
+                        "timeline/wheel-keeps-turning-lens-synthesis",
+                        "timeline/wheel-keeps-turning-future-cycle"
+                    ] %}
+                    <div class="landing-section__reel-frame">
+                        <img class="landing-section__reel-image"
+                             src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
+                             alt=""
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="landing-section__overlay"></div>
+        </div>
+        <div class="landing-section__inner landing-section__inner--story">
+            <span class="landing-section__eyebrow">{{ wheel_page.title }}</span>
+            <h2 class="landing-section__heading">{{ wheel_page.title }}</h2>
+            <p class="landing-section__body">{{ wheel_page.description | truncate(length=200) }}</p>
+            <a href="{{ get_url(path='timeline/the-wheel-keeps-turning', lang=detected_lang) }}" class="landing-section__cta">
+                <span>{{ trans(key="readMore", lang=detected_lang) }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/>
+                    <polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+        </div>
+        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
 </div>
 
 <script>

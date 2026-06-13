@@ -1,0 +1,122 @@
+{% extends "base.html" %}
+{% import "macros/zodiac.html" as zodiac %}
+
+{% block content %}
+{% set ages_data = load_data(path="data/ages.json") %}
+{% set ages_i18n = load_data(path="data/ages.i18n.json") %}
+{% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
+{% set preamble_page = get_page(path="timeline/preamble.md") %}
+{% set beginning_page = get_page(path="timeline/in-the-beginning.md") %}
+{% set wheel_page = get_page(path="timeline/the-wheel-keeps-turning.md") %}
+{% set first_age = ages_data | first %}
+{% set capricorn_age = ages_data | nth(n=1) %}
+
+<div class="chronology-page">
+    <section class="chronology-page__hero">
+        <div class="chronology-page__hero-copy">
+            <span class="chronology-page__eyebrow">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</span>
+            <h1 class="chronology-page__title">{{ page.title }}</h1>
+            {% if page.description %}
+            <p class="chronology-page__description">{{ page.description }}</p>
+            {% endif %}
+            {% if page.content %}
+            <div class="chronology-page__lede">
+                {{ page.content | safe }}
+            </div>
+            {% endif %}
+        </div>
+        <div class="chronology-page__hero-panel" aria-hidden="true">
+            <div class="chronology-page__hero-strip">
+                {% for frame in [
+                    "timeline/preamble-recurring-shape",
+                    capricorn_age.earth_texture,
+                    "timeline/wheel-keeps-turning-infinity"
+                ] %}
+                <div class="chronology-page__hero-frame">
+                    {% if frame is starting_with("http") %}
+                    <img class="chronology-page__hero-image"
+                         src="{{ frame }}"
+                         alt=""
+                         loading="lazy"
+                         decoding="async">
+                    {% else %}
+                    <img class="chronology-page__hero-image"
+                         src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
+                         alt=""
+                         loading="lazy"
+                         decoding="async">
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology-page__hero-link">
+                {{ trans(key="timelineBackToHub", lang=detected_lang) }}
+            </a>
+        </div>
+    </section>
+
+    <div class="chronology-page__layout">
+        <main class="chronology-page__main">
+            <ol class="chronology-page__list">
+                <li class="chronology-page__item chronology-page__item--intro">
+                    <a href="{{ get_url(path='timeline/preamble', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--intro">
+                        <span class="chronology-page__card-kicker">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
+                        <h2 class="chronology-page__card-title">{{ preamble_page.title }}</h2>
+                        <p class="chronology-page__card-summary">{{ preamble_page.description | truncate(length=180) }}</p>
+                    </a>
+                </li>
+
+                <li class="chronology-page__item chronology-page__item--intro">
+                    <a href="{{ get_url(path='timeline/in-the-beginning', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--intro">
+                        <span class="chronology-page__card-kicker">{{ first_age.start }} — {{ first_age.end }}</span>
+                        <h2 class="chronology-page__card-title">{{ beginning_page.title }}</h2>
+                        <p class="chronology-page__card-summary">{{ beginning_page.description | truncate(length=180) }}</p>
+                    </a>
+                </li>
+
+                {% for age in ages_data %}
+                {% set slug = age.link | split(pat="/") | nth(n=2) %}
+                {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+                {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
+                <li class="chronology-page__item chronology-page__item--age" data-age-color="{{ age.color }}">
+                    <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}" class="chronology-page__card chronology-page__card--age">
+                        <span class="chronology-page__card-kicker">
+                            {{ age.start }} — {{ age.end }}
+                        </span>
+                        <div class="chronology-page__card-head">
+                            <span class="chronology-page__card-symbol" aria-hidden="true">{{ zodiac::icon(name=slug | replace(from="age-of-", to=""), size=18) }}</span>
+                            <h2 class="chronology-page__card-title">{{ age_name }}</h2>
+                        </div>
+                        <p class="chronology-page__card-summary">{{ age_event }}</p>
+                    </a>
+                </li>
+                {% endfor %}
+
+                <li class="chronology-page__item chronology-page__item--outro">
+                    <a href="{{ get_url(path='timeline/the-wheel-keeps-turning', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--outro">
+                        <span class="chronology-page__card-kicker">{{ wheel_page.title }}</span>
+                        <h2 class="chronology-page__card-title">{{ wheel_page.title }}</h2>
+                        <p class="chronology-page__card-summary">{{ wheel_page.description | truncate(length=180) }}</p>
+                    </a>
+                </li>
+            </ol>
+        </main>
+
+        <aside class="chronology-page__sidebar" role="complementary" aria-label="{{ trans(key='timelineGreatYear', lang=detected_lang) }}">
+            <div class="chronology-page__sidebar-panel">
+                <h2 class="chronology-page__sidebar-title">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</h2>
+                <p class="chronology-page__sidebar-copy">
+                    {{ trans(key="timelineGreatYearBrowse", lang=detected_lang) }}
+                </p>
+                <ul class="chronology-page__sidebar-list">
+                    <li>{{ preamble_page.title }}</li>
+                    <li>{{ first_age.name }}</li>
+                    <li>{{ ages_strings["age-of-capricorn"].name | default(value=ages_i18n.en["age-of-capricorn"].name) }}</li>
+                    <li>{{ ages_strings["age-of-aquarius"].name | default(value=ages_i18n.en["age-of-aquarius"].name) }}</li>
+                    <li>{{ wheel_page.title }}</li>
+                </ul>
+            </div>
+        </aside>
+    </div>
+</div>
+{% endblock content %}

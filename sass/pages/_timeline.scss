@@ -40,10 +40,74 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     pointer-events: none;
 }
 
+.landing-section__media {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 // Only the active section's image is at full opacity. Same fade pattern
 // the landing's video uses; the `is-active` class is toggled by JS.
 .landing-section.is-active .landing-section__bg-image {
     opacity: 1;
+}
+
+.landing-section__reel {
+    position: relative;
+    width: min(76rem, calc(100vw - 3rem));
+    aspect-ratio: 16 / 9;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: 0 1.5rem 4rem rgba(0, 0, 0, 0.28);
+}
+
+.landing-section__reel-track {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    width: 200%;
+    height: 100%;
+    animation: timeline-reel-scroll 24s linear infinite;
+}
+
+.landing-section__reel-frame {
+    position: relative;
+    overflow: hidden;
+}
+
+.landing-section__reel-image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+}
+
+.landing-section--timeline-story .landing-section__inner,
+.landing-section--timeline-opening .landing-section__inner {
+    max-width: 52rem;
+}
+
+.landing-section--timeline-story .landing-section__body {
+    max-width: 42rem;
+}
+
+@keyframes timeline-reel-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .landing-section__reel-track {
+        animation: none;
+    }
 }
 
 // ---- Zodiac glyph (large, decorative) inside the section's text column ----
@@ -102,6 +166,10 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
 .landing-section--video .landing-section__eyebrow {
     color: rgba(255, 255, 255, 0.85);
+}
+
+.landing-section--timeline-story .landing-section__eyebrow {
+    color: rgba(255, 255, 255, 0.82);
 }
 
 // ---- "Read this age" CTA ----

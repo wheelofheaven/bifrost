@@ -6,6 +6,8 @@
 {% block content %}
 <!-- Event Schema for Timeline Pages -->
 {% include "partials/schema/event.html" %}
+{% set ages_data = load_data(path="data/ages.json") %}
+{% set age_matches = ages_data | filter(attribute="link", value="/timeline/" ~ page.slug) %}
 
 <div class="timeline-page">
     <!-- Breadcrumb Navigation -->
@@ -342,6 +344,26 @@
              body after the lede (Wikipedia pattern). -->
         <aside class="timeline-page__sidebar" role="complementary" aria-labelledby="page-title">
             <header class="timeline-page__header">
+                {% if age_matches | length > 0 %}
+                {% set age_data = age_matches[0] %}
+                <a class="timeline-page__earth-link" href="{{ get_url(path='timeline/chronology', lang='en') }}" aria-label="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">
+                    <figure class="timeline-page__earth-figure">
+                        <img class="timeline-page__earth-image"
+                             src="{{ age_data.earth_texture }}"
+                             alt=""
+                             loading="lazy"
+                             decoding="async">
+                        <figcaption class="timeline-page__earth-caption">
+                            <span class="timeline-page__earth-label">{{ trans(key="timelineGreatYearBrowse", lang=detected_lang) }}</span>
+                            <strong class="timeline-page__earth-title">{{ page.title }}</strong>
+                            {% if age_data.event %}
+                            <span class="timeline-page__earth-summary">{{ age_data.event }}</span>
+                            {% endif %}
+                        </figcaption>
+                    </figure>
+                </a>
+                {% endif %}
+
                 <!-- Reading-status / claim-type cluster -->
                 <div class="timeline-page__claim-section">
                     <div class="timeline-page__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
