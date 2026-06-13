@@ -751,7 +751,8 @@
 
                 {# Agent buttons — same pattern as wiki-page sidebar. Points at
                    the book's JSON endpoint on the API. #}
-                {% set raw_url = (config.extra.api_url | default(value="https://api.wheelofheaven.world")) ~ "/v1/books/" ~ book_slug %}
+                {% set api_base = config.extra.api_url | default(value="https://api.wheelofheaven.world") %}
+                {% set raw_url = api_base ~ "/v1/books/" ~ book_slug %}
                 <div class="library-book__agent-section">
                     <div class="library-book__meta-label">{{ trans(key="agentReadAs", lang=detected_lang) }}</div>
                     <div class="library-book__agent-buttons">
