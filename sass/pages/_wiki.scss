@@ -1657,7 +1657,7 @@
     // "SUMMARY" label — rotated -90° (reads bottom-to-top), suspended between
     // the accent line and the paragraph's text edge.
     &::after {
-        content: "Summary";
+        content: attr(data-summary-label);
         position: absolute;
         left: 0.875rem;
         top: 50%;

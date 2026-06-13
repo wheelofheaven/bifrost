@@ -45,7 +45,7 @@
                 <!-- Lede / summary — uses page.description so the summary treatment
                      is editorially controlled and decoupled from the body's first paragraph. -->
                 {% if page.description %}
-                <div class="wiki__lede" data-ai-summary="true">
+                <div class="wiki__lede" data-ai-summary="true" data-summary-label="{{ trans(key='summaryLabel', lang=detected_lang) }}">
                     <p>{{ page.description | markdown(inline=true) | safe }}</p>
                 </div>
                 {% endif %}

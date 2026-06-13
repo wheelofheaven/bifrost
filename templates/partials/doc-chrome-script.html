@@ -1,0 +1,91 @@
+<script>
+(function () {
+    // Shared chrome behaviour for the single-column reading pages
+    // (Articles + Dispatches): the "Copy for LLMs" button and the live
+    // last-edited fetch. Keyed on data attributes so it stays
+    // block-agnostic — the same script drives .article__* and
+    // .dispatch__* markup without knowing the block prefix.
+
+    // ---- Copy for LLMs ----
+    document.querySelectorAll('[data-action="copy-md"]').forEach((btn) => {
+        const labelEl = btn.querySelector('[data-agent-label]');
+        const originalLabel = labelEl ? labelEl.textContent : '';
+        const setLabel = (text, state) => {
+            if (!labelEl) return;
+            labelEl.textContent = text;
+            if (state) btn.setAttribute('data-state', state);
+            else btn.removeAttribute('data-state');
+            setTimeout(() => {
+                labelEl.textContent = originalLabel;
+                btn.removeAttribute('data-state');
+            }, 2000);
+        };
+
+        btn.addEventListener('click', async () => {
+            const url = btn.getAttribute('data-md-url');
+            if (!url) return;
+            btn.disabled = true;
+            try {
+                const res = await fetch(url, { mode: 'cors' });
+                if (!res.ok) throw new Error('fetch failed: ' + res.status);
+                const md = await res.text();
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    await navigator.clipboard.writeText(md);
+                } else {
+                    const ta = document.createElement('textarea');
+                    ta.value = md;
+                    ta.setAttribute('readonly', '');
+                    ta.style.position = 'absolute';
+                    ta.style.left = '-9999px';
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(ta);
+                }
+                setLabel('Copied!', 'ok');
+            } catch (err) {
+                console.warn('Copy for LLMs failed:', err);
+                setLabel('Open instead →', 'err');
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } finally {
+                btn.disabled = false;
+            }
+        });
+    });
+
+    // ---- Last-edit info ----
+    // Fetch the most recent commit for this file from the GitHub API and
+    // render date + author next to "View history". Fails silently (the
+    // meta block stays hidden) on rate-limit / network errors.
+    document.querySelectorAll('[data-history-path]').forEach((historyEl) => {
+        const path = historyEl.getAttribute('data-history-path');
+        if (!path) return;
+        const apiUrl = `https://api.github.com/repos/wheelofheaven/data-content/commits?path=${encodeURIComponent(path)}&per_page=1`;
+        fetch(apiUrl, { headers: { 'Accept': 'application/vnd.github+json' } })
+            .then((res) => (res.ok ? res.json() : Promise.reject(res.status)))
+            .then((commits) => {
+                if (!Array.isArray(commits) || commits.length === 0) return;
+                const latest = commits[0];
+                const iso = latest && latest.commit && latest.commit.author && latest.commit.author.date;
+                const author = (latest && latest.author && latest.author.login)
+                    || (latest && latest.commit && latest.commit.author && latest.commit.author.name)
+                    || '';
+                if (!iso) return;
+
+                const meta = historyEl.querySelector('[data-history-meta]');
+                const dateEl = historyEl.querySelector('[data-history-date]');
+                const authorEl = historyEl.querySelector('[data-history-author]');
+                if (!dateEl || !meta) return;
+
+                const d = new Date(iso);
+                const formatted = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+                dateEl.setAttribute('datetime', iso);
+                dateEl.setAttribute('title', d.toLocaleString());
+                dateEl.textContent = formatted;
+                if (author && authorEl) authorEl.textContent = `by ${author}`;
+                meta.hidden = false;
+            })
+            .catch(() => { /* swallow — stays hidden */ });
+    });
+})();
+</script>
