@@ -4,7 +4,7 @@
 // scroll-snap, pagination dots, IntersectionObserver, and section transitions
 // all just work. This file only adds the timeline-specific extras:
 //
-// - Full-viewport image slideshow support, analogous to the landing page's
+// - Full-viewport image crossfade support, analogous to the landing page's
 //   pinned video backgrounds.
 // - Zodiac glyph block placed inside `.landing-section__inner`.
 // - "Read this age" CTA at the bottom of each age section.
@@ -21,13 +21,14 @@
 // of the landing critical path.
 $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-// ---- Full-viewport illustration slideshow ----
+// ---- Full-viewport illustration crossfade ----
 // `.landing-section__media` is already a fixed, opacity-faded viewport layer
-// in _home.scss. The timeline slideshow fills that layer and rotates three
-// illustrations in place with a subtle flip/fade, so every section reads like
-// the opening hero instead of a framed carousel.
+// in _home.scss. The timeline slideshow fills that layer and crossfades three
+// chapter illustrations in place, so every section reads like the opening hero
+// instead of a framed carousel or collage.
 .landing-section__slideshow,
 .landing-section__slide,
+.landing-section__slide-picture,
 .landing-section__slide-image {
     position: absolute;
     inset: 0;
@@ -41,11 +42,8 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
 .landing-section__slide {
     opacity: 0;
-    transform: rotateY(-12deg) scale(1.04);
-    transform-origin: center;
-    animation: timeline-hero-flip 18s ease-in-out infinite;
+    animation: timeline-hero-crossfade 18s ease-in-out infinite;
     animation-delay: calc(var(--slide-index) * 6s);
-    backface-visibility: hidden;
 }
 
 .landing-section__slide-image {
@@ -64,30 +62,19 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     max-width: 42rem;
 }
 
-@keyframes timeline-hero-flip {
-    0% {
-        opacity: 0;
-        transform: rotateY(-12deg) scale(1.04);
-        filter: saturate(0.9) brightness(0.82);
-    }
-
-    5%,
-    29% {
+@keyframes timeline-hero-crossfade {
+    0%,
+    27% {
         opacity: 1;
-        transform: rotateY(0deg) scale(1);
-        filter: saturate(1) brightness(1);
     }
 
-    34% {
+    33%,
+    94% {
         opacity: 0;
-        transform: rotateY(10deg) scale(1.035);
-        filter: saturate(0.92) brightness(0.82);
     }
 
     100% {
-        opacity: 0;
-        transform: rotateY(10deg) scale(1.035);
-        filter: saturate(0.92) brightness(0.82);
+        opacity: 1;
     }
 }
 
@@ -98,8 +85,6 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     .landing-section__slide:first-child {
         opacity: 1;
-        transform: none;
-        filter: none;
     }
 }
 

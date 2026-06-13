@@ -20,6 +20,7 @@
 {% set ages_i18n = load_data(path="data/ages.i18n.json") %}
 {% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
 {% set timeline_slides = load_data(path="data/timeline-slides.json") %}
+{% set timeline_cdn = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set preamble_page = get_page(path="timeline/preamble.md") %}
 {% set wheel_page = get_page(path="timeline/the-wheel-keeps-turning.md") %}
 
@@ -144,11 +145,16 @@
                 {% set preamble_slides = timeline_slides.preamble %}
                 {% for frame in preamble_slides %}
                 <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
-                    <img class="landing-section__slide-image"
-                         src="{{ get_url(path=frame.src) }}"
-                         alt=""
-                         loading="lazy"
-                         decoding="async">
+                    <picture class="landing-section__slide-picture">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <img class="landing-section__slide-image"
+                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             alt=""
+                             loading="lazy"
+                             decoding="async"
+                             sizes="100vw">
+                    </picture>
                 </div>
                 {% endfor %}
             </div>
@@ -218,11 +224,16 @@
                 {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
                 {% for frame in age_slides %}
                 <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
-                    <img class="landing-section__slide-image"
-                         src="{{ get_url(path=frame.src) }}"
-                         alt=""
-                         loading="lazy"
-                         decoding="async">
+                    <picture class="landing-section__slide-picture">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <img class="landing-section__slide-image"
+                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             alt=""
+                             loading="lazy"
+                             decoding="async"
+                             sizes="100vw">
+                    </picture>
                 </div>
                 {% endfor %}
             </div>
@@ -270,11 +281,16 @@
                 {% set wheel_slides = timeline_slides.wheel %}
                 {% for frame in wheel_slides %}
                 <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
-                    <img class="landing-section__slide-image"
-                         src="{{ get_url(path=frame.src) }}"
-                         alt=""
-                         loading="lazy"
-                         decoding="async">
+                    <picture class="landing-section__slide-picture">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <img class="landing-section__slide-image"
+                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             alt=""
+                             loading="lazy"
+                             decoding="async"
+                             sizes="100vw">
+                    </picture>
                 </div>
                 {% endfor %}
             </div>
