@@ -2,121 +2,358 @@
 {% import "macros/zodiac.html" as zodiac %}
 
 {% block content %}
+{# /timeline/chronology — "The Great Year Dial".
+   An interactive instrument for the *state of the Earth* across the Great
+   Year. A central Earth orb cross-fades through its texture states while a
+   sweep-hand rotates around a 13-node zodiac wheel; the active age's zodiac
+   glyph drifts in the starfield behind it and the whole stage tints to the
+   age's colour. A TODAY marker anchors the present (Aquarius). The Play
+   control sweeps the hand from the beginning round to today.
+
+   This is deliberately distinct from /timeline/ (the cinematic serial-hero
+   reading flow) and from /timeline/<age> (the chapter prose). Here the
+   subject is the planet's changing face, not the narrative.
+
+   Data: data/ages.json (13 entries: "In the beginning…" + 12 ages) with
+   per-language names/events from data/ages.i18n.json. Nodes carry all their
+   state in data-* attributes; the inline script reads the active node and
+   drives the cross-fades. A visually-hidden ordered list (revealed by
+   <noscript>) keeps the chronology crawlable and usable without JS. #}
 {% set ages_data = load_data(path="data/ages.json") %}
 {% set ages_i18n = load_data(path="data/ages.i18n.json") %}
 {% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
-{% set preamble_page = get_page(path="timeline/preamble.md") %}
-{% set beginning_page = get_page(path="timeline/in-the-beginning.md") %}
-{% set wheel_page = get_page(path="timeline/the-wheel-keeps-turning.md") %}
-{% set first_age = ages_data | first %}
-{% set capricorn_age = ages_data | nth(n=1) %}
+{% set node_count = ages_data | length %}
+{% set cdn = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 
-<div class="chronology-page">
-    <section class="chronology-page__hero">
-        <div class="chronology-page__hero-copy">
-            <span class="chronology-page__eyebrow">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</span>
-            <h1 class="chronology-page__title">{{ page.title }}</h1>
-            {% if page.description %}
-            <p class="chronology-page__description">{{ page.description }}</p>
-            {% endif %}
-            {% if page.content %}
-            <div class="chronology-page__lede">
-                {{ page.content | safe }}
-            </div>
-            {% endif %}
+{# Determine the "today" node: the age whose span contains the current year.
+   2026 falls inside Aquarius (1945 → 4110). Computed here so the marker
+   stays correct if the age boundaries are ever edited. #}
+{% set today_year = 2026 %}
+{% set today_index = node_count - 1 %}
+{% for age in ages_data %}
+    {% set s = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set e = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set s_signed = s %}{% if age.start is starting_with("−") %}{% set s_signed = 0 - s %}{% endif %}
+    {% set e_signed = e %}{% if age.end is starting_with("−") %}{% set e_signed = 0 - e %}{% endif %}
+    {% if today_year >= s_signed and today_year < e_signed %}
+        {% set_global today_index = loop.index0 %}
+    {% endif %}
+{% endfor %}
+
+<div class="chronology"
+     data-chronology
+     data-node-count="{{ node_count }}"
+     data-today-index="{{ today_index }}"
+     data-active-color="{{ ages_data | nth(n=today_index) | get(key='color') }}"
+     style="--n: {{ node_count }};">
+
+    <header class="chronology__intro">
+        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology__back">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            {{ trans(key="timelineBackToHub", lang=detected_lang) }}
+        </a>
+        <span class="chronology__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
+        <h1 class="chronology__title">{{ page.title }}</h1>
+        {% if page.content %}
+        <div class="chronology__lede">{{ page.content | safe }}</div>
+        {% endif %}
+    </header>
+
+    <section class="chronology__stage" aria-hidden="true">
+        {# --- Starfield: deterministic scatter so the build is reproducible. --- #}
+        <div class="chronology__starfield">
+            {% set seeds = [7,31,12,58,40,3,77,22,64,18,49,9,71,35,2,52,84,27,60,15,44,6,90,33,55,20,68,11,80,38,1,47,73,25,62,17,42,88,29,57] %}
+            {% for s in seeds %}
+            {% set x = (s * 37) % 100 %}
+            {% set y = (s * 53) % 100 %}
+            {% set d = (s % 3) + 1 %}
+            <span class="chronology__star chronology__star--s{{ d }}" style="--sx: {{ x }}%; --sy: {{ y }}%; --twk: {{ (s % 5) * 0.4 }}s;"></span>
+            {% endfor %}
         </div>
-        <div class="chronology-page__hero-panel" aria-hidden="true">
-            <div class="chronology-page__hero-strip">
-                {% for frame in [
-                    "timeline/preamble-recurring-shape",
-                    capricorn_age.earth_texture,
-                    "timeline/wheel-keeps-turning-infinity"
-                ] %}
-                <div class="chronology-page__hero-frame">
-                    {% if frame is starting_with("http") %}
-                    <img class="chronology-page__hero-image"
-                         src="{{ frame }}"
-                         alt=""
-                         loading="lazy"
-                         decoding="async">
-                    {% else %}
-                    <img class="chronology-page__hero-image"
-                         src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
-                         alt=""
-                         loading="lazy"
-                         decoding="async">
-                    {% endif %}
-                </div>
-                {% endfor %}
+
+        {# --- Background constellation glyphs: one ghosted layer per node,
+               cross-faded by JS. The active node's glyph is shown. --- #}
+        <div class="chronology__constellations">
+            {% for age in ages_data %}
+            {% set slug = age.link | split(pat="/") | nth(n=2) %}
+            {% set zslug = slug | replace(from="age-of-", to="") %}
+            <div class="chronology__constellation{% if loop.index0 == today_index %} is-active{% endif %}" data-glyph="{{ loop.index0 }}">
+                {% if slug == "in-the-beginning" %}
+                <span class="chronology__constellation-spark">✦</span>
+                {% else %}
+                {{ zodiac::icon(name=zslug, size=440) }}
+                {% endif %}
             </div>
-            <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology-page__hero-link">
-                {{ trans(key="timelineBackToHub", lang=detected_lang) }}
-            </a>
+            {% endfor %}
+        </div>
+
+        {# --- The wheel: ring track, filled arc, sweep hand, nodes, Earth. --- #}
+        <div class="chronology__wheel">
+            <div class="chronology__ring" aria-hidden="true"></div>
+            <div class="chronology__arc" data-arc aria-hidden="true"></div>
+            <div class="chronology__hand" data-hand aria-hidden="true">
+                <span class="chronology__hand-line"></span>
+                <span class="chronology__hand-cap"></span>
+            </div>
+
+            {# Earth orb — one texture layer per node, cross-faded by JS. #}
+            <div class="chronology__earth">
+                <div class="chronology__earth-glow" data-glow></div>
+                <div class="chronology__earth-orb">
+                    {% for age in ages_data %}
+                    {% set avif = age.earth_texture | replace(from=".webp", to=".avif") %}
+                    <picture class="chronology__earth-layer{% if loop.index0 == today_index %} is-active{% endif %}" data-earth="{{ loop.index0 }}">
+                        <source srcset="{{ avif }}" type="image/avif">
+                        <img class="chronology__earth-img" src="{{ age.earth_texture }}" alt="" loading="lazy" decoding="async">
+                    </picture>
+                    {% endfor %}
+                    <div class="chronology__earth-shade"></div>
+                </div>
+            </div>
+
+            {# Nodes around the ring. Buttons scrub; the CTA in the caption is
+               the real navigation link. Each node carries its full state. #}
+            <ul class="chronology__nodes">
+                {% for age in ages_data %}
+                {% set slug = age.link | split(pat="/") | nth(n=2) %}
+                {% set zslug = slug | replace(from="age-of-", to="") %}
+                {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+                {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
+                {# BC/AD labels, mirroring the section template's convention. #}
+                {% set sy = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+                {% set ey = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+                {% set start_label = sy ~ " BC" %}{% if not (age.start is starting_with("−")) %}{% set start_label = sy ~ " AD" %}{% endif %}
+                {% set end_label = ey ~ " BC" %}{% if not (age.end is starting_with("−")) %}{% set end_label = ey ~ " AD" %}{% endif %}
+                <li class="chronology__node-slot" style="--i: {{ loop.index0 }};">
+                    <button type="button"
+                            class="chronology__node{% if loop.index0 == today_index %} is-active is-today{% endif %}"
+                            data-node="{{ loop.index0 }}"
+                            data-color="{{ age.color }}"
+                            data-name="{{ age_name }}"
+                            data-event="{{ age_event }}"
+                            data-start="{{ start_label }}"
+                            data-end="{{ end_label }}"
+                            data-href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
+                            {% if loop.index0 == today_index %}data-today="true"{% endif %}
+                            aria-label="{{ age_name }} · {{ start_label }} — {{ end_label }}">
+                        <span class="chronology__node-glyph" aria-hidden="true">
+                            {% if slug == "in-the-beginning" %}✦{% else %}{{ zodiac::icon(name=zslug, size=20) }}{% endif %}
+                        </span>
+                    </button>
+                    {% if loop.index0 == 0 %}
+                    <span class="chronology__node-tag chronology__node-tag--begin">{{ trans(key="chronologyBeginningLabel", lang=detected_lang) }}</span>
+                    {% elif loop.index0 == today_index %}
+                    <span class="chronology__node-tag chronology__node-tag--today">{{ trans(key="chronologyTodayLabel", lang=detected_lang) }}</span>
+                    {% endif %}
+                </li>
+                {% endfor %}
+            </ul>
         </div>
     </section>
 
-    <div class="chronology-page__layout">
-        <main class="chronology-page__main">
-            <ol class="chronology-page__list">
-                <li class="chronology-page__item chronology-page__item--intro">
-                    <a href="{{ get_url(path='timeline/preamble', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--intro">
-                        <span class="chronology-page__card-kicker">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
-                        <h2 class="chronology-page__card-title">{{ preamble_page.title }}</h2>
-                        <p class="chronology-page__card-summary">{{ preamble_page.description | truncate(length=180) }}</p>
-                    </a>
-                </li>
+    {# --- Live caption: populated by JS from the active node. Server-rendered
+           with the TODAY node so it is meaningful before/without JS. --- #}
+    {% set today_age = ages_data | nth(n=today_index) %}
+    {% set today_slug = today_age.link | split(pat="/") | nth(n=2) %}
+    {% set today_name = ages_strings[today_slug].name | default(value=ages_i18n.en[today_slug].name) %}
+    {% set today_event = ages_strings[today_slug].event | default(value=ages_i18n.en[today_slug].event) %}
+    {% set tsy = today_age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set tey = today_age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set t_start = tsy ~ " BC" %}{% if not (today_age.start is starting_with("−")) %}{% set t_start = tsy ~ " AD" %}{% endif %}
+    {% set t_end = tey ~ " BC" %}{% if not (today_age.end is starting_with("−")) %}{% set t_end = tey ~ " AD" %}{% endif %}
+    <section class="chronology__readout" aria-live="polite">
+        <span class="chronology__readout-badge" data-readout-today hidden>
+            <span class="chronology__readout-pulse" aria-hidden="true"></span>
+            {{ trans(key="chronologyYouAreHere", lang=detected_lang) }}
+        </span>
+        <span class="chronology__readout-era" data-readout-era>{{ t_start }} → {{ t_end }}</span>
+        <h2 class="chronology__readout-name" data-readout-name>{{ today_name }}</h2>
+        <p class="chronology__readout-event" data-readout-event>{{ today_event }}</p>
+        <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang) }}">
+            <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+        </a>
+    </section>
 
-                <li class="chronology-page__item chronology-page__item--intro">
-                    <a href="{{ get_url(path='timeline/in-the-beginning', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--intro">
-                        <span class="chronology-page__card-kicker">{{ first_age.start }} — {{ first_age.end }}</span>
-                        <h2 class="chronology-page__card-title">{{ beginning_page.title }}</h2>
-                        <p class="chronology-page__card-summary">{{ beginning_page.description | truncate(length=180) }}</p>
-                    </a>
-                </li>
+    {# --- Controls --- #}
+    <section class="chronology__controls">
+        <button type="button" class="chronology__play" data-play
+                aria-label="{{ trans(key='chronologyPlay', lang=detected_lang) }}"
+                data-label-play="{{ trans(key='chronologyPlay', lang=detected_lang) }}"
+                data-label-pause="{{ trans(key='chronologyPause', lang=detected_lang) }}"
+                data-label-replay="{{ trans(key='chronologyReplay', lang=detected_lang) }}">
+            <svg class="chronology__play-icon chronology__play-icon--play" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            <svg class="chronology__play-icon chronology__play-icon--pause" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+            <svg class="chronology__play-icon chronology__play-icon--replay" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/></svg>
+            <span class="chronology__play-label" data-play-label>{{ trans(key="chronologyPlay", lang=detected_lang) }}</span>
+        </button>
+        <p class="chronology__hint">{{ trans(key="chronologyHint", lang=detected_lang) }}</p>
+    </section>
 
-                {% for age in ages_data %}
-                {% set slug = age.link | split(pat="/") | nth(n=2) %}
-                {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
-                {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
-                <li class="chronology-page__item chronology-page__item--age" data-age-color="{{ age.color }}">
-                    <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}" class="chronology-page__card chronology-page__card--age">
-                        <span class="chronology-page__card-kicker">
-                            {{ age.start }} — {{ age.end }}
-                        </span>
-                        <div class="chronology-page__card-head">
-                            <span class="chronology-page__card-symbol" aria-hidden="true">{{ zodiac::icon(name=slug | replace(from="age-of-", to=""), size=18) }}</span>
-                            <h2 class="chronology-page__card-title">{{ age_name }}</h2>
-                        </div>
-                        <p class="chronology-page__card-summary">{{ age_event }}</p>
-                    </a>
-                </li>
-                {% endfor %}
-
-                <li class="chronology-page__item chronology-page__item--outro">
-                    <a href="{{ get_url(path='timeline/the-wheel-keeps-turning', lang=detected_lang) }}" class="chronology-page__card chronology-page__card--outro">
-                        <span class="chronology-page__card-kicker">{{ wheel_page.title }}</span>
-                        <h2 class="chronology-page__card-title">{{ wheel_page.title }}</h2>
-                        <p class="chronology-page__card-summary">{{ wheel_page.description | truncate(length=180) }}</p>
-                    </a>
-                </li>
-            </ol>
-        </main>
-
-        <aside class="chronology-page__sidebar" role="complementary" aria-label="{{ trans(key='timelineGreatYear', lang=detected_lang) }}">
-            <div class="chronology-page__sidebar-panel">
-                <h2 class="chronology-page__sidebar-title">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</h2>
-                <p class="chronology-page__sidebar-copy">
-                    {{ trans(key="timelineGreatYearBrowse", lang=detected_lang) }}
-                </p>
-                <ul class="chronology-page__sidebar-list">
-                    <li>{{ preamble_page.title }}</li>
-                    <li>{{ first_age.name }}</li>
-                    <li>{{ ages_strings["age-of-capricorn"].name | default(value=ages_i18n.en["age-of-capricorn"].name) }}</li>
-                    <li>{{ ages_strings["age-of-aquarius"].name | default(value=ages_i18n.en["age-of-aquarius"].name) }}</li>
-                    <li>{{ wheel_page.title }}</li>
-                </ul>
-            </div>
-        </aside>
-    </div>
+    {# --- Crawlable / no-JS fallback: a plain ordered list of the chronology.
+           Visually-hidden when JS is active; revealed by <noscript>. --- #}
+    <noscript>
+        <style>
+            .chronology__stage, .chronology__readout, .chronology__controls { display: none !important; }
+            .chronology__fallback { position: static !important; width: auto !important; height: auto !important; clip: auto !important; overflow: visible !important; }
+        </style>
+    </noscript>
+    <ol class="chronology__fallback">
+        {% for age in ages_data %}
+        {% set slug = age.link | split(pat="/") | nth(n=2) %}
+        {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+        {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
+        {% set sy = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+        {% set ey = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+        {% set start_label = sy ~ " BC" %}{% if not (age.start is starting_with("−")) %}{% set start_label = sy ~ " AD" %}{% endif %}
+        {% set end_label = ey ~ " BC" %}{% if not (age.end is starting_with("−")) %}{% set end_label = ey ~ " AD" %}{% endif %}
+        <li class="chronology__fallback-item">
+            <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}">
+                <strong>{{ age_name }}</strong>
+                <span>{{ start_label }} — {{ end_label }}</span>
+                <span>{{ age_event }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ol>
 </div>
+
+<script>
+(function () {
+    "use strict";
+    const root = document.querySelector('[data-chronology]');
+    if (!root) return;
+
+    const nodes = Array.from(root.querySelectorAll('.chronology__node'));
+    const earths = Array.from(root.querySelectorAll('[data-earth]'));
+    const glyphs = Array.from(root.querySelectorAll('[data-glyph]'));
+    const hand = root.querySelector('[data-hand]');
+    const arc = root.querySelector('[data-arc]');
+    const glow = root.querySelector('[data-glow]');
+    const elEra = root.querySelector('[data-readout-era]');
+    const elName = root.querySelector('[data-readout-name]');
+    const elEvent = root.querySelector('[data-readout-event]');
+    const elCta = root.querySelector('[data-readout-cta]');
+    const elToday = root.querySelector('[data-readout-today]');
+    const playBtn = root.querySelector('[data-play]');
+    const playLabel = root.querySelector('[data-play-label]');
+    if (!nodes.length) return;
+
+    const N = nodes.length;
+    const STEP = 360 / N;
+    const todayIndex = Number(root.getAttribute('data-today-index')) || (N - 1);
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const LABELS = {
+        play: playBtn.getAttribute('data-label-play') || 'Play',
+        pause: playBtn.getAttribute('data-label-pause') || 'Pause',
+        replay: playBtn.getAttribute('data-label-replay') || 'Replay'
+    };
+
+    let active = todayIndex;
+    let playing = false;
+    let timer = null;
+
+    const angleFor = (i) => i * STEP; // 0 = top, clockwise
+
+    function render(i) {
+        active = i;
+        const node = nodes[i];
+
+        nodes.forEach((n, k) => n.classList.toggle('is-active', k === i));
+        earths.forEach((e, k) => e.classList.toggle('is-active', k === i));
+        glyphs.forEach((g, k) => g.classList.toggle('is-active', k === i));
+
+        // Hand + filled arc both track the active angle.
+        const deg = angleFor(i);
+        if (hand) hand.style.setProperty('--hand-deg', deg + 'deg');
+        if (arc) arc.style.setProperty('--sweep-deg', deg + 'deg');
+
+        // Stage tint follows the age colour (mapped to a hue in SCSS).
+        root.setAttribute('data-active-color', node.getAttribute('data-color'));
+
+        // Caption.
+        if (elEra) elEra.textContent = node.getAttribute('data-start') + ' → ' + node.getAttribute('data-end');
+        if (elName) elName.textContent = node.getAttribute('data-name');
+        if (elEvent) elEvent.textContent = node.getAttribute('data-event');
+        if (elCta) elCta.setAttribute('href', node.getAttribute('data-href'));
+        if (elToday) elToday.hidden = node.getAttribute('data-today') !== 'true';
+    }
+
+    function setPlayState(state) {
+        // state: 'play' (idle, ready to play), 'pause' (playing), 'replay'
+        root.setAttribute('data-play-state', state);
+        const key = state === 'pause' ? 'pause' : (state === 'replay' ? 'replay' : 'play');
+        if (playLabel) playLabel.textContent = LABELS[key];
+        playBtn.setAttribute('aria-label', LABELS[key]);
+    }
+
+    function stopPlay(finished) {
+        playing = false;
+        if (timer) { clearInterval(timer); timer = null; }
+        setPlayState(finished ? 'replay' : 'play');
+    }
+
+    function startPlay() {
+        playing = true;
+        setPlayState('pause');
+        // Always sweep from the beginning so the journey reads start → today.
+        render(0);
+        const dwell = reduceMotion ? 220 : 1100;
+        timer = setInterval(() => {
+            if (active >= todayIndex) { stopPlay(true); return; }
+            render(active + 1);
+        }, dwell);
+    }
+
+    playBtn.addEventListener('click', () => {
+        if (playing) { stopPlay(false); return; }
+        startPlay();
+    });
+
+    nodes.forEach((node, i) => {
+        node.addEventListener('click', () => { stopPlay(false); render(i); });
+    });
+
+    // Keyboard: arrows step through ages while the wheel has focus.
+    root.querySelector('.chronology__wheel').setAttribute('tabindex', '0');
+    root.querySelector('.chronology__wheel').addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); stopPlay(false); render((active + 1) % N); }
+        else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); stopPlay(false); render((active - 1 + N) % N); }
+        else if (e.key === 'Home') { e.preventDefault(); stopPlay(false); render(0); }
+        else if (e.key === 'End') { e.preventDefault(); stopPlay(false); render(todayIndex); }
+    });
+
+    // Drag the dial: map pointer angle (from centre) to the nearest node.
+    const wheel = root.querySelector('.chronology__wheel');
+    let dragging = false;
+    function pointerToIndex(ev) {
+        const r = wheel.getBoundingClientRect();
+        const cx = r.left + r.width / 2;
+        const cy = r.top + r.height / 2;
+        const dx = ev.clientX - cx;
+        const dy = ev.clientY - cy;
+        let a = Math.atan2(dy, dx) * 180 / Math.PI + 90; // 0 at top, clockwise
+        if (a < 0) a += 360;
+        return Math.round(a / STEP) % N;
+    }
+    wheel.addEventListener('pointerdown', (e) => {
+        if (e.target.closest('.chronology__node')) return; // node click handles itself
+        dragging = true;
+        stopPlay(false);
+        render(pointerToIndex(e));
+        wheel.setPointerCapture(e.pointerId);
+    });
+    wheel.addEventListener('pointermove', (e) => { if (dragging) render(pointerToIndex(e)); });
+    wheel.addEventListener('pointerup', () => { dragging = false; });
+    wheel.addEventListener('pointercancel', () => { dragging = false; });
+
+    setPlayState('play');
+    render(todayIndex);
+})();
+</script>
 {% endblock content %}
