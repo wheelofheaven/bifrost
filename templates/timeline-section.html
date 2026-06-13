@@ -140,28 +140,17 @@
     {# Preamble — framed as the interpretive door before the age sequence. #}
     <section id="preamble" class="landing-section landing-section--timeline-story landing-section--video" data-section="2">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__reel">
-                <div class="landing-section__reel-track">
-                    {% set preamble_slides = timeline_slides.preamble %}
-                    {% for frame in preamble_slides %}
-                    <div class="landing-section__reel-frame">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt="{{ frame.alt }}"
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
-                    {% for frame in preamble_slides %}
-                    <div class="landing-section__reel-frame" aria-hidden="true">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt=""
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
+            <div class="landing-section__slideshow">
+                {% set preamble_slides = timeline_slides.preamble %}
+                {% for frame in preamble_slides %}
+                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                    <img class="landing-section__slide-image"
+                         src="{{ get_url(path=frame.src) }}"
+                         alt=""
+                         loading="lazy"
+                         decoding="async">
                 </div>
+                {% endfor %}
             </div>
             <div class="landing-section__overlay"></div>
         </div>
@@ -225,28 +214,17 @@
              data-section="{{ idx }}"
              data-age-color="{{ age.color }}">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__reel">
-                <div class="landing-section__reel-track">
-                    {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
-                    {% for frame in age_slides %}
-                    <div class="landing-section__reel-frame">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt="{{ frame.alt }}"
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
-                    {% for frame in age_slides %}
-                    <div class="landing-section__reel-frame" aria-hidden="true">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt=""
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
+            <div class="landing-section__slideshow">
+                {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
+                {% for frame in age_slides %}
+                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                    <img class="landing-section__slide-image"
+                         src="{{ get_url(path=frame.src) }}"
+                         alt=""
+                         loading="lazy"
+                         decoding="async">
                 </div>
+                {% endfor %}
             </div>
             <div class="landing-section__overlay"></div>
         </div>
@@ -288,28 +266,17 @@
 
     <section id="wheel" class="landing-section landing-section--timeline-story landing-section--video landing-section--coda" data-section="16">
         <div class="landing-section__media" aria-hidden="true">
-            <div class="landing-section__reel">
-                <div class="landing-section__reel-track">
-                    {% set wheel_slides = timeline_slides.wheel %}
-                    {% for frame in wheel_slides %}
-                    <div class="landing-section__reel-frame">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt="{{ frame.alt }}"
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
-                    {% for frame in wheel_slides %}
-                    <div class="landing-section__reel-frame" aria-hidden="true">
-                        <img class="landing-section__reel-image"
-                             src="{{ get_url(path=frame.src) }}"
-                             alt=""
-                             loading="lazy"
-                             decoding="async">
-                    </div>
-                    {% endfor %}
+            <div class="landing-section__slideshow">
+                {% set wheel_slides = timeline_slides.wheel %}
+                {% for frame in wheel_slides %}
+                <div class="landing-section__slide" style="--slide-index: {{ loop.index0 }};">
+                    <img class="landing-section__slide-image"
+                         src="{{ get_url(path=frame.src) }}"
+                         alt=""
+                         loading="lazy"
+                         decoding="async">
                 </div>
+                {% endfor %}
             </div>
             <div class="landing-section__overlay"></div>
         </div>
