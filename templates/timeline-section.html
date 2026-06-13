@@ -19,6 +19,7 @@
    EN when a lang or a slug is missing. #}
 {% set ages_i18n = load_data(path="data/ages.i18n.json") %}
 {% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
+{% set timeline_slides = load_data(path="data/timeline-slides.json") %}
 {% set preamble_page = get_page(path="timeline/preamble.md") %}
 {% set wheel_page = get_page(path="timeline/the-wheel-keeps-turning.md") %}
 
@@ -141,17 +142,20 @@
         <div class="landing-section__media" aria-hidden="true">
             <div class="landing-section__reel">
                 <div class="landing-section__reel-track">
-                    {% for frame in [
-                        "timeline/preamble-recurring-shape",
-                        "timeline/preamble-cross-cultural-pattern",
-                        "timeline/preamble-chaos-polarity",
-                        "timeline/preamble-recurring-shape",
-                        "timeline/preamble-cross-cultural-pattern",
-                        "timeline/preamble-chaos-polarity"
-                    ] %}
+                    {% set preamble_slides = timeline_slides.preamble %}
+                    {% for frame in preamble_slides %}
                     <div class="landing-section__reel-frame">
                         <img class="landing-section__reel-image"
-                             src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
+                             src="{{ get_url(path=frame.src) }}"
+                             alt="{{ frame.alt }}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                    {% for frame in preamble_slides %}
+                    <div class="landing-section__reel-frame" aria-hidden="true">
+                        <img class="landing-section__reel-image"
+                             src="{{ get_url(path=frame.src) }}"
                              alt=""
                              loading="lazy"
                              decoding="async">
@@ -223,10 +227,20 @@
         <div class="landing-section__media" aria-hidden="true">
             <div class="landing-section__reel">
                 <div class="landing-section__reel-track">
-                    {% for frame in [prev_age.earth_texture, age.earth_texture, next_age.earth_texture, prev_age.earth_texture, age.earth_texture, next_age.earth_texture] %}
+                    {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
+                    {% for frame in age_slides %}
                     <div class="landing-section__reel-frame">
                         <img class="landing-section__reel-image"
-                             src="{{ frame }}"
+                             src="{{ get_url(path=frame.src) }}"
+                             alt="{{ frame.alt }}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                    {% for frame in age_slides %}
+                    <div class="landing-section__reel-frame" aria-hidden="true">
+                        <img class="landing-section__reel-image"
+                             src="{{ get_url(path=frame.src) }}"
                              alt=""
                              loading="lazy"
                              decoding="async">
@@ -276,17 +290,20 @@
         <div class="landing-section__media" aria-hidden="true">
             <div class="landing-section__reel">
                 <div class="landing-section__reel-track">
-                    {% for frame in [
-                        "timeline/wheel-keeps-turning-infinity",
-                        "timeline/wheel-keeps-turning-lens-synthesis",
-                        "timeline/wheel-keeps-turning-future-cycle",
-                        "timeline/wheel-keeps-turning-infinity",
-                        "timeline/wheel-keeps-turning-lens-synthesis",
-                        "timeline/wheel-keeps-turning-future-cycle"
-                    ] %}
+                    {% set wheel_slides = timeline_slides.wheel %}
+                    {% for frame in wheel_slides %}
                     <div class="landing-section__reel-frame">
                         <img class="landing-section__reel-image"
-                             src="{{ config.extra.cdn_url }}/images/{{ frame }}.webp"
+                             src="{{ get_url(path=frame.src) }}"
+                             alt="{{ frame.alt }}"
+                             loading="lazy"
+                             decoding="async">
+                    </div>
+                    {% endfor %}
+                    {% for frame in wheel_slides %}
+                    <div class="landing-section__reel-frame" aria-hidden="true">
+                        <img class="landing-section__reel-image"
+                             src="{{ get_url(path=frame.src) }}"
                              alt=""
                              loading="lazy"
                              decoding="async">
