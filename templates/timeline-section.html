@@ -46,16 +46,6 @@
                     <span class="landing__nav-dot-title">{{ section.title }}</span>
                 </a>
             </li>
-            <li class="landing__nav-item">
-                <a href="#preamble"
-                   class="landing__nav-dot"
-                   data-section-link="2"
-                   aria-label="{{ preamble_page.title }}">
-                    <span class="landing__nav-dot-year" aria-hidden="true">I</span>
-                    <span class="landing__nav-dot-glyph" aria-hidden="true">✦</span>
-                    <span class="landing__nav-dot-title">{{ preamble_page.title }}</span>
-                </a>
-            </li>
             {% for age in ages_data %}
             {# Slug-based anchors so URLs are speakable: /timeline/#age-of-capricorn,
                /timeline/#in-the-beginning, etc. #}
@@ -83,16 +73,6 @@
                 </a>
             </li>
             {% endfor %}
-            <li class="landing__nav-item">
-                <a href="#wheel"
-                   class="landing__nav-dot"
-                   data-section-link="16"
-                   aria-label="{{ wheel_page.title }}">
-                    <span class="landing__nav-dot-year" aria-hidden="true">∞</span>
-                    <span class="landing__nav-dot-glyph" aria-hidden="true">∞</span>
-                    <span class="landing__nav-dot-title">{{ wheel_page.title }}</span>
-                </a>
-            </li>
         </ol>
     </nav>
 
