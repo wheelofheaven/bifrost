@@ -1398,6 +1398,9 @@
     // (transform-origin: right) and grows out to its final position with
     // a slight rotate, so the trio "unfolds" leftward from the corner.
     &__para-actions .library-book__share-btn,
+    &__para-actions .library-book__para-listen-btn,
+    &__para-actions .library-book__para-commentary-btn,
+    &__para-actions .library-book__para-close-btn,
     &__para-actions .study-tools__btn {
         opacity: 0;
         transform: scale(0) rotate(-90deg);
@@ -1414,20 +1417,29 @@
         pointer-events: auto;
 
         .library-book__share-btn,
+        .library-book__para-listen-btn,
+        .library-book__para-commentary-btn,
+        .library-book__para-close-btn,
         .study-tools__btn {
             opacity: 1;
             transform: scale(1) rotate(0);
         }
 
-        .study-tools__btn--note     { transition-delay: 0s; }
-        .study-tools__btn--bookmark { transition-delay: 0.07s; }
-        .library-book__share-btn    { transition-delay: 0.14s; }
+        .library-book__para-close-btn      { transition-delay: 0s; }
+        .library-book__para-commentary-btn  { transition-delay: 0.05s; }
+        .study-tools__btn--note     { transition-delay: 0.1s; }
+        .study-tools__btn--bookmark { transition-delay: 0.15s; }
+        .library-book__share-btn    { transition-delay: 0.2s; }
+        .library-book__para-listen-btn      { transition-delay: 0.25s; }
     }
 
     // Per-button chrome: in the glass container, drop the individual
     // borders/fills — the container provides the surface. Hover gives
     // a soft accent tint.
-    &__share-btn {
+    &__share-btn,
+    &__para-listen-btn,
+    &__para-commentary-btn,
+    &__para-close-btn {
         position: static;
         width: 1.75rem;
         height: 1.75rem;
@@ -1453,6 +1465,20 @@
             height: 1.5rem;
         }
     }
+
+    // Fixed left-to-right order in the pill regardless of DOM / injection
+    // order (study-tools appends bookmark + note at runtime):
+    // play · share · bookmark · note · commentary · close.
+    &__para-listen-btn     { order: -2; }
+    &__share-btn           { order: -1; }
+    &__para-commentary-btn { order: 1; }
+    &__para-close-btn      { order: 2; }
+
+    // The "play from here" button only makes sense when a prerecorded audio
+    // play exists for this book + language; listen-button.js adds
+    // `woh-audio-available` to <body> once the manifest probe confirms one.
+    &__para-listen-btn { display: none; }
+    .woh-audio-available &__para-listen-btn { display: flex; }
 
     // Drop the per-button border/fill on study-tools buttons inside the
     // floating glass pill — the container provides the chrome. Hover/

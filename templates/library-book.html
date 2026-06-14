@@ -1028,6 +1028,15 @@ function deselectParagraph() {
     history.replaceState(null, null, window.location.pathname + window.location.search);
 }
 
+// Bridge from the actions-pill "play from here" button to the listen player
+// (listen-button.js). The button is hidden unless audio is available, so this
+// is a no-op when WohListen isn't wired.
+function listenFromParagraph(paragraphId) {
+    if (window.WohListen && typeof window.WohListen.playFromParagraph === 'function') {
+        window.WohListen.playFromParagraph(paragraphId);
+    }
+}
+
 // Commentary popover: each verse with commentary has its own
 // `.library-book__commentary-popover` rendered inline by the template
 // (markdown already converted server-side). Open by toggling
@@ -1066,8 +1075,8 @@ function closeCommentary(paragraphId) {
     }
     if (paragraph) {
         paragraph.classList.remove('library-book__paragraph--commentary-open');
-        const trigger = paragraph.querySelector('.library-book__commentary-link');
-        if (trigger) trigger.setAttribute('aria-expanded', 'false');
+        paragraph.querySelectorAll('.library-book__commentary-link, .library-book__para-commentary-btn')
+            .forEach(t => t.setAttribute('aria-expanded', 'false'));
     }
 }
 

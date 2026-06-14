@@ -111,7 +111,22 @@
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
 {% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text) %}
-    {% set has_commentary = verse.commentary | default(value="") | trim != "" %}
+    {# Notes model: verse.notes.official is the WoH-sanctioned commentary
+       (markdown); verse.notes.community is an array of contributed notes
+       (empty for now). has_notes drives the actions-gutter trigger and the
+       popover. (Field migrated from the legacy `commentary` string.)
+
+       `official` is either a plain string (books not yet localized) or an
+       i18n map {en, de, fr, ...} (localized books). Resolve to the active
+       language with an English fallback. #}
+    {% set official_raw = verse.notes.official | default(value="") %}
+    {% if official_raw is object %}
+    {% set official_note = official_raw[lang] | default(value=official_raw.en | default(value="")) %}
+    {% else %}
+    {% set official_note = official_raw %}
+    {% endif %}
+    {% set community_notes = verse.notes.community | default(value=[]) %}
+    {% set has_notes = official_note | trim != "" or community_notes | length > 0 %}
     {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
@@ -124,7 +139,7 @@
        paragraph (the source split a quotation across two paragraphs and
        we want them to read as one). #}
     {% set kind = verse.kind | default(value="body") %}
-    <div class="library-book__paragraph library-book__paragraph--{{ kind }}{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
+    <div class="library-book__paragraph library-book__paragraph--{{ kind }}{% if has_notes %} library-book__paragraph--has-commentary{% endif %}"
          id="c{{ chapter_n }}p{{ verse.n }}"
          data-ref-id="{{ verse.refId | default(value='') }}"
          data-kind="{{ kind }}"
@@ -132,7 +147,7 @@
         <div class="library-book__para-num">{{ verse.n }}</div>
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
-                {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" aria-label="Open commentary for verse {{ verse.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}
+                {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}
             </div>
             {% if ref_paragraph_text %}
             <div class="library-book__para-reference" aria-label="Reference translation">{{ ref_paragraph_text }}</div>
@@ -216,6 +231,15 @@
             {% endif %}
         </div>
         <div class="library-book__para-actions">
+            {# Play from here — only revealed once listen-button.js confirms a
+               prerecorded audio play exists for this book + language (CSS keyed
+               on body.woh-audio-available). Starts/seeks the player to this
+               paragraph. #}
+            <button class="library-book__para-listen-btn" onclick="event.stopPropagation(); listenFromParagraph('c{{ chapter_n }}p{{ verse.n }}')" title="Play from here" aria-label="Play the audio from this paragraph">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M8 5v14l11-7z"></path>
+                </svg>
+            </button>
             <button class="library-book__share-btn" onclick="event.stopPropagation(); shareParagraph('c{{ chapter_n }}p{{ verse.n }}')" title="Share this paragraph" aria-label="Share this paragraph">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
@@ -223,23 +247,39 @@
                     <line x1="12" y1="2" x2="12" y2="15"></line>
                 </svg>
             </button>
+            {% if has_notes %}
+            {# Notes — opens the official WoH commentary (and any community
+               notes) for this paragraph. This actions-gutter button is the
+               sole trigger; the old inline prose link has been retired. #}
+            <button class="library-book__para-commentary-btn" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" title="Open notes" aria-label="Open notes for verse {{ verse.n }}" aria-expanded="false">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                </svg>
+            </button>
+            {% endif %}
+            <button class="library-book__para-close-btn" onclick="event.stopPropagation(); deselectParagraph()" title="Close" aria-label="Close paragraph actions">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
         </div>
-        {% if has_commentary %}
+        {% if has_notes %}
         <div class="library-book__commentary-popover"
              id="commentary-c{{ chapter_n }}p{{ verse.n }}"
              role="dialog"
-             aria-label="Commentary on verse {{ verse.n }}"
+             aria-label="Notes on verse {{ verse.n }}"
              aria-hidden="true"
              onclick="event.stopPropagation()">
             <header class="library-book__commentary-popover-header">
                 <div class="library-book__commentary-popover-heading">
-                    <span class="library-book__commentary-popover-title">Translation Commentary</span>
+                    <span class="library-book__commentary-popover-title">Notes</span>
                     <span class="library-book__commentary-popover-ref">Verse {{ verse.n }}</span>
                 </div>
                 <button class="library-book__commentary-popover-close"
                         type="button"
                         onclick="closeCommentary('c{{ chapter_n }}p{{ verse.n }}')"
-                        aria-label="Close commentary">
+                        aria-label="Close notes">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
@@ -247,7 +287,22 @@
                 </button>
             </header>
             <div class="library-book__commentary-popover-body">
-                {{ verse.commentary | markdown | safe }}
+                {% if official_note | trim != "" %}
+                <div class="library-book__note library-book__note--official">
+                    {{ official_note | markdown | safe }}
+                </div>
+                {% endif %}
+                {% if community_notes | length > 0 %}
+                <div class="library-book__community-notes">
+                    <h4 class="library-book__community-notes-title">Community notes</h4>
+                    {% for note in community_notes %}
+                    <div class="library-book__note library-book__note--community">
+                        {{ note.body | default(value="") | markdown | safe }}
+                        {% if note.author %}<cite class="library-book__note-author">— {{ note.author }}</cite>{% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
             </div>
         </div>
         {% endif %}
