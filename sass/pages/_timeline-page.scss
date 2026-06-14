@@ -464,6 +464,26 @@
 
         @media (max-width: 900px) {
             padding: 0 1.25rem;
+
+            // Chapter illustrations break out of the content gutter and
+            // span the full viewport — they're the visual anchor of each
+            // chapter, and the side padding only makes sense alongside the
+            // desktop sidebar. The 100vw + translateX(-50%) pair cancels
+            // both the content padding and the centered container's margins.
+            .figure {
+                width: 100vw;
+                margin-left: 50%;
+                transform: translateX(-50%);
+
+                &__image {
+                    width: 100%;
+                    border-radius: 0;
+                }
+
+                &__caption {
+                    padding: 0 1.25rem;
+                }
+            }
         }
 
         h2 {
