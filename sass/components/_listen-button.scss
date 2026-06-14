@@ -34,6 +34,16 @@
         transform: scale(0.98);
     }
 
+    // Re-assert the UA `[hidden]` default. The featured title button ships
+    // with the `hidden` attribute and is unhidden by listen-button.js only
+    // once a prerecorded audio play is confirmed for this book + language.
+    // Without this, the `display: inline-flex` above (an author rule) wins
+    // over the user-agent `[hidden] { display: none }`, so the play button
+    // would show on every book — including those with no audio.
+    &[hidden] {
+        display: none;
+    }
+
     // Featured variant — circular play-button shown next to a page title
     // (library-book uses this on the right of `.library-book__title`).
     // Carries no label, just the play glyph. Filled with the accent
