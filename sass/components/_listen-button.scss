@@ -46,29 +46,48 @@
 
     // Featured variant — circular play-button shown next to a page title
     // (library-book uses this on the right of `.library-book__title`).
-    // Carries no label, just the play glyph. Filled with the accent
-    // colour so it reads as the primary call-to-action on books that
-    // have a prerecorded audio play.
+    // Carries no label, just the play glyph, so it must center its single
+    // child on both axes (the base rule only centers vertically, which left
+    // the icon flush-left). Filled with a slowly drifting duo-tone gradient
+    // of the two theme accents so it reads as a modern, living call-to-action
+    // on books that have a prerecorded audio play.
     &--featured {
         padding: 0;
         width: 2.75rem;
         height: 2.75rem;
+        justify-content: center;
         border-radius: 50%;
-        background-color: var(--color-accent-primary);
         color: var(--color-background);
         border-color: transparent;
         flex-shrink: 0;
         box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
 
+        // Duo-tone gradient (primary → secondary → primary). Oversized via
+        // background-size so the animation can pan it back and forth for a
+        // subtle moving sheen without the seam ever showing.
+        background-image: linear-gradient(
+            120deg,
+            var(--color-accent-primary) 0%,
+            var(--color-accent-secondary, var(--color-accent-primary)) 50%,
+            var(--color-accent-primary) 100%
+        );
+        background-size: 200% 200%;
+        background-position: 0% 50%;
+        animation: listen-featured-sheen 6s ease-in-out infinite;
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+
         svg {
             width: 22px;
             height: 22px;
-            // Optical centering of the play triangle.
-            transform: translateX(1px);
+            // Optical centering of the play triangle — its visual mass sits
+            // toward the base, so nudge it a hair right of true center.
+            transform: translateX(1.5px);
         }
 
         &:hover {
-            background-color: var(--color-accent-primary);
             color: var(--color-background);
             border-color: transparent;
             transform: scale(1.05);
@@ -85,6 +104,12 @@
             }
         }
     }
+}
+
+@keyframes listen-featured-sheen {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 // Audio Player - Floating bottom bar (SoundCloud style)
