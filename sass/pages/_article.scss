@@ -188,7 +188,19 @@
         }
 
         a {
-            color: var(--color-link);
+            // Match wiki content links: accent colour + an always-visible
+            // underline (non-colour indicator, WCAG 1.4.1) that thickens on
+            // hover, so inline links read the same across wiki and articles.
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+            transition: text-decoration-thickness 0.15s ease, color 0.15s ease;
+
+            &:hover,
+            &:focus {
+                text-decoration-thickness: 2px;
+            }
         }
     }
 
@@ -202,47 +214,53 @@
     }
 
     // Explanatory footnotes — lettered notes that pair with the `footnote`
-    // superscript markers in the prose. Citation-serif to match references.
+    // superscript markers in the prose. Matched to the wiki footnotes:
+    // citation serif, an inline letter back-link followed by inline note text.
     &__footnote-list {
         margin: 0;
-        padding-left: 1.5rem;
+        padding: 0;
         list-style: none;
-        counter-reset: none;
     }
 
     &__footnote-item {
-        position: relative;
-        margin-bottom: v.$spacing-sm;
+        margin-bottom: 0.625rem;
+        padding: 0;
         font-family: var(--font-family-citation);
-        font-size: 0.9375rem;
+        font-size: 1rem;
         line-height: 1.65;
         color: var(--color-text);
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
         scroll-margin-top: 6rem;
 
-        &:target {
-            background: var(--color-hover);
-            border-radius: v.$border-radius-sm;
-            box-shadow: 0 0 0 0.4rem var(--color-hover);
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 
     &__footnote-backlink {
-        position: absolute;
-        left: -1.5rem;
+        display: inline-block;
+        margin-right: 0.5rem;
         font-family: typo.$font-family-tech;
-        font-size: 0.8125rem;
-        font-style: italic;
-        color: var(--color-link);
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: var(--color-text-muted);
         text-decoration: none;
+        transition: color 0.15s ease;
+        user-select: none;
 
-        &:hover {
-            text-decoration: underline;
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
         }
     }
 
     &__footnote-content {
-        em {
-            font-style: italic;
+        display: inline;
+
+        p {
+            display: inline;
+            margin: 0;
         }
     }
 
