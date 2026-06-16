@@ -12,23 +12,30 @@
     <div class="article__container">
         <article class="article__article" role="article" aria-labelledby="article-title">
             <header class="article__header">
-                <div class="article__meta" aria-label="Article metadata">
+                {# Eyebrow: content classification (type, epistemic status,
+                   category). The author/date/reading-time provenance moves to
+                   the byline under the headline (editorial best practice). #}
+                <div class="article__meta" aria-label="Article classification">
                     {{ article::chip(lang=detected_lang) }}
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.category %}
                     <span class="article__category">{{ page.extra.category }}</span>
                     {% endif %}
-                    {% if page.date %}
-                    <time class="article__published" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
-                        {{ trans(key="pagePublished", lang=detected_lang) }} {{ page.date | date(format="%B %d, %Y") }}
-                    </time>
-                    {% endif %}
-                    {% if page.reading_time %}
-                    <span class="article__reading-time">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>
-                    {% endif %}
                 </div>
 
                 <h1 class="article__title" id="article-title">{{ page.title }}</h1>
+
+                {# Byline: author · date · reading time, grouped under the
+                   headline. Author defaults to Zara Zinsfuss (the corpus
+                   author); set page.extra.author / author_slug to override. #}
+                {% set byline_name = page.extra.author | default(value="Zara Zinsfuss") %}
+                {% set byline_slug = page.extra.author_slug | default(value="zara-zinsfuss") %}
+                <p class="article__byline">
+                    <span class="article__byline-label">{{ trans(key="referenceBy", lang=detected_lang) }}</span>
+                    {% if byline_slug %}<a class="article__byline-link" href="{{ get_url(path='author/' ~ byline_slug) }}" rel="author">{{ byline_name }}</a>{% else %}<span class="article__byline-name">{{ byline_name }}</span>{% endif %}
+                    {% if page.date %}<span class="article__byline-sep" aria-hidden="true">·</span><time class="article__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% endif %}
+                    {% if page.reading_time %}<span class="article__byline-sep" aria-hidden="true">·</span><span class="article__byline-readtime">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>{% endif %}
+                </p>
 
                 {% set summary_text = page.extra.summary | default(value=page.extra.tldr | default(value=page.description | default(value=""))) %}
                 {% if summary_text %}
@@ -223,12 +230,12 @@
             </div>
 
             <footer class="article__footer">
-                <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="article__back-link">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="article__back-card">
+                    <svg class="article__back-card-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
                     </svg>
-                    {{ trans(key="articleBackToHub", lang=detected_lang) }}
+                    <span class="article__back-card-text">{{ trans(key="articleBackToHub", lang=detected_lang) }}</span>
                 </a>
             </footer>
         </article>

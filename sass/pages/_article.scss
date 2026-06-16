@@ -62,7 +62,7 @@
     }
 
     &__title {
-        margin: 0 0 v.$spacing-md;
+        margin: 0 0 v.$spacing-sm;
         font-family: var(--font-family-lead);
         font-size: 2.25rem;
         font-weight: 700;
@@ -72,6 +72,45 @@
         @media (max-width: 768px) {
             font-size: 1.75rem;
         }
+    }
+
+    // Byline under the title — muted "by", author name linked to the profile.
+    &__byline {
+        margin: 0 0 v.$spacing-md;
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+    }
+
+    &__byline-label {
+        color: var(--color-text-subtle);
+    }
+
+    &__byline-link {
+        color: var(--color-accent-primary);
+        font-weight: 600;
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+    }
+
+    &__byline-name {
+        color: var(--color-text);
+        font-weight: 600;
+    }
+
+    &__byline-sep {
+        margin: 0 0.45rem;
+        color: var(--color-text-subtle);
+    }
+
+    &__byline-date,
+    &__byline-readtime {
+        color: var(--color-text-muted);
     }
 
     // Summary / lede — mirrors the wiki & timeline lede treatment (accent
@@ -95,6 +134,9 @@
             color: var(--color-text);
         }
 
+        // The accent rule (line) sits just left of the text; the rotated
+        // "Summary" label sits further left again, so the order in the gutter
+        // reads label → line → text.
         &::before {
             content: "";
             position: absolute;
@@ -109,7 +151,7 @@
         &::after {
             content: attr(data-summary-label);
             position: absolute;
-            left: -0.5rem;
+            left: -1.7rem;
             top: 50%;
             transform: translate(-50%, -50%) rotate(-90deg);
             transform-origin: 50% 50%;
@@ -480,20 +522,47 @@
     }
 
     &__footer {
-        margin-top: v.$spacing-lg;
+        margin-top: v.$spacing-xl;
     }
 
-    &__back-link {
-        display: inline-flex;
+    // "Back to Articles" as a card — same surface/border/hover language as the
+    // related-content "Read Next" cards, so the page closes on a card rather
+    // than a thin text link.
+    &__back-card {
+        display: flex;
         align-items: center;
-        gap: v.$spacing-2xs;
-        font-size: v.$font-size-sm;
-        color: var(--color-text-muted);
+        gap: v.$spacing-sm;
+        padding: 1.25rem 1.5rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.75rem;
+        color: var(--color-text);
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-base;
+        font-weight: 600;
         text-decoration: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
         &:hover {
-            color: var(--color-text);
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+
+            .article__back-card-icon {
+                transform: translateX(-4px);
+            }
         }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+    }
+
+    &__back-card-icon {
+        flex-shrink: 0;
+        color: var(--color-accent-primary);
+        transition: transform 0.2s ease;
     }
 }
 
