@@ -69,9 +69,88 @@
     {%- set _final_title = "Library" -%}
 {%- endif -%}
 
+{# Interlinear mode. When `interlinear=true` (with book + chapter + verse,
+   and optional `verse_end` for a range), pull the original-language line and
+   transliteration straight from the chapter data and render them always-
+   visible beneath each translated line. Mirrors the field logic of
+   macros/library.html `render_verse`, but static (no toggle) and scoped to
+   the quote. Falls back to `body` if the data can't be resolved. #}
+{%- set _interlinear = interlinear | default(value=false) -%}
+{%- set _vstart = verse | default(value=0) -%}
+{%- set _vend = verse_end | default(value=verse | default(value=0)) -%}
+{%- set_global _il_verses = [] -%}
+{%- set _il_lang = "" -%}
+{%- if _interlinear and _book and _chapter -%}
+    {%- set _bmeta = load_data(path="data/library/" ~ _book ~ "/_meta.json", required=false) -%}
+    {%- if _bmeta -%}
+        {%- set _il_lang = _bmeta.originalLang | default(value="") -%}
+        {%- set_global _il_file = "" -%}
+        {%- if _bmeta.chapterFiles -%}
+            {%- for cf in _bmeta.chapterFiles -%}
+                {%- if cf.n == _chapter -%}{%- set_global _il_file = cf.file -%}{%- endif -%}
+            {%- endfor -%}
+        {%- endif -%}
+        {%- if _il_file -%}
+            {%- set _cdata = load_data(path="data/library/" ~ _book ~ "/" ~ _il_file, required=false) -%}
+            {%- if _cdata -%}
+                {%- set_global _il_all = [] -%}
+                {%- if _cdata.paragraphs -%}{%- set_global _il_all = _cdata.paragraphs -%}
+                {%- elif _cdata.lines -%}{%- set_global _il_all = _cdata.lines -%}
+                {%- elif _cdata.tablets -%}{%- set_global _il_all = _cdata.tablets[0].lines -%}
+                {%- elif _cdata.segments -%}{%- for _seg in _cdata.segments -%}{%- set_global _il_all = _il_all | concat(with=_seg.lines) -%}{%- endfor -%}
+                {%- endif -%}
+                {%- for _v in _il_all -%}
+                    {%- if _v.n >= _vstart and _v.n <= _vend -%}{%- set_global _il_verses = _il_verses | concat(with=[_v]) -%}{%- endif -%}
+                {%- endfor -%}
+            {%- endif -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endif -%}
+{%- set _il_rtl = _il_lang == "he" or _il_lang == "arc" or _il_lang == "ar" or _il_lang == "arb" or _il_lang == "syr" -%}
+
 <blockquote class="library-quote">
-    <div class="library-quote__content">
-        {{ body | markdown | safe }}
+    <div class="library-quote__content{% if _il_verses | length > 0 %} library-quote__content--interlinear{% endif %}">
+        {%- if _il_verses | length > 0 -%}
+            {%- for _v in _il_verses -%}
+            <div class="library-quote__il-verse">
+                <div class="library-quote__il-en">{{ _v.i18n[_detected] | default(value=_v.i18n.en | default(value=_v.text | default(value=""))) }}</div>
+                {%- set _src = _v.text | default(value=_v.he | default(value=_v.translit | default(value=""))) -%}
+                {%- set _has_cun = _v.cuneiform | default(value="") | trim != "" -%}
+                {%- set _has_he_pair = _v.he | default(value="") | trim != "" and _v.translit | default(value="") | trim != "" -%}
+                {%- set _has_txt_pair = _v.text | default(value="") | trim != "" and _v.translit | default(value="") | trim != "" -%}
+                {# Direction/lang from the verse's own text_lang when present (a
+                   book's meta originalLang can differ from the script actually
+                   carried per verse — e.g. Enoch is catalogued Aramaic but the
+                   verse text is Greek). #}
+                {%- set _vlang = _v.text_lang | default(value=_il_lang) -%}
+                {%- set _vrtl = _vlang == "he" or _vlang == "arc" or _vlang == "ar" or _vlang == "arb" or _vlang == "syr" -%}
+                {%- if _has_cun -%}
+                {%- set _cun_tokens = _v.cuneiform | split(pat=" ") -%}
+                {%- set _tr_tokens = _src | split(pat=" ") -%}
+                <div class="library-quote__il-original" lang="{{ _il_lang }}">
+                    {%- for _ct in _cun_tokens -%}<span class="library-quote__il-word"><span class="library-quote__il-script" lang="{{ _il_lang }}-Xsux">{{ _ct }}</span><span class="library-quote__il-translit">{{ _tr_tokens[loop.index0] | default(value="") }}</span></span>{%- endfor -%}
+                    {%- if _v.cuneiform_confidence == "partial" -%}<span class="library-quote__il-badge" title="Partial cuneiform back-rendering — a reading aid, not an attested tablet score">◑</span>{%- endif -%}
+                </div>
+                {%- elif _has_he_pair -%}
+                {%- set _heb_tokens = _v.he | split(pat=" ") -%}
+                {%- set _tr_tokens = _v.translit | split(pat=" ") -%}
+                <div class="library-quote__il-original" lang="he">
+                    {%- for _ht in _heb_tokens -%}<span class="library-quote__il-word"><span class="library-quote__il-script" lang="he" dir="rtl">{{ _ht }}</span><span class="library-quote__il-translit">{{ _tr_tokens[loop.index0] | default(value="") }}</span></span>{%- endfor -%}
+                </div>
+                {%- elif _has_txt_pair -%}
+                {%- set _txt_tokens = _v.text | split(pat=" ") -%}
+                {%- set _tr_tokens = _v.translit | split(pat=" ") -%}
+                <div class="library-quote__il-original" lang="{{ _vlang }}"{% if _vrtl %} dir="rtl"{% endif %}>
+                    {%- for _tt in _txt_tokens -%}<span class="library-quote__il-word"><span class="library-quote__il-script"{% if _vrtl %} dir="rtl"{% endif %}>{{ _tt }}</span><span class="library-quote__il-translit">{{ _tr_tokens[loop.index0] | default(value="") }}</span></span>{%- endfor -%}
+                </div>
+                {%- elif _src | trim != "" -%}
+                <div class="library-quote__il-original library-quote__il-original--plain" lang="{{ _vlang }}"{% if _vrtl %} dir="rtl"{% endif %}>{{ _src }}</div>
+                {%- endif -%}
+            </div>
+            {%- endfor -%}
+        {%- else -%}
+            {{ body | markdown | safe }}
+        {%- endif -%}
     </div>
 
     {% if _final_path %}

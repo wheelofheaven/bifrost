@@ -80,6 +80,25 @@
             </section>
             {% endif %}
 
+            {# Explanatory footnotes (page.extra.footnotes) — distinct from the
+               bibliographic references below. Rendered as lettered notes (a, b,
+               c, …) to match the `footnote` shortcode's superscript markers. #}
+            {% if page.extra.footnotes %}
+            <section class="article__footnotes" role="doc-endnotes" aria-label="Footnotes" data-ai-cite="true">
+                <h2 class="article__section-title" id="notes">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</h2>
+                <ol class="article__footnote-list">
+                    {% set letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split(pat=" ") %}
+                    {% for fn in page.extra.footnotes %}
+                    {% set display = letters[loop.index0] | default(value=loop.index) %}
+                    <li class="article__footnote-item" id="fn-{{ loop.index }}">
+                        <a href="#fnref-{{ loop.index }}" class="article__footnote-backlink" aria-label="Jump back to footnote {{ display }} in the text" title="Jump back to footnote">{{ display }}.</a>
+                        <span class="article__footnote-content">{{ fn.content | markdown(inline=true) | safe }}</span>
+                    </li>
+                    {% endfor %}
+                </ol>
+            </section>
+            {% endif %}
+
             {% if page.extra.references %}
             {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
             <section class="article__references" role="doc-bibliography" aria-label="References and citations">

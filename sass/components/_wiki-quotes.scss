@@ -377,6 +377,68 @@
     }
 }
 
+// Interlinear original-language layer inside a library quote (rendered when
+// the shortcode is called with `interlinear=true`). Always visible: the
+// translation line, then the original script with the transliteration beneath
+// each word. Word-pair columns for cuneiform / Hebrew / Greek; a single line
+// for scripts that have no per-word transliteration in the corpus.
+.library-quote {
+    &__il-verse {
+        margin-bottom: 1.15rem;
+
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__il-en {
+        margin-bottom: 0.3rem;
+    }
+
+    &__il-original {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.15rem 0.7rem;
+        align-items: flex-end;
+        padding: 0.35rem 0 0.1rem;
+        font-family: var(--font-family-body);
+        line-height: 1.45;
+
+        &--plain {
+            display: block;
+            font-size: 1.15rem;
+            line-height: 1.6;
+            color: var(--color-text);
+        }
+    }
+
+    &__il-word {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    &__il-script {
+        font-size: 1.1rem;
+        line-height: 1.5;
+        color: var(--color-text);
+    }
+
+    &__il-translit {
+        font-size: 0.78rem;
+        font-style: italic;
+        color: var(--color-text-subtle);
+        letter-spacing: 0.01em;
+    }
+
+    &__il-badge {
+        align-self: center;
+        font-size: 0.85rem;
+        color: var(--color-text-subtle);
+        cursor: help;
+    }
+}
+
 // Revelation Glow Animation
 @keyframes revelation-glow {
     0%,

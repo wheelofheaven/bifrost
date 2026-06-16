@@ -194,10 +194,56 @@
 
     &__see-also,
     &__external-links,
+    &__footnotes,
     &__references {
         margin-top: v.$spacing-xl;
         padding-top: v.$spacing-lg;
         border-top: 1px solid var(--color-hairline);
+    }
+
+    // Explanatory footnotes — lettered notes that pair with the `footnote`
+    // superscript markers in the prose. Citation-serif to match references.
+    &__footnote-list {
+        margin: 0;
+        padding-left: 1.5rem;
+        list-style: none;
+        counter-reset: none;
+    }
+
+    &__footnote-item {
+        position: relative;
+        margin-bottom: v.$spacing-sm;
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.65;
+        color: var(--color-text);
+        scroll-margin-top: 6rem;
+
+        &:target {
+            background: var(--color-hover);
+            border-radius: v.$border-radius-sm;
+            box-shadow: 0 0 0 0.4rem var(--color-hover);
+        }
+    }
+
+    &__footnote-backlink {
+        position: absolute;
+        left: -1.5rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        font-style: italic;
+        color: var(--color-link);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    &__footnote-content {
+        em {
+            font-style: italic;
+        }
     }
 
     &__section-title {
