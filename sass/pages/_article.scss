@@ -82,16 +82,14 @@
     &__summary {
         position: relative;
         margin-top: v.$spacing-md;
-        padding: 1.25rem 2rem 1.75rem;
+        // No left inset: the summary text aligns flush-left with the title and
+        // body. The accent rule and rotated label live in the column's left
+        // gutter (negative offsets) instead of pushing the text rightward.
+        padding: 1.25rem 0 1.75rem;
         min-height: 5.5rem; // room for the rotated label
-
-        @media (max-width: 768px) {
-            padding: 1rem 1.25rem 1.5rem;
-        }
 
         p {
             margin: 0;
-            padding-left: 0.875rem;
             font-size: v.$font-size-lg;
             line-height: 1.6;
             color: var(--color-text);
@@ -100,7 +98,7 @@
         &::before {
             content: "";
             position: absolute;
-            left: 1.75rem;
+            left: -1.125rem;
             top: 1.25rem;
             bottom: 1.75rem;
             width: 4px;
@@ -111,7 +109,7 @@
         &::after {
             content: attr(data-summary-label);
             position: absolute;
-            left: 0.875rem;
+            left: -0.5rem;
             top: 50%;
             transform: translate(-50%, -50%) rotate(-90deg);
             transform-origin: 50% 50%;
