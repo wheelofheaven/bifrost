@@ -41,14 +41,16 @@
             {% endif %}
         </header>
 
+        {# Active category filter — shown by JS when ?category= is present.
+           Sits under the header, above the grid (page-level, full width). #}
+        <div class="articles-feed__active-filter" data-filter-banner hidden>
+            <span class="articles-feed__active-filter-name" data-filter-name></span>
+            <a class="articles-feed__active-filter-clear" href="{{ get_url(path='/articles/', lang=detected_lang) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
+        </div>
+
         {% if entries %}
         <div class="articles-feed__grid">
             <main class="articles-feed__main">
-                {# Active category filter banner — shown by JS when ?category= is present. #}
-                <div class="articles-feed__active-filter" data-filter-banner hidden>
-                    <span class="articles-feed__active-filter-name" data-filter-name></span>
-                    <a class="articles-feed__active-filter-clear" href="{{ get_url(path='/articles/', lang=detected_lang) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
-                </div>
                 {{ article::card_lead(page=entries | first, lang=detected_lang) }}
 
                 {% set rest = entries | slice(start=1) %}
@@ -177,6 +179,21 @@
         var name = banner.querySelector("[data-filter-name]");
         if (name) { name.textContent = label || cat; }
         banner.hidden = false;
+
+        // Clearing the filter (×) hides the chip and restores all cards
+        // instantly — no page reload. The href stays as a no-JS fallback.
+        var clear = banner.querySelector(".articles-feed__active-filter-clear");
+        if (clear) {
+            clear.addEventListener("click", function (e) {
+                e.preventDefault();
+                document.querySelectorAll(".article-card").forEach(function (card) { card.hidden = false; });
+                document.querySelectorAll(".articles-feed__filter-item").forEach(function (li) { li.classList.remove("is-active"); });
+                banner.hidden = true;
+                if (window.history && history.replaceState) {
+                    history.replaceState(null, "", window.location.pathname);
+                }
+            });
+        }
     }
     document.querySelectorAll(".articles-feed__filter-item").forEach(function (li) {
         if ((li.getAttribute("data-cat") || "") === cat) { li.classList.add("is-active"); }

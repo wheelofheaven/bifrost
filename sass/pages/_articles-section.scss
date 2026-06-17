@@ -175,6 +175,13 @@
         font-size: v.$font-size-sm;
         color: var(--color-text);
         background: var(--color-background-secondary);
+
+        // Respect the `hidden` attribute — the class's display would otherwise
+        // override the UA [hidden] rule, leaving an empty chip always visible
+        // and preventing the JS clear from hiding it.
+        &[hidden] {
+            display: none;
+        }
     }
 
     &__active-filter-name {
