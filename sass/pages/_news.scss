@@ -497,7 +497,7 @@
     }
 
     &__title {
-        margin: 0 0 v.$spacing-md;
+        margin: 0 0 v.$spacing-sm;
         font-family: var(--font-family-lead);
         font-size: 2.25rem;
         font-weight: 700;
@@ -509,22 +509,41 @@
         }
     }
 
-    // Summary / lede — mirrors the wiki & timeline lede treatment (accent
-    // rule + rotated "Summary" label) so the Dispatch carries the same
-    // reference-page identity as the rest of the site.
+    // Provenance byline under the headline — parallel to the article byline,
+    // but event-date · published · reading-time (no author).
+    &__byline {
+        margin: 0 0 v.$spacing-md;
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+    }
+
+    &__byline-event {
+        color: var(--color-text);
+        font-weight: 600;
+    }
+
+    &__byline-sep {
+        margin: 0 0.45rem;
+        color: var(--color-text-subtle);
+    }
+
+    &__byline-date,
+    &__byline-readtime {
+        color: var(--color-text-muted);
+    }
+
+    // Summary — matches the article summary: text flush-left with the title
+    // and body; the rotated "Summary" label sits left of the accent rule, both
+    // in the column's left gutter.
     &__summary {
         position: relative;
         margin-top: v.$spacing-md;
-        padding: 1.25rem 2rem 1.75rem;
+        padding: 1.25rem 0 1.75rem;
         min-height: 5.5rem; // room for the rotated label
-
-        @media (max-width: 768px) {
-            padding: 1rem 1.25rem 1.5rem;
-        }
 
         p {
             margin: 0;
-            padding-left: 0.875rem;
             font-size: v.$font-size-lg;
             line-height: 1.6;
             color: var(--color-text);
@@ -533,7 +552,7 @@
         &::before {
             content: "";
             position: absolute;
-            left: 1.75rem;
+            left: -1.125rem;
             top: 1.25rem;
             bottom: 1.75rem;
             width: 4px;
@@ -544,7 +563,7 @@
         &::after {
             content: attr(data-summary-label);
             position: absolute;
-            left: 0.875rem;
+            left: -1.7rem;
             top: 50%;
             transform: translate(-50%, -50%) rotate(-90deg);
             transform-origin: 50% 50%;
@@ -555,11 +574,6 @@
             color: var(--color-accent-primary);
             white-space: nowrap;
             pointer-events: none;
-        }
-
-        @media (max-width: 768px) {
-            &::before { left: 1rem; top: 1rem; bottom: 1.5rem; }
-            &::after { left: 0.125rem; }
         }
     }
 
@@ -586,7 +600,18 @@
         }
 
         a {
-            color: var(--color-link);
+            // Match the wiki/article body links: accent colour + always-on
+            // underline (non-colour indicator, WCAG 1.4.1), thicker on hover.
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.2em;
+            transition: text-decoration-thickness 0.15s ease, color 0.15s ease;
+
+            &:hover,
+            &:focus {
+                text-decoration-thickness: 2px;
+            }
         }
 
         code {
@@ -863,19 +888,45 @@
     }
 
     &__footer {
-        margin-top: v.$spacing-lg;
+        margin-top: v.$spacing-xl;
     }
 
-    &__back-link {
-        display: inline-flex;
+    // "Back to Newsroom" card — same surface/border/hover language as the
+    // article back-card and the related-content cards.
+    &__back-card {
+        display: flex;
         align-items: center;
-        gap: v.$spacing-2xs;
-        font-size: v.$font-size-sm;
-        color: var(--color-text-muted);
+        gap: v.$spacing-sm;
+        padding: 1.25rem 1.5rem;
+        background-color: var(--color-surface);
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.75rem;
+        color: var(--color-text);
+        font-family: var(--font-family-body);
+        font-size: v.$font-size-base;
+        font-weight: 600;
         text-decoration: none;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 
         &:hover {
-            color: var(--color-text);
+            border-color: var(--color-accent-primary);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+
+            .dispatch__back-card-icon {
+                transform: translateX(-4px);
+            }
         }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+    }
+
+    &__back-card-icon {
+        flex-shrink: 0;
+        color: var(--color-accent-primary);
+        transition: transform 0.2s ease;
     }
 }
