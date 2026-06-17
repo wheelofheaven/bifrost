@@ -44,6 +44,11 @@
         {% if entries %}
         <div class="articles-feed__grid">
             <main class="articles-feed__main">
+                {# Active category filter banner — shown by JS when ?category= is present. #}
+                <div class="articles-feed__active-filter" data-filter-banner hidden>
+                    <span class="articles-feed__active-filter-name" data-filter-name></span>
+                    <a class="articles-feed__active-filter-clear" href="{{ get_url(path='/articles/', lang=detected_lang) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
+                </div>
                 {{ article::card_lead(page=entries | first, lang=detected_lang) }}
 
                 {% set rest = entries | slice(start=1) %}
@@ -84,13 +89,13 @@
                     <ul class="articles-feed__filter-list">
                         {% for cat in cats %}
                         {% set matches = all_pages | filter(attribute="extra.category", value=cat) %}
-                        <li class="articles-feed__filter-item">
-                            <span class="articles-feed__filter-label">{{ cat }}</span>
+                        <li class="articles-feed__filter-item" data-cat="{{ cat | lower }}">
+                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}?category={{ cat | urlencode }}">{{ cat }}</a>
                             <span class="articles-feed__filter-count">{{ matches | length }}</span>
                         </li>
                         {% endfor %}
-                        <li class="articles-feed__filter-item articles-feed__filter-item--total">
-                            <span class="articles-feed__filter-label">{{ trans(key="articlesAllArticles", lang=detected_lang) }}</span>
+                        <li class="articles-feed__filter-item articles-feed__filter-item--total" data-cat="">
+                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}">{{ trans(key="articlesAllArticles", lang=detected_lang) }}</a>
                             <span class="articles-feed__filter-count">{{ total }}</span>
                         </li>
                     </ul>
@@ -151,4 +156,31 @@
         </footer>
     </div>
 </div>
+
+{# Category filter — reads ?category= and filters the article cards by their
+   data-category attribute (client-side; current page only). #}
+<script>
+(function () {
+    var cat = (new URLSearchParams(window.location.search).get("category") || "").trim().toLowerCase();
+    if (!cat) return;
+    var label = "";
+    document.querySelectorAll(".article-card").forEach(function (card) {
+        var match = (card.getAttribute("data-category") || "").toLowerCase() === cat;
+        card.hidden = !match;
+        if (match && !label) {
+            var c = card.querySelector(".article-card__category");
+            label = c ? c.textContent.trim() : cat;
+        }
+    });
+    var banner = document.querySelector("[data-filter-banner]");
+    if (banner) {
+        var name = banner.querySelector("[data-filter-name]");
+        if (name) { name.textContent = label || cat; }
+        banner.hidden = false;
+    }
+    document.querySelectorAll(".articles-feed__filter-item").forEach(function (li) {
+        if ((li.getAttribute("data-cat") || "") === cat) { li.classList.add("is-active"); }
+    });
+}());
+</script>
 {% endblock content %}

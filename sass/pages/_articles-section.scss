@@ -142,10 +142,62 @@
             border-top: 1px solid var(--color-hairline);
             font-weight: 600;
         }
+
+        // Active filter (set by the category-filter script).
+        &.is-active .articles-feed__filter-label {
+            color: var(--color-accent-primary);
+            font-weight: 600;
+        }
     }
 
     &__filter-label {
         min-width: 0;
+        color: var(--color-text);
+        text-decoration: none;
+
+        &:hover,
+        &:focus {
+            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-underline-offset: 0.2em;
+        }
+    }
+
+    // Active category-filter banner — a chip with the category name + a clear ×.
+    &__active-filter {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-sm;
+        margin-bottom: v.$spacing-lg;
+        padding: v.$spacing-2xs v.$spacing-sm;
+        border: 1px solid var(--color-accent-primary);
+        border-radius: v.$border-radius-full;
+        font-size: v.$font-size-sm;
+        color: var(--color-text);
+        background: var(--color-background-secondary);
+    }
+
+    &__active-filter-name {
+        font-weight: 600;
+    }
+
+    &__active-filter-clear {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 50%;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        font-size: 1rem;
+        line-height: 1;
+
+        &:hover,
+        &:focus {
+            background: var(--color-hover);
+            color: var(--color-text);
+        }
     }
 
     &__filter-count {
