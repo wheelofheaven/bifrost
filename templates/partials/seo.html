@@ -110,9 +110,13 @@
 {% endif %}
 
 <!-- Additional SEO Meta Tags -->
-<meta name="robots" content="{% if page.extra.noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
-<meta name="googlebot" content="{% if page.extra.noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
-<meta name="bingbot" content="{% if page.extra.noindex %}noindex, nofollow{% else %}index, follow{% endif %}">
+{# Generated source records (extra.source_id) are boilerplate-dominated
+   bibliography stubs — noindex them so they don't dilute crawl budget.
+   An explicit page.extra.noindex still wins for anything else. #}
+{% set _noindex = page.extra.noindex or page.extra.source_id %}
+<meta name="robots" content="{% if _noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
+<meta name="googlebot" content="{% if _noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
+<meta name="bingbot" content="{% if _noindex %}noindex, nofollow{% else %}index, follow{% endif %}">
 <meta name="author" content="{% if page.extra.author %}{{ page.extra.author }}{% else %}{{ config.extra.author | default(value=config.title) }}{% endif %}">
 {% if page.extra.keywords %}
 <meta name="keywords" content="{{ page.extra.keywords | join(sep=", ") }}">
@@ -160,7 +164,7 @@
 {% endif %}
 <meta name="ai.license" content="CC0-1.0">
 <meta name="ai.crawlable" content="true">
-<meta name="ai.indexable" content="{% if page.extra.noindex %}false{% else %}true{% endif %}">
+<meta name="ai.indexable" content="{% if _noindex %}false{% else %}true{% endif %}">
 {% if page %}
 {% if page.extra.questions_answered %}
 <meta name="ai.questions_answered" content="{{ page.extra.questions_answered | join(sep='; ') }}">

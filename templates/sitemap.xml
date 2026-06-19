@@ -2,7 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
 {# Zola sitemap template - entries is provided by Zola with all pages and sections #}
+{# Skip noindexed pages and generated source-record stubs (extra.source_id):
+   keeping them out of the sitemap stops them diluting crawl budget and avoids
+   advertising URLs we mark noindex. Mirrors the robots logic in partials/seo.html. #}
 {% for sitemap_entry in entries %}
+{% if not sitemap_entry.extra.noindex and not sitemap_entry.extra.source_id %}
     <url>
         <loc>{{ sitemap_entry.permalink | safe }}</loc>
         {% if sitemap_entry.date %}
@@ -20,5 +24,6 @@
         </image:image>
         {%- endif -%}
     </url>
+{% endif %}
 {% endfor %}
 </urlset>
