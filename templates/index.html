@@ -462,6 +462,23 @@
 
         sections.forEach((s) => observer.observe(s));
 
+        // Fade the pinned pagination dots out once the footer scrolls into
+        // view, so they don't sit on top of the footer content. A separate
+        // observer keeps this independent of the active-section logic above.
+        const nav = document.querySelector('.landing__nav');
+        const footer = document.getElementById('footer');
+        if (nav && footer) {
+            const footerObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        nav.classList.toggle('landing__nav--hidden', entry.isIntersecting);
+                    });
+                },
+                { rootMargin: '0px 0px -10% 0px' }
+            );
+            footerObserver.observe(footer);
+        }
+
         // First-engagement gate. Any pointer / scroll / key / touch
         // event flips userEngaged and triggers playback on whichever
         // section is currently visible. Listeners are passive +
