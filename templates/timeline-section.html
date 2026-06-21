@@ -125,13 +125,18 @@
                 {% set preamble_slides = timeline_slides.preamble %}
                 {% for frame in preamble_slides %}
                 <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
+                    {# Image sources are held in data-* and promoted to real
+                       src/srcset by the windowed loader in the script below.
+                       These <img>s live inside position:fixed media layers,
+                       which defeats native loading="lazy" (a fixed element is
+                       always "in viewport"), so all slides would otherwise
+                       decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
                              alt=""
-                             loading="lazy"
                              decoding="async"
                              sizes="100vw">
                     </picture>
@@ -204,13 +209,18 @@
                 {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
                 {% for frame in age_slides %}
                 <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
+                    {# Image sources are held in data-* and promoted to real
+                       src/srcset by the windowed loader in the script below.
+                       These <img>s live inside position:fixed media layers,
+                       which defeats native loading="lazy" (a fixed element is
+                       always "in viewport"), so all slides would otherwise
+                       decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
                              alt=""
-                             loading="lazy"
                              decoding="async"
                              sizes="100vw">
                     </picture>
@@ -261,13 +271,18 @@
                 {% set wheel_slides = timeline_slides.wheel %}
                 {% for frame in wheel_slides %}
                 <div class="landing-section__slide{% if loop.first %} is-current{% endif %}">
+                    {# Image sources are held in data-* and promoted to real
+                       src/srcset by the windowed loader in the script below.
+                       These <img>s live inside position:fixed media layers,
+                       which defeats native loading="lazy" (a fixed element is
+                       always "in viewport"), so all slides would otherwise
+                       decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
                              alt=""
-                             loading="lazy"
                              decoding="async"
                              sizes="100vw">
                     </picture>
@@ -317,6 +332,46 @@
     // at full opacity covering the footer.
     const intersecting = new Set();
 
+    // --- Windowed hero-image loading ---------------------------------------
+    // Every section's media is a position:fixed full-viewport layer, which
+    // makes native loading="lazy" useless: a fixed element always counts as
+    // "in viewport", so all 60+ full-screen slide images would load and
+    // decode at once. On desktop that's merely wasteful; on iOS Safari it
+    // overruns the per-tab memory ceiling and the page reload-loops ("cannot
+    // load"). So we keep slide sources in data-* and only promote the active
+    // section ±WINDOW, unloading the rest to bound decoded-image memory.
+    const WINDOW = 1;
+    const mediaBySection = new Map();
+    sections.forEach((s) => {
+        const num = Number(s.getAttribute('data-section'));
+        const nodes = s.querySelectorAll(
+            '.landing-section__media [data-src], .landing-section__media [data-srcset]'
+        );
+        if (nodes.length) mediaBySection.set(num, nodes);
+    });
+    const loadNode = (el) => {
+        if (el.dataset.src && el.getAttribute('src') !== el.dataset.src) {
+            el.setAttribute('src', el.dataset.src);
+        }
+        if (el.dataset.srcset && el.getAttribute('srcset') !== el.dataset.srcset) {
+            el.setAttribute('srcset', el.dataset.srcset);
+        }
+    };
+    const unloadNode = (el) => {
+        // Drop the resolved source so the browser can release the decoded
+        // bitmap. Sources are re-promoted from data-* when back in window.
+        if (el.dataset.src && el.hasAttribute('src')) el.removeAttribute('src');
+        if (el.dataset.srcset && el.hasAttribute('srcset')) el.removeAttribute('srcset');
+    };
+    const ensureMediaWindow = (activeNum) => {
+        const n = Number(activeNum);
+        if (!Number.isFinite(n)) return;
+        mediaBySection.forEach((nodes, num) => {
+            const fn = Math.abs(num - n) <= WINDOW ? loadNode : unloadNode;
+            nodes.forEach(fn);
+        });
+    };
+
     const setActive = (idx) => {
         if (idx === null) {
             // Past all sections — clear active markers but leave the
@@ -335,6 +390,7 @@
             const isActive = s.getAttribute('data-section') === String(idx);
             s.classList.toggle('is-active', isActive);
         });
+        ensureMediaWindow(idx);
         if (progressFill) {
             const pct = (Number(idx) / total) * 100;
             progressFill.style.width = pct + '%';
