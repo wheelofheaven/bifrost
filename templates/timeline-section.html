@@ -89,7 +89,7 @@
     {% set first_age = ages_data | first %}
     {% set first_slug = first_age.link | split(pat="/") | nth(n=2) %}
     <section id="start" class="landing-section landing-section--timeline-opening landing-section--video" data-section="1">
-        <div class="landing-section__media" aria-hidden="true">
+        <div class="landing-section__media landing-section__media--dormant" aria-hidden="true">
             <video
                 class="landing-section__video"
                 muted
@@ -120,7 +120,7 @@
 
     {# Preamble — framed as the interpretive door before the age sequence. #}
     <section id="preamble" class="landing-section landing-section--timeline-story landing-section--video" data-section="2">
-        <div class="landing-section__media" aria-hidden="true">
+        <div class="landing-section__media landing-section__media--dormant" aria-hidden="true">
             <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set preamble_slides = timeline_slides.preamble %}
                 {% for frame in preamble_slides %}
@@ -204,7 +204,7 @@
              class="landing-section landing-section--timeline-age landing-section--video"
              data-section="{{ idx }}"
              data-age-color="{{ age.color }}">
-        <div class="landing-section__media" aria-hidden="true">
+        <div class="landing-section__media landing-section__media--dormant" aria-hidden="true">
             <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set age_slides = timeline_slides[slug] | default(value=timeline_slides.preamble) %}
                 {% for frame in age_slides %}
@@ -266,7 +266,7 @@
     {% endfor %}
 
     <section id="wheel" class="landing-section landing-section--timeline-story landing-section--video landing-section--coda" data-section="16">
-        <div class="landing-section__media" aria-hidden="true">
+        <div class="landing-section__media landing-section__media--dormant" aria-hidden="true">
             <div class="landing-section__slideshow" data-timeline-slideshow>
                 {% set wheel_slides = timeline_slides.wheel %}
                 {% for frame in wheel_slides %}
@@ -332,22 +332,33 @@
     // at full opacity covering the footer.
     const intersecting = new Set();
 
-    // --- Windowed hero-image loading ---------------------------------------
-    // Every section's media is a position:fixed full-viewport layer, which
-    // makes native loading="lazy" useless: a fixed element always counts as
-    // "in viewport", so all 60+ full-screen slide images would load and
-    // decode at once. On desktop that's merely wasteful; on iOS Safari it
-    // overruns the per-tab memory ceiling and the page reload-loops ("cannot
-    // load"). So we keep slide sources in data-* and only promote the active
-    // section ±WINDOW, unloading the rest to bound decoded-image memory.
+    // --- Virtualized media layers (iOS Safari OOM fix) ---------------------
+    // Each section's media is a `position: fixed; inset: 0` full-viewport
+    // layer. Two problems compound on iOS Safari, which has a hard per-tab
+    // memory ceiling:
+    //
+    //   1. A fixed layer always counts as "in viewport", so native
+    //      loading="lazy" never defers the slide images — all 60+ full-screen
+    //      pictures would decode at once.
+    //   2. Every fixed full-viewport layer gets its own GPU backing store
+    //      (~viewport × devicePixelRatio²). At 16+ sections that alone
+    //      overruns the budget — *before any image loads* — and the tab
+    //      reload-loops ("a problem repeatedly occurred").
+    //
+    // So the media layers ship `--dormant` (display:none) in the HTML and we
+    // reveal only the active section ±WINDOW here: at most ~3 fixed layers
+    // exist at once, and zero extra before this script runs. Within the
+    // window we also promote slide sources from data-* to bound decode
+    // memory; outside it we drop them so the bitmaps can be released.
     const WINDOW = 1;
-    const mediaBySection = new Map();
+    const DORMANT = 'landing-section__media--dormant';
+    const sectionMedia = [];
     sections.forEach((s) => {
         const num = Number(s.getAttribute('data-section'));
-        const nodes = s.querySelectorAll(
-            '.landing-section__media [data-src], .landing-section__media [data-srcset]'
-        );
-        if (nodes.length) mediaBySection.set(num, nodes);
+        const media = s.querySelector('.landing-section__media');
+        if (!media) return;
+        const nodes = media.querySelectorAll('[data-src], [data-srcset]');
+        sectionMedia.push({ num, media, nodes });
     });
     const loadNode = (el) => {
         if (el.dataset.src && el.getAttribute('src') !== el.dataset.src) {
@@ -366,9 +377,13 @@
     const ensureMediaWindow = (activeNum) => {
         const n = Number(activeNum);
         if (!Number.isFinite(n)) return;
-        mediaBySection.forEach((nodes, num) => {
-            const fn = Math.abs(num - n) <= WINDOW ? loadNode : unloadNode;
-            nodes.forEach(fn);
+        sectionMedia.forEach(({ num, media, nodes }) => {
+            const within = Math.abs(num - n) <= WINDOW;
+            // Collapse the fixed layer entirely when out of window so iOS
+            // Safari frees its backing store; reveal it just before it can
+            // scroll into view.
+            media.classList.toggle(DORMANT, !within);
+            nodes.forEach(within ? loadNode : unloadNode);
         });
     };
 

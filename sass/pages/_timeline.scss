@@ -39,6 +39,27 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     background: #000;
 }
 
+// Virtualized media layers. Each `.landing-section__media` is a fixed,
+// full-viewport layer with its own GPU backing store; 16+ of them at once
+// overruns iOS Safari's per-tab memory and reload-loops the page. The layers
+// ship dormant (no layer, no backing store) and the timeline script reveals
+// only the active section ±1. Keep this as plain display:none so a layer
+// genuinely leaves the render tree — visibility/opacity would still composite.
+// JS-less clients see text over the section's solid background, which is fine
+// because the media is decorative (aria-hidden).
+.landing-section__media--dormant {
+    display: none;
+}
+
+// Solid backdrop behind every timeline hero so white section text stays
+// legible whenever its media layer is dormant or still loading (the loaded
+// media covers this completely, so there's no visible change once shown).
+.landing-section--timeline-opening,
+.landing-section--timeline-story,
+.landing-section--timeline-age {
+    background-color: #000;
+}
+
 .landing-section__slide {
     opacity: 0;
     transition: opacity 1.6s ease-in-out;
