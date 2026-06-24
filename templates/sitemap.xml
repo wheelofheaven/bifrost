@@ -17,7 +17,7 @@
         {#- Add image if available in extra data -#}
         {%- if sitemap_entry.extra.image and sitemap_entry.extra.image is containing("/") -%}
         <image:image>
-            <image:loc>{{ get_url(path=sitemap_entry.extra.image) | safe }}</image:loc>
+            <image:loc>{% if sitemap_entry.extra.image is starting_with("http") %}{{ sitemap_entry.extra.image | safe }}{% else %}{{ get_url(path=sitemap_entry.extra.image) | safe }}{% endif %}</image:loc>
             {%- if sitemap_entry.extra.image_alt -%}
             <image:caption>{{ sitemap_entry.extra.image_alt | escape }}</image:caption>
             {%- endif -%}

@@ -110,7 +110,7 @@
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
-{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text) %}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false) %}
     {# Notes model: verse.notes.official is the WoH-sanctioned commentary
        (markdown); verse.notes.community is an array of contributed notes
        (empty for now). has_notes drives the actions-gutter trigger and the
@@ -139,12 +139,38 @@
        paragraph (the source split a quotation across two paragraphs and
        we want them to read as one). #}
     {% set kind = verse.kind | default(value="body") %}
+    {% set speaker_id = "" %}
+    {% if portrait_registry and verse.speaker and portrait_registry.speakerAliases and portrait_registry.speakerAliases[verse.speaker] %}
+    {% set speaker_id = portrait_registry.speakerAliases[verse.speaker] %}
+    {% endif %}
+    {% set speaker_portrait = false %}
+    {% if speaker_id and portrait_registry.portraits and portrait_registry.portraits[speaker_id] %}
+    {% set speaker_portrait = portrait_registry.portraits[speaker_id] %}
+    {% endif %}
     <div class="library-book__paragraph library-book__paragraph--{{ kind }}{% if has_notes %} library-book__paragraph--has-commentary{% endif %}"
          id="c{{ chapter_n }}p{{ verse.n }}"
          data-ref-id="{{ verse.refId | default(value='') }}"
          data-kind="{{ kind }}"
+         {% if verse.speaker %}data-speaker="{{ verse.speaker }}"{% endif %}
+         {% if speaker_id %}data-speaker-id="{{ speaker_id }}"{% endif %}
          onclick="selectParagraph('c{{ chapter_n }}p{{ verse.n }}')">
         <div class="library-book__para-num">{{ verse.n }}</div>
+        {% if speaker_portrait %}
+        <a class="library-book__speaker"
+           href="{{ speaker_portrait.wiki | safe }}"
+           aria-label="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }} speaking"
+           title="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }}"
+           onclick="event.stopPropagation()">
+            <picture>
+                {% if speaker_portrait.thumbAvif %}<source srcset="{{ speaker_portrait.thumbAvif | safe }}" type="image/avif">{% endif %}
+                <img class="library-book__speaker-image"
+                     src="{{ speaker_portrait.thumb | default(value=speaker_portrait.image) | safe }}"
+                     alt="{{ speaker_portrait.alt }}"
+                     loading="lazy"
+                     decoding="async">
+            </picture>
+        </a>
+        {% endif %}
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
                 {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}

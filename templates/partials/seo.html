@@ -43,13 +43,25 @@
     {% set _og_slug = "index" %}
 {% endif %}
 {% if page.extra.image %}
+    {% if page.extra.image is starting_with("http") %}
+    {% set og_image_url = page.extra.image %}
+    {% else %}
     {% set og_image_url = get_url(path=page.extra.image) %}
+    {% endif %}
 {% elif page.extra.header_image %}
+    {% if page.extra.header_image is starting_with("http") %}
+    {% set og_image_url = page.extra.header_image %}
+    {% else %}
     {% set og_image_url = get_url(path=page.extra.header_image) %}
+    {% endif %}
 {% elif config.extra.cdn_url %}
     {% set og_image_url = config.extra.cdn_url ~ "/images/og/" ~ _og_lang ~ "/" ~ _og_section ~ "/" ~ _og_slug ~ ".jpg" %}
 {% elif section.extra.image %}
+    {% if section.extra.image is starting_with("http") %}
+    {% set og_image_url = section.extra.image %}
+    {% else %}
     {% set og_image_url = get_url(path=section.extra.image) %}
+    {% endif %}
 {% else %}
     {% set og_image_url = get_url(path="brand/wheel-of-heaven.jpg") %}
 {% endif %}
@@ -223,9 +235,10 @@
   "dateModified": "{{ page.date | date(format="%Y-%m-%dT%H:%M:%S") }}+00:00",
   {% endif %}
   {% if page.extra.image or page.extra.header_image %}
+  {% set image_object_url = page.extra.image | default(value=page.extra.header_image) %}
   "image": {
     "@type": "ImageObject",
-    "url": "{{ get_url(path=page.extra.image | default(value=page.extra.header_image)) }}",
+    "url": "{% if image_object_url is starting_with("http") %}{{ image_object_url | safe }}{% else %}{{ get_url(path=image_object_url) }}{% endif %}",
     "name": "{{ page.title | default(value='') | escape }} - Featured Image",
     "description": "{% if page.extra.image_alt %}{{ page.extra.image_alt | escape }}{% elif page.description %}{{ page.description | truncate(length=150) | escape }}{% else %}Featured image for {{ page.title | default(value='') | escape }}{% endif %}",
     "width": 1200,
@@ -386,11 +399,11 @@
 
 <!-- Preload Critical Resources -->
 {% if page.extra.image %}
-<link rel="preload" as="image" href="{{ get_url(path=page.extra.image) }}" fetchpriority="high">
+<link rel="preload" as="image" href="{% if page.extra.image is starting_with("http") %}{{ page.extra.image | safe }}{% else %}{{ get_url(path=page.extra.image) }}{% endif %}" fetchpriority="high">
 {% elif page.extra.header_image %}
-<link rel="preload" as="image" href="{{ get_url(path=page.extra.header_image) }}" fetchpriority="high">
+<link rel="preload" as="image" href="{% if page.extra.header_image is starting_with("http") %}{{ page.extra.header_image | safe }}{% else %}{{ get_url(path=page.extra.header_image) }}{% endif %}" fetchpriority="high">
 {% elif section.extra.image %}
-<link rel="preload" as="image" href="{{ get_url(path=section.extra.image) }}" fetchpriority="high">
+<link rel="preload" as="image" href="{% if section.extra.image is starting_with("http") %}{{ section.extra.image | safe }}{% else %}{{ get_url(path=section.extra.image) }}{% endif %}" fetchpriority="high">
 {% endif %}
 
 {# Homepage LCP hint: the first landing-section video poster is the

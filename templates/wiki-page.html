@@ -221,6 +221,34 @@
              into the article body after the first paragraph (Wikipedia pattern). -->
         <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
             <header class="wiki__header">
+                {% if page.extra.image %}
+                {% set wiki_portrait_src = page.extra.image %}
+                {% if wiki_portrait_src is starting_with("http") %}
+                {% else %}
+                    {% set wiki_portrait_src = get_url(path=wiki_portrait_src) %}
+                {% endif %}
+                <figure class="wiki__portrait"{% if page.extra.portrait_id %} data-portrait-id="{{ page.extra.portrait_id }}"{% endif %}>
+                    <picture>
+                        {% if page.extra.image_avif %}
+                        {% set wiki_portrait_avif = page.extra.image_avif %}
+                        {% if wiki_portrait_avif is starting_with("http") %}
+                        {% else %}
+                            {% set wiki_portrait_avif = get_url(path=wiki_portrait_avif) %}
+                        {% endif %}
+                        <source srcset="{{ wiki_portrait_avif | safe }}" type="image/avif">
+                        {% endif %}
+                        <img class="wiki__portrait-image"
+                             src="{{ wiki_portrait_src | safe }}"
+                             alt="{% if page.extra.image_alt %}{{ page.extra.image_alt }}{% else %}Portrait for {{ page.title }}{% endif %}"
+                             loading="lazy"
+                             decoding="async">
+                    </picture>
+                    {% if page.extra.image_caption %}
+                    <figcaption class="wiki__portrait-caption">{{ page.extra.image_caption }}</figcaption>
+                    {% endif %}
+                </figure>
+                {% endif %}
+
                 <!-- At-a-glance infobox (only when the page declares one) -->
                 {% if page.extra.infobox %}
                 <details class="wiki__infobox">
