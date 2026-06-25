@@ -1,0 +1,96 @@
+// Back FAB — history-aware "go back" button (Wikipedia mobile pattern).
+//
+// Pinned bottom-LEFT so it never collides with the bottom-right FAB stack
+// (to-top / search / reader). Mobile-only: desktop has breadcrumbs and the
+// browser's own back affordance, so this would just be clutter there.
+//
+// Rendered `hidden` by default; back-fab.js removes `hidden` and adds
+// `--visible` only when the reader arrived from another page on the site.
+@use "../abstracts/variables" as v;
+
+.back-fab {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    z-index: 110;
+
+    display: inline-flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+
+    // The class's `display` would otherwise beat the UA `[hidden]` rule, so
+    // the button must explicitly collapse while back-fab.js keeps it hidden.
+    &[hidden] {
+        display: none;
+    }
+    max-width: min(60vw, 16rem);
+    height: 3rem;
+    padding: 0 v.$spacing-md 0 v.$spacing-sm;
+
+    background-color: var(--color-navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: v.$border-radius-full;
+    color: var(--color-text);
+    font-size: v.$font-size-sm;
+    font-weight: 500;
+    line-height: 1;
+    cursor: pointer;
+
+    // Idle (pre-reveal) state: shifted left + faded. JS flips --visible.
+    opacity: 0;
+    transform: translateX(-0.5rem);
+    transition:
+        opacity v.$transition-slow ease,
+        transform v.$transition-slow ease,
+        background-color v.$transition-base ease,
+        bottom v.$transition-slow cubic-bezier(0.4, 0, 0.2, 1);
+
+    &--visible {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    &:hover,
+    &:focus {
+        background-color: var(--color-hover);
+        outline: none;
+    }
+
+    &__icon {
+        display: inline-flex;
+        flex: 0 0 auto;
+
+        svg {
+            display: block;
+        }
+    }
+
+    // Destination page name (or the generic "Back" fallback). Truncates so a
+    // long chapter title can't blow out the pill width.
+    &__label {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+    }
+
+    // Desktop: breadcrumbs + browser back cover this need. Hide to keep the
+    // reading view clean — matches the reader-fab / search-fab breakpoint.
+    @media (min-width: 1000px) {
+        display: none;
+    }
+}
+
+// Lift clear of the PWA install banner so the Install button stays tappable,
+// mirroring the bottom-right FAB family in _totop.scss.
+body:has(.pwa-install-banner--visible) .back-fab {
+    bottom: 6rem;
+}
+
+@media (max-width: 640px) {
+    // The banner stacks into a taller column on narrow screens.
+    body:has(.pwa-install-banner--visible) .back-fab {
+        bottom: 10rem;
+    }
+}

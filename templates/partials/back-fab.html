@@ -1,0 +1,19 @@
+{# History-aware "go back" FAB. Mobile-only (mirrors the reader-fab /
+   search-fab breakpoint). Hidden by default; back-fab.js reveals it only
+   when the reader arrived from another page on this site, so a single tap
+   returns to the chapter (or any page) they were reading — the Wikipedia
+   mobile pattern. Sits bottom-LEFT so it never collides with the bottom-
+   right FAB stack (to-top / search / reader). #}
+<button type="button"
+        class="back-fab"
+        id="backFab"
+        aria-label="{{ trans(key='navbarBack', lang=detected_lang) }}"
+        hidden>
+    <span class="back-fab__icon" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </span>
+    <span class="back-fab__label">{{ trans(key='navbarBack', lang=detected_lang) }}</span>
+</button>

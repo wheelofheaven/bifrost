@@ -34,6 +34,7 @@ const bundles = {
     'toc-scroll-spy.js',
     'to-top.js',
     'reader-fab.js',
+    'back-fab.js',
     'prefetch.js',
     'listen-button.js',
     'category-rail.js',
