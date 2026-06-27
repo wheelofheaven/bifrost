@@ -109,6 +109,35 @@
         pointer-events: none;
     }
 
+    // --- Brand watermark -------------------------------------------------
+    // Persistent top-left lockup (mark + wordmark). Opaque white with a
+    // drop-shadow for legibility over any backdrop; stays visible while the
+    // controls auto-hide so it reads as a channel bug / shows in recordings.
+    &__brand {
+        position: absolute;
+        top: v.$spacing-lg;
+        left: v.$spacing-xl;
+        z-index: 3;
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-sm;
+        color: #f4f4f5;
+        pointer-events: none;
+        filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.7));
+    }
+
+    &__brandmark svg {
+        display: block;
+        width: 26px;
+        height: 26px;
+    }
+
+    &__brandtype svg {
+        display: block;
+        width: auto;
+        height: 15px;   // wordmark viewBox 1920×200 → ~144px wide
+    }
+
     // --- Caption ---------------------------------------------------------
     &__caption {
         position: absolute;

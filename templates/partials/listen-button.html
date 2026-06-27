@@ -108,6 +108,13 @@
         <div class="cinematic__vignette"></div>
     </div>
 
+    <!-- Persistent brand watermark (top-left) — stays put while the controls
+         auto-hide, so it reads as a channel bug and shows in recordings. -->
+    <div class="cinematic__brand" aria-label="Wheel of Heaven">
+        <span class="cinematic__brandmark">{% include "partials/brand/logomark.html" %}</span>
+        <span class="cinematic__brandtype">{% include "partials/brand/wordmark.html" %}</span>
+    </div>
+
     <div class="cinematic__caption" id="cinematicCaption" aria-live="polite">
         <span class="cinematic__speaker" id="cinematicSpeaker" hidden></span>
         <p class="cinematic__text" id="cinematicText"></p>
