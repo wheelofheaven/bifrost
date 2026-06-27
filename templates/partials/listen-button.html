@@ -80,22 +80,6 @@
             </svg>
         </button>
 
-        <!-- Engine toggle (System / Studio) -->
-        <button
-            class="audio-player__engine"
-            id="audioEngineToggle"
-            aria-label="Switch to studio voice"
-            title="Voice engine"
-        >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
-                <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
-                <line x1="12" y1="19" x2="12" y2="23"/>
-                <line x1="8" y1="23" x2="16" y2="23"/>
-            </svg>
-            <span class="audio-player__engine-label" id="audioEngineLabel">System voice</span>
-        </button>
-
         <!-- Close -->
         <button class="audio-player__close" id="audioClose" aria-label="{{ trans(key='audioStop', lang=detected_lang) }}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -129,7 +113,19 @@
         <p class="cinematic__text" id="cinematicText"></p>
     </div>
 
-    <div class="cinematic__controls">
+    <!-- Top bar — exit only. Auto-hides with the play bar on inactivity. -->
+    <div class="cinematic__topbar">
+        <button class="cinematic__btn cinematic__btn--exit" id="cinematicExit" type="button" aria-label="Exit cinematic view">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        </button>
+    </div>
+
+    <!-- Play bar — play/pause + seekable progress. Revealed on pointer move
+         or touch, auto-hidden after inactivity while playing. -->
+    <div class="cinematic__bar" id="cinematicBar">
         <button class="cinematic__btn cinematic__btn--play" id="cinematicPlayPause" type="button" aria-label="Play">
             <span class="cinematic__icon cinematic__icon--play">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -138,11 +134,12 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
             </span>
         </button>
-        <button class="cinematic__btn cinematic__btn--exit" id="cinematicExit" type="button" aria-label="Exit cinematic view">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="18" y1="6" x2="6" y2="18"></line>
-                <line x1="6" y1="6" x2="18" y2="18"></line>
-            </svg>
-        </button>
+        <span class="cinematic__time" id="cinematicTimeCurrent">0:00</span>
+        <div class="cinematic__progress" id="cinematicProgress" role="slider" aria-label="Seek" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+            <div class="cinematic__progress-bg"></div>
+            <div class="cinematic__progress-fill" id="cinematicProgressFill"></div>
+            <div class="cinematic__progress-handle" id="cinematicProgressHandle"></div>
+        </div>
+        <span class="cinematic__time" id="cinematicTimeTotal">0:00</span>
     </div>
 </div>

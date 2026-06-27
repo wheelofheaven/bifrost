@@ -23,16 +23,19 @@
     height: 2.25rem;
     flex-shrink: 0;
     padding: 0;
-    background: transparent;
-    border: none;
+    // Accent-coloured so the "watch it like a video" action stands out in the
+    // bar rather than reading as just another muted icon.
+    background: var(--color-hover);
+    border: 1px solid var(--color-accent-primary);
     border-radius: v.$border-radius-full;
-    color: var(--color-text-muted);
+    color: var(--color-accent-primary);
     cursor: pointer;
-    transition: color v.$transition-base, background-color v.$transition-base;
+    transition: color v.$transition-base, background-color v.$transition-base, border-color v.$transition-base;
 
     &:hover {
-        color: var(--color-accent-primary);
-        background: var(--color-hover);
+        color: var(--color-background);
+        background: var(--color-accent-primary);
+        border-color: var(--color-accent-primary);
     }
 
     body.woh-audio-available & {
@@ -151,27 +154,104 @@
         text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85), 0 0 3px rgba(0, 0, 0, 0.9);
     }
 
-    // --- Controls --------------------------------------------------------
-    // Auto-hide while playing; reveal on hover, keyboard focus, or while
-    // paused so the cinematic frame stays clean during playback.
-    &__controls {
+    // --- Chrome (top bar + play bar) -------------------------------------
+    // Both auto-hide while playing and reveal on activity (JS toggles
+    // `cinematic--active` on pointer move / touch), on keyboard focus, or
+    // while paused (:not(.cinematic--playing)) so the frame stays clean
+    // during playback but controls are a flick away.
+    &__topbar {
         position: absolute;
         top: 0;
         left: 0;
         right: 0;
         display: flex;
-        align-items: center;
-        justify-content: space-between;
+        justify-content: flex-end;
         padding: v.$spacing-lg v.$spacing-xl;
         background: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent);
         opacity: 0;
         transition: opacity 0.3s ease;
+        pointer-events: none;
     }
 
-    &:hover &__controls,
-    &:focus-within &__controls,
-    &:not(.cinematic--playing) &__controls {
+    &__bar {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-md;
+        padding: v.$spacing-xl;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        pointer-events: none;
+    }
+
+    &--active &__topbar,
+    &:focus-within &__topbar,
+    &:not(.cinematic--playing) &__topbar,
+    &--active &__bar,
+    &:focus-within &__bar,
+    &:not(.cinematic--playing) &__bar {
         opacity: 1;
+        pointer-events: auto;
+    }
+
+    // Hide the cursor during clean playback (revealed again on movement).
+    &--playing:not(.cinematic--active) {
+        cursor: none;
+    }
+
+    // --- Play bar internals ----------------------------------------------
+    &__time {
+        flex-shrink: 0;
+        min-width: 3ch;
+        font-size: clamp(0.7rem, 1.4vw, 0.85rem);
+        font-variant-numeric: tabular-nums;
+        color: rgba(244, 244, 245, 0.85);
+        text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+    }
+
+    &__progress {
+        position: relative;
+        flex: 1;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        touch-action: none;
+    }
+
+    &__progress-bg,
+    &__progress-fill {
+        position: absolute;
+        left: 0;
+        height: 4px;
+        border-radius: 2px;
+    }
+
+    &__progress-bg {
+        right: 0;
+        background: rgba(255, 255, 255, 0.25);
+    }
+
+    &__progress-fill {
+        width: 0;
+        background: var(--color-accent-primary);
+    }
+
+    &__progress-handle {
+        position: absolute;
+        top: 50%;
+        left: 0;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5);
+        transform: translate(-50%, -50%);
+        pointer-events: none;
     }
 
     &__btn {
