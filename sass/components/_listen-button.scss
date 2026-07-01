@@ -2,6 +2,7 @@
 // Text-to-Speech with SoundCloud-style bottom bar
 
 @use "../abstracts/variables" as vars;
+@use "../abstracts/colors" as c;
 
 // Trigger button (inline on page)
 .listen-trigger {
@@ -424,45 +425,104 @@
         transform: translate(-50%, -50%) scale(1.15);
     }
 
-    // Secondary actions — chapter jump + cinematic. Only meaningful when a
-    // prerecorded audio play exists; the row is hidden otherwise (TTS pages
-    // just show the scrubber). Revealed via body.woh-audio-available below.
-    &__actions {
-        display: none;
-        align-items: center;
-        justify-content: flex-end;
-        gap: 0.5rem;
-        padding: 0.5rem 0 0.125rem;
+    // Cinematic preview — a live tile that shows the CURRENT scene, framed
+    // by an animated Bifrost-rainbow border that invites the tap. Tapping it
+    // opens the fullscreen cinematic view. Revealed by JS (hidden attr) only
+    // once the chapter's cinematic timeline has loaded.
+    &__cinematic-preview {
+        position: relative;
+        display: block;
+        width: 100%;
+        height: 5.5rem;
+        margin-top: 0.75rem;
+        padding: 0;
+        cursor: pointer;
+        overflow: hidden;
+        border: 3px solid transparent;
+        border-radius: 0.75rem;
+        // Two-layer paint: opaque inner fill on the padding box, flowing
+        // rainbow on the border box. Animating the border layer's position
+        // makes the spectrum drift around the frame.
+        background:
+            linear-gradient(var(--color-navbar-bg), var(--color-navbar-bg)) padding-box,
+            linear-gradient(90deg,
+                #{c.$yellow-500}, #{c.$pink-500}, #{c.$lavender-500},
+                #{c.$mauve-500}, #{c.$blue-500}, #{c.$cyan-500},
+                #{c.$teal-500}, #{c.$mint-500}, #{c.$green-500},
+                #{c.$yellow-500}) border-box;
+        background-size: auto, 200% 100%;
+        animation: audio-cinematic-flow 5s linear infinite;
+
+        &[hidden] { display: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            animation: none;
+        }
+
+        // Sharpen the invitation on hover/focus — quicker drift + a lift.
+        &:hover,
+        &:focus-visible {
+            animation-duration: 2.5s;
+            outline: none;
+        }
+        &:hover .audio-player__cinematic-hint,
+        &:focus-visible .audio-player__cinematic-hint {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0) 65%);
+        }
     }
 
-    &__action {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        width: 2.25rem;
-        height: 2.25rem;
-        padding: 0;
-        background: var(--color-hover);
-        border: 1px solid var(--color-border);
-        border-radius: 0.625rem;
-        color: var(--color-text);
-        cursor: pointer;
-        transition:
-            color 0.2s ease,
-            background-color 0.2s ease,
-            border-color 0.2s ease;
+    // The scene still fills the frame inside the rainbow border.
+    &__cinematic-scene {
+        position: absolute;
+        inset: 0;
+        border-radius: 0.55rem;
+        background-color: var(--color-background);
+        background-size: cover;
+        background-position: center;
+        z-index: 0;
 
-        &:hover {
-            color: var(--color-accent-primary);
-            border-color: var(--color-accent-primary);
+        // No published scene art yet → a soft accent-tinted gradient so the
+        // tile still reads as a "watch" surface behind the rainbow frame.
+        &--fallback {
+            background-image: linear-gradient(135deg,
+                color-mix(in srgb, var(--color-accent-primary) 24%, #0b0b12),
+                #0b0b12 62%);
         }
+    }
+
+    // Label overlay — "▶ Cinematic view", bottom-left over a scrim.
+    &__cinematic-hint {
+        position: absolute;
+        inset: 0;
+        z-index: 1;
+        display: flex;
+        align-items: flex-end;
+        gap: 0.4rem;
+        padding: 0.5rem 0.625rem;
+        border-radius: 0.55rem;
+        color: #fff;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0) 55%);
+        transition: background 0.2s ease;
+
+        svg { flex-shrink: 0; }
+    }
+
+    &__cinematic-hint-label {
+        line-height: 1;
     }
 
     // ---- Expanded state --------------------------------------------------
     &--expanded {
         .audio-player__panel {
-            max-height: 12rem;
+            // Generous cap — the scrubber + cinematic preview + chapter list
+            // are taller than the old actions row; the chapter list scrolls
+            // within its own max-height so the panel never runs away.
+            max-height: min(75vh, 34rem);
             opacity: 1;
+            padding-bottom: 0.75rem;
         }
 
         .audio-player__bar {
@@ -475,37 +535,18 @@
         }
     }
 
-    // ---- Chapter jump overlay — anchors above the whole player ----------
-    &__chapter-menu {
-        position: absolute;
-        bottom: calc(100% + 0.5rem);
-        left: 50%;
-        transform: translateX(-50%);
-        min-width: 14rem;
-        max-width: 22rem;
-        max-height: min(60vh, 22rem);
+    // ---- Chapter list — inline in the panel, scrolls if long ------------
+    &__chapters {
+        display: flex;
+        flex-direction: column;
+        gap: 0.125rem;
+        margin-top: 0.75rem;
+        max-height: 14rem;
         overflow-y: auto;
-        padding: 0.5rem;
-        // Opaque foreground card. The parent .audio-player has a
-        // backdrop-filter (own stacking context) which in some browsers
-        // makes opaque descendants composite oddly; isolate + solid page
-        // background keeps the menu painting cleanly.
-        background-color: var(--color-background);
-        backdrop-filter: none;
-        -webkit-backdrop-filter: none;
-        isolation: isolate;
-        border: 1px solid var(--color-border);
-        border-radius: 0.75rem;
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.2);
-        z-index: 1;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.18s ease;
-
-        &.is-open {
-            opacity: 1;
-            pointer-events: auto;
-        }
+        // Keep the current chapter and scrollbar off the panel's rounded
+        // edge without clipping the scrollbar.
+        padding-right: 0.125rem;
+        overscroll-behavior: contain;
 
         &[hidden] {
             display: none;
@@ -622,12 +663,6 @@
     }
 }
 
-// Reveal the secondary-actions row only when a prerecorded audio play is
-// available (matches how the cinematic toggle reveals). TTS pages omit it.
-body.woh-audio-available .audio-player__actions {
-    display: flex;
-}
-
 // Add padding to body when player is visible so the bar doesn't cover
 // the bottom of the content.
 body.has-audio-player {
@@ -682,6 +717,13 @@ body:has(.audio-player--expanded) {
     to {
         transform: rotate(360deg);
     }
+}
+
+// Drift the rainbow frame around the cinematic preview. Moving the 200%-wide
+// border-box gradient by its full width loops seamlessly (yellow → … → yellow).
+@keyframes audio-cinematic-flow {
+    0%   { background-position: 0 0, 0% 50%; }
+    100% { background-position: 0 0, 200% 50%; }
 }
 
 // Hide on print

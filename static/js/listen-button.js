@@ -1139,6 +1139,15 @@
         let currentCaptionIdx = -1;
         let chromeTimer = null;     // inactivity timer that hides the play bar
 
+        // Live scene preview shown in the audio-player panel (the tile that
+        // replaced the old cinematic button). Updated even while the
+        // fullscreen view is closed, so the panel always reflects the
+        // current scene. Tracked with its own key so it and the fullscreen
+        // layers don't fight over `currentSceneKey`.
+        const previewBtn = document.getElementById('audioCinematicToggle');
+        const previewSceneEl = document.getElementById('audioCinematicScene');
+        let previewSceneKey = null;
+
         function bookContext() {
             const el = document.querySelector('[data-book-slug]');
             return {
@@ -1163,6 +1172,7 @@
             } catch (e) {
                 if (token === fetchToken) data = null;
             }
+            syncPreviewVisibility();
         }
 
         function setLayerImage(layer, image) {
@@ -1211,6 +1221,50 @@
             incoming.classList.add('is-active');
             activeLayer.classList.remove('is-active');
             activeLayer = incoming;
+        }
+
+        // --- Panel scene preview (independent of the fullscreen layers) ---
+        function setPreviewImage(image) {
+            if (!previewSceneEl) return;
+            const apply = (img, allowDefaultFallback) => {
+                const url = `${CINEMATIC_IMG_BASE}/${slug}/${img}.jpg`;
+                const probe = new Image();
+                probe.onload = () => {
+                    previewSceneEl.style.backgroundImage = `url("${url}")`;
+                    previewSceneEl.classList.remove('audio-player__cinematic-scene--fallback');
+                };
+                probe.onerror = () => {
+                    // Named scene art not published yet → book-wide default →
+                    // finally the animated gradient placeholder.
+                    if (allowDefaultFallback) { apply('default', false); return; }
+                    previewSceneEl.style.backgroundImage = '';
+                    previewSceneEl.classList.add('audio-player__cinematic-scene--fallback');
+                };
+                probe.src = url;
+            };
+            const img = image || 'default';
+            apply(img, img !== 'default');
+        }
+
+        function renderPreview(t) {
+            if (!previewBtn || !data || !data.scenes) return;
+            let scene = null;
+            for (const s of data.scenes) {
+                if (t >= s.start && t < s.end) { scene = s; break; }
+            }
+            const key = scene ? scene.scene : 'default';
+            if (key === previewSceneKey) return;
+            previewSceneKey = key;
+            setPreviewImage((scene && scene.image) || 'default');
+        }
+
+        // Reveal the preview tile once a chapter's cinematic timeline has
+        // loaded (called from loadChapter); hide it when there's none.
+        function syncPreviewVisibility() {
+            if (!previewBtn) return;
+            const has = !!(data && data.scenes && data.scenes.length);
+            previewBtn.hidden = !has;
+            if (has) { previewSceneKey = null; renderPreview(0); }
         }
 
         function renderCaption(t) {
@@ -1293,6 +1347,9 @@
             async onChapter(n) { await loadChapter(n); },
             // Called from the engine's onProgress with the chapter-local clock.
             onProgress(ratio, cur, total) {
+                // The panel preview tracks the scene even while the
+                // fullscreen view is closed, so keep it outside the guard.
+                if (typeof cur === 'number') renderPreview(cur);
                 if (!open) return;
                 if (typeof cur === 'number') {
                     renderScene(cur);
@@ -1468,34 +1525,22 @@
             btn.appendChild(name);
             btn.appendChild(dur);
             btn.addEventListener('click', () => {
-                closeChapterMenu();
                 if (currentEngine && typeof currentEngine.jumpToChapter === 'function') {
                     currentEngine.jumpToChapter(c.n);
                 }
             });
             chapterMenu.appendChild(btn);
         });
-    }
-    function openChapterMenu() {
-        if (!chapterMenu || !titleButton) return;
-        renderChapterMenu();
-        if (!chapterMenu.children.length) return;
+        // The list is inline in the expanded panel now — reveal it and keep
+        // the current chapter scrolled into view.
         chapterMenu.hidden = false;
-        // Next frame so the opacity transition runs.
-        requestAnimationFrame(() => chapterMenu.classList.add('is-open'));
-        titleButton.setAttribute('aria-expanded', 'true');
-        chapterMenu.setAttribute('aria-hidden', 'false');
+        const current = chapterMenu.querySelector('.audio-player__chapter-item.is-current');
+        if (current && current.scrollIntoView) current.scrollIntoView({ block: 'nearest' });
     }
-    function closeChapterMenu() {
-        if (!chapterMenu || !titleButton) return;
-        chapterMenu.classList.remove('is-open');
-        titleButton.setAttribute('aria-expanded', 'false');
-        chapterMenu.setAttribute('aria-hidden', 'true');
-        // After transition, hide entirely so it's not in the tab order.
-        setTimeout(() => {
-            if (!chapterMenu.classList.contains('is-open')) chapterMenu.hidden = true;
-        }, 200);
-    }
+    // (The chapter list is now inline in the expanded panel; the old
+    // open/close popover helpers and their title-button trigger were
+    // removed — renderChapterMenu() is driven directly by chapter changes
+    // and by expanding the panel.)
 
     async function speak() {
         playQueue = getReadingUnits();
@@ -1626,35 +1671,17 @@
         progressBar.addEventListener('pointercancel', endDrag);
     }
 
-    // v4.3 — title click opens the chapter-jump overlay (when the engine
-    // exposes a manifest, i.e. the prerecorded engine is active).
-    if (titleButton && chapterMenu) {
-        titleButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            if (chapterMenu.classList.contains('is-open')) closeChapterMenu();
-            else openChapterMenu();
-        });
-        document.addEventListener('click', (e) => {
-            if (!chapterMenu.classList.contains('is-open')) return;
-            if (chapterMenu.contains(e.target) || titleButton.contains(e.target)) return;
-            closeChapterMenu();
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && chapterMenu.classList.contains('is-open')) {
-                closeChapterMenu();
-                titleButton.focus();
-            }
-        });
-    }
-
     // Expand/collapse the player. The compact bar shows play + title/
     // subtitle; tapping the meta area grows the bar upward to reveal the
-    // tactile scrubber and secondary actions. Toggling `--expanded` drives
-    // the CSS; the chevron flips via the same class.
+    // tactile scrubber, the inline chapter list, and the cinematic preview.
+    // Toggling `--expanded` drives the CSS; the chevron flips via the same
+    // class. Render the chapter list on first expand so it's populated even
+    // if the reader expands before a chapter-change has fired.
     if (expandToggle) {
         expandToggle.addEventListener('click', () => {
             const expanded = player.classList.toggle('audio-player--expanded');
             expandToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+            if (expanded) renderChapterMenu();
         });
     }
 

@@ -12,36 +12,9 @@
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
 
-// Toggle button in the audio-player bar. Hidden until a prerecorded audio
-// play is confirmed for this book + language (body.woh-audio-available),
-// matching how the other prerecorded-only affordances reveal.
-.audio-player__cinematic-toggle {
-    display: none;
-    align-items: center;
-    justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    flex-shrink: 0;
-    padding: 0;
-    // Accent-coloured so the "watch it like a video" action stands out in the
-    // bar rather than reading as just another muted icon.
-    background: var(--color-hover);
-    border: 1px solid var(--color-accent-primary);
-    border-radius: v.$border-radius-full;
-    color: var(--color-accent-primary);
-    cursor: pointer;
-    transition: color v.$transition-base, background-color v.$transition-base, border-color v.$transition-base;
-
-    &:hover {
-        color: var(--color-background);
-        background: var(--color-accent-primary);
-        border-color: var(--color-accent-primary);
-    }
-
-    body.woh-audio-available & {
-        display: inline-flex;
-    }
-}
+// The in-panel cinematic control moved from an icon toggle to a live scene
+// preview tile — see `.audio-player__cinematic-preview` in
+// components/_listen-button.scss. This file styles the fullscreen view below.
 
 .cinematic {
     position: fixed;
