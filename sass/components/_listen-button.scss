@@ -125,17 +125,20 @@
     transform: translate(-50%, calc(100% + 2rem));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // Glassmorphism background
+    // Glassmorphism — matches the navbar and the FAB family (search /
+    // back / reader): same blur, border colour, and corner radius so the
+    // bottom bar reads as part of the same glass system rather than a
+    // heavier one-off (it previously used blur(20px) saturate(180%), a
+    // hairline border, and a 1rem radius).
     background-color: var(--color-navbar-bg);
-    backdrop-filter: blur(20px) saturate(180%);
-    -webkit-backdrop-filter: blur(20px) saturate(180%);
-    border: 1px solid var(--color-hairline);
-    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--color-border);
+    border-radius: 0.75rem;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 
     @media (max-width: 640px) {
         bottom: 0.75rem;
-        border-radius: 0.75rem;
     }
 
     &--visible {
@@ -607,15 +610,6 @@ body.has-audio-player {
 
     .to-top--visible ~ .search-fab {
         bottom: 9.5rem;
-    }
-
-    // The back-fab lives bottom-LEFT with a higher z-index (110) than the
-    // player bar (100), so without lifting it, it renders on top of the
-    // full-width bar's left end — the "Back button overlapping the Play
-    // bar" report. Lift it clear like the bottom-right FAB family above.
-    // The back-fab already transitions `bottom`, so this animates smoothly.
-    .back-fab {
-        bottom: 6rem;
     }
 }
 
