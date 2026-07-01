@@ -139,9 +139,13 @@
        paragraph (the source split a quotation across two paragraphs and
        we want them to read as one). #}
     {% set kind = verse.kind | default(value="body") %}
+    {# Use the `get` filter (not bracket-indexing) so speaker keys with
+       non-ASCII characters — e.g. "Raël" — resolve. Tera's map[key] access
+       silently misses on Unicode keys, which is why only ASCII speakers like
+       "Yahweh" were getting a portrait. #}
     {% set speaker_id = "" %}
-    {% if portrait_registry and verse.speaker and portrait_registry.speakerAliases and portrait_registry.speakerAliases[verse.speaker] %}
-    {% set speaker_id = portrait_registry.speakerAliases[verse.speaker] %}
+    {% if portrait_registry and verse.speaker and portrait_registry.speakerAliases %}
+    {% set speaker_id = portrait_registry.speakerAliases | get(key=verse.speaker, default="") %}
     {% endif %}
     {% set speaker_portrait = false %}
     {% if speaker_id and portrait_registry.portraits and portrait_registry.portraits[speaker_id] %}
