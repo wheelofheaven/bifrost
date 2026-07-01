@@ -61,7 +61,8 @@
           <li>{{ link_macros::smart_link(url="https://github.com/wheelofheaven/", text="GitHub") }}</li>
           <li>{{ link_macros::smart_link(url="https://t.me/wheelofheaven", text="Telegram") }}</li>
           <li>{{ link_macros::smart_link(url="https://x.com/wheelofheaven", text="X (Twitter)") }}</li>
-          <li>{{ link_macros::smart_link(url="https://www.youtube.com/@wheelofheaven", text="YouTube") }}</li>
+          {% set yt_url = trans(key="youtubeChannelUrl", lang=detected_lang) %}
+          <li>{{ link_macros::smart_link(url=yt_url, text="YouTube") }}</li>
         </ul>
       </div>
 
