@@ -1,0 +1,28 @@
+{# Self-hosted KaTeX math rendering (CSP allows only same-origin assets, so
+   no CDN). Included only on pages whose rendered content actually contains a
+   `$$` display-math block — see the gate in base.html — so the ~0.5 MB of
+   JS + fonts never loads on pages without math.
+
+   Delimiters are deliberately limited to `$$…$$`, `\[…\]` and `\(…\)`. Bare
+   single-`$` inline math is NOT enabled, so a literal dollar sign in prose
+   can't be mistaken for the start of an equation. #}
+<link rel="stylesheet" href="{{ get_url(path='vendor/katex/katex.min.css', cachebust=true) | safe }}">
+<script defer src="{{ get_url(path='vendor/katex/katex.min.js', cachebust=true) | safe }}"></script>
+<script defer src="{{ get_url(path='vendor/katex/auto-render.min.js', cachebust=true) | safe }}"></script>
+<script>
+    // Inline scripts ignore `defer`, so wait for DOMContentLoaded — by then
+    // the deferred KaTeX + auto-render scripts above have executed.
+    document.addEventListener("DOMContentLoaded", function () {
+        if (typeof renderMathInElement !== "function") return;
+        var scope = document.getElementById("main-content") || document.body;
+        renderMathInElement(scope, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "\\[", right: "\\]", display: true },
+                { left: "\\(", right: "\\)", display: false }
+            ],
+            throwOnError: false,
+            ignoredTags: ["script", "noscript", "style", "textarea", "pre", "code"]
+        });
+    });
+</script>

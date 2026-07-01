@@ -70,5 +70,10 @@
         {% include "partials/reading-list.html" %}
         {% include "partials/search-i18n.html" %}
         {% include "partials/scripts.html" %}
+        {# Load KaTeX only on pages that actually contain display math, so the
+           self-hosted JS + fonts stay off every other page. #}
+        {% if page and page.content and page.content is containing("$$") %}
+        {% include "partials/katex.html" %}
+        {% endif %}
     </body>
 </html>
