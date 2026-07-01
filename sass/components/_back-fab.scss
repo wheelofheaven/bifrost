@@ -1,55 +1,58 @@
 // Back FAB — history-aware "go back" button (Wikipedia mobile pattern).
 //
-// Pinned bottom-LEFT so it never collides with the bottom-right FAB stack
-// (to-top / search / reader). Mobile-only: desktop has breadcrumbs and the
-// browser's own back affordance, so this would just be clutter there.
+// Lives INSIDE the navbar and overlays the brand logo on mobile: when the
+// reader dove into a wiki/library page from elsewhere on the site, the
+// logo slot becomes a back button. Because the navbar is `position: fixed`,
+// absolutely positioning the button inside it makes it track the navbar
+// through every scroll/hide state for free. Desktop keeps the real logo —
+// breadcrumbs and the browser's own back affordance cover the need there.
 //
 // Rendered `hidden` by default; back-fab.js removes `hidden` and adds
 // `--visible` only when the reader arrived from another page on the site.
 @use "../abstracts/variables" as v;
 
 .back-fab {
-    position: fixed;
-    bottom: 1.5rem;
-    left: 1.5rem;
-    z-index: 110;
+    // Overlay the navbar logo. `left`/`top` match the mobile navbar's
+    // padding (0.5rem 1rem) so the button sits exactly over the logo.
+    // Anchored to the TOP (not `top: 50%`) so it stays aligned with the
+    // logo row when the burger menu expands the navbar downward.
+    position: absolute;
+    left: 1rem;
+    top: 0.5rem;
+    z-index: 2; // above the logo it covers
 
     display: inline-flex;
     align-items: center;
-    gap: v.$spacing-xs;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
 
     // The class's `display` would otherwise beat the UA `[hidden]` rule, so
     // the button must explicitly collapse while back-fab.js keeps it hidden.
     &[hidden] {
         display: none;
     }
-    max-width: min(60vw, 16rem);
-    height: 3rem;
-    padding: 0 v.$spacing-md 0 v.$spacing-sm;
 
+    // Glass — matches the navbar and the FAB family (blur, border, radius).
     background-color: var(--color-navbar-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border: 1px solid var(--color-border);
-    border-radius: v.$border-radius-full;
+    border-radius: 0.75rem;
     color: var(--color-text);
-    font-size: v.$font-size-sm;
-    font-weight: 500;
-    line-height: 1;
     cursor: pointer;
 
-    // Idle (pre-reveal) state: shifted left + faded. JS flips --visible.
+    // Idle (pre-reveal) state: faded. JS flips --visible.
     opacity: 0;
-    transform: translateX(-0.5rem);
+    pointer-events: none;
     transition:
         opacity v.$transition-slow ease,
-        transform v.$transition-slow ease,
-        background-color v.$transition-base ease,
-        bottom v.$transition-slow cubic-bezier(0.4, 0, 0.2, 1);
+        background-color v.$transition-base ease;
 
     &--visible {
         opacity: 1;
-        transform: translateX(0);
+        pointer-events: auto;
     }
 
     &:hover,
@@ -67,30 +70,31 @@
         }
     }
 
-    // Destination page name (or the generic "Back" fallback). Truncates so a
-    // long chapter title can't blow out the pill width.
+    // Icon-only in the logo slot; the destination name stays in the
+    // button's aria-label for screen readers.
     &__label {
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        display: none;
     }
 
-    // Desktop: breadcrumbs + browser back cover this need. Hide to keep the
-    // reading view clean — matches the reader-fab / search-fab breakpoint.
+    // Desktop: breadcrumbs + browser back cover this need, and the brand
+    // logo should stay put. Hide the back button entirely.
     @media (min-width: 1000px) {
         display: none;
     }
 }
 
-// Lift clear of the PWA install banner so the Install button stays tappable,
-// mirroring the bottom-right FAB family in _totop.scss.
-body:has(.pwa-install-banner--visible) .back-fab {
-    bottom: 6rem;
+// Fade the brand logo out while the back button occupies its slot, so the
+// two don't show through one another. Scoped to <=999px: back-fab.js adds
+// `--visible` on any viewport, but the button itself is `display: none` on
+// desktop, so without this media guard the logo would vanish on desktop
+// with nothing replacing it.
+.navbar__logo {
+    transition: opacity v.$transition-slow ease;
 }
 
-@media (max-width: 640px) {
-    // The banner stacks into a taller column on narrow screens.
-    body:has(.pwa-install-banner--visible) .back-fab {
-        bottom: 10rem;
+@media (max-width: 999px) {
+    .navbar:has(.back-fab--visible) .navbar__logo {
+        opacity: 0;
+        pointer-events: none;
     }
 }

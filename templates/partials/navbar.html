@@ -7,6 +7,9 @@
     >
         {% include "partials/brand/logomark.html" %}
     </a>
+    {# Mobile back button — overlays the logo slot when the reader dove into
+       this page from elsewhere on the site. Revealed by back-fab.js. #}
+    {% include "partials/back-fab.html" %}
     <div class="navbar__content">
         <!-- Two-pane container for the mobile burger menu. Pane A is the
              main nav + theme/lang/reading-list controls; Pane B is the
