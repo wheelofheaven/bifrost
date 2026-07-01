@@ -152,6 +152,16 @@
             gap: 0.5rem;
             padding: 0.5rem 0.75rem;
         }
+
+        // On narrow phones the fixed controls (play + both time labels +
+        // cinematic toggle + close) plus the progress bar's 100px minimum
+        // sum past the bar's width, so the row overflowed and the trailing
+        // controls (cinematic toggle, close) spilled past the rounded right
+        // edge — clipped. Tighten the gutter here; the progress min-width is
+        // relaxed below so the flex row always fits.
+        @media (max-width: 480px) {
+            gap: 0.375rem;
+        }
     }
 
     // Play/Pause button — solid accent circle. The progress ring (v4.4)
@@ -294,6 +304,15 @@
 
         @media (max-width: 768px) {
             height: 4px;
+        }
+
+        // The bar's fixed controls take priority on narrow phones; let the
+        // progress bar shrink further than its 100px default so the whole
+        // row fits inside the bar instead of pushing the trailing controls
+        // (cinematic toggle, close) off the rounded right edge. `flex: 1`
+        // still lets it grow to fill whatever space the controls leave.
+        @media (max-width: 480px) {
+            min-width: 40px;
         }
     }
 
@@ -588,6 +607,15 @@ body.has-audio-player {
 
     .to-top--visible ~ .search-fab {
         bottom: 9.5rem;
+    }
+
+    // The back-fab lives bottom-LEFT with a higher z-index (110) than the
+    // player bar (100), so without lifting it, it renders on top of the
+    // full-width bar's left end — the "Back button overlapping the Play
+    // bar" report. Lift it clear like the bottom-right FAB family above.
+    // The back-fab already transitions `bottom`, so this animates smoothly.
+    .back-fab {
+        bottom: 6rem;
     }
 }
 
