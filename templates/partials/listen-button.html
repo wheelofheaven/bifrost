@@ -11,15 +11,55 @@
     <span>{{ trans(key="listenLabel", lang=detected_lang) }}</span>
 </button>
 
-<!-- Audio Player Bar - Fixed at bottom (SoundCloud style) -->
+<!-- Audio Player — fixed bottom bar. Two states:
+     • Collapsed (default): a compact row — the play button (with a
+       progress ring that fills as the track plays) plus the title and
+       subtitle. Progress is read at a glance from the ring.
+     • Expanded (tap the meta area): the bar grows UPWARD, revealing a
+       panel with a tactile scrubber (draggable) and secondary actions
+       (chapter jump, cinematic view).
+     Every id below is consumed by listen-button.js. -->
 <div class="audio-player" id="audioPlayer" aria-hidden="true" inert
      data-label-play="{{ trans(key='audioPlay', lang=detected_lang) }}"
      data-label-pause="{{ trans(key='audioPause', lang=detected_lang) }}"
      data-label-this-page="{{ trans(key='audioThisPage', lang=detected_lang) }}">
-    <div class="audio-player__container">
-        <!-- Play/Pause — with a progress ring (v4.4) that fills clockwise
-             as the audio progresses, set via the --progress CSS custom
-             property by listen-button.js. -->
+
+    <!-- Expanded panel — collapsed to zero height until the bar is tapped,
+         then grows upward above the compact bar. -->
+    <div class="audio-player__panel" id="audioPanel">
+        <!-- Tactile scrubber: current time · draggable progress · total. -->
+        <div class="audio-player__scrubber">
+            <span class="audio-player__time audio-player__time--current" id="audioTimeCurrent">0:00</span>
+            <div class="audio-player__progress" id="audioProgress" role="slider" aria-label="{{ trans(key='audioPlay', lang=detected_lang) }}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+                <div class="audio-player__progress-bg"></div>
+                <div class="audio-player__progress-fill" id="audioProgressFill"></div>
+                <div class="audio-player__progress-handle" id="audioProgressHandle"></div>
+            </div>
+            <span class="audio-player__time audio-player__time--total" id="audioTimeTotal">0:00</span>
+        </div>
+
+        <!-- Secondary actions. Each is revealed only when relevant: chapter
+             jump on multi-chapter books, cinematic on prerecorded audio. -->
+        <div class="audio-player__actions">
+            <button class="audio-player__action audio-player__action--chapters" id="audioChaptersBtn" type="button" aria-haspopup="menu" aria-expanded="false" aria-label="Chapters" title="Chapters">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/>
+                    <line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+                </svg>
+            </button>
+            <button class="audio-player__cinematic-toggle" id="audioCinematicToggle" type="button" aria-label="Open cinematic view" title="Cinematic view">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="4" width="20" height="16" rx="2"/>
+                    <path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <!-- Compact bar — always visible. -->
+    <div class="audio-player__bar">
+        <!-- Play/Pause — with a progress ring (--progress 0..100, set by
+             listen-button.js) that fills clockwise as the audio plays. -->
         <button class="audio-player__play" id="audioPlayPause" aria-label="{{ trans(key='audioPlay', lang=detected_lang) }}">
             <svg class="audio-player__play-ring" viewBox="0 0 100 100" aria-hidden="true">
                 <circle class="audio-player__play-ring-track" cx="50" cy="50" r="48" pathLength="100"/>
@@ -38,46 +78,22 @@
             </span>
         </button>
 
-        <!-- Time & Progress -->
-        <span class="audio-player__time audio-player__time--current" id="audioTimeCurrent">0:00</span>
-
-        <div class="audio-player__progress" id="audioProgress">
-            <div class="audio-player__progress-bg"></div>
-            <div class="audio-player__progress-fill" id="audioProgressFill"></div>
-            <div class="audio-player__progress-handle" id="audioProgressHandle"></div>
-        </div>
-
-        <span class="audio-player__time audio-player__time--total" id="audioTimeTotal">0:00</span>
-
-        <!-- Title — clickable on library pages to open the chapter jump
-             overlay. Book and chapter rows crossfade every few seconds so
-             both names surface during playback. -->
-        <button class="audio-player__title" id="audioTitle" type="button" aria-haspopup="menu" aria-expanded="false">
-            <span class="audio-player__title-row audio-player__title-row--book is-active">
-                <span class="audio-player__title-text"></span>
+        <!-- Meta — title over subtitle, both visible. The whole area is the
+             expand/collapse toggle; the chevron flips when open. -->
+        <button class="audio-player__meta" id="audioExpandToggle" type="button" aria-expanded="false" aria-controls="audioPanel" aria-label="Expand player">
+            <span class="audio-player__title-stack">
+                <span class="audio-player__title-row audio-player__title-row--book is-active">
+                    <span class="audio-player__title-text"></span>
+                </span>
+                <span class="audio-player__title-row audio-player__title-row--chapter">
+                    <span class="audio-player__chapter-text"></span>
+                </span>
             </span>
-            <span class="audio-player__title-row audio-player__title-row--chapter">
-                <span class="audio-player__chapter-text"></span>
+            <span class="audio-player__chevron" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="18 15 12 9 6 15"/>
+                </svg>
             </span>
-        </button>
-
-        <!-- Chapter jump overlay — populated at runtime from the manifest -->
-        <div class="audio-player__chapter-menu" id="audioChapterMenu" role="menu" aria-hidden="true" hidden></div>
-
-        <!-- Cinematic view toggle (v5) — only revealed when a prerecorded
-             audio play is available (body.woh-audio-available). Opens the
-             fullscreen scene + caption presentation. -->
-        <button
-            class="audio-player__cinematic-toggle"
-            id="audioCinematicToggle"
-            type="button"
-            aria-label="Open cinematic view"
-            title="Cinematic view"
-        >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <rect x="2" y="4" width="20" height="16" rx="2"/>
-                <path d="M7 4v16M17 4v16M2 9h5M2 15h5M17 9h5M17 15h5"/>
-            </svg>
         </button>
 
         <!-- Close -->
@@ -88,6 +104,10 @@
             </svg>
         </button>
     </div>
+
+    <!-- Chapter jump overlay — populated at runtime from the manifest,
+         anchored above the player. -->
+    <div class="audio-player__chapter-menu" id="audioChapterMenu" role="menu" aria-hidden="true" hidden></div>
 
     <!-- Loading overlay (shown while studio model downloads / warms up) -->
     <div class="audio-player__loading" id="audioLoading" aria-live="polite">

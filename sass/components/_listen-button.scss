@@ -112,24 +112,36 @@
     100% { background-position: 0% 50%; }
 }
 
-// Audio Player - Floating bottom bar (SoundCloud style)
+// =====================================================================
+// Audio Player — floating bottom bar with a compact + expanded state.
+//
+//   Compact (default): the play button (with a progress ring that fills
+//   as the track plays) + the title and subtitle. Progress is read at a
+//   glance from the ring; no scrubber clutter.
+//
+//   Expanded (tap the meta area): the bar grows UPWARD — because it's
+//   anchored to the bottom of the viewport, adding the panel at the top
+//   of the flex column pushes the top edge up — revealing a tactile
+//   scrubber and the secondary actions (chapter jump, cinematic view).
+// =====================================================================
 .audio-player {
     position: fixed;
     bottom: 1rem;
     left: 50%;
     z-index: 100;
-    // Match the navbar's footprint exactly (90% width up to 80rem max-width).
-    // Keeps the visual rhythm symmetric — bar at top, bar at bottom, same span.
+    // Match the navbar's footprint (90% up to 80rem) so the top and bottom
+    // glass bars share the same span.
     width: 90%;
     max-width: 80rem;
     transform: translate(-50%, calc(100% + 2rem));
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-    // Glassmorphism — matches the navbar and the FAB family (search /
-    // back / reader): same blur, border colour, and corner radius so the
-    // bottom bar reads as part of the same glass system rather than a
-    // heavier one-off (it previously used blur(20px) saturate(180%), a
-    // hairline border, and a 1rem radius).
+    // Flex column: panel (top) then bar (bottom). Anchored to the bottom,
+    // so the whole element grows upward as the panel opens.
+    display: flex;
+    flex-direction: column;
+
+    // Glass — matches the navbar and the FAB family (blur, border, radius).
     background-color: var(--color-navbar-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -145,32 +157,19 @@
         transform: translate(-50%, 0);
     }
 
-    &__container {
+    // ---- Compact bar -----------------------------------------------------
+    &__bar {
         display: flex;
         align-items: center;
         gap: 0.75rem;
-        padding: 0.5rem 1rem;
+        padding: 0.5rem 0.75rem;
 
-        @media (max-width: 768px) {
-            gap: 0.5rem;
-            padding: 0.5rem 0.75rem;
-        }
-
-        // On narrow phones the fixed controls (play + both time labels +
-        // cinematic toggle + close) plus the progress bar's 100px minimum
-        // sum past the bar's width, so the row overflowed and the trailing
-        // controls (cinematic toggle, close) spilled past the rounded right
-        // edge — clipped. Tighten the gutter here; the progress min-width is
-        // relaxed below so the flex row always fits.
         @media (max-width: 480px) {
-            gap: 0.375rem;
+            gap: 0.5rem;
         }
     }
 
-    // Play/Pause button — solid accent circle. The progress ring (v4.4)
-    // is an SVG sibling layered around it via absolute positioning that
-    // fills clockwise as audio progresses (driven by --progress 0..100
-    // set in JS on this element).
+    // Play/Pause button — solid accent circle with the v4.4 progress ring.
     &__play {
         position: relative;
         display: flex;
@@ -184,7 +183,7 @@
         border-radius: 50%;
         cursor: pointer;
         flex-shrink: 0;
-        transition: all 0.2s ease;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
 
         &:hover {
             transform: scale(1.05);
@@ -196,19 +195,14 @@
         }
 
         @media (max-width: 768px) {
-            width: 32px;
-            height: 32px;
+            width: 34px;
+            height: 34px;
         }
     }
 
-    // v4.4 — progress ring around the play button. The SVG is sized
-    // explicitly and centered via top:50%/left:50% + translate(-50%,-50%)
-    // rather than `inset`, because the inset approach was reportedly
-    // rendering off-center in some browsers — probably box-sizing or
-    // sub-pixel rounding interacting with the play button's hover scale.
-    // The translate-based centering is bullet-proof: SVG center always
-    // aligns with the play button's center regardless of px/% maths.
-    // Rotated -90deg so stroke-dashoffset fills clockwise from the top.
+    // v4.4 — progress ring around the play button. The SVG is centered via
+    // top/left 50% + translate(-50%,-50%); rotated -90deg so the fill runs
+    // clockwise from the top. --progress (0..100) is set in JS on `&__play`.
     &__play-ring {
         position: absolute;
         top: 50%;
@@ -220,10 +214,8 @@
         overflow: visible;
 
         @media (max-width: 768px) {
-            // Play button shrinks to 32px on mobile; keep the ring
-            // proportional (44px outer = ~6px breathing room).
-            width: 44px;
-            height: 44px;
+            width: 46px;
+            height: 46px;
         }
     }
 
@@ -242,8 +234,6 @@
         stroke: var(--color-accent-primary);
         stroke-linecap: round;
         stroke-dasharray: 100;
-        // --progress is 0..100, set on the .audio-player__play element.
-        // dashoffset 100 = empty, 0 = full.
         stroke-dashoffset: calc(100 - var(--progress, 0));
         transition: stroke-dashoffset 0.15s linear;
     }
@@ -270,68 +260,146 @@
         display: flex;
     }
 
-    // Time displays
-    &__time {
-        font-size: 0.75rem;
-        font-family: var(--font-mono, monospace);
-        color: var(--color-text-muted);
-        min-width: 3.5rem;
-        flex-shrink: 0;
+    // ---- Meta (expand toggle): title over subtitle + chevron ------------
+    &__meta {
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.25rem 0.25rem 0.25rem 0;
+        background: transparent;
+        border: 0;
+        cursor: pointer;
+        text-align: left;
+        color: inherit;
+        font: inherit;
 
-        &--current {
-            text-align: right;
-        }
-
-        &--total {
-            text-align: left;
-        }
-
-        @media (max-width: 480px) {
-            font-size: 0.75rem;
-            min-width: 2.75rem;
+        &:hover .audio-player__title-text {
+            color: var(--color-accent-primary);
         }
     }
 
-    // Progress bar
-    &__progress {
+    &__title-stack {
         flex: 1;
-        height: 6px;
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 0.05rem;
+    }
+
+    // Book + chapter rows are now permanently stacked and visible. The JS
+    // still toggles `is-active` (legacy crossfade) but these styles ignore
+    // it, so there's no flicker.
+    &__title-row {
+        display: block;
+        min-width: 0;
+        white-space: nowrap;
+        overflow: hidden;
+
+        // Collapse the chapter line when there is no chapter (TTS pages),
+        // so the title sits vertically centered on its own.
+        &--chapter:has(.audio-player__chapter-text:empty) {
+            display: none;
+        }
+    }
+
+    &__title-text {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        line-height: 1.2;
+        color: var(--color-text);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        transition: color 0.2s ease;
+    }
+
+    &__chapter-text {
+        display: block;
+        font-size: 0.75rem;
+        line-height: 1.2;
+        color: var(--color-text-muted);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    &__chevron {
+        flex-shrink: 0;
+        display: inline-flex;
+        color: var(--color-text-muted);
+        transition:
+            transform 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            color 0.2s ease;
+    }
+
+    // ---- Expanded panel -------------------------------------------------
+    &__panel {
+        overflow: hidden;
+        max-height: 0;
+        opacity: 0;
+        padding: 0 0.875rem;
+        transition:
+            max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1),
+            opacity 0.25s ease;
+    }
+
+    // Tactile scrubber: current time · draggable progress · total time.
+    &__scrubber {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding-top: 0.625rem;
+    }
+
+    &__time {
+        flex-shrink: 0;
+        min-width: 3rem;
+        font-size: 0.75rem;
+        font-family: var(--font-mono, monospace);
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text-muted);
+
+        &--current { text-align: right; }
+        &--total { text-align: left; }
+    }
+
+    // Generous touch target; the visible track is a thin centered bar with
+    // an always-visible handle (tactile, drag-to-seek via listen-button.js).
+    &__progress {
         position: relative;
+        flex: 1;
+        min-width: 0;
+        height: 1.25rem;
+        display: flex;
+        align-items: center;
         cursor: pointer;
-        border-radius: 3px;
-        min-width: 100px;
-        // v4.1: drag-to-seek wires pointer events here. touch-action:none
-        // stops the browser from interpreting horizontal drag as a scroll
-        // gesture on mobile, so the user can scrub during playback.
+        // touch-action:none stops the browser treating a horizontal drag as
+        // a scroll gesture, so the user can scrub during playback.
         touch-action: none;
-
-        @media (max-width: 768px) {
-            height: 4px;
-        }
-
-        // The bar's fixed controls take priority on narrow phones; let the
-        // progress bar shrink further than its 100px default so the whole
-        // row fits inside the bar instead of pushing the trailing controls
-        // (cinematic toggle, close) off the rounded right edge. `flex: 1`
-        // still lets it grow to fill whatever space the controls leave.
-        @media (max-width: 480px) {
-            min-width: 40px;
-        }
     }
 
     &__progress-bg {
         position: absolute;
-        inset: 0;
+        left: 0;
+        right: 0;
+        top: 50%;
+        height: 5px;
+        transform: translateY(-50%);
         background-color: var(--color-border);
         border-radius: 3px;
     }
 
     &__progress-fill {
         position: absolute;
-        top: 0;
         left: 0;
-        bottom: 0;
+        top: 50%;
+        height: 5px;
         width: 0%;
+        transform: translateY(-50%);
         background: linear-gradient(90deg, var(--color-accent-primary), var(--color-accent-secondary, var(--color-accent-primary)));
         border-radius: 3px;
         transition: width 0.1s linear;
@@ -341,94 +409,73 @@
         position: absolute;
         top: 50%;
         left: 0%;
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
         background-color: var(--color-accent-primary);
         border: 2px solid var(--color-background);
         border-radius: 50%;
         transform: translate(-50%, -50%);
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-        opacity: 0;
-        transition: opacity 0.2s ease, transform 0.2s ease;
-
-        @media (max-width: 768px) {
-            width: 12px;
-            height: 12px;
-        }
+        transition: transform 0.15s ease;
     }
 
     &__progress:hover &__progress-handle,
-    &--playing &__progress-handle,
-    &--paused &__progress-handle {
-        opacity: 1;
+    &__progress:active &__progress-handle {
+        transform: translate(-50%, -50%) scale(1.15);
     }
 
-    &__progress:hover &__progress-handle {
-        transform: translate(-50%, -50%) scale(1.2);
-    }
-
-    // Title — clickable, opens the chapter jump overlay. Two rows
-    // (book + chapter) stack at the same position and crossfade between
-    // each other every few seconds so both names surface during playback.
-    &__title {
-        position: relative;
-        flex: 0 1 220px;
-        min-width: 0;
-        height: 1.1rem;
-        background: transparent;
-        border: none;
-        cursor: pointer;
-        padding: 0;
-        text-align: left;
-        font: inherit;
-        color: inherit;
-        overflow: hidden;
-
-        &:hover .audio-player__title-row.is-active {
-            color: var(--color-accent-primary);
-        }
-
-        @media (max-width: 640px) {
-            display: none;
-        }
-    }
-
-    &__title-row {
-        position: absolute;
-        inset: 0;
-        display: flex;
+    // Secondary actions — chapter jump + cinematic. Only meaningful when a
+    // prerecorded audio play exists; the row is hidden otherwise (TTS pages
+    // just show the scrubber). Revealed via body.woh-audio-available below.
+    &__actions {
+        display: none;
         align-items: center;
-        opacity: 0;
-        transform: translateY(0.6rem);
-        transition: opacity 0.4s ease, transform 0.4s ease, color 0.2s ease;
-        white-space: nowrap;
-        overflow: hidden;
+        justify-content: flex-end;
+        gap: 0.5rem;
+        padding: 0.5rem 0 0.125rem;
+    }
 
-        &.is-active {
-            opacity: 1;
-            transform: translateY(0);
+    &__action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: 0;
+        background: var(--color-hover);
+        border: 1px solid var(--color-border);
+        border-radius: 0.625rem;
+        color: var(--color-text);
+        cursor: pointer;
+        transition:
+            color 0.2s ease,
+            background-color 0.2s ease,
+            border-color 0.2s ease;
+
+        &:hover {
+            color: var(--color-accent-primary);
+            border-color: var(--color-accent-primary);
         }
     }
 
-    &__title-text,
-    &__chapter-text {
-        display: block;
-        font-size: 0.875rem;
-        font-weight: 500;
-        color: var(--color-text);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        max-width: 100%;
+    // ---- Expanded state --------------------------------------------------
+    &--expanded {
+        .audio-player__panel {
+            max-height: 12rem;
+            opacity: 1;
+        }
+
+        .audio-player__bar {
+            border-top: 1px solid var(--color-hairline);
+        }
+
+        .audio-player__chevron {
+            transform: rotate(180deg);
+            color: var(--color-text);
+        }
     }
 
-    &__chapter-text {
-        color: var(--color-text-muted);
-    }
-
-    // Chapter jump overlay — popover that anchors above the title button.
-    // Built from the manifest at runtime: one row per chapter, click to
-    // seek the engine to that chapter's start.
+    // ---- Chapter jump overlay — anchors above the whole player ----------
     &__chapter-menu {
         position: absolute;
         bottom: calc(100% + 0.5rem);
@@ -439,13 +486,10 @@
         max-height: min(60vh, 22rem);
         overflow-y: auto;
         padding: 0.5rem;
-        // Fully opaque foreground card. The parent .audio-player has
-        // backdrop-filter set, which creates a stacking context that in
-        // some browsers causes opaque descendants to composite weirdly
-        // ("transparent" look). Force our own stacking context via
-        // `isolation: isolate` so the menu paints independently. Use
-        // --color-background (the page background, fully opaque solid)
-        // so there's nothing for the parent filter to bleed through.
+        // Opaque foreground card. The parent .audio-player has a
+        // backdrop-filter (own stacking context) which in some browsers
+        // makes opaque descendants composite oddly; isolate + solid page
+        // background keeps the menu painting cleanly.
         background-color: var(--color-background);
         backdrop-filter: none;
         -webkit-backdrop-filter: none;
@@ -521,7 +565,7 @@
         display: none;
         align-items: center;
         gap: 0.5rem;
-        padding: 0.4rem 1rem 0.6rem;
+        padding: 0.4rem 0.875rem 0.6rem;
         font-size: 0.75rem;
         color: var(--color-text-muted);
         border-top: 1px solid var(--color-hairline);
@@ -541,7 +585,7 @@
         flex-shrink: 0;
     }
 
-    // Close button
+    // Close button (in the compact bar)
     &__close {
         display: flex;
         align-items: center;
@@ -578,6 +622,12 @@
     }
 }
 
+// Reveal the secondary-actions row only when a prerecorded audio play is
+// available (matches how the cinematic toggle reveals). TTS pages omit it.
+body.woh-audio-available .audio-player__actions {
+    display: flex;
+}
+
 // Add padding to body when player is visible so the bar doesn't cover
 // the bottom of the content.
 body.has-audio-player {
@@ -610,6 +660,21 @@ body.has-audio-player {
 
     .to-top--visible ~ .search-fab {
         bottom: 9.5rem;
+    }
+}
+
+// When the player is EXPANDED it's much taller than the collapsed bar, so
+// the lifted bottom-right FABs would land on top of the scrubber/actions
+// (they overlapped the total-time + action buttons). Fade them out while
+// the panel is open — the user is focused on the player then anyway — and
+// they fade back when it collapses. Their own `bottom`/`opacity` transitions
+// make this smooth both ways.
+body:has(.audio-player--expanded) {
+    .reader-fab,
+    .to-top,
+    .search-fab {
+        opacity: 0;
+        pointer-events: none;
     }
 }
 

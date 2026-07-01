@@ -39,7 +39,10 @@
     const titleEl = document.querySelector('.audio-player__title-text');
     // v4.3 — chapter title + jump overlay
     const chapterTextEl = document.querySelector('.audio-player__chapter-text');
-    const titleButton = document.getElementById('audioTitle');
+    // The chapter-jump trigger moved into the expanded panel; the title/
+    // subtitle meta area is now the expand toggle instead.
+    const titleButton = document.getElementById('audioChaptersBtn');
+    const expandToggle = document.getElementById('audioExpandToggle');
     const chapterMenu = document.getElementById('audioChapterMenu');
     const titleBookRow = document.querySelector('.audio-player__title-row--book');
     const titleChapterRow = document.querySelector('.audio-player__title-row--chapter');
@@ -237,6 +240,9 @@
 
     function hidePlayer() {
         player.classList.remove('audio-player--visible');
+        // Collapse the expanded panel so it reopens compact next time.
+        player.classList.remove('audio-player--expanded');
+        if (expandToggle) expandToggle.setAttribute('aria-expanded', 'false');
         player.setAttribute('aria-hidden', 'true');
         player.setAttribute('inert', '');
         document.body.classList.remove('has-audio-player');
@@ -1638,6 +1644,17 @@
                 closeChapterMenu();
                 titleButton.focus();
             }
+        });
+    }
+
+    // Expand/collapse the player. The compact bar shows play + title/
+    // subtitle; tapping the meta area grows the bar upward to reveal the
+    // tactile scrubber and secondary actions. Toggling `--expanded` drives
+    // the CSS; the chevron flips via the same class.
+    if (expandToggle) {
+        expandToggle.addEventListener('click', () => {
+            const expanded = player.classList.toggle('audio-player--expanded');
+            expandToggle.setAttribute('aria-expanded', expanded ? 'true' : 'false');
         });
     }
 
