@@ -4025,6 +4025,14 @@
         flex-direction: column;
         position: static;
         width: auto;
+        // Match `&__main`'s `min-width: 0`. At <=768px the container
+        // collapses to a single `1fr` column shared by main and sidebar;
+        // without this the sidebar's widest min-content child (e.g. a
+        // cuneiform original title or a long TOC entry on interlinear
+        // books) inflates the shared track and drags the reading column
+        // wider than the viewport, where `&__article`'s `overflow: hidden`
+        // clips it — text cut off on the right with no way to scroll.
+        min-width: 0;
         height: auto;
         max-height: none;
         overflow: visible;
