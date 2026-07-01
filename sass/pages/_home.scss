@@ -167,7 +167,12 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     scroll-snap-stop: normal;
 
     @media (max-width: 768px) {
-        padding: 5rem 1.25rem 4rem;
+        // Extra bottom room so the absolute "Continue" hint (which sits
+        // ~4.4rem up from the section bottom) never collides with the
+        // centered content — e.g. the cosmic-clock dial's lower
+        // "~13,000 years ago" label was landing on top of it. The margin
+        // also covers longer translated labels on narrow (320px) screens.
+        padding: 5rem 1.25rem 7rem;
     }
 
     &__inner {
@@ -282,6 +287,42 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         color: var(--color-text);
         margin: 0;
         max-width: 36rem;
+    }
+
+    // In-content link to a fuller page (e.g. §6 → the full /method/ page).
+    // Understated mono treatment so it reads as an invitation to go deeper
+    // rather than competing with the section heading.
+    &__link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0.75rem;
+        color: var(--color-text);
+        font-family: $_landing-mono;
+        font-size: 0.8125rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        border: 1px solid var(--color-border);
+        border-radius: 2rem;
+        transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
+
+        svg {
+            flex-shrink: 0;
+            transition: transform 0.2s ease;
+        }
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+            border-color: var(--color-accent-primary);
+            outline: none;
+
+            svg {
+                transform: translateX(3px);
+            }
+        }
     }
 
     // Bottom-of-section "Continue" hint, anchored to the section.

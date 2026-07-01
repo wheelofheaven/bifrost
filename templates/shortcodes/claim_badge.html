@@ -1,0 +1,23 @@
+{#- Inline single claim-type badge, colored and fully expanded — the same
+    pill the claim-badge macro renders, but usable inside markdown prose.
+    Usage:  {% claim_badge(type="direct") %}   (direct|framework|inferred|speculative)
+    Reuses the shared claimType*/claimBadge*Char/Rest translation keys.
+
+    Zola's bare `lang`/`page.lang` aren't reliable in shortcode context, so
+    the language is detected from the page path (same approach as the
+    library/libref shortcodes) — otherwise the badge label falls back to
+    English on translated pages. -#}
+{%- set t = type | capitalize -%}
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _lang = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _lang = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _lang = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _lang = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _lang = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _lang = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _lang = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _lang = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _lang = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _lang = "he" -%}
+{%- endif -%}
+<span class="claim-badge claim-badge--{{ type }} claim-badge--active" role="img" aria-label="{{ trans(key='claimType' ~ t, lang=_lang) }}"><span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key='claimBadge' ~ t ~ 'Char', lang=_lang) }}</span><span class="claim-badge__rest">{{ trans(key='claimBadge' ~ t ~ 'Rest', lang=_lang) }}</span></span></span>
