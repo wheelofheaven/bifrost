@@ -16,6 +16,15 @@
     <div class="author__container">
         <article class="author__article" role="article" aria-labelledby="author-title">
             <header class="author__header">
+                {% if page.extra.image %}
+                <div class="author__portrait">
+                    <picture>
+                        {% if page.extra.image_avif %}<source srcset="{{ page.extra.image_avif }}" type="image/avif">{% endif %}
+                        <img src="{{ page.extra.image }}" alt="{{ page.extra.image_alt | default(value=page.title) | escape }}" width="176" height="176" decoding="async">
+                    </picture>
+                </div>
+                {% endif %}
+
                 {% if page.extra.role %}
                 <p class="author__role">{{ page.extra.role }}</p>
                 {% endif %}

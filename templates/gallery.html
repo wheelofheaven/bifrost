@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+
+{% block content %}
+{% set gallery = load_data(path="data/gallery.json") %}
+<div class="gallery" data-gallery>
+    {{ breadcrumbs::generic(title=page.title, lang=detected_lang) }}
+
+    <header class="gallery__header">
+        <h1 class="gallery__title" id="gallery-title">{{ page.title }}</h1>
+        <p class="gallery__desc">{{ page.description }}</p>
+
+        {# Category filter chips — "All" + one per populated category. #}
+        <div class="gallery__filters" role="tablist" aria-label="Filter by category">
+            <button class="gallery__chip is-active" type="button" role="tab" aria-selected="true" data-filter="all">
+                All
+                <span class="gallery__chip-count">{{ gallery.total }}</span>
+            </button>
+            {% for cat in gallery.categories %}
+            <button class="gallery__chip" type="button" role="tab" aria-selected="false" data-filter="{{ cat.key }}">
+                {{ cat.label }}
+                <span class="gallery__chip-count">{{ cat.count }}</span>
+            </button>
+            {% endfor %}
+        </div>
+    </header>
+
+    {# Uniform square grid. Each tile carries everything the lightbox needs. #}
+    <ul class="gallery__grid" role="list">
+        {% for img in gallery.images %}
+        <li class="gallery__item" data-category="{{ img.category }}"{% if img.used_on | length == 0 %} data-unused="true"{% endif %}>
+            <button class="gallery__tile" type="button"
+                    data-full="{{ img.full }}"
+                    data-full-webp="{{ img.full_webp }}"
+                    data-full-src="{{ img.full_src }}"
+                    data-alt="{{ img.alt | escape }}"
+                    data-caption="{{ img.caption | escape }}"
+                    data-category="{{ img.category }}"
+                    data-name="{{ img.name }}"
+                    data-used='{{ img.used_on | json_encode }}'
+                    aria-label="{{ img.alt | default(value=img.name) | escape }}">
+                <picture>
+                    <source srcset="{{ img.thumb }}" type="image/avif">
+                    <source srcset="{{ img.thumb_webp }}" type="image/webp">
+                    <img src="{{ img.thumb_webp }}" alt="{{ img.alt | escape }}" loading="lazy" decoding="async">
+                </picture>
+            </button>
+        </li>
+        {% endfor %}
+    </ul>
+
+    {# Lightbox — hidden until a tile is clicked; populated by gallery.js. #}
+    <div class="gallery__lightbox" id="galleryLightbox" role="dialog" aria-modal="true" aria-labelledby="galleryLbTitle" hidden>
+        <div class="gallery__lightbox-scrim" data-lb-close></div>
+        <div class="gallery__lightbox-panel">
+            <button class="gallery__lightbox-close" type="button" data-lb-close aria-label="{{ trans(key='audioStop', lang=detected_lang) | default(value='Close') }}">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+            <figure class="gallery__lightbox-figure">
+                <picture class="gallery__lightbox-picture">
+                    <source id="galleryLbAvif" type="image/avif">
+                    <source id="galleryLbWebp" type="image/webp">
+                    <img id="galleryLbImg" src="" alt="">
+                </picture>
+                <figcaption class="gallery__lightbox-meta">
+                    <p class="gallery__lightbox-caption" id="galleryLbTitle"></p>
+                    <div class="gallery__lightbox-used" id="galleryLbUsed"></div>
+                </figcaption>
+            </figure>
+        </div>
+    </div>
+</div>
+
+<script src="{{ get_url(path='js/gallery.js', cachebust=true) | safe }}" defer></script>
+{% endblock content %}

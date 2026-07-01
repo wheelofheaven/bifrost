@@ -27,6 +27,24 @@
         border-bottom: 1px solid var(--color-hairline);
     }
 
+    &__portrait {
+        margin-bottom: v.$spacing-lg;
+
+        img {
+            display: block;
+            width: 176px;
+            height: 176px;
+            object-fit: cover;
+            border-radius: v.$border-radius-lg;
+            border: 1px solid var(--color-border);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+        }
+
+        @media (max-width: 600px) {
+            img { width: 132px; height: 132px; }
+        }
+    }
+
     &__role {
         margin: 0 0 v.$spacing-sm;
         font-family: typo.$font-family-tech;
