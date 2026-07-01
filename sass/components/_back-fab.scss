@@ -21,12 +21,21 @@
     top: 0.5rem;
     z-index: 2; // above the logo it covers
 
+    // Match `.navbar__mobile-toggle` (the burger) exactly: a plain
+    // transparent icon button, no chip. Same padding + 1.5rem glyph means
+    // the same 2.5rem box, so at the shared `top` it sits on the same
+    // vertical centre-line as the burger/logo (the old 2.75rem box was
+    // taller, so it hung ~4px low).
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0;
+    padding: 0.5rem;
+    background: none;
+    border: none;
+    border-radius: 0.375rem;
+    color: var(--color-text);
+    cursor: pointer;
+    transition: all 0.3s ease;
 
     // The class's `display` would otherwise beat the UA `[hidden]` rule, so
     // the button must explicitly collapse while back-fab.js keeps it hidden.
@@ -34,21 +43,9 @@
         display: none;
     }
 
-    // Glass — matches the navbar and the FAB family (blur, border, radius).
-    background-color: var(--color-navbar-bg);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid var(--color-border);
-    border-radius: 0.75rem;
-    color: var(--color-text);
-    cursor: pointer;
-
     // Idle (pre-reveal) state: faded. JS flips --visible.
     opacity: 0;
     pointer-events: none;
-    transition:
-        opacity v.$transition-slow ease,
-        background-color v.$transition-base ease;
 
     &--visible {
         opacity: 1;
@@ -58,6 +55,7 @@
     &:hover,
     &:focus {
         background-color: var(--color-hover);
+        color: var(--color-accent-primary);
         outline: none;
     }
 
@@ -67,6 +65,8 @@
 
         svg {
             display: block;
+            width: 1.5rem;
+            height: 1.5rem;
         }
     }
 
