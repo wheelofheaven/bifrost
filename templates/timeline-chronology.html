@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% import "macros/zodiac.html" as zodiac %}
+
+{% block content %}
+{# /timeline/chronology — "The Equinox Observatory".
+   A cinematic orbital scene for the state of the Earth across the Great
+   Year. A canvas star sky (real star positions + zodiac constellation
+   figures in ecliptic coordinates, from static/data/zodiac-sky.json,
+   built by scripts/build_zodiac_sky.py) pans with the precession behind
+   a Sun pinned at the vernal-equinox point, rising over the Earth's limb.
+   The Earth's face cross-fades through its age textures, a year counter
+   rolls, and a 13-stop scrubber + Play control drive the whole Great Year.
+
+   The visual argument: the zodiac constellation standing behind the
+   rising Sun at spring equinox IS the age.
+
+   This is deliberately distinct from /timeline/ (the cinematic serial-hero
+   reading flow) and from /timeline/<age> (the chapter prose). Here the
+   subject is the planet and its sky, not the narrative.
+
+   Data: data/ages.json (13 entries: "In the beginning…" + 12 ages) with
+   per-language names/events from data/ages.i18n.json. Scrubber buttons
+   carry all state in data-* attributes; static/js/chronology.js drives
+   the canvas and the transitions. A visually-hidden ordered list
+   (revealed by <noscript>) keeps the chronology crawlable without JS. #}
+{% set ages_data = load_data(path="data/ages.json") %}
+{% set ages_i18n = load_data(path="data/ages.i18n.json") %}
+{% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
+{% set node_count = ages_data | length %}
+
+{# Slug → IAU constellation id used by the sky dataset. "In the beginning"
+   (one age before Capricorn, going retrograde) falls in the previous
+   cycle's Aquarius — which the unwrapping in chronology.js handles. #}
+{% set const_ids = ["aqr", "cap", "sgr", "sco", "lib", "vir", "leo", "cnc", "gem", "tau", "ari", "psc", "aqr"] %}
+
+{# Determine the "today" node: the age whose span contains the current year.
+   Computed here so the marker stays correct if the boundaries are edited. #}
+{% set today_year = 2026 %}
+{% set today_index = node_count - 1 %}
+{% for age in ages_data %}
+    {% set s = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set e = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+    {% set s_signed = s %}{% if age.start is starting_with("−") %}{% set s_signed = 0 - s %}{% endif %}
+    {% set e_signed = e %}{% if age.end is starting_with("−") %}{% set e_signed = 0 - e %}{% endif %}
+    {% if today_year >= s_signed and today_year < e_signed %}
+        {% set_global today_index = loop.index0 %}
+    {% endif %}
+{% endfor %}
+
+<div class="chronology"
+     data-chronology
+     data-node-count="{{ node_count }}"
+     data-today-index="{{ today_index }}"
+     data-today-year="{{ today_year }}"
+     data-sky-url="{{ get_url(path='data/zodiac-sky.json', cachebust=true) | safe }}"
+     data-active-color="{{ ages_data | nth(n=today_index) | get(key='color') }}">
+
+    <header class="chronology__intro">
+        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology__back">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            {{ trans(key="timelineBackToHub", lang=detected_lang) }}
+        </a>
+        <span class="chronology__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
+        <h1 class="chronology__title">{{ page.title }}</h1>
+        {% if page.content %}
+        <div class="chronology__lede">{{ page.content | safe }}</div>
+        {% endif %}
+    </header>
+
+    {# =========================== The stage =========================== #}
+    <section class="chronology__stage" data-stage aria-hidden="true">
+        <canvas class="chronology__sky" data-sky></canvas>
+
+        {# Sun caption — pinned under the sun's canvas position. #}
+        <div class="chronology__sun-tag">{{ trans(key="chronologyEquinoxLabel", lang=detected_lang) }}</div>
+
+        {# Earth limb — a planet rising into the frame from below, one
+           texture layer per node, cross-faded by JS. #}
+        <div class="chronology__earth">
+            <div class="chronology__earth-atmo" aria-hidden="true"></div>
+            <div class="chronology__earth-orb">
+                {% for age in ages_data %}
+                {% set avif = age.earth_texture | replace(from=".webp", to=".avif") %}
+                <picture class="chronology__earth-layer{% if loop.index0 == today_index %} is-active{% endif %}" data-earth="{{ loop.index0 }}">
+                    <source srcset="{{ avif }}" type="image/avif">
+                    <img class="chronology__earth-img" src="{{ age.earth_texture }}" alt="" loading="lazy" decoding="async">
+                </picture>
+                {% endfor %}
+                <div class="chronology__earth-shade"></div>
+            </div>
+        </div>
+
+        {# HUD — age identity on the left, rolling year on the right. #}
+        <div class="chronology__hud">
+            <div class="chronology__hud-age">
+                <span class="chronology__hud-glyph" data-hud-glyph aria-hidden="true"></span>
+                <div class="chronology__hud-meta">
+                    <h2 class="chronology__hud-name" data-hud-name></h2>
+                    <span class="chronology__hud-span" data-hud-span></span>
+                </div>
+            </div>
+            <div class="chronology__hud-year">
+                <span class="chronology__hud-year-label">{{ trans(key="chronologyYearLabel", lang=detected_lang) }}</span>
+                <span class="chronology__hud-year-value" data-year></span>
+            </div>
+        </div>
+
+        {# Deck — play control + the 13-stop age scrubber. #}
+        <div class="chronology__deck">
+            <button type="button" class="chronology__play" data-play
+                    aria-label="{{ trans(key='chronologyPlay', lang=detected_lang) }}"
+                    data-label-play="{{ trans(key='chronologyPlay', lang=detected_lang) }}"
+                    data-label-pause="{{ trans(key='chronologyPause', lang=detected_lang) }}"
+                    data-label-replay="{{ trans(key='chronologyReplay', lang=detected_lang) }}">
+                <svg class="chronology__play-icon chronology__play-icon--play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                <svg class="chronology__play-icon chronology__play-icon--pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>
+                <svg class="chronology__play-icon chronology__play-icon--replay" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7"/><polyline points="3 4 3 9 8 9"/></svg>
+                <span class="chronology__play-label" data-play-label>{{ trans(key="chronologyPlay", lang=detected_lang) }}</span>
+            </button>
+
+            <div class="chronology__scrubber">
+                <span class="chronology__scrubber-track" aria-hidden="true">
+                    <span class="chronology__scrubber-fill" data-deck-fill></span>
+                </span>
+                <ol class="chronology__stops">
+                    {% for age in ages_data %}
+                    {% set slug = age.link | split(pat="/") | nth(n=2) %}
+                    {% set zslug = slug | replace(from="age-of-", to="") %}
+                    {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+                    {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
+                    {% set sy = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+                    {% set ey = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+                    {% set s_signed = sy %}{% if age.start is starting_with("−") %}{% set s_signed = 0 - sy %}{% endif %}
+                    {% set e_signed = ey %}{% if age.end is starting_with("−") %}{% set e_signed = 0 - ey %}{% endif %}
+                    {% set start_label = sy ~ " BC" %}{% if not (age.start is starting_with("−")) %}{% set start_label = sy ~ " AD" %}{% endif %}
+                    {% set end_label = ey ~ " BC" %}{% if not (age.end is starting_with("−")) %}{% set end_label = ey ~ " AD" %}{% endif %}
+                    <li class="chronology__stop-slot">
+                        <button type="button"
+                                class="chronology__stop{% if loop.index0 == today_index %} is-active is-today{% endif %}"
+                                data-node="{{ loop.index0 }}"
+                                data-color="{{ age.color }}"
+                                data-name="{{ age_name }}"
+                                data-event="{{ age_event }}"
+                                data-start-year="{{ s_signed }}"
+                                data-end-year="{{ e_signed }}"
+                                data-const="{{ const_ids | nth(n=loop.index0) }}"
+                                data-vignette="{{ age.vignette | default(value='') }}"
+                                data-href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
+                                {% if loop.index0 == today_index %}data-today="true"{% endif %}
+                                aria-label="{{ age_name }} · {{ start_label }} — {{ end_label }}"
+                                title="{{ age_name }}">
+                            <span class="chronology__stop-glyph" data-glyph-src aria-hidden="true">
+                                {% if slug == "in-the-beginning" %}<span class="chronology__stop-spark">✦</span>{% else %}{{ zodiac::icon(name=zslug, size=18) }}{% endif %}
+                            </span>
+                        </button>
+                        {% if loop.index0 == today_index %}
+                        <span class="chronology__stop-tag">{{ trans(key="chronologyTodayLabel", lang=detected_lang) }}</span>
+                        {% endif %}
+                    </li>
+                    {% endfor %}
+                </ol>
+            </div>
+        </div>
+    </section>
+
+    {# --- Readout: the narrative theme of the active age. Server-rendered
+           with the TODAY node so it is meaningful before/without JS. --- #}
+    {% set today_age = ages_data | nth(n=today_index) %}
+    {% set today_slug = today_age.link | split(pat="/") | nth(n=2) %}
+    {% set today_name = ages_strings[today_slug].name | default(value=ages_i18n.en[today_slug].name) %}
+    {% set today_event = ages_strings[today_slug].event | default(value=ages_i18n.en[today_slug].event) %}
+    <section class="chronology__readout" aria-live="polite">
+        <span class="chronology__readout-badge" data-readout-today hidden>
+            <span class="chronology__readout-pulse" aria-hidden="true"></span>
+            {{ trans(key="chronologyYouAreHere", lang=detected_lang) }}
+        </span>
+        {# Optional per-age vignette artwork — populated from the
+           `vignette` field in data/ages.json when present. #}
+        <figure class="chronology__readout-art" data-readout-art hidden>
+            <img data-readout-art-img alt="" loading="lazy" decoding="async">
+        </figure>
+        <p class="chronology__readout-event" data-readout-event>{{ today_event }}</p>
+        <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang) }}">
+            <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+        </a>
+        <p class="chronology__hint">{{ trans(key="chronologyHint", lang=detected_lang) }}</p>
+    </section>
+
+    {# --- Crawlable / no-JS fallback: a plain ordered list of the chronology.
+           Visually-hidden when JS is active; revealed by <noscript>. --- #}
+    <noscript>
+        <style>
+            .chronology__stage, .chronology__readout { display: none !important; }
+            .chronology__fallback { position: static !important; width: auto !important; height: auto !important; clip: auto !important; overflow: visible !important; }
+        </style>
+    </noscript>
+    <ol class="chronology__fallback">
+        {% for age in ages_data %}
+        {% set slug = age.link | split(pat="/") | nth(n=2) %}
+        {% set age_name = ages_strings[slug].name | default(value=ages_i18n.en[slug].name) %}
+        {% set age_event = ages_strings[slug].event | default(value=ages_i18n.en[slug].event) %}
+        {% set sy = age.start | replace(from="−", to="") | replace(from="-", to="") | int %}
+        {% set ey = age.end | replace(from="−", to="") | replace(from="-", to="") | int %}
+        {% set start_label = sy ~ " BC" %}{% if not (age.start is starting_with("−")) %}{% set start_label = sy ~ " AD" %}{% endif %}
+        {% set end_label = ey ~ " BC" %}{% if not (age.end is starting_with("−")) %}{% set end_label = ey ~ " AD" %}{% endif %}
+        <li class="chronology__fallback-item">
+            <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}">
+                <strong>{{ age_name }}</strong>
+                <span>{{ start_label }} — {{ end_label }}</span>
+                <span>{{ age_event }}</span>
+            </a>
+        </li>
+        {% endfor %}
+    </ol>
+</div>
+
+<script src="{{ get_url(path='js/chronology.js', cachebust=true) | safe }}" defer></script>
+{% endblock content %}
