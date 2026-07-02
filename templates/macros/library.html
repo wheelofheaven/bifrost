@@ -158,23 +158,29 @@
          {% if verse.speaker %}data-speaker="{{ verse.speaker }}"{% endif %}
          {% if speaker_id %}data-speaker-id="{{ speaker_id }}"{% endif %}
          onclick="selectParagraph('c{{ chapter_n }}p{{ verse.n }}')">
-        <div class="library-book__para-num">{{ verse.n }}</div>
-        {% if speaker_portrait %}
-        <a class="library-book__speaker"
-           href="{{ speaker_portrait.wiki | safe }}"
-           aria-label="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }} speaking"
-           title="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }}"
-           onclick="event.stopPropagation()">
-            <picture>
-                {% if speaker_portrait.thumbAvif %}<source srcset="{{ speaker_portrait.thumbAvif | safe }}" type="image/avif">{% endif %}
-                <img class="library-book__speaker-image"
-                     src="{{ speaker_portrait.thumb | default(value=speaker_portrait.image) | safe }}"
-                     alt="{{ speaker_portrait.alt }}"
-                     loading="lazy"
-                     decoding="async">
-            </picture>
-        </a>
-        {% endif %}
+        {# Gutter groups the numeral + speaker portrait. `display: contents`
+           on desktop keeps them as direct flex items of the paragraph (layout
+           unchanged); on mobile the gutter becomes a slim flex column so the
+           portrait tucks under the number instead of stealing the measure. #}
+        <div class="library-book__para-gutter">
+            <div class="library-book__para-num">{{ verse.n }}</div>
+            {% if speaker_portrait %}
+            <a class="library-book__speaker"
+               href="{{ speaker_portrait.wiki | safe }}"
+               aria-label="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }} speaking"
+               title="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }}"
+               onclick="event.stopPropagation()">
+                <picture>
+                    {% if speaker_portrait.thumbAvif %}<source srcset="{{ speaker_portrait.thumbAvif | safe }}" type="image/avif">{% endif %}
+                    <img class="library-book__speaker-image"
+                         src="{{ speaker_portrait.thumb | default(value=speaker_portrait.image) | safe }}"
+                         alt="{{ speaker_portrait.alt }}"
+                         loading="lazy"
+                         decoding="async">
+                </picture>
+            </a>
+            {% endif %}
+        </div>
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
                 {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}

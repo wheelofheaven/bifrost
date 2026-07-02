@@ -1248,6 +1248,22 @@
         }
     }
 
+    &__para-gutter {
+        // Desktop: transparent — the numeral + portrait stay direct flex items
+        // of the paragraph, so the side-by-side layout is unchanged.
+        display: contents;
+
+        // Phones: a slim centered column so the portrait sits directly beneath
+        // the number instead of beside it, freeing the measure for the prose.
+        @media (max-width: 600px) {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            flex: 0 0 auto;
+        }
+    }
+
     &__para-num {
         min-width: 2.25rem;
         font-family: typo.$font-family-tech;
@@ -1269,9 +1285,12 @@
         // marginal anchor — enough to read, not enough to claim the
         // measure.
         @media (max-width: 600px) {
-            min-width: 1.25rem;
-            padding-right: 0.25rem;
+            min-width: 0;
+            padding-right: 0;
             font-size: 0.65rem;
+            text-align: center;
+            // Compact line so the numeral hugs the portrait beneath it.
+            line-height: 1.3;
         }
     }
 
@@ -1291,7 +1310,7 @@
 
         @media (max-width: 600px) {
             width: 1.5rem;
-            margin-right: 0.125rem;
+            margin: 0;
         }
     }
 

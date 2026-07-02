@@ -13,6 +13,13 @@
         max-width: 48rem;
         margin: 0 auto;
         padding: 0 v.$spacing-lg;
+
+        // Tighter side gutter on phones, consistent with the
+        // section landing pages (news/articles).
+        @media (max-width: 768px) {
+            padding-left: v.$spacing-sm;
+            padding-right: v.$spacing-sm;
+        }
     }
 
     &__article {

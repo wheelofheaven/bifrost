@@ -6,12 +6,25 @@
 @use "../abstracts/colors" as c;
 
 .gallery {
-    max-width: 88rem;
+    // Match the standard section-page container (see .newsroom / .articles-feed).
+    // The global <main> already supplies the navbar top-clearance, so we only
+    // add the section's own vertical rhythm here — no duplicate 6rem top gap.
+    max-width: 76rem;
     margin: 0 auto;
-    padding: 6rem 1.5rem 4rem;
+    padding: v.$spacing-xl v.$spacing-lg v.$spacing-2xl;
 
     @media (max-width: 768px) {
-        padding: 5rem 1rem 3rem;
+        padding-left: v.$spacing-sm;
+        padding-right: v.$spacing-sm;
+    }
+
+    // The .breadcrumbs component carries its own 2rem side padding, sized for
+    // pages where it sits flush at the <main> edge. Inside this max-width
+    // container that double-insets it past the tile grid, so zero the side
+    // padding to line the crumb up with the tiles below it.
+    .breadcrumbs {
+        padding-left: 0;
+        padding-right: 0;
     }
 
     &__header {

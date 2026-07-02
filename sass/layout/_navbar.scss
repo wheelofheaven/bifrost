@@ -2,11 +2,18 @@
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
-// Body scroll lock when mobile nav is open
-body.mobile-nav-open {
-    overflow: hidden;
-    height: 100vh;
-    height: 100dvh;
+// Body scroll lock when mobile nav is open.
+//
+// Lock the viewport scroller on <html> only — NOT on <body>. The old
+// `body { overflow: hidden; height: 100vh }` shrank the document's scrollable
+// area, so the browser bounced window.scrollY back toward the top the moment
+// the menu opened — which reset a /library/ reader to the first chapter every
+// time the burger was tapped. Locking the root element (the actual scrolling
+// element) preserves the reading position across open/close. The touchmove
+// guard in navbar-mobile-toggle.js still blocks iOS rubber-band scrolling
+// behind the menu.
+html:has(body.mobile-nav-open) {
+    overflow-y: hidden;
 }
 
 @keyframes logo-spin {
