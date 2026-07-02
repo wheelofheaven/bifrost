@@ -44,7 +44,7 @@
 
         {% if entries %}
         <div class="newsroom__grid">
-            <main class="newsroom__main">
+            <div class="newsroom__main">
                 {{ dispatch::card_lead(page=entries | first, lang=detected_lang) }}
 
                 {% set rest = entries | slice(start=1) %}
@@ -67,7 +67,7 @@
                     {% endif %}
                 </nav>
                 {% endif %}
-            </main>
+            </div>
 
             <aside class="newsroom__rail" aria-label="{{ trans(key='newsroomSidebarLabel', lang=detected_lang) }}">
                 <section class="newsroom__rail-module">

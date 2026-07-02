@@ -16,7 +16,7 @@
     <div class="timeline-page__container">
         <!-- Main column comes first in DOM so mobile readers see title + body before
              the sidebar's metadata. Grid areas keep the visual order on desktop. -->
-        <main class="timeline-page__main">
+        <div class="timeline-page__main">
             <article class="timeline-page__article" role="article" aria-labelledby="page-title">
                 <!-- Chapter Header -->
                 <header class="timeline-page__page-header">
@@ -337,7 +337,7 @@
                     </a>
                 </div>
             </article>
-        </main>
+        </div>
 
         <!-- Sidebar: claim badge + page meta + sticky TOC. On mobile, a small JS
              helper lifts the TOC out of the sidebar and inserts it into the article

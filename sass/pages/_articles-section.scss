@@ -23,6 +23,13 @@
         max-width: 76rem;
         margin: 0 auto;
         padding: 0 v.$spacing-lg;
+
+        // Tighter side gutter on phones so the boxed lead card isn't
+        // squeezed into an unreadably narrow column.
+        @media (max-width: 768px) {
+            padding-left: v.$spacing-sm;
+            padding-right: v.$spacing-sm;
+        }
     }
 
     &__header {
@@ -442,7 +449,7 @@
         border-radius: v.$border-radius-lg;
 
         @media (max-width: 768px) {
-            padding: v.$spacing-lg;
+            padding: v.$spacing-md;
         }
 
         .article-card__title {
