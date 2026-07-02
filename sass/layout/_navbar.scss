@@ -1173,11 +1173,15 @@ html:has(body.mobile-nav-open) {
 
                 // Mobile lang trigger is an icon-only button — same
                 // dimensions as the theme toggle so the bar-controls row
-                // reads as a uniform set of pills.
+                // reads as a uniform set of pills. `margin-left: auto`
+                // pushes it (and the reading-list button after it) to the
+                // right edge of the row, leaving the theme toggle alone on
+                // the left.
                 &.navbar__lang-trigger {
                     width: 44px;
                     min-width: 44px;
                     padding: 0;
+                    margin-left: auto;
 
                     .navbar__lang-trigger__icon {
                         display: inline-flex;
@@ -1185,9 +1189,12 @@ html:has(body.mobile-nav-open) {
                         justify-content: center;
                     }
 
+                    // Earth-outline glyph fills its viewBox tightly (like
+                    // the bookmark), so 24px here reads the same visual
+                    // weight as the 22px bookmark SVG.
                     .navbar__lang-trigger__icon svg {
-                        width: 22px;
-                        height: 22px;
+                        width: 24px;
+                        height: 24px;
                     }
                 }
 
@@ -1212,12 +1219,23 @@ html:has(body.mobile-nav-open) {
             }
 
             // Theme toggle uses a swap-layered icon container sized via
-            // .navbar__theme-icon (1.5rem default). Pin it to the same
-            // 22px the lang and bookmark SVGs use here so all three
-            // bar-controls icons read as visually equal-weight pills.
+            // .navbar__theme-icon (1.5rem default). Feather's moon/sun
+            // glyphs carry more internal padding than the bookmark and
+            // earth outlines, so pin the container slightly larger (26px)
+            // to read as the same visual weight — all three bar-controls
+            // icons should look equal-sized, using the bookmark as the
+            // reference.
             #mobile-theme-toggle .navbar__theme-icon {
-                width: 22px;
-                height: 22px;
+                width: 26px;
+                height: 26px;
+
+                // The moon/sun glyphs live in absolutely-positioned
+                // `.icon` layers (inset: 0); make their SVGs fill the
+                // layer so they track the container size.
+                .icon svg {
+                    width: 100%;
+                    height: 100%;
+                }
             }
 
             .navbar__content {

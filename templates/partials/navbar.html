@@ -115,13 +115,12 @@
                 </span>
             </button>
 
-            <!-- Mobile lang trigger: language icon (A + 文 motif from
-                 Tabler, styled to match Feather strokes) that slides
-                 the burger menu to a dedicated language pane (see
+            <!-- Mobile lang trigger: earth-outline glyph (famicons) that
+                 slides the burger menu to a dedicated language pane (see
                  .navbar__pane--lang below). Replaces the previous popup
                  dropdown so we don't stack a second overlay inside the
-                 burger overlay. Globe was misleading because it reads
-                 as "international/world" rather than "language." -->
+                 burger overlay. Sits at the right edge of the bar-controls
+                 row, adjacent to the reading-list (bookmark) button. -->
             <button
                 type="button"
                 class="navbar__bar-btn navbar__lang-trigger"
@@ -130,13 +129,13 @@
                 aria-label="{{ trans(key='navbarSelectLanguage', lang=detected_lang) }}"
             >
                 <span class="navbar__lang-trigger__icon" aria-hidden="true">
-                    {% include "partials/icons/language.html" %}
+                    {% include "partials/icons/famicons-earth-outline.html" %}
                 </span>
             </button>
 
             <button
                 type="button"
-                class="navbar__bar-btn navbar__bar-btn--end reading-list-toggle"
+                class="navbar__bar-btn reading-list-toggle"
                 data-toggle-reading-list
                 aria-label="{{ trans(key='openReadingList', lang=detected_lang) }}"
             >
