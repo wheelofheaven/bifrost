@@ -29,6 +29,15 @@ html {
     // preferences continue to compound on top.
     font-size: 106.25%;
 
+    // Phones: the small-x-height penalty above is worse on a handheld held
+    // at arm's length, where 17px reads noticeably small (readers were
+    // pinch-zooming to ~120% to get comfortable). Nudge the rem base up so
+    // body text lands ~19px. Everything in rem scales with it, so spacing
+    // and touch targets grow in proportion.
+    @media (max-width: 768px) {
+        font-size: 118.75%;
+    }
+
     // Offset for the fixed navbar (~5rem tall, sitting at top: 0.5rem) so
     // fragment navigation (#anchor) doesn't land content under the navbar.
     // Landing/timeline overview override this in _home.scss.

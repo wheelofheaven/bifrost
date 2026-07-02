@@ -90,6 +90,42 @@
         height: 1.25rem;
     }
 
+    // Two stacked icons: the search glyph and a transient "back to top"
+    // caret. library-reader.js sets `data-flash="to-top"` on this button for
+    // ~2.5s after auto-resuming the reader to their saved paragraph, then it
+    // fades back to search. Borrowing this button (rarely tapped the instant
+    // you open a book) keeps the primary reader FAB free for Listen etc.
+    &__icon {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+
+    &__icon[data-icon="to-top"] {
+        opacity: 0;
+        transform: translateY(0.3rem);
+        color: var(--color-accent-primary);
+    }
+
+    &[data-flash="to-top"] {
+        border-color: var(--color-accent-primary);
+        // A couple of gentle pulses to draw the eye to the corner when the
+        // button momentarily becomes a "back to top" control, then it holds
+        // steady as the caret for the rest of the flash window.
+        animation: search-fab-flash-pulse 0.8s ease 2;
+
+        .search-fab__icon[data-icon="search"] {
+            opacity: 0;
+        }
+        .search-fab__icon[data-icon="to-top"] {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
     &:hover,
     &:focus {
         background-color: var(--color-hover);
@@ -100,6 +136,16 @@
 
     @media (min-width: 1000px) {
         display: none;
+    }
+}
+
+@keyframes search-fab-flash-pulse {
+    0%,
+    100% {
+        transform: scale(1);
+    }
+    40% {
+        transform: scale(1.14);
     }
 }
 

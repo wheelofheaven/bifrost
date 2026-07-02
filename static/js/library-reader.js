@@ -79,6 +79,9 @@ const LibraryReader = (function() {
         // Set up event listeners
         setupEventListeners();
 
+        // Guard for the search-FAB "back to top" flash (see restoreProgress)
+        installSearchFabFlashGuard();
+
         // Handle deep linking
         handleDeepLink();
 
@@ -472,52 +475,76 @@ const LibraryReader = (function() {
         if (!window.LibraryStorage) return;
 
         const progress = window.LibraryStorage.getProgress(state.bookSlug);
-        if (progress && progress.chapter && !window.location.hash) {
-            // Show continue reading prompt
-            showContinueReadingPrompt(progress);
+        if (progress && progress.chapter && progress.paragraph && !window.location.hash) {
+            resumeReadingPosition(progress);
         }
     }
 
     /**
-     * Show continue reading prompt
+     * Resume reading without a blocking prompt: jump straight to the saved
+     * paragraph and select/highlight it. The "start over" affordance is the
+     * existing to-top control — on desktop the to-top button appears once
+     * we're scrolled down; on mobile the search FAB briefly morphs into a
+     * to-top caret (flashSearchFabToTop) before fading back to search.
      */
-    function showContinueReadingPrompt(progress) {
-        const prompt = document.createElement('div');
-        prompt.className = 'library-reader__continue-prompt';
-        prompt.innerHTML = `
-            <div class="library-reader__continue-content">
-                <span class="library-reader__continue-text">
-                    Continue from Chapter ${progress.chapter}, Paragraph ${progress.paragraph}?
-                </span>
-                <div class="library-reader__continue-actions">
-                    <button class="library-reader__continue-btn library-reader__continue-btn--primary" data-action="continue">
-                        Continue
-                    </button>
-                    <button class="library-reader__continue-btn" data-action="dismiss">
-                        Start Over
-                    </button>
-                </div>
-            </div>
-        `;
+    function resumeReadingPosition(progress) {
+        const paraId = `c${progress.chapter}p${progress.paragraph}`;
+        const para = document.getElementById(paraId);
+        if (!para) return;
 
-        prompt.querySelector('[data-action="continue"]').addEventListener('click', () => {
-            const paraId = `c${progress.chapter}p${progress.paragraph}`;
-            const para = document.getElementById(paraId);
-            if (para) {
-                para.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                setTimeout(() => selectParagraph(paraId), 500);
-            }
-            prompt.remove();
-        });
+        // Instant jump — not a long smooth-scroll from the top on load.
+        para.scrollIntoView({ block: 'center' });
+        selectParagraph(paraId);
+        flashSearchFabToTop();
+    }
 
-        prompt.querySelector('[data-action="dismiss"]').addEventListener('click', () => {
-            prompt.remove();
-        });
+    // ── Transient "back to top" flash on the mobile search FAB ──────────
+    let searchFabFlashing = false;
+    let searchFabFlashTimer = null;
+    let searchFabPrevLabel = null;
 
-        document.body.appendChild(prompt);
+    function flashSearchFabToTop() {
+        const fab = document.querySelector('.search-fab');
+        if (!fab) return;
+        searchFabFlashing = true;
+        fab.setAttribute('data-flash', 'to-top');
+        // Borrow the localized "back to top" label from the to-top button.
+        const topBtn = document.getElementById('toTopBtn');
+        searchFabPrevLabel = fab.getAttribute('aria-label');
+        fab.setAttribute(
+            'aria-label',
+            (topBtn && topBtn.getAttribute('aria-label')) || 'Back to top'
+        );
+        clearTimeout(searchFabFlashTimer);
+        // Long enough to notice after the page settles into the resumed spot.
+        searchFabFlashTimer = setTimeout(endSearchFabFlash, 4500);
+    }
 
-        // Auto-dismiss after 10 seconds
-        setTimeout(() => prompt.remove(), 10000);
+    function endSearchFabFlash() {
+        searchFabFlashing = false;
+        clearTimeout(searchFabFlashTimer);
+        const fab = document.querySelector('.search-fab');
+        if (!fab) return;
+        fab.removeAttribute('data-flash');
+        if (searchFabPrevLabel !== null) {
+            fab.setAttribute('aria-label', searchFabPrevLabel);
+            searchFabPrevLabel = null;
+        }
+    }
+
+    // Capture-phase guard: while the search FAB shows the "back to top"
+    // caret, a tap scrolls up instead of opening search. Capture beats the
+    // button's own (bubble) search-focus handler wired in navbar.html.
+    function installSearchFabFlashGuard() {
+        document.addEventListener('click', (e) => {
+            if (!searchFabFlashing) return;
+            const fab = e.target.closest && e.target.closest('.search-fab');
+            if (!fab) return;
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            endSearchFabFlash();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }, true);
     }
 
     /**

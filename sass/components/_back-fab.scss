@@ -12,12 +12,16 @@
 @use "../abstracts/variables" as v;
 
 .back-fab {
-    // Overlay the navbar logo. `left`/`top` match the mobile navbar's
-    // padding (0.5rem 1rem) so the button sits exactly over the logo.
-    // Anchored to the TOP (not `top: 50%`) so it stays aligned with the
-    // logo row when the burger menu expands the navbar downward.
+    // Overlay the navbar logo. Uses the logical `inset-inline-start` (not
+    // `left`) so it tracks the logo across writing directions: in RTL (Hebrew)
+    // the navbar mirrors — the logo moves to the right and the burger to the
+    // left — and a hard `left: 1rem` would have parked the back button on top
+    // of the burger. The `1rem`/`0.5rem` insets match the mobile navbar's
+    // padding so the button sits exactly over the logo. Anchored to the TOP
+    // (not `top: 50%`) so it stays aligned with the logo row when the burger
+    // menu expands the navbar downward.
     position: absolute;
-    left: 1rem;
+    inset-inline-start: 1rem;
     top: 0.5rem;
     z-index: 2; // above the logo it covers
 

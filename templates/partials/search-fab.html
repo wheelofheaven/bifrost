@@ -4,5 +4,13 @@
     data-search-toggle
     aria-label="{{ trans(key='navbarSearch', lang=detected_lang) }}"
 >
-    {% include "partials/icons/feather-search.html" %}
+    <span class="search-fab__icon" data-icon="search">{% include "partials/icons/feather-search.html" %}</span>
+    {# Transient "back to top" caret. library-reader.js flips
+       `data-flash="to-top"` on this button for ~2.5s after auto-resuming the
+       reader to their saved paragraph, then it fades back to the search icon.
+       The reader rarely searches the instant they open a book, so borrowing
+       this button keeps the primary reader FAB free for Listen etc. #}
+    <span class="search-fab__icon" data-icon="to-top" aria-hidden="true">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" fill-rule="evenodd" d="M16.53 14.03a.75.75 0 0 1-1.06 0L12 10.56l-3.47 3.47a.75.75 0 0 1-1.06-1.06l4-4a.75.75 0 0 1 1.06 0l4 4a.75.75 0 0 1 0 1.06" clip-rule="evenodd"/></svg>
+    </span>
 </button>

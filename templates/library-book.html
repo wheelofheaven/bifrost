@@ -1356,6 +1356,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
 <!-- Library Reader Scripts (bundled): keyboard shortcuts, settings persistence,
      bookmark / study tools etc. -->
-<script src="{{ get_url(path='js/dist/library.bundle.js') }}"></script>
+<script src="{{ get_url(path='js/dist/library.bundle.js', cachebust=true) | safe }}"></script>
 
 {% endblock content %}
