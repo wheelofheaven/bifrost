@@ -1,13 +1,49 @@
 // =============================================================
 // /timeline/chronology — "The Equinox Observatory"
-// A cinematic orbital scene: a canvas star sky panning with the
-// precession behind a Sun pinned at the vernal-equinox point, an
-// Earth limb rising into the frame with cross-fading age textures,
-// a rolling year HUD, and a 13-stop age scrubber with Play.
+// A full-viewport orbital scene (same route treatment as /map):
+// a canvas star sky panning with the precession behind a Sun
+// anchored to the limb of a half-visible Earth orb, a rolling
+// year HUD, a 13-stop age scrubber with Play, and a chapter card
+// with the age's vignette rendering below the stage.
 // The canvas is driven by static/js/chronology.js.
 // =============================================================
 
 @use "../abstracts/variables" as vars;
+
+// The page owns the whole viewport, like /map.
+main:has(.chronology) {
+    max-width: none;
+    min-width: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+body:has(.chronology) {
+    background: #04050c;
+}
+
+body:has(.chronology) .pwa-install-banner,
+body:has(.chronology) .notification-stack,
+body:has(.chronology) .search-fab,
+body:has(.chronology) .to-top {
+    display: none !important;
+}
+
+// The notification-stack rules (components/_notification-stack.scss) dock
+// the navbar below the stack and pad `main` by the stack height via
+// `body:has(.notification-stack:not([data-visible-count="0"]))`. The stack
+// is suppressed on this route, but `display: none` doesn't stop that
+// `:has()` from matching — so pin both back explicitly. Same specificity,
+// later in the cascade (pages compile after components).
+body:has(.notification-stack) main:has(.chronology) {
+    padding: 0;
+}
+
+// (0,3,1) — ties the stack rule's specificity; later in the cascade wins.
+body:has(.chronology .chronology__stage) .navbar {
+    top: 0.5rem;
+}
 
 // Age colour → accent hue. Mirrors data/ages.json `color` values against
 // the Bifrost 500 shades so the scene tint matches the rest of the timeline.
@@ -26,75 +62,44 @@ $chronology-age-colors: (
 
 .chronology {
     --age-accent: #5e91e5;
-    // Vertical anatomy of the stage, shared with chronology.js: the sun
-    // sits at 70% height (84.5% pre-dawn), the Earth limb crests at ~78%.
-    --horizon: 78%;
+    // Diameter of the half-visible Earth orb. The sun is anchored to the
+    // orb's limb by JS (it measures the orb rect and sets --sun-y in px).
+    --orb: clamp(24rem, 74vmin, 56rem);
+    --sun-y: 55%;
 
-    padding-bottom: 4rem;
+    color: #eef2ff;
 
     // Scene tint driven by the active node's colour (set on the root by JS).
     @each $name, $hex in $chronology-age-colors {
         &[data-active-color="#{$name}"] { --age-accent: #{$hex}; }
     }
 
-    // ---- Intro -------------------------------------------------
-    &__intro {
-        max-width: 56rem;
-        margin: 0 auto;
-        padding: 1.5rem 1.5rem 0;
-        text-align: center;
+    @media (max-width: 767px) {
+        --orb: min(96vw, 52svh);
     }
 
-    &__back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.4rem;
-        margin-bottom: 1.25rem;
-        color: var(--color-text-muted);
-        font-size: 0.85rem;
-        text-decoration: none;
-        transition: color vars.$transition-base ease;
-
-        &:hover { color: var(--age-accent); }
+    // ---- SEO / screen-reader hero (visible title lives in the HUD) ----
+    &__hero {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
     }
 
-    &__eyebrow {
-        display: block;
-        text-transform: uppercase;
-        letter-spacing: 0.16em;
-        font-size: 0.75rem;
-        font-weight: 600;
-        color: var(--age-accent);
-        transition: color vars.$transition-slow ease;
-    }
-
-    &__title {
-        margin: 0.5rem 0 0;
-        font-size: clamp(2rem, 5vw, 3rem);
-        line-height: 1.1;
-        color: var(--color-text);
-    }
-
-    &__lede {
-        margin: 1rem auto 0;
-        max-width: 44rem;
-        color: var(--color-text-muted);
-        font-size: 1.0625rem;
-        line-height: 1.6;
-
-        p { margin: 0; }
-    }
-
-    // ---- Stage (the full-bleed orbital scene) --------------------
+    // ---- Stage (the full-viewport orbital scene) --------------------
     &__stage {
         position: relative;
-        margin: 2rem 0 0;
         width: 100%;
-        height: clamp(520px, 74vh, 820px);
+        height: 100svh;
+        min-height: 34rem;
         overflow: hidden;
         background:
-            radial-gradient(120% 90% at 50% 108%, color-mix(in srgb, var(--age-accent) 16%, transparent) 0%, transparent 55%),
-            radial-gradient(circle at 50% 30%, #10142c 0%, #090c1c 55%, #04050c 100%);
+            radial-gradient(130% 70% at 50% 112%, color-mix(in srgb, var(--age-accent) 18%, transparent) 0%, transparent 58%),
+            radial-gradient(circle at 50% 20%, #10142c 0%, #090c1c 55%, #04050c 100%);
         touch-action: pan-y;
         cursor: grab;
         outline: none;
@@ -104,10 +109,6 @@ $chronology-age-colors: (
 
         &:focus-visible {
             box-shadow: inset 0 0 0 2px var(--age-accent);
-        }
-
-        @media (max-width: 767px) {
-            height: clamp(560px, 82vh, 760px);
         }
     }
 
@@ -120,46 +121,40 @@ $chronology-age-colors: (
     &__sun-tag {
         position: absolute;
         left: 50%;
-        top: calc(var(--horizon) + 1.25rem);
+        top: calc(var(--sun-y) + 2rem);
         transform: translateX(-50%);
         white-space: nowrap;
         font-size: 0.65rem;
         font-weight: 600;
         letter-spacing: 0.18em;
         text-transform: uppercase;
-        color: rgba(255, 255, 255, 0.55);
+        color: rgba(255, 255, 255, 0.6);
         text-shadow: 0 1px 8px rgba(0, 0, 0, 0.8);
         pointer-events: none;
         z-index: 3;
     }
 
-    // ---- Earth limb ---------------------------------------------
-    // A planet far larger than the frame, cresting from below. Only the
-    // top arc is visible; the atmosphere ring is a glow behind it.
+    // ---- Earth: a half-visible orb rising from the bottom edge -------
     &__earth {
         position: absolute;
         left: 50%;
-        top: var(--horizon);
-        width: max(170%, 900px);
-        aspect-ratio: 1;
+        bottom: calc(var(--orb) / -2);
+        width: var(--orb);
+        height: var(--orb);
         transform: translateX(-50%);
         pointer-events: none;
         z-index: 2;
-
-        @media (max-width: 767px) {
-            width: max(260%, 640px);
-        }
     }
 
     &__earth-atmo {
         position: absolute;
-        inset: -0.8%;
+        inset: -0.6%;
         border-radius: 50%;
         background: transparent;
         box-shadow:
-            0 0 2.5rem 0.3rem color-mix(in srgb, var(--age-accent) 55%, #9db8ff),
-            0 0 7rem 1rem color-mix(in srgb, var(--age-accent) 35%, transparent);
-        opacity: 0.5;
+            0 0 1.8rem 0.2rem color-mix(in srgb, var(--age-accent) 60%, #9db8ff),
+            0 0 5.5rem 0.9rem color-mix(in srgb, var(--age-accent) 38%, transparent);
+        opacity: 0.55;
         transition: box-shadow vars.$transition-slower ease;
     }
 
@@ -169,7 +164,7 @@ $chronology-age-colors: (
         border-radius: 50%;
         overflow: hidden;
         background: #04050c;
-        box-shadow: inset 0 3rem 6rem rgba(160, 190, 255, 0.16);
+        box-shadow: inset 0 2.5rem 5rem rgba(170, 200, 255, 0.14);
     }
 
     &__earth-layer {
@@ -200,28 +195,29 @@ $chronology-age-colors: (
         inset: 0;
         border-radius: 50%;
         pointer-events: none;
-        // Terminator: day at the crest where the sun sits, falling to
-        // night at the flanks and below. Only the top ~8% of the orb is
-        // ever visible, so the falloff has to happen inside that sliver.
-        background:
-            linear-gradient(to bottom, transparent 0%, rgba(2, 3, 8, 0.35) 6%, rgba(2, 3, 8, 0.88) 14%),
-            radial-gradient(58% 10% at 50% 0%, transparent 45%, rgba(2, 3, 8, 0.5) 100%);
+        // Day at the crest under the sun, falling off toward the flanks;
+        // the orb's lower half is below the viewport edge.
+        background: radial-gradient(90% 62% at 50% -4%, transparent 42%, rgba(2, 3, 8, 0.62) 100%);
     }
 
     // ---- HUD ------------------------------------------------------
     &__hud {
         position: absolute;
         inset: 0 0 auto;
-        display: flex;
-        align-items: flex-start;
-        justify-content: space-between;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: start;
         gap: 1rem;
-        padding: 1.25rem 1.5rem;
+        padding: 4.75rem 1.5rem 0;
         pointer-events: none;
         z-index: 4;
 
         @media (max-width: 767px) {
-            padding: 1rem;
+            // The age name needs more room than the year counter.
+            grid-template-columns: 1.6fr 1fr;
+            grid-template-areas: "title title" "age year";
+            padding: 4.25rem 1rem 0;
+            row-gap: 0.9rem;
         }
     }
 
@@ -230,6 +226,49 @@ $chronology-age-colors: (
         align-items: center;
         gap: 0.75rem;
         min-width: 0;
+
+        @media (max-width: 767px) { grid-area: age; }
+    }
+
+    &__hud-title {
+        text-align: center;
+        pointer-events: auto;
+
+        @media (max-width: 767px) { grid-area: title; }
+    }
+
+    &__back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        margin-bottom: 0.4rem;
+        color: rgba(255, 255, 255, 0.55);
+        font-size: 0.75rem;
+        text-decoration: none;
+        transition: color vars.$transition-base ease;
+
+        &:hover { color: var(--age-accent); }
+    }
+
+    &__eyebrow {
+        display: block;
+        text-transform: uppercase;
+        letter-spacing: 0.18em;
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: var(--age-accent);
+        transition: color vars.$transition-slow ease;
+    }
+
+    &__title {
+        display: block;
+        margin-top: 0.15rem;
+        font-family: var(--font-family-lead);
+        font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+        font-weight: 700;
+        line-height: 1.1;
+        color: #fff;
+        text-shadow: 0 1px 14px rgba(0, 0, 0, 0.7);
     }
 
     &__hud-glyph {
@@ -259,7 +298,7 @@ $chronology-age-colors: (
 
     &__hud-name {
         margin: 0;
-        font-size: clamp(1.05rem, 2.4vw, 1.5rem);
+        font-size: clamp(1rem, 2.2vw, 1.4rem);
         line-height: 1.15;
         color: #fff;
         text-shadow: 0 1px 12px rgba(0, 0, 0, 0.7);
@@ -271,7 +310,7 @@ $chronology-age-colors: (
     &__hud-span {
         display: block;
         margin-top: 0.15rem;
-        font-size: 0.75rem;
+        font-size: 0.72rem;
         font-variant-numeric: tabular-nums;
         letter-spacing: 0.06em;
         color: color-mix(in srgb, var(--age-accent) 80%, #fff);
@@ -283,6 +322,12 @@ $chronology-age-colors: (
     &__hud-year {
         text-align: right;
         flex: none;
+        min-width: 0;
+
+        @media (max-width: 767px) {
+            grid-area: year;
+            justify-self: end;
+        }
     }
 
     &__hud-year-label {
@@ -297,31 +342,40 @@ $chronology-age-colors: (
     &__hud-year-value {
         display: block;
         margin-top: 0.1rem;
-        font-size: clamp(1.4rem, 3.4vw, 2.2rem);
+        font-size: clamp(1.5rem, 3.2vw, 2.4rem);
         font-weight: 650;
         font-variant-numeric: tabular-nums;
         line-height: 1;
+        white-space: nowrap;
         color: #fff;
         text-shadow: 0 1px 16px rgba(0, 0, 0, 0.7), 0 0 28px color-mix(in srgb, var(--age-accent) 45%, transparent);
         direction: ltr;
         unicode-bidi: embed;
+
+        @media (max-width: 767px) {
+            font-size: 1.5rem;
+            // Chrome's mobile text autosizing must not inflate the counter
+            // out of its grid cell.
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
     }
 
-    // ---- Deck: play + scrubber -----------------------------------
+    // ---- Deck: play + scrubber + scroll cue ------------------------
     &__deck {
         position: absolute;
         inset: auto 0 0;
         display: flex;
         align-items: center;
         gap: 0.9rem;
-        padding: 0.9rem 1.25rem 1.1rem;
-        background: linear-gradient(to top, rgba(3, 4, 10, 0.85) 20%, rgba(3, 4, 10, 0.35) 70%, transparent);
+        padding: 0.9rem 1.25rem calc(1rem + env(safe-area-inset-bottom, 0px));
+        background: linear-gradient(to top, rgba(3, 4, 10, 0.88) 25%, rgba(3, 4, 10, 0.4) 72%, transparent);
         z-index: 5;
 
         @media (max-width: 767px) {
-            flex-direction: column;
+            flex-wrap: wrap;
             gap: 0.6rem;
-            padding: 0.75rem 0.75rem 0.9rem;
+            padding: 0.75rem 0.75rem calc(0.8rem + env(safe-area-inset-bottom, 0px));
         }
     }
 
@@ -346,6 +400,10 @@ $chronology-age-colors: (
             background: color-mix(in srgb, var(--age-accent) 26%, rgba(8, 10, 22, 0.7));
             transform: translateY(-1px);
         }
+
+        @media (max-width: 767px) {
+            order: 2;
+        }
     }
 
     &__play-icon { display: none; color: var(--age-accent); flex: none; }
@@ -357,6 +415,31 @@ $chronology-age-colors: (
     &[data-play-state="pause"] &__play-icon--play,
     &[data-play-state="replay"] &__play-icon--play { display: none; }
 
+    &__more {
+        display: grid;
+        place-items: center;
+        width: 2.4rem;
+        height: 2.4rem;
+        flex: none;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        color: rgba(255, 255, 255, 0.7);
+        background: rgba(8, 10, 22, 0.7);
+        backdrop-filter: blur(8px);
+        transition: color vars.$transition-base ease, border-color vars.$transition-base ease, transform vars.$transition-base ease;
+
+        &:hover {
+            color: #fff;
+            border-color: var(--age-accent);
+            transform: translateY(2px);
+        }
+
+        @media (max-width: 767px) {
+            order: 3;
+            margin-left: auto;
+        }
+    }
+
     &__scrubber {
         position: relative;
         flex: 1;
@@ -364,7 +447,8 @@ $chronology-age-colors: (
         padding: 0.55rem 0;
 
         @media (max-width: 767px) {
-            width: 100%;
+            order: 1;
+            flex-basis: 100%;
         }
     }
 
@@ -485,22 +569,54 @@ $chronology-age-colors: (
         @media (max-width: 767px) { display: none; }
     }
 
-    // ---- Readout (narrative theme of the active age) ---------------
+    // ---- Chapter card: vignette + narrative below the stage ---------
+    &__chapter {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 3rem 1.5rem 4rem;
+
+        @media (max-width: 767px) {
+            padding: 2rem 1rem 3rem;
+        }
+    }
+
+    &__chapter-art {
+        margin: 0 0 1.75rem;
+
+        img {
+            display: block;
+            width: 100%;
+            aspect-ratio: 21 / 9;
+            object-fit: cover;
+            // Accent-tinted skeleton while the vignette streams in.
+            background:
+                radial-gradient(80% 120% at 50% 100%, color-mix(in srgb, var(--age-accent) 14%, transparent), transparent 70%),
+                #0a0d1e;
+            border-radius: vars.$border-radius-xl;
+            border: 1px solid color-mix(in srgb, var(--age-accent) 32%, rgba(255, 255, 255, 0.1));
+            box-shadow:
+                0 1.5rem 4rem rgba(0, 0, 0, 0.5),
+                0 0 4rem color-mix(in srgb, var(--age-accent) 18%, transparent);
+            opacity: 1;
+            transition: opacity 0.5s ease, border-color vars.$transition-slower ease;
+
+            &.is-swapping { opacity: 0; }
+
+            @media (max-width: 767px) {
+                aspect-ratio: 16 / 10;
+                border-radius: vars.$border-radius-lg;
+            }
+        }
+    }
+
     &__readout {
-        position: relative;
         max-width: 40rem;
-        margin: 1.75rem auto 0;
-        padding: 0 1.5rem;
+        margin: 0 auto;
         text-align: center;
-        min-height: 9rem;
     }
 
     &__readout-badge {
         display: inline-flex;
-
-        // The author display would otherwise defeat the `hidden` attribute
-        // that JS toggles on non-today ages.
-        &[hidden] { display: none; }
         align-items: center;
         gap: 0.4rem;
         margin-bottom: 0.75rem;
@@ -512,6 +628,10 @@ $chronology-age-colors: (
         text-transform: uppercase;
         color: var(--age-accent);
         background: color-mix(in srgb, var(--age-accent) 14%, transparent);
+
+        // The author display would otherwise defeat the `hidden` attribute
+        // that JS toggles on non-today ages.
+        &[hidden] { display: none; }
     }
 
     &__readout-pulse {
@@ -523,24 +643,10 @@ $chronology-age-colors: (
         animation: chronoTodayPulse 2.2s ease-out infinite;
     }
 
-    &__readout-art {
-        margin: 0 0 1.1rem;
-
-        img {
-            display: block;
-            width: 100%;
-            aspect-ratio: 21 / 9;
-            object-fit: cover;
-            border-radius: vars.$border-radius-lg;
-            border: 1px solid color-mix(in srgb, var(--age-accent) 30%, var(--color-hairline));
-            box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.35);
-        }
-    }
-
     &__readout-event {
         margin: 0 auto;
         max-width: 36rem;
-        color: var(--color-text-muted);
+        color: rgba(238, 242, 255, 0.75);
         font-size: 1rem;
         line-height: 1.6;
     }
@@ -567,9 +673,8 @@ $chronology-age-colors: (
 
     &__hint {
         margin: 1.1rem 0 0;
-        color: var(--color-text-muted);
+        color: rgba(238, 242, 255, 0.45);
         font-size: 0.8rem;
-        opacity: 0.75;
     }
 
     // ---- No-JS / crawlable fallback ----------------------------
@@ -586,13 +691,13 @@ $chronology-age-colors: (
 
     &__fallback-item a {
         display: block;
-        padding: 0.75rem 0;
-        border-bottom: 1px solid var(--color-hairline);
-        color: var(--color-text);
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+        color: #eef2ff;
         text-decoration: none;
 
         strong { display: block; }
-        span { display: block; color: var(--color-text-muted); font-size: 0.9rem; }
+        span { display: block; color: rgba(238, 242, 255, 0.6); font-size: 0.9rem; }
     }
 }
 
@@ -610,7 +715,8 @@ $chronology-age-colors: (
     }
 
     .chronology__earth-layer,
-    .chronology__scrubber-fill {
+    .chronology__scrubber-fill,
+    .chronology__chapter-art img {
         transition-duration: 0.01ms !important;
     }
 }

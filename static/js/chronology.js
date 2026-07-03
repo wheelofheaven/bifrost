@@ -31,6 +31,7 @@
     var elEvent = root.querySelector('[data-readout-event]');
     var elArt = root.querySelector('[data-readout-art]');
     var elArtImg = root.querySelector('[data-readout-art-img]');
+    var elArtAvif = root.querySelector('[data-readout-art-avif]');
     var elCta = root.querySelector('[data-readout-cta]');
     var elToday = root.querySelector('[data-readout-today]');
     var elFill = root.querySelector('[data-deck-fill]');
@@ -137,15 +138,29 @@
     var targetLon = 0;
     var dispYear = AGES[todayIndex].startYear;
     var targetYear = AGES[todayIndex].startYear;
-    var sunFrac = 0.70;           // sun y as fraction of stage height
-    var targetSunFrac = 0.70;
+    var sunY = 0;                 // sun y in px, anchored to the orb limb
+    var targetSunY = 0;
     var playStart = 0;
     var PLAY_MS = reduceMotion ? 13000 : 34000;
     var running = false;
     var visible = true;
     var lastT = 0;
 
-    var SUN_RISEN = 0.70, SUN_DAWN = 0.845;
+    // The sun rides just above the Earth's limb; for "In the beginning"
+    // (pre-arrival) it waits below the horizon and rises with Capricorn.
+    var earthEl = root.querySelector('[data-earth-orb]');
+    var horizonY = 0;
+    function measureHorizon() {
+        if (!earthEl) { horizonY = H * 0.72; return; }
+        var er = earthEl.getBoundingClientRect();
+        var sr = stage.getBoundingClientRect();
+        horizonY = er.top - sr.top;
+    }
+    function sunYFor(index) {
+        return index === 0
+            ? horizonY + Math.max(24, H * 0.035)
+            : horizonY - Math.max(42, H * 0.075);
+    }
 
     function eraLabel(y) {
         var r = Math.round(y);
@@ -166,6 +181,9 @@
         canvas.height = H * dpr;
         canvas.style.width = W + 'px';
         canvas.style.height = H + 'px';
+        measureHorizon();
+        targetSunY = sunYFor(active);
+        if (!sunY) sunY = targetSunY;
         requestDraw();
     }
 
@@ -202,7 +220,6 @@
         var fov = Math.min(88, Math.max(52, W / 15));  // horizontal degrees
         var ppd = W / fov;                              // px per degree
         var cx = W / 2;
-        var sunY = H * sunFrac;
         var t = now / 1000;
 
         function sx(lon) { return cx - wrap180(lon - skyLon) * ppd; }
@@ -305,23 +322,64 @@
             ctx.restore();
         }
 
-        // The Sun at the vernal-equinox point.
-        var sun = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, Math.min(W, H) * 0.30);
-        sun.addColorStop(0, 'rgba(255,252,240,0.95)');
-        sun.addColorStop(0.06, 'rgba(255,246,214,0.85)');
-        sun.addColorStop(0.18, 'rgba(255,236,190,0.28)');
-        sun.addColorStop(0.5, 'rgba(255,230,180,0.07)');
-        sun.addColorStop(1, 'rgba(255,230,180,0)');
-        ctx.fillStyle = sun;
+        // ---- The Sun at the vernal-equinox point ----
+        var breath = reduceMotion ? 1 : 0.94 + 0.06 * Math.sin(t * 0.9);
+        var coreR = Math.max(8, Math.min(W, H) * 0.012);
+
+        // Accent-tinted corona, breathing slowly.
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        var corona = ctx.createRadialGradient(cx, sunY, 0, cx, sunY, Math.min(W, H) * 0.34);
+        corona.addColorStop(0, 'rgba(255,250,235,0.55)');
+        corona.addColorStop(0.12, 'rgba(255,242,205,' + (0.30 * breath).toFixed(3) + ')');
+        corona.addColorStop(0.4, 'rgba(255,232,185,' + (0.10 * breath).toFixed(3) + ')');
+        corona.addColorStop(1, 'rgba(255,230,180,0)');
+        ctx.fillStyle = corona;
         ctx.fillRect(0, 0, W, H);
 
+        // Horizontal lens streak hugging the ecliptic.
+        ctx.translate(cx, sunY);
+        ctx.scale(1, 0.045);
+        var streak = ctx.createRadialGradient(0, 0, 0, 0, 0, W * 0.30);
+        streak.addColorStop(0, 'rgba(255,248,225,0.55)');
+        streak.addColorStop(0.35, 'rgba(255,240,200,0.16)');
+        streak.addColorStop(1, 'rgba(255,235,190,0)');
+        ctx.fillStyle = streak;
+        ctx.beginPath();
+        ctx.arc(0, 0, W * 0.30, 0, 6.2832);
+        ctx.fill();
+        ctx.restore();
+
+        // Vertical diffraction spike, softer than the streak.
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+        ctx.translate(cx, sunY);
+        ctx.scale(0.018, 1);
+        var spike = ctx.createRadialGradient(0, 0, 0, 0, 0, coreR * 14);
+        spike.addColorStop(0, 'rgba(255,248,225,0.5)');
+        spike.addColorStop(0.5, 'rgba(255,240,200,0.12)');
+        spike.addColorStop(1, 'rgba(255,235,190,0)');
+        ctx.fillStyle = spike;
+        ctx.beginPath();
+        ctx.arc(0, 0, coreR * 14, 0, 6.2832);
+        ctx.fill();
+        ctx.restore();
+
+        // Chromatic rim + crisp core.
+        ctx.save();
+        ctx.beginPath();
+        ctx.fillStyle = 'rgba(255,236,190,0.85)';
+        ctx.shadowColor = accent;
+        ctx.shadowBlur = 34;
+        ctx.arc(cx, sunY, coreR * 1.5, 0, 6.2832);
+        ctx.fill();
         ctx.beginPath();
         ctx.fillStyle = '#fffdf6';
-        ctx.shadowColor = 'rgba(255,244,210,0.9)';
-        ctx.shadowBlur = 26;
-        ctx.arc(cx, sunY, Math.max(7, W * 0.008), 0, 6.2832);
+        ctx.shadowColor = 'rgba(255,244,210,0.95)';
+        ctx.shadowBlur = 22;
+        ctx.arc(cx, sunY, coreR, 0, 6.2832);
         ctx.fill();
-        ctx.shadowBlur = 0;
+        ctx.restore();
 
         // Equinox tick under the sun, pointing at the horizon.
         ctx.save();
@@ -330,8 +388,8 @@
         ctx.lineWidth = 1;
         ctx.setLineDash([3, 4]);
         ctx.beginPath();
-        ctx.moveTo(cx, sunY + 16);
-        ctx.lineTo(cx, sunY + Math.max(30, H * 0.075));
+        ctx.moveTo(cx, sunY + coreR + 10);
+        ctx.lineTo(cx, sunY + Math.max(30, H * 0.06));
         ctx.stroke();
         ctx.restore();
     }
@@ -353,21 +411,23 @@
         if (hudName) hudName.textContent = age.name;
         if (hudSpan) hudSpan.textContent = eraLabel(age.startYear) + ' — ' + eraLabel(age.endYear);
         if (elEvent) elEvent.textContent = age.event;
-        if (elArt && elArtImg) {
-            if (age.vignette) {
-                elArtImg.src = age.vignette;
-                elArtImg.alt = age.name;
-                elArt.hidden = false;
-            } else {
-                elArt.hidden = true;
-                elArtImg.removeAttribute('src');
-            }
+        if (elArt && elArtImg && age.vignette && elArtImg.getAttribute('src') !== age.vignette) {
+            elArtImg.classList.add('is-swapping');
+            var swapTo = age.vignette;
+            var reveal = function () {
+                if (elArtImg.getAttribute('src') === swapTo) elArtImg.classList.remove('is-swapping');
+            };
+            elArtImg.addEventListener('load', reveal, { once: true });
+            if (elArtAvif) elArtAvif.srcset = swapTo.replace('.webp', '.avif');
+            elArtImg.src = swapTo;
+            elArtImg.alt = age.name;
+            if (elArtImg.complete) reveal();
         }
         if (elCta) elCta.setAttribute('href', age.href);
         if (elToday) elToday.hidden = !age.today;
 
         targetLon = age.lon;
-        targetSunFrac = (i === 0) ? SUN_DAWN : SUN_RISEN;
+        targetSunY = sunYFor(i);
         if (!opts.keepYear) targetYear = age.startYear;
         if (elFill && mode !== 'play') {
             elFill.style.width = ((i / (N - 1)) * 100).toFixed(2) + '%';
@@ -466,8 +526,8 @@
             if (lonKeys) { skyLon = lonForYear(year); targetLon = skyLon; }
             var idx = indexForYear(year);
             if (idx !== active) applyAge(idx, { keepYear: true });
-            targetSunFrac = (idx === 0) ? SUN_DAWN : SUN_RISEN;
-            sunFrac += (targetSunFrac - sunFrac) * Math.min(1, dt * 3);
+            targetSunY = sunYFor(idx);
+            sunY += (targetSunY - sunY) * Math.min(1, dt * 3);
             if (elFill) {
                 elFill.style.width = (p * 100).toFixed(2) + '%';
             }
@@ -476,18 +536,19 @@
             var k = reduceMotion ? 1 : Math.min(1, dt * 3.2);
             skyLon += (targetLon - skyLon) * k;
             dispYear += (targetYear - dispYear) * (reduceMotion ? 1 : Math.min(1, dt * 4));
-            sunFrac += (targetSunFrac - sunFrac) * k;
+            sunY += (targetSunY - sunY) * k;
             if (Math.abs(targetLon - skyLon) > 0.01 || Math.abs(targetYear - dispYear) > 0.6 ||
-                Math.abs(targetSunFrac - sunFrac) > 0.0005) {
+                Math.abs(targetSunY - sunY) > 0.4) {
                 needMore = true;
             } else {
                 skyLon = targetLon;
                 dispYear = targetYear;
-                sunFrac = targetSunFrac;
+                sunY = targetSunY;
             }
         }
 
         if (hudYear) hudYear.textContent = eraLabel(dispYear);
+        root.style.setProperty('--sun-y', sunY.toFixed(1) + 'px');
         draw(now);
 
         // Twinkle keeps the sky alive while visible (unless reduced motion).
@@ -535,6 +596,6 @@
     applyAge(startIndex);
     dispYear = targetYear = (startIndex === todayIndex) ? todayYear : AGES[startIndex].startYear;
     skyLon = targetLon;
-    sunFrac = targetSunFrac;
+    sunY = targetSunY;
     ensureLoop();
 })();
