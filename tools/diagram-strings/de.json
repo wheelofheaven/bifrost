@@ -1,0 +1,58 @@
+{
+  "lang": "de", "rtl": false,
+  "zodiac": {
+    "aries":"Widder","taurus":"Stier","gemini":"Zwillinge","cancer":"Krebs",
+    "leo":"Löwe","virgo":"Jungfrau","libra":"Waage","scorpio":"Skorpion",
+    "sagittarius":"Schütze","capricorn":"Steinbock","aquarius":"Wassermann","pisces":"Fische"
+  },
+  "pr": {
+    "title":"Die Präzession der Erdachse",
+    "desc":"Die Rotationsachse der Erde ist um 23,4 Grad gegen die Ekliptiknormale geneigt und überstreicht langsam einen vollen Kegel, sodass der nördliche Himmelspol einen Kreis vor den Fixsternen beschreibt — vorbei an Thuban um 2800 v. Chr., Polaris heute und Wega um 13.700 n. Chr.",
+    "ecliptic_normal":"Ekliptiknormale",
+    "vega":"Wega","vega_date":"≈ 13.700 n.Chr.",
+    "thuban":"Thuban","thuban_date":"≈ 2800 v.Chr.",
+    "polaris":"Polaris","polaris_sub":"heutiger Polarstern",
+    "axis":["Rotationsachse","der Erde"]
+  },
+  "gy": {
+    "title":"Das Große Jahr als Rad aus zwölf Zeitaltern",
+    "desc":"Der etwa 25.772 Jahre lange Präzessionszyklus, geteilt in zwölf Zeitalter von je rund 2.160 Jahren, eines je Tierkreiszeichen. Der Frühlingspunkt wandert rückläufig durch den Tierkreis, etwa ein Grad je 72 Jahre, und steht derzeit an der Grenze Fische–Wassermann, am Beginn des Wassermann-Zeitalters.",
+    "here":"wir sind hier",
+    "center":["Das Große Jahr"],
+    "years":"≈ 25.772 Jahre",
+    "sub":["zwölf Zeitalter zu","~2.160 Jahren"],
+    "advance":"Zeitalter schreiten voran",
+    "foot":"Ein Zeitalter = ein Großer Monat = 30° Präzession ≈ 2.160 Jahre"
+  },
+  "wh": {
+    "title":"Das Rad des Himmels — zwölf Präzessionszeitalter des Projekts",
+    "desc":"Die zwölf rund 2.160 Jahre langen Präzessionszeitalter als Phasen des Projekts der Allianz, mit Grenzjahren am Rand: vom Steinbock-Zeitalter (~21.810 v. Chr., Projektbeginn) über Löwe (Menschen erschaffen), Krebs (Eden), Zwillinge (die Sintflut), Stier (Babel), Widder (die Propheten), Fische (die Evangelien) bis zum aktuellen Wassermann-Zeitalter (ab 1950 n. Chr.).",
+    "gloss":{"leo":"Menschen erschaffen","cancer":"Eden","gemini":"die Sintflut","taurus":"Babel","aries":"die Propheten","pisces":"die Evangelien"},
+    "here":"wir sind hier","here_year":"1950 n.Chr.",
+    "advance":"Zeitalter voran →",
+    "center":["Das Rad","des Himmels"],
+    "sub":["zwölf Zeitalter des","Projekts der Allianz"],
+    "foot":"Ein Zeitalter ≈ 2.160 Jahre · eine volle Umdrehung ≈ ein Großes Jahr",
+    "years":{"15":"19,7k v.Chr.","45":"17,5k v.Chr.","75":"15,3k v.Chr.","105":"13,2k v.Chr.","135":"11,0k v.Chr.","165":"8,85k v.Chr.","195":"6,69k v.Chr.","225":"4,53k v.Chr.","255":"2,37k v.Chr.","285":"210 v.Chr."},
+    "wrap":["21,8k v.Chr.","/ 4110 n.Chr."]
+  },
+  "ep": {
+    "title":"Die vierstufige epistemische Unterscheidung",
+    "desc":"Eine Pyramide aus vier Inhaltsstufen, die der Korpus getrennt hält: direkte Quellenaussagen an der festen Basis, dann vergleichende Beobachtungen, dann Wheel-of-Heaven-Deutung, mit offenen Fragen an der deutenden Spitze.",
+    "tiers":[
+      {"name":"Offene Fragen","gloss":null},
+      {"name":"Wheel-of-Heaven-Deutung","gloss":"Synthese auf Korpusebene, als solche markiert"},
+      {"name":"Vergleichende Beobachtungen","gloss":"Muster über Traditionen hinweg"},
+      {"name":"Direkte Quellenaussagen","gloss":"was eine Quelle selbst aussagt"}
+    ],
+    "axis_bottom":"gesichert","axis_top":"am deutendsten"
+  },
+  "tb": {
+    "title":"Der Präzessionszeitalter-Rahmen als Zeitleiste",
+    "desc":"Zwölf zusammenhängende, rund 2.160 Jahre lange Präzessionszeitalter vom Steinbock-Zeitalter (~21.810 v. Chr., Projektbeginn) bis zum Wassermann-Zeitalter (ab 1950 n. Chr., das aktuelle Zeitalter), jeweils mit ihrem Tierkreiszeichen.",
+    "events":{"leo":"Menschenschöpfung","cancer":"Eden","gemini":"die Sintflut","taurus":"Babel · Patriarchen","aries":"Propheten · Gesetz des Mose","pisces":"Christentum · Islam","aquarius":"aktuelles Zeitalter"},
+    "now":"jetzt · 1950 n.Chr.",
+    "start":"~21.810 v.Chr. · Projektbeginn",
+    "end":"~4110 n.Chr."
+  }
+}

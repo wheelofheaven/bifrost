@@ -1,0 +1,58 @@
+{
+  "lang": "fr", "rtl": false,
+  "zodiac": {
+    "aries":"Bélier","taurus":"Taureau","gemini":"Gémeaux","cancer":"Cancer",
+    "leo":"Lion","virgo":"Vierge","libra":"Balance","scorpio":"Scorpion",
+    "sagittarius":"Sagittaire","capricorn":"Capricorne","aquarius":"Verseau","pisces":"Poissons"
+  },
+  "pr": {
+    "title":"La précession de l'axe terrestre",
+    "desc":"L'axe de rotation de la Terre est incliné de 23,4 degrés par rapport à la normale à l'écliptique et balaie lentement un cône complet, de sorte que le pôle céleste nord trace un cercle sur fond d'étoiles fixes — passant par Thuban vers 2800 av. J.-C., Polaris aujourd'hui, et Véga vers 13 700 apr. J.-C.",
+    "ecliptic_normal":"normale à l'écliptique",
+    "vega":"Véga","vega_date":"≈ 13 700 apr. J.-C.",
+    "thuban":"Thuban","thuban_date":"≈ 2800 av. J.-C.",
+    "polaris":"Polaris","polaris_sub":"étoile polaire actuelle",
+    "axis":["axe de rotation","de la Terre"]
+  },
+  "gy": {
+    "title":"La Grande Année comme roue de douze Ères",
+    "desc":"Le cycle précessionnel d'environ 25 772 ans divisé en douze Ères d'environ 2 160 ans chacune, une par signe du zodiaque. L'équinoxe dérive à rebours à travers le zodiaque d'environ un degré tous les 72 ans et se situe actuellement à la frontière Poissons–Verseau, entrant dans l'Ère du Verseau.",
+    "here":"nous sommes ici",
+    "center":["La Grande Année"],
+    "years":"≈ 25 772 ans",
+    "sub":["douze Ères de","~2 160 ans"],
+    "advance":"les Ères avancent",
+    "foot":"Une Ère = un Grand Mois = 30° de précession ≈ 2 160 ans"
+  },
+  "wh": {
+    "title":"La Roue du Ciel — douze ères précessionnelles du projet",
+    "desc":"Les douze ères précessionnelles d'environ 2 160 ans lues comme les phases du projet de l'alliance, avec les années-frontières indiquées sur le pourtour : de l'Ère du Capricorne (~21 810 av. J.-C., ouverture du projet) à travers le Lion (humains créés), le Cancer (Éden), les Gémeaux (le Déluge), le Taureau (Babel), le Bélier (les prophètes), les Poissons (les Évangiles), jusqu'à l'actuelle Ère du Verseau (à partir de 1950 apr. J.-C.).",
+    "gloss":{"leo":"humains créés","cancer":"Éden","gemini":"le Déluge","taurus":"Babel","aries":"les prophètes","pisces":"les Évangiles"},
+    "here":"nous sommes ici","here_year":"1950 apr. J.-C.",
+    "advance":"les ères avancent →",
+    "center":["La Roue","du Ciel"],
+    "sub":["douze ères du","projet de l'alliance"],
+    "foot":"Une ère ≈ 2 160 ans · un tour complet ≈ une Grande Année",
+    "years":{"15":"19,7k av. J.-C.","45":"17,5k av. J.-C.","75":"15,3k av. J.-C.","105":"13,2k av. J.-C.","135":"11,0k av. J.-C.","165":"8,85k av. J.-C.","195":"6,69k av. J.-C.","225":"4,53k av. J.-C.","255":"2,37k av. J.-C.","285":"210 av. J.-C."},
+    "wrap":["21,8k av. J.-C.","/ 4110 apr. J.-C."]
+  },
+  "ep": {
+    "title":"La distinction épistémique à quatre niveaux",
+    "desc":"Une pyramide de quatre niveaux de contenu que le corpus tient séparés : les assertions directes des sources à la base solide, puis les observations comparées, puis l'interprétation Wheel of Heaven, avec les questions ouvertes au faîte interprétatif.",
+    "tiers":[
+      {"name":"Questions ouvertes","gloss":null},
+      {"name":"Interprétation Wheel of Heaven","gloss":"synthèse au niveau du corpus, marquée comme telle"},
+      {"name":"Observations comparées","gloss":"motifs relevés à travers les traditions"},
+      {"name":"Assertions directes des sources","gloss":"ce qu'une source affirme elle-même"}
+    ],
+    "axis_bottom":"le plus solide","axis_top":"le plus interprétatif"
+  },
+  "tb": {
+    "title":"Le cadre des ères précessionnelles comme chronologie",
+    "desc":"Douze ères précessionnelles contiguës d'environ 2 160 ans, de l'Ère du Capricorne (~21 810 av. J.-C., ouverture du projet) à l'Ère du Verseau (à partir de 1950 apr. J.-C., l'ère actuelle), chacune marquée de son glyphe zodiacal.",
+    "events":{"leo":"création humaine","cancer":"Éden","gemini":"le Déluge","taurus":"Babel · patriarches","aries":"prophètes · loi mosaïque","pisces":"christianisme · islam","aquarius":"ère actuelle"},
+    "now":"maintenant · 1950 apr. J.-C.",
+    "start":"~21 810 av. J.-C. · ouverture du projet",
+    "end":"~4110 apr. J.-C."
+  }
+}

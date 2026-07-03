@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 270" role="img" aria-labelledby="tb-t tb-d">
+  <title id="tb-t">The precessional-age framework as a timeline</title>
+  <desc id="tb-d">Twelve contiguous ~2,160-year precessional ages from the Age of Capricorn (~21,810 BCE, project opening) to the Age of Aquarius (from 1950 CE, the current age), each marked with its zodiac glyph.</desc>
+  <defs>
+    <symbol id="z-capricorn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7 V17 M4 7 L9 13 L13 7 Q17 7 17 13 Q17 18 13 18 Q9 18 9 14"/></symbol>
+    <symbol id="z-sagittarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="13 5 19 5 19 11"/><line x1="9" y1="12" x2="12" y2="15"/></symbol>
+    <symbol id="z-scorpio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 V7 L8 12 L12 7 V18 L16 12 V18 H21"/><path d="M19 16 L21 18 L19 20"/></symbol>
+    <symbol id="z-libra" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13 Q6 8 12 8 Q18 8 18 13"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="z-virgo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 V7 L9 13 L13 7 V19 Q15 14 18 14 Q21 14 19 19 Q17 22 15 19"/></symbol>
+    <symbol id="z-leo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3"/><path d="M11 16 Q11 8 14 6 Q19 5 19 11 Q19 14 17 16 Q15 17 17 19"/></symbol>
+    <symbol id="z-cancer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="14" y2="9"/><circle cx="16" cy="11" r="2"/><line x1="20" y1="15" x2="10" y2="15"/><circle cx="8" cy="13" r="2"/></symbol>
+    <symbol id="z-gemini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="19" x2="19" y2="19"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></symbol>
+    <symbol id="z-taurus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="4"/><path d="M5 8 Q12 13 19 8"/></symbol>
+    <symbol id="z-aries" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18 V11 Q5 5 9 5 Q12 5 12 12 Q12 5 15 5 Q19 5 19 11 V18"/></symbol>
+    <symbol id="z-pisces" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 Q4 12 7 19"/><path d="M17 5 Q20 12 17 19"/><line x1="7" y1="12" x2="17" y2="12"/></symbol>
+    <symbol id="z-aquarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 L7 7 L11 9 L15 7 L19 9"/><path d="M3 15 L7 13 L11 15 L15 13 L19 15"/></symbol>
+  </defs>
+  <rect x="60.0" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-capricorn" x="84.8" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="95.8" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 95.8 110.0)">Capricorn</text>
+  <rect x="131.7" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-sagittarius" x="156.5" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="167.5" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 167.5 110.0)">Sagittarius</text>
+  <rect x="203.3" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-scorpio" x="228.2" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="239.2" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 239.2 110.0)">Scorpio</text>
+  <rect x="275.0" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-libra" x="299.8" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="310.8" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 310.8 110.0)">Libra</text>
+  <rect x="346.7" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-virgo" x="371.5" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="382.5" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 382.5 110.0)">Virgo</text>
+  <rect x="418.3" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-leo" x="443.2" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="454.2" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 454.2 110.0)">Leo</text>
+  <text x="454.2" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 454.2 180.0)">human creation</text>
+  <rect x="490.0" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-cancer" x="514.8" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="525.8" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 525.8 110.0)">Cancer</text>
+  <text x="525.8" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 525.8 180.0)">Eden</text>
+  <rect x="561.7" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-gemini" x="586.5" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="597.5" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 597.5 110.0)">Gemini</text>
+  <text x="597.5" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 597.5 180.0)">the Flood</text>
+  <rect x="633.3" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-taurus" x="658.2" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="669.2" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 669.2 110.0)">Taurus</text>
+  <text x="669.2" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 669.2 180.0)">Babel · patriarchs</text>
+  <rect x="705.0" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-aries" x="729.8" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="740.8" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 740.8 110.0)">Aries</text>
+  <text x="740.8" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 740.8 180.0)">prophets · Mosaic law</text>
+  <rect x="776.7" y="118.0" width="71.7" height="50.0" class="dg-surface dg-muted" stroke-width="1"/>
+  <use href="#z-pisces" x="801.5" y="132.0" width="22.0" height="22.0" class="dg-glyph"/>
+  <text x="812.5" y="110.0" text-anchor="start" class="dg-label" font-size="11" transform="rotate(-38 812.5 110.0)">Pisces</text>
+  <text x="812.5" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 812.5 180.0)">Christianity · Islam</text>
+  <rect x="848.3" y="118.0" width="71.7" height="50.0" fill="var(--color-accent-primary)" fill-opacity="0.16" class="dg-accent" stroke-width="1"/>
+  <use href="#z-aquarius" x="873.2" y="132.0" width="22.0" height="22.0" class="dg-glyph--accent"/>
+  <text x="884.2" y="110.0" text-anchor="start" class="dg-label--accent" font-size="11" transform="rotate(-38 884.2 110.0)">Aquarius</text>
+  <text x="884.2" y="180.0" text-anchor="end" class="dg-label--muted" font-size="10" transform="rotate(-38 884.2 180.0)">current age</text>
+  <line x1="848.3" y1="78.0" x2="848.3" y2="174.0" class="dg-accent" stroke-width="1.6" stroke-dasharray="4 3"/>
+  <text x="848.3" y="72.0" text-anchor="middle" class="dg-label--accent" font-size="11" font-weight="600">now · 1950 CE</text>
+  <text x="60" y="210.0" text-anchor="start" class="dg-label--muted" font-size="10.5">~21,810 BCE · project opening</text>
+  <text x="920" y="210.0" text-anchor="end" class="dg-label--muted" font-size="10.5">~4110 CE</text>
+  <line x1="60" y1="168.0" x2="928" y2="168.0" class="dg-muted" stroke-width="1"/>
+</svg>

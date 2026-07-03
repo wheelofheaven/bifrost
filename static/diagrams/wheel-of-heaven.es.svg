@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+  <title id="wh-t">Wheel of Heaven — doce eras precesionales del proyecto</title>
+  <desc id="wh-d">Las doce eras precesionales de ~2.160 años leídas como fases del proyecto de la alianza, con los años frontera marcados alrededor del borde: desde la Era de Capricornio (~21.810 a. C., apertura del proyecto) pasando por Leo (humanos creados), Cáncer (Edén), Géminis (el Diluvio), Tauro (Babel), Aries (los profetas), Piscis (los evangelios), hasta la actual Era de Acuario (desde 1950 d. C.).</desc>
+  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <g class="dg-muted" stroke-width="1">
+    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
+    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
+    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
+    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
+    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
+    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
+    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
+    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
+    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
+    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
+    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
+    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="270.0" y="104.0" class="dg-label" font-size="12">Capricornio</text>
+    <text x="353.0" y="126.2" class="dg-label" font-size="12">Sagitario</text>
+    <text x="413.8" y="187.0" class="dg-label" font-size="12">Escorpio</text>
+    <text x="436.0" y="270.0" class="dg-label" font-size="12">Libra</text>
+    <text x="413.8" y="353.0" class="dg-label" font-size="12">Virgo</text>
+    <text x="353.0" y="413.8" class="dg-label" font-size="12">Leo</text>
+    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">humanos creados</text>
+    <text x="270.0" y="436.0" class="dg-label" font-size="12">Cáncer</text>
+    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">Edén</text>
+    <text x="187.0" y="413.8" class="dg-label" font-size="12">Géminis</text>
+    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">el Diluvio</text>
+    <text x="126.2" y="353.0" class="dg-label" font-size="12">Tauro</text>
+    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">Babel</text>
+    <text x="104.0" y="270.0" class="dg-label" font-size="12">Aries</text>
+    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">los profetas</text>
+    <text x="126.2" y="187.0" class="dg-label" font-size="12">Piscis</text>
+    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">los evangelios</text>
+    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">Acuario</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">19,7k a. C.</text>
+    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">17,5k a. C.</text>
+    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">15,3k a. C.</text>
+    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">13,2k a. C.</text>
+    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">11,0k a. C.</text>
+    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">8,85k a. C.</text>
+    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">6,69k a. C.</text>
+    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">4,53k a. C.</text>
+    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">2,37k a. C.</text>
+    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">210 a. C.</text>
+    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">21,8k a. C.</text>
+    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 4110 d. C.</text>
+  </g>
+  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
+  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">estamos aquí</text>
+  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">1950 d. C.</text>
+  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
+  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
+  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">eras avanzan →</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Wheel of</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Heaven</text>
+  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">doce eras del</text>
+  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">proyecto de la alianza</text>
+  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">Cada era ≈ 2.160 años · una vuelta completa ≈ un Gran Año</text>
+</svg>

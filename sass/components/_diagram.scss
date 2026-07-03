@@ -1,0 +1,102 @@
+@use "../abstracts/variables" as v;
+
+// Inline SVG diagrams (astronomical / structural figures authored by hand and
+// inlined via the {% diagram %} shortcode). Theme-aware: every stroke and fill
+// resolves to a CSS custom property, so the figure recolours on the light/dark
+// toggle without a second asset.
+
+.diagram {
+    margin: v.$spacing-xl 0;
+
+    &__canvas {
+        width: 100%;
+
+        svg {
+            display: block;
+            width: 100%;
+            height: auto;
+            // Diagram text inherits the site's type stack rather than a
+            // browser default serif.
+            font-family: inherit;
+        }
+    }
+
+    &__caption {
+        margin-top: v.$spacing-sm;
+        font-size: v.$font-size-sm;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+        text-align: center;
+    }
+
+    // --- Theme-aware helper classes used inside the SVGs -------------------
+    // Structural lines, globe outlines, axes.
+    .dg-line {
+        stroke: var(--color-text);
+    }
+
+    // Secondary / reference geometry (normals, guide arcs, foreshortened
+    // construction lines).
+    .dg-muted {
+        stroke: var(--color-text-subtle);
+    }
+
+    // The through-line the diagram is *about* (the precessional circle, the
+    // current pole marker) — drawn in the theme accent.
+    .dg-accent {
+        stroke: var(--color-accent-primary);
+
+        &--fill {
+            fill: var(--color-accent-primary);
+            stroke: none;
+        }
+    }
+
+    // Filled shapes that should read as "solid on the page background"
+    // (globe body, label backplates).
+    .dg-surface {
+        fill: var(--color-background-secondary);
+    }
+
+    // Label backplate so text stays legible where it crosses geometry.
+    .dg-plate {
+        fill: var(--color-background);
+        opacity: 0.82;
+    }
+
+    // Text.
+    .dg-label {
+        fill: var(--color-text);
+        stroke: none;
+    }
+
+    .dg-label--muted {
+        fill: var(--color-text-muted);
+        stroke: none;
+    }
+
+    .dg-label--accent {
+        fill: var(--color-accent-primary);
+        stroke: none;
+    }
+
+    // Stroke-based zodiac glyphs (reused from macros/zodiac.html via <symbol>).
+    // They draw with currentColor, so we drive their hue through `color`.
+    .dg-glyph {
+        color: var(--color-text-muted);
+
+        &--accent {
+            color: var(--color-accent-primary);
+        }
+    }
+
+    // Technical axis captions (monospace, e.g. the pyramid's firm↔interpretive axis).
+    .dg-axis {
+        fill: var(--color-text-muted);
+        stroke: none;
+        font-family: var(--font-family-tech), ui-monospace, "SF Mono", Menlo, monospace;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+}

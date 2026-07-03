@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+  <title id="wh-t">גלגל השמיים — שנים-עשר עידני הנקיפה של הפרויקט</title>
+  <desc id="wh-d">שנים-עשר עידני הנקיפה בני ~2,160 השנים נקראים כשלבים בפרויקט הברית, עם שנות הגבול מסומנות סביב השפה: מעידן הגדי (~21,810 לפנה״ס, פתיחת הפרויקט) דרך האריה (בריאת האדם), הסרטן (עדן), התאומים (המבול), השור (בבל), הטלה (הנביאים), הדגים (הבשורות), ועד עידן הדלי הנוכחי (מ-1950 לספירה).</desc>
+  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <g class="dg-muted" stroke-width="1">
+    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
+    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
+    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
+    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
+    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
+    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
+    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
+    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
+    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
+    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
+    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
+    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="270.0" y="104.0" class="dg-label" font-size="12">גדי</text>
+    <text x="353.0" y="126.2" class="dg-label" font-size="12">קשת</text>
+    <text x="413.8" y="187.0" class="dg-label" font-size="12">עקרב</text>
+    <text x="436.0" y="270.0" class="dg-label" font-size="12">מאזניים</text>
+    <text x="413.8" y="353.0" class="dg-label" font-size="12">בתולה</text>
+    <text x="353.0" y="413.8" class="dg-label" font-size="12">אריה</text>
+    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">בריאת האדם</text>
+    <text x="270.0" y="436.0" class="dg-label" font-size="12">סרטן</text>
+    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">עדן</text>
+    <text x="187.0" y="413.8" class="dg-label" font-size="12">תאומים</text>
+    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">המבול</text>
+    <text x="126.2" y="353.0" class="dg-label" font-size="12">שור</text>
+    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">בבל</text>
+    <text x="104.0" y="270.0" class="dg-label" font-size="12">טלה</text>
+    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">הנביאים</text>
+    <text x="126.2" y="187.0" class="dg-label" font-size="12">דגים</text>
+    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">הבשורות</text>
+    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">דלי</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">19.7k לפנה״ס</text>
+    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">17.5k לפנה״ס</text>
+    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">15.3k לפנה״ס</text>
+    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">13.2k לפנה״ס</text>
+    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">11.0k לפנה״ס</text>
+    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">8.85k לפנה״ס</text>
+    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">6.69k לפנה״ס</text>
+    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">4.53k לפנה״ס</text>
+    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">2.37k לפנה״ס</text>
+    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">210 לפנה״ס</text>
+    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">21.8k לפנה״ס</text>
+    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 4110 לספירה</text>
+  </g>
+  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
+  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">אנחנו כאן</text>
+  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">1950 לספירה</text>
+  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
+  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
+  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">העידנים מתקדמים →</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">גלגל</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">השמיים</text>
+  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">שנים-עשר עידני</text>
+  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">פרויקט הברית</text>
+  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">כל עידן ≈ 2,160 שנה · סיבוב מלא ≈ שנה גדולה אחת</text>
+</svg>

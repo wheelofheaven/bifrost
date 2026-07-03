@@ -1,0 +1,58 @@
+{
+  "lang": "es", "rtl": false,
+  "zodiac": {
+    "aries":"Aries","taurus":"Tauro","gemini":"Géminis","cancer":"Cáncer",
+    "leo":"Leo","virgo":"Virgo","libra":"Libra","scorpio":"Escorpio",
+    "sagittarius":"Sagitario","capricorn":"Capricornio","aquarius":"Acuario","pisces":"Piscis"
+  },
+  "pr": {
+    "title":"Precesión axial de la Tierra",
+    "desc":"El eje de rotación de la Tierra está inclinado 23,4 grados respecto a la normal a la eclíptica y describe lentamente un cono completo, de modo que el polo celeste norte traza un círculo contra las estrellas fijas — pasando por Thuban hacia el 2800 a. C., Polaris hoy y Vega hacia el 13.700 d. C.",
+    "ecliptic_normal":"normal a la eclíptica",
+    "vega":"Vega","vega_date":"≈ 13.700 d. C.",
+    "thuban":"Thuban","thuban_date":"≈ 2800 a. C.",
+    "polaris":"Polaris","polaris_sub":"estrella polar hoy",
+    "axis":["eje de rotación","de la Tierra"]
+  },
+  "gy": {
+    "title":"El Gran Año como rueda de doce eras",
+    "desc":"El ciclo precesional de ~25.772 años dividido en doce eras de unos 2.160 años cada una, una por signo zodiacal. El equinoccio deriva hacia atrás a través del zodíaco a razón de aproximadamente un grado cada 72 años y se sitúa actualmente en la frontera Piscis–Acuario, entrando en la Era de Acuario.",
+    "here":"estamos aquí",
+    "center":["El Gran Año"],
+    "years":"≈ 25.772 años",
+    "sub":["doce eras de","~2.160 años"],
+    "advance":"las eras avanzan",
+    "foot":"Cada era = un Gran Mes = 30° de precesión ≈ 2.160 años"
+  },
+  "wh": {
+    "title":"Wheel of Heaven — doce eras precesionales del proyecto",
+    "desc":"Las doce eras precesionales de ~2.160 años leídas como fases del proyecto de la alianza, con los años frontera marcados alrededor del borde: desde la Era de Capricornio (~21.810 a. C., apertura del proyecto) pasando por Leo (humanos creados), Cáncer (Edén), Géminis (el Diluvio), Tauro (Babel), Aries (los profetas), Piscis (los evangelios), hasta la actual Era de Acuario (desde 1950 d. C.).",
+    "gloss":{"leo":"humanos creados","cancer":"Edén","gemini":"el Diluvio","taurus":"Babel","aries":"los profetas","pisces":"los evangelios"},
+    "here":"estamos aquí","here_year":"1950 d. C.",
+    "advance":"eras avanzan →",
+    "center":["Wheel of","Heaven"],
+    "sub":["doce eras del","proyecto de la alianza"],
+    "foot":"Cada era ≈ 2.160 años · una vuelta completa ≈ un Gran Año",
+    "years":{"15":"19,7k a. C.","45":"17,5k a. C.","75":"15,3k a. C.","105":"13,2k a. C.","135":"11,0k a. C.","165":"8,85k a. C.","195":"6,69k a. C.","225":"4,53k a. C.","255":"2,37k a. C.","285":"210 a. C."},
+    "wrap":["21,8k a. C.","/ 4110 d. C."]
+  },
+  "ep": {
+    "title":"La distinción epistémica de cuatro niveles",
+    "desc":"Una pirámide de cuatro niveles de contenido que el corpus mantiene separados: afirmaciones directas de las fuentes en la base firme, luego observaciones comparativas, luego interpretación Wheel of Heaven, con cuestiones abiertas en la cúspide interpretativa.",
+    "tiers":[
+      {"name":"Cuestiones abiertas","gloss":null},
+      {"name":"Interpretación Wheel of Heaven","gloss":"síntesis a nivel del corpus, marcada como tal"},
+      {"name":"Observaciones comparativas","gloss":"patrones observados entre tradiciones"},
+      {"name":"Afirmaciones directas de las fuentes","gloss":"lo que una fuente afirma por sí misma"}
+    ],
+    "axis_bottom":"más firme","axis_top":"más interpretativo"
+  },
+  "tb": {
+    "title":"El marco de las eras precesionales como línea de tiempo",
+    "desc":"Doce eras precesionales contiguas de ~2.160 años desde la Era de Capricornio (~21.810 a. C., apertura del proyecto) hasta la Era de Acuario (desde 1950 d. C., la era actual), cada una marcada con su glifo zodiacal.",
+    "events":{"leo":"creación humana","cancer":"Edén","gemini":"el Diluvio","taurus":"Babel · patriarcas","aries":"profetas · ley mosaica","pisces":"cristianismo · islam","aquarius":"era actual"},
+    "now":"ahora · 1950 d. C.",
+    "start":"~21.810 a. C. · apertura del proyecto",
+    "end":"~4110 d. C."
+  }
+}

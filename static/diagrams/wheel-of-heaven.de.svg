@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+  <title id="wh-t">Das Rad des Himmels — zwölf Präzessionszeitalter des Projekts</title>
+  <desc id="wh-d">Die zwölf rund 2.160 Jahre langen Präzessionszeitalter als Phasen des Projekts der Allianz, mit Grenzjahren am Rand: vom Steinbock-Zeitalter (~21.810 v. Chr., Projektbeginn) über Löwe (Menschen erschaffen), Krebs (Eden), Zwillinge (die Sintflut), Stier (Babel), Widder (die Propheten), Fische (die Evangelien) bis zum aktuellen Wassermann-Zeitalter (ab 1950 n. Chr.).</desc>
+  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <g class="dg-muted" stroke-width="1">
+    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
+    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
+    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
+    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
+    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
+    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
+    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
+    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
+    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
+    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
+    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
+    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="270.0" y="104.0" class="dg-label" font-size="12">Steinbock</text>
+    <text x="353.0" y="126.2" class="dg-label" font-size="12">Schütze</text>
+    <text x="413.8" y="187.0" class="dg-label" font-size="12">Skorpion</text>
+    <text x="436.0" y="270.0" class="dg-label" font-size="12">Waage</text>
+    <text x="413.8" y="353.0" class="dg-label" font-size="12">Jungfrau</text>
+    <text x="353.0" y="413.8" class="dg-label" font-size="12">Löwe</text>
+    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">Menschen erschaffen</text>
+    <text x="270.0" y="436.0" class="dg-label" font-size="12">Krebs</text>
+    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">Eden</text>
+    <text x="187.0" y="413.8" class="dg-label" font-size="12">Zwillinge</text>
+    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">die Sintflut</text>
+    <text x="126.2" y="353.0" class="dg-label" font-size="12">Stier</text>
+    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">Babel</text>
+    <text x="104.0" y="270.0" class="dg-label" font-size="12">Widder</text>
+    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">die Propheten</text>
+    <text x="126.2" y="187.0" class="dg-label" font-size="12">Fische</text>
+    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">die Evangelien</text>
+    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">Wassermann</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">19,7k v.Chr.</text>
+    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">17,5k v.Chr.</text>
+    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">15,3k v.Chr.</text>
+    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">13,2k v.Chr.</text>
+    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">11,0k v.Chr.</text>
+    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">8,85k v.Chr.</text>
+    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">6,69k v.Chr.</text>
+    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">4,53k v.Chr.</text>
+    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">2,37k v.Chr.</text>
+    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">210 v.Chr.</text>
+    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">21,8k v.Chr.</text>
+    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 4110 n.Chr.</text>
+  </g>
+  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
+  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">wir sind hier</text>
+  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">1950 n.Chr.</text>
+  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
+  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
+  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">Zeitalter voran →</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Das Rad</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">des Himmels</text>
+  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">zwölf Zeitalter des</text>
+  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">Projekts der Allianz</text>
+  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">Ein Zeitalter ≈ 2.160 Jahre · eine volle Umdrehung ≈ ein Großes Jahr</text>
+</svg>

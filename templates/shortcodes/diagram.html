@@ -1,0 +1,43 @@
+{#
+  diagram shortcode — inlines a hand-authored, theme-aware SVG figure,
+  localized to the page's language when a translated variant exists.
+
+  Usage (inline form — the shortcode takes no body):
+    {{ diagram(name="precession", caption="…", alt="…") }}
+
+  Localization: the SVGs are generated per language by
+  themes/bifrost/tools/gen_diagrams.py from diagram-strings/{lang}.json and
+  live at static/diagrams/{name}.{lang}.svg (English is the bare {name}.svg
+  fallback). This shortcode loads the localized variant when present and
+  falls back to English otherwise, so a page in any language shows the
+  right labels. The SVG is inlined (not <img>-embedded) so it inherits the
+  page's theme colours via the .diagram SCSS component and recolours on the
+  light/dark toggle.
+#}
+{# Zola's bare `lang` reports the site default inside shortcode context, so
+   detect the page language from its path — same pattern as library.html. #}
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _lang = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _lang = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _lang = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _lang = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _lang = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _lang = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _lang = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _lang = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _lang = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _lang = "he" -%}
+{%- endif -%}
+{%- set _base = "themes/bifrost/static/diagrams/" ~ name -%}
+{%- set svg = load_data(path=_base ~ "." ~ _lang ~ ".svg", required=false, format="plain") -%}
+{%- if not svg -%}
+    {%- set svg = load_data(path=_base ~ ".svg", format="plain") -%}
+{%- endif -%}
+<figure class="diagram"{% if alt %} role="group" aria-label="{{ alt }}"{% endif %}>
+    <div class="diagram__canvas">
+        {{ svg | safe }}
+    </div>
+    {% if caption %}
+    <figcaption class="diagram__caption">{{ caption | markdown(inline=true) | safe }}</figcaption>
+    {% endif %}
+</figure>

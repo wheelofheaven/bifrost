@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" role="img" aria-labelledby="ep-t ep-d">
+  <title id="ep-t">4단계 인식론적 구분</title>
+  <desc id="ep-d">코퍼스가 별도로 유지하는 네 개의 콘텐츠 단계로 이루어진 피라미드입니다: 견고한 바닥에는 직접적 자료 주장, 그 위에 비교적 관찰, 그 위에 Wheel of Heaven 해석, 그리고 해석의 정점에 열린 질문들이 놓입니다.</desc>
+  <polygon points="310.0,34.0 372.5,123.5 247.5,123.5" fill="none" class="dg-muted" stroke-width="1.4" stroke-dasharray="5 4"/>
+  <text x="310.0" y="113.5" text-anchor="middle" class="dg-label" font-size="13" font-weight="600">열린 질문들</text>
+  <polygon points="247.5,123.5 372.5,123.5 435.0,213.0 185.0,213.0" fill="#d88bc9" fill-opacity="0.18" stroke="#d88bc9" stroke-opacity="0.85" stroke-width="1.5"/>
+  <text x="310.0" y="164.2" text-anchor="middle" class="dg-label" font-size="14" font-weight="600">Wheel of Heaven 해석</text>
+  <text x="310.0" y="183.2" text-anchor="middle" class="dg-label--muted" font-size="11.5">코퍼스 수준의 종합, 그렇게 표시됨</text>
+  <polygon points="185.0,213.0 435.0,213.0 497.5,302.5 122.5,302.5" fill="#9d81d9" fill-opacity="0.18" stroke="#9d81d9" stroke-opacity="0.85" stroke-width="1.5"/>
+  <text x="310.0" y="253.8" text-anchor="middle" class="dg-label" font-size="14" font-weight="600">비교적 관찰</text>
+  <text x="310.0" y="272.8" text-anchor="middle" class="dg-label--muted" font-size="11.5">전통들을 가로질러 관찰된 패턴</text>
+  <polygon points="122.5,302.5 497.5,302.5 560.0,392.0 60.0,392.0" fill="#49b5d7" fill-opacity="0.18" stroke="#49b5d7" stroke-opacity="0.85" stroke-width="1.5"/>
+  <text x="310.0" y="343.2" text-anchor="middle" class="dg-label" font-size="14" font-weight="600">직접적 자료 주장</text>
+  <text x="310.0" y="362.2" text-anchor="middle" class="dg-label--muted" font-size="11.5">자료 자체가 주장하는 것</text>
+  <line x1="54" y1="392.0" x2="54" y2="40.0" class="dg-muted" stroke-width="1.2"/>
+  <path d="M 50 48.0 L 54 39.0 L 58 48.0 Z" class="dg-accent--fill"/>
+  <text x="62" y="392.0" text-anchor="start" class="dg-axis">가장 확실함</text>
+  <text x="62" y="52.0" text-anchor="start" class="dg-axis">가장 해석적</text>
+</svg>

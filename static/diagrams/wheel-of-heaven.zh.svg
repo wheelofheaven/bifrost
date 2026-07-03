@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+  <title id="wh-t">天轮 — 项目的十二个岁差时代</title>
+  <desc id="wh-d">这十二个各约 2,160 年的岁差时代被解读为联盟项目的各个阶段，边界年份标注于轮缘：从摩羯座时代（约公元前 21,810 年，项目启动）经狮子座（人类创造）、巨蟹座（伊甸园）、双子座（大洪水）、金牛座（巴别塔）、白羊座（先知）、双鱼座（福音书），直到当前的水瓶座时代（自公元 1950 年起）。</desc>
+  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <g class="dg-muted" stroke-width="1">
+    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
+    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
+    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
+    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
+    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
+    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
+    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
+    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
+    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
+    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
+    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
+    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="270.0" y="104.0" class="dg-label" font-size="12">摩羯座</text>
+    <text x="353.0" y="126.2" class="dg-label" font-size="12">射手座</text>
+    <text x="413.8" y="187.0" class="dg-label" font-size="12">天蝎座</text>
+    <text x="436.0" y="270.0" class="dg-label" font-size="12">天秤座</text>
+    <text x="413.8" y="353.0" class="dg-label" font-size="12">处女座</text>
+    <text x="353.0" y="413.8" class="dg-label" font-size="12">狮子座</text>
+    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">人类创造</text>
+    <text x="270.0" y="436.0" class="dg-label" font-size="12">巨蟹座</text>
+    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">伊甸园</text>
+    <text x="187.0" y="413.8" class="dg-label" font-size="12">双子座</text>
+    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">大洪水</text>
+    <text x="126.2" y="353.0" class="dg-label" font-size="12">金牛座</text>
+    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">巴别塔</text>
+    <text x="104.0" y="270.0" class="dg-label" font-size="12">白羊座</text>
+    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">先知</text>
+    <text x="126.2" y="187.0" class="dg-label" font-size="12">双鱼座</text>
+    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">福音书</text>
+    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">水瓶座</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">公元前 1.97 万年</text>
+    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">公元前 1.75 万年</text>
+    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">公元前 1.53 万年</text>
+    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">公元前 1.32 万年</text>
+    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">公元前 1.1 万年</text>
+    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">公元前 8850 年</text>
+    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">公元前 6690 年</text>
+    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">公元前 4530 年</text>
+    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">公元前 2370 年</text>
+    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">公元前 210 年</text>
+    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">公元前 2.18 万年</text>
+    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 公元 4110 年</text>
+  </g>
+  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
+  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">我们在此</text>
+  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">公元 1950 年</text>
+  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
+  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
+  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">时代推进 →</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">天</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">轮</text>
+  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">联盟项目的</text>
+  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">十二个时代</text>
+  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">每个时代 ≈ 2,160 年 · 一整圈 ≈ 一个大年</text>
+</svg>

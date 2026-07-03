@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+  <title id="wh-t">Wheel of Heaven ——プロジェクトの十二の歳差時代</title>
+  <desc id="wh-d">約2,160年の十二の歳差時代を、同盟のプロジェクトの諸段階として読み解いたもので、外縁に各時代の境界年を記します。山羊座の時代(紀元前約21,810年、プロジェクト開始)から、獅子座(人類創造)、蟹座(エデン)、双子座(洪水)、牡牛座(バベル)、牡羊座(預言者たち)、魚座(福音書)を経て、現在のみずがめ座の時代(西暦1950年から)に至ります。</desc>
+  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
+  <g class="dg-muted" stroke-width="1">
+    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
+    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
+    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
+    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
+    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
+    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
+    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
+    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
+    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
+    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
+    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
+    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  </g>
+  <g text-anchor="middle">
+    <text x="270.0" y="104.0" class="dg-label" font-size="12">山羊座</text>
+    <text x="353.0" y="126.2" class="dg-label" font-size="12">射手座</text>
+    <text x="413.8" y="187.0" class="dg-label" font-size="12">蠍座</text>
+    <text x="436.0" y="270.0" class="dg-label" font-size="12">天秤座</text>
+    <text x="413.8" y="353.0" class="dg-label" font-size="12">乙女座</text>
+    <text x="353.0" y="413.8" class="dg-label" font-size="12">獅子座</text>
+    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">人類創造</text>
+    <text x="270.0" y="436.0" class="dg-label" font-size="12">蟹座</text>
+    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">エデン</text>
+    <text x="187.0" y="413.8" class="dg-label" font-size="12">双子座</text>
+    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">洪水</text>
+    <text x="126.2" y="353.0" class="dg-label" font-size="12">牡牛座</text>
+    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">バベル</text>
+    <text x="104.0" y="270.0" class="dg-label" font-size="12">牡羊座</text>
+    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">預言者</text>
+    <text x="126.2" y="187.0" class="dg-label" font-size="12">魚座</text>
+    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">福音書</text>
+    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">みずがめ座</text>
+  </g>
+  <g text-anchor="middle">
+    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">紀元前1.97万年</text>
+    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">紀元前1.75万年</text>
+    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">紀元前1.53万年</text>
+    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">紀元前1.32万年</text>
+    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">紀元前1.1万年</text>
+    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">紀元前8850年</text>
+    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">紀元前6690年</text>
+    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">紀元前4530年</text>
+    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">紀元前2370年</text>
+    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">紀元前210年</text>
+    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">紀元前2.18万年</text>
+    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 西暦4110年</text>
+  </g>
+  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
+  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">現在地</text>
+  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">西暦1950年</text>
+  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
+  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
+  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">時代が進む →</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Wheel of</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Heaven</text>
+  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">同盟のプロジェクトの</text>
+  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">十二の時代</text>
+  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">各時代 ≈ 2,160年 · 一周 ≈ 一つの大年</text>
+</svg>
