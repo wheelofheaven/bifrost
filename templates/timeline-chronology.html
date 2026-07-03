@@ -3,20 +3,18 @@
 
 {% block content %}
 {# /timeline/chronology — "The Equinox Observatory".
-   A cinematic orbital scene for the state of the Earth across the Great
-   Year. A canvas star sky (real star positions + zodiac constellation
-   figures in ecliptic coordinates, from static/data/zodiac-sky.json,
-   built by scripts/build_zodiac_sky.py) pans with the precession behind
-   a Sun pinned at the vernal-equinox point, rising over the Earth's limb.
-   The Earth's face cross-fades through its age textures, a year counter
-   rolls, and a 13-stop scrubber + Play control drive the whole Great Year.
+   A full-viewport orbital scene (same route treatment as /map) for the
+   state of the Earth across the Great Year. A canvas star sky (real star
+   positions + zodiac constellation figures in ecliptic coordinates, from
+   static/data/zodiac-sky.json, built by scripts/build_zodiac_sky.py) pans
+   with the precession behind a Sun anchored to the limb of a half-visible
+   Earth orb whose face cross-fades through its age textures. A year
+   counter rolls in the HUD and a 13-stop scrubber + Play control drive
+   the whole Great Year. Below the stage, a chapter card shows the active
+   age's vignette rendering (data/ages.json `vignette`) and narrative.
 
    The visual argument: the zodiac constellation standing behind the
    rising Sun at spring equinox IS the age.
-
-   This is deliberately distinct from /timeline/ (the cinematic serial-hero
-   reading flow) and from /timeline/<age> (the chapter prose). Here the
-   subject is the planet and its sky, not the narrative.
 
    Data: data/ages.json (13 entries: "In the beginning…" + 12 ages) with
    per-language names/events from data/ages.i18n.json. Scrubber buttons
@@ -55,31 +53,27 @@
      data-sky-url="{{ get_url(path='data/zodiac-sky.json', cachebust=true) | safe }}"
      data-active-color="{{ ages_data | nth(n=today_index) | get(key='color') }}">
 
-    <header class="chronology__intro">
-        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology__back">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-            </svg>
-            {{ trans(key="timelineBackToHub", lang=detected_lang) }}
-        </a>
-        <span class="chronology__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
-        <h1 class="chronology__title">{{ page.title }}</h1>
+    {# Visually-hidden hero keeps the h1/lede for SEO and screen readers;
+       the visible title lives in the stage overlay. Mirrors /map. #}
+    <header class="chronology__hero">
+        <h1 id="chronology-title">{{ page.title }}</h1>
         {% if page.content %}
-        <div class="chronology__lede">{{ page.content | safe }}</div>
+        <div data-ai-summary="true">{{ page.content | safe }}</div>
         {% endif %}
     </header>
 
     {# =========================== The stage =========================== #}
-    <section class="chronology__stage" data-stage aria-hidden="true">
-        <canvas class="chronology__sky" data-sky></canvas>
+    <section class="chronology__stage" data-stage aria-labelledby="chronology-title">
+        <canvas class="chronology__sky" data-sky aria-hidden="true"></canvas>
 
-        {# Sun caption — pinned under the sun's canvas position. #}
-        <div class="chronology__sun-tag">{{ trans(key="chronologyEquinoxLabel", lang=detected_lang) }}</div>
+        {# Sun caption — pinned under the sun's canvas position (JS sets
+           --sun-y on the root). #}
+        <div class="chronology__sun-tag" aria-hidden="true">{{ trans(key="chronologyEquinoxLabel", lang=detected_lang) }}</div>
 
-        {# Earth limb — a planet rising into the frame from below, one
+        {# Earth — a half-visible orb rising from the bottom edge, one
            texture layer per node, cross-faded by JS. #}
-        <div class="chronology__earth">
-            <div class="chronology__earth-atmo" aria-hidden="true"></div>
+        <div class="chronology__earth" data-earth-orb aria-hidden="true">
+            <div class="chronology__earth-atmo"></div>
             <div class="chronology__earth-orb">
                 {% for age in ages_data %}
                 {% set avif = age.earth_texture | replace(from=".webp", to=".avif") %}
@@ -92,7 +86,7 @@
             </div>
         </div>
 
-        {# HUD — age identity on the left, rolling year on the right. #}
+        {# HUD — title centre, age identity left, rolling year right. #}
         <div class="chronology__hud">
             <div class="chronology__hud-age">
                 <span class="chronology__hud-glyph" data-hud-glyph aria-hidden="true"></span>
@@ -101,13 +95,23 @@
                     <span class="chronology__hud-span" data-hud-span></span>
                 </div>
             </div>
+            <div class="chronology__hud-title" aria-hidden="true">
+                <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology__back">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+                    </svg>
+                    {{ trans(key="timelineBackToHub", lang=detected_lang) }}
+                </a>
+                <span class="chronology__eyebrow">{{ trans(key="timelineOverviewEyebrow", lang=detected_lang) }}</span>
+                <span class="chronology__title">{{ page.title }}</span>
+            </div>
             <div class="chronology__hud-year">
                 <span class="chronology__hud-year-label">{{ trans(key="chronologyYearLabel", lang=detected_lang) }}</span>
                 <span class="chronology__hud-year-value" data-year></span>
             </div>
         </div>
 
-        {# Deck — play control + the 13-stop age scrubber. #}
+        {# Deck — play control + the 13-stop age scrubber + scroll cue. #}
         <div class="chronology__deck">
             <button type="button" class="chronology__play" data-play
                     aria-label="{{ trans(key='chronologyPlay', lang=detected_lang) }}"
@@ -162,40 +166,53 @@
                     {% endfor %}
                 </ol>
             </div>
+
+            <a class="chronology__more" href="#chronology-chapter" aria-label="{{ trans(key='timelineReadAge', lang=detected_lang) }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <polyline points="6 9 12 15 18 9"/>
+                </svg>
+            </a>
         </div>
     </section>
 
-    {# --- Readout: the narrative theme of the active age. Server-rendered
-           with the TODAY node so it is meaningful before/without JS. --- #}
+    {# --- Chapter card: the active age's vignette rendering + narrative.
+           Server-rendered with the TODAY node so it is meaningful
+           before/without JS. --- #}
     {% set today_age = ages_data | nth(n=today_index) %}
     {% set today_slug = today_age.link | split(pat="/") | nth(n=2) %}
     {% set today_name = ages_strings[today_slug].name | default(value=ages_i18n.en[today_slug].name) %}
     {% set today_event = ages_strings[today_slug].event | default(value=ages_i18n.en[today_slug].event) %}
-    <section class="chronology__readout" aria-live="polite">
-        <span class="chronology__readout-badge" data-readout-today hidden>
-            <span class="chronology__readout-pulse" aria-hidden="true"></span>
-            {{ trans(key="chronologyYouAreHere", lang=detected_lang) }}
-        </span>
-        {# Optional per-age vignette artwork — populated from the
-           `vignette` field in data/ages.json when present. #}
-        <figure class="chronology__readout-art" data-readout-art hidden>
-            <img data-readout-art-img alt="" loading="lazy" decoding="async">
+    <section class="chronology__chapter" id="chronology-chapter" aria-live="polite">
+        {% if today_age.vignette %}
+        {% set t_avif = today_age.vignette | replace(from=".webp", to=".avif") %}
+        <figure class="chronology__chapter-art" data-readout-art>
+            <picture>
+                <source data-readout-art-avif srcset="{{ t_avif }}" type="image/avif">
+                <img data-readout-art-img src="{{ today_age.vignette }}" alt="{{ today_name }}" loading="lazy" decoding="async">
+            </picture>
         </figure>
-        <p class="chronology__readout-event" data-readout-event>{{ today_event }}</p>
-        <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang) }}">
-            <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
-            </svg>
-        </a>
-        <p class="chronology__hint">{{ trans(key="chronologyHint", lang=detected_lang) }}</p>
+        {% endif %}
+        <div class="chronology__readout">
+            <span class="chronology__readout-badge" data-readout-today hidden>
+                <span class="chronology__readout-pulse" aria-hidden="true"></span>
+                {{ trans(key="chronologyYouAreHere", lang=detected_lang) }}
+            </span>
+            <p class="chronology__readout-event" data-readout-event>{{ today_event }}</p>
+            <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang) }}">
+                <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+                </svg>
+            </a>
+            <p class="chronology__hint">{{ trans(key="chronologyHint", lang=detected_lang) }}</p>
+        </div>
     </section>
 
     {# --- Crawlable / no-JS fallback: a plain ordered list of the chronology.
            Visually-hidden when JS is active; revealed by <noscript>. --- #}
     <noscript>
         <style>
-            .chronology__stage, .chronology__readout { display: none !important; }
+            .chronology__stage, .chronology__chapter { display: none !important; }
             .chronology__fallback { position: static !important; width: auto !important; height: auto !important; clip: auto !important; overflow: visible !important; }
         </style>
     </noscript>
