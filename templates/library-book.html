@@ -154,7 +154,9 @@
                     {% endif %}
                     <section class="library-book__chapter" id="chapter-{{ chapter.n }}">
                         {% set chap_label = library_macros::chapter_label(book_data=book_data, chapter=chapter, lang=detected_lang) | trim %}
-                        {% set chap_title = chapter.title | default(value="") | trim %}
+                        {% set chap_title = chapter.title | default(value="") %}
+                        {% if chapter.titleI18n and chapter.titleI18n[detected_lang] %}{% set chap_title = chapter.titleI18n[detected_lang] %}{% endif %}
+                        {% set chap_title = chap_title | trim %}
                         {% set bare_chapter = "Chapter " ~ chapter.n %}
                         {# Suppress the descriptive title when it merely restates the
                            enumeration (biblical/BoM "Chapter N" titles) or the label. #}
@@ -840,7 +842,9 @@
                     <ul class="library-book__toc-list">
                         {% for chapter in book_chapters %}
                         {% set chap_label = library_macros::chapter_label(book_data=book_data, chapter=chapter, lang=detected_lang) | trim %}
-                        {% set chap_title = chapter.title | default(value="") | trim %}
+                        {% set chap_title = chapter.title | default(value="") %}
+                        {% if chapter.titleI18n and chapter.titleI18n[detected_lang] %}{% set chap_title = chapter.titleI18n[detected_lang] %}{% endif %}
+                        {% set chap_title = chap_title | trim %}
                         {% set bare_chapter = "Chapter " ~ chapter.n %}
                         {% set show_chap_title = chap_title != "" and chap_title != chap_label and chap_title != bare_chapter %}
                         <li class="library-book__toc-item" data-chapter="{{ chapter.n }}">
