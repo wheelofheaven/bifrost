@@ -6,6 +6,11 @@
     font-size: typo.$font-size-sd;
     border-top: vars.$hairline-width solid var(--color-hairline);
     background: var(--color-footer-bg);
+    // Rounded top corners lift the footer off the page as a distinct panel.
+    // The hairline border-top follows the curve, so the rounding reads even
+    // when the footer bg matches the body bg (dark theme).
+    border-top-left-radius: 1.5rem;
+    border-top-right-radius: 1.5rem;
     // iOS notch support — only the side insets; the bottom inset is folded
     // into the rainbow strip below so the strip can reach the true edge.
     padding-bottom: 0;
@@ -17,18 +22,19 @@
         max-width: 1200px;
         margin-inline: auto;
         margin-top: 3rem;
-        margin-bottom: 3rem;
+        // No margin-bottom: the padding-bottom below already separates the
+        // columns from the bottom bar. Stacking both left a ~6rem dead gap
+        // above the copyright row on desktop.
+        margin-bottom: 0;
         padding: 3rem vars.$spacing-xl;
 
         @media (max-width: 768px) {
             margin-top: 2rem;
-            margin-bottom: 2rem;
             padding: 2.5rem vars.$spacing-lg;
         }
 
         @media (max-width: 600px) {
             margin-top: 1.5rem;
-            margin-bottom: 1.5rem;
             padding: 2.5rem vars.$spacing-md;
         }
     }
@@ -291,6 +297,7 @@
 // using a seamlessly-looping gradient (first/last stop are the same color).
 .footer__rainbow {
     display: block;
+    position: relative;
     height: 13rem;
     // Absorb the iOS bottom safe-area inset inside the strip so the rainbow
     // continues all the way to the device edge with no theme-bg gap below.
@@ -345,6 +352,26 @@
 
     animation: footer-rainbow-shift 90s linear infinite;
     pointer-events: none;
+
+    // Film-grain overlay — matches the fine, balanced grain baked into the
+    // cosmic hero background used across our thumbnails. A seamless, fine
+    // fractal-noise texture (SVG feTurbulence at high frequency ≈ 1px specks),
+    // desaturated to monochrome. Blended with `overlay` so it lays down BOTH
+    // lighter and darker specks (real film grain) instead of the sooty,
+    // darken-only look of multiply; overlay also naturally fades grain out of
+    // the lightest highlights, which is physically correct. The parent's
+    // alpha mask clips this pseudo too, so the grain fades in with the rainbow.
+    &::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+        background-size: 220px 220px;
+        background-repeat: repeat;
+        mix-blend-mode: overlay;
+        opacity: 0.5;
+        pointer-events: none;
+    }
 
     @media (max-width: 768px) {
         height: 10rem;
