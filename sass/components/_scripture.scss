@@ -124,6 +124,23 @@
         line-height: 1;
     }
 
+    // Whole-line variant for CJK originals (Japanese, etc.) that have no
+    // space-delimited word boundaries: the original line and its
+    // transliteration stack as full-width wrapping blocks rather than
+    // fixed-width word-pair columns.
+    &__interlinear-word--whole {
+        display: block;
+        width: 100%;
+        white-space: normal;
+
+        .library-book__interlinear-cun,
+        .library-book__interlinear-translit {
+            display: block;
+            white-space: normal;
+            text-align: start;
+        }
+    }
+
     // Original-language token. Matches the library reader's
     // `.library-book__para-original` typography exactly (citation
     // font stack — Plex Serif + Frank Ruhl Libre for Hebrew via

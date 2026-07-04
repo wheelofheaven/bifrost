@@ -131,7 +131,12 @@
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
     {% set has_hebrew_pair = verse.he | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
-    {% set has_text_translit_pair = verse.text | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
+    {# CJK scripts have no space-delimited word boundaries, so the word-pair
+       alignment used for Greek/Arabic/Hebrew doesn't apply — render the whole
+       original line with any transliteration beneath it instead. #}
+    {% set is_cjk = original_lang == "ja" or original_lang == "zh" or original_lang == "zh-Hant" or original_lang == "ko" %}
+    {% set has_cjk_pair = is_cjk and verse.text | default(value="") | trim != "" %}
+    {% set has_text_translit_pair = not is_cjk and verse.text | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
     {# Paragraph kind — see docs.wheelofheaven.world Audio Play Cue Sheets.
        Absent means "body" (default verse). "title" renders as a heading;
@@ -202,7 +207,7 @@
                    line — render it directly. No alignment pass needed
                    because there's only one layer. #}
             {% if has_translation and (has_cuneiform or has_hebrew_pair or has_text_translit_pair or source_text) %}
-            <div class="library-book__para-original{% if has_cuneiform or has_hebrew_pair or has_text_translit_pair %} library-book__para-original--interlinear{% endif %}" lang="{{ original_lang }}">
+            <div class="library-book__para-original{% if has_cuneiform or has_hebrew_pair or has_text_translit_pair or has_cjk_pair %} library-book__para-original--interlinear{% endif %}" lang="{{ original_lang }}">
                 {% if has_cuneiform %}
                 {# Per-script tokenization for interlinear word-pair alignment.
                    Ugaritic uses the alphabetic-cuneiform word divider 𐎟
@@ -251,7 +256,7 @@
                    for Aramaic + Arabic + other right-to-left scripts. #}
                 {% set txt_tokens = verse.text | split(pat=" ") %}
                 {% set translit_tokens = verse.translit | split(pat=" ") %}
-                {% set is_rtl = original_lang == "arc" or original_lang == "ar" or original_lang == "arb" or original_lang == "syr" %}
+                {% set is_rtl = original_lang == "arc" or original_lang == "ar" or original_lang == "arb" or original_lang == "fa" or original_lang == "fas" or original_lang == "syr" %}
                 <span class="library-book__interlinear-row">
                     {% for txt_token in txt_tokens %}
                     <span class="library-book__interlinear-word">
@@ -259,6 +264,15 @@
                         <span class="library-book__interlinear-translit">{{ translit_tokens[loop.index0] | default(value="") }}</span>
                     </span>
                     {% endfor %}
+                </span>
+                {% elif has_cjk_pair %}
+                {# CJK (Japanese, etc.): render the whole original line with the
+                   transliteration beneath it — no space-delimited word-pairs. #}
+                <span class="library-book__interlinear-row">
+                    <span class="library-book__interlinear-word library-book__interlinear-word--whole">
+                        <span class="library-book__interlinear-cun" lang="{{ original_lang }}">{{ verse.text }}</span>
+                        {% if verse.translit | default(value="") | trim != "" %}<span class="library-book__interlinear-translit">{{ verse.translit }}</span>{% endif %}
+                    </span>
                 </span>
                 {% else %}
                 {{ source_text }}

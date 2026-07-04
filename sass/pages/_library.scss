@@ -5120,6 +5120,40 @@
     line-height: 1;
 }
 
+// Whole-line variant for CJK originals (Japanese, etc.) with no
+// space-delimited word boundaries: the original line and its
+// transliteration stack as full-width wrapping blocks instead of
+// fixed-width word-pair columns.
+.library-book__interlinear-word--whole {
+    display: block;
+    width: 100%;
+    white-space: normal;
+
+    .library-book__interlinear-cun,
+    .library-book__interlinear-translit {
+        display: block;
+        white-space: normal;
+        text-align: start;
+        min-height: 0;
+    }
+}
+
+// The interlinear-cun span is cuneiform-styled by default. For the
+// non-cuneiform originals now routed through the word-pair / whole-line
+// branches (Arabic, Persian, Japanese) render in the reader's citation
+// font at reading size rather than the cuneiform stack.
+.library-book__interlinear-cun {
+    &:lang(ar),
+    &:lang(fa),
+    &:lang(fas),
+    &:lang(ja),
+    &:lang(zh),
+    &:lang(ko) {
+        font-family: var(--font-family-citation);
+        font-size: var(--reader-font-size, 1.3125rem);
+    }
+}
+
 .library-book__interlinear-cun {
     font-family: typo.$font-family-cuneiform;
     font-size: 1.5rem;

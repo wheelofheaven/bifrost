@@ -685,6 +685,12 @@
                         {% set_global interlinear_original_label = "Arabic" %}
                     {% elif original_lang == "arc" %}
                         {% set_global interlinear_original_label = "Aramaic" %}
+                    {% elif original_lang == "fa" or original_lang == "fas" %}
+                        {% set_global interlinear_original_label = "Persian" %}
+                    {% elif original_lang == "ja" %}
+                        {% set_global interlinear_original_label = "Japanese" %}
+                    {% elif original_lang == "vi" %}
+                        {% set_global interlinear_original_label = "Vietnamese" %}
                     {% else %}
                         {% set_global interlinear_original_label = original_lang | upper %}
                     {% endif %}
