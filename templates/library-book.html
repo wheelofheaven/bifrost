@@ -153,10 +153,21 @@
                         {% set ref_chapter = ref_chapters | nth(n=loop.index0) %}
                     {% endif %}
                     <section class="library-book__chapter" id="chapter-{{ chapter.n }}">
+                        {% set chap_label = library_macros::chapter_label(book_data=book_data, chapter=chapter, lang=detected_lang) | trim %}
+                        {% set chap_title = chapter.title | default(value="") | trim %}
+                        {% set bare_chapter = "Chapter " ~ chapter.n %}
+                        {# Suppress the descriptive title when it merely restates the
+                           enumeration (biblical/BoM "Chapter N" titles) or the label. #}
+                        {% set show_chap_title = chap_title != "" and chap_title != chap_label and chap_title != bare_chapter %}
                         <header class="library-book__chapter-header">
-                            <span class="library-book__chapter-number">{{ trans(key="libraryChapter", lang=detected_lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=detected_lang) }}</span>
-                            {% if chapter.title %}
-                            <h2 class="library-book__chapter-title">{{ chapter.title }}</h2>
+                            {# Enumeration eyebrow only when the book has more than one
+                               chapter — a lone chapter that is the whole book doesn't
+                               need an artificial "Chapter 1" / "Oracle 1" label. #}
+                            {% if book_chapters | length > 1 %}
+                            <span class="library-book__chapter-number">{{ chap_label }}</span>
+                            {% endif %}
+                            {% if show_chap_title %}
+                            <h2 class="library-book__chapter-title">{{ chap_title }}</h2>
                             {% endif %}
                         </header>
 
@@ -828,12 +839,14 @@
                 <nav class="library-book__toc-nav" aria-labelledby="book-toc-heading">
                     <ul class="library-book__toc-list">
                         {% for chapter in book_chapters %}
+                        {% set chap_label = library_macros::chapter_label(book_data=book_data, chapter=chapter, lang=detected_lang) | trim %}
+                        {% set chap_title = chapter.title | default(value="") | trim %}
+                        {% set bare_chapter = "Chapter " ~ chapter.n %}
+                        {% set show_chap_title = chap_title != "" and chap_title != chap_label and chap_title != bare_chapter %}
                         <li class="library-book__toc-item" data-chapter="{{ chapter.n }}">
                             <a href="#chapter-{{ chapter.n }}" class="library-book__toc-link" onclick="scrollToChapter({{ chapter.n }})">
                                 <span class="library-book__toc-chapter-number">{{ chapter.n }}</span>
-                                <span class="library-book__toc-chapter-title">
-                                    {% if chapter.title %}{{ chapter.title }}{% else %}{{ trans(key="libraryChapter", lang=detected_lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=detected_lang) }}{% endif %}
-                                </span>
+                                <span class="library-book__toc-chapter-title">{% if show_chap_title %}{{ chap_title }}{% else %}{{ chap_label }}{% endif %}</span>
                             </a>
                         </li>
                         {% endfor %}

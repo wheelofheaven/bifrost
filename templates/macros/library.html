@@ -106,6 +106,16 @@
     {%- endif -%}
 {% endmacro %}
 
+{# Chapter enumeration label — "Chapter 1", "Sūra 21", "Part 1", "Oracle 1",
+   "Message 1", "Fragment 1"… Uses the book's own segment terminology
+   (schemaLabels[1], always stored in English) when it is more specific than
+   the generic "Chapter"; otherwise the localized trans-based label so
+   `第1章` etc. still work for the biblical/BoM corpus. #}
+{% macro chapter_label(book_data, chapter, lang) %}
+{%- set seg = book_data.schemaLabels.en[1] | default(value="") -%}
+{%- if seg and seg != "Chapter" -%}{{ seg }} {{ chapter.n }}{%- else -%}{{ trans(key="libraryChapter", lang=lang) }}{{ chapter.n }}{{ trans(key="libraryChapterSuffix", lang=lang) }}{%- endif -%}
+{% endmacro chapter_label %}
+
 {# Macro to render a single verse (paragraph or line) for library-book.html.
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
