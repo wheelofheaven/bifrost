@@ -96,7 +96,7 @@
                     {% endif %}
                     <h3 class="wiki-featured__card-title">{{ f_title }}</h3>
                     {% if f_desc %}
-                    <p class="wiki-featured__card-desc">{{ f_desc | striptags | truncate(length=140, end="…") }}</p>
+                    <p class="wiki-featured__card-desc">{{ f_desc | markdown(inline=true) | striptags | truncate(length=140, end="…") }}</p>
                     {% endif %}
                     <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
                 </a>
@@ -386,7 +386,7 @@
                                     {% endif %}
                                     {% if card_text %}
                                     <div class="wiki-card__summary">
-                                        {{ card_text | truncate(length=400, end="...") }}
+                                        {{ card_text | markdown(inline=true) | striptags | truncate(length=400, end="...") }}
                                     </div>
                                     {% endif %}
 

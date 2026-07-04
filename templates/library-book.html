@@ -140,7 +140,7 @@
                    rendered in main body, never collapsed. #}
                 {% if book_description %}
                 <div class="library-book__lede" data-ai-summary="true">
-                    <p>{{ book_description }}</p>
+                    <p>{{ book_description | markdown(inline=true) | safe }}</p>
                 </div>
                 {% endif %}
 
