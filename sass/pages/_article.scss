@@ -128,11 +128,12 @@
     &__summary {
         position: relative;
         margin-top: v.$spacing-md;
-        // No left inset: the summary text aligns flush-left with the title and
-        // body. The accent rule and rotated label live in the column's left
-        // gutter (negative offsets) instead of pushing the text rightward.
-        padding: 1.25rem 0 1.75rem;
-        min-height: 5.5rem; // room for the rotated label
+        // Text is flush-left with the title and body (full body width). The
+        // accent line and the colour-inverted "Summary" label both live in the
+        // column's left gutter (negative offsets) so they never push the text
+        // rightward or overlap it.
+        padding: 1.25rem 0 1.5rem;
+        min-height: 4.5rem;
 
         p {
             margin: 0;
@@ -141,39 +142,58 @@
             color: var(--color-text);
         }
 
-        // The accent rule (line) sits just left of the text; the rotated
-        // "Summary" label sits further left again, so the order in the gutter
-        // reads label → line → text.
+        // The "summary line": a thin full-height accent rule in the gutter.
         &::before {
             content: "";
             position: absolute;
-            left: -1.125rem;
-            top: 1.25rem;
-            bottom: 1.75rem;
+            top: 0;
+            bottom: 0;
+            left: -0.9rem;
             width: 4px;
             background: var(--color-accent-primary);
             border-radius: 2px;
         }
 
+        // "SUMMARY" label overlaid on the line — colour-inverted (accent fill,
+        // page-background text), vertical, auto-sized to the word so it never
+        // clips regardless of language.
         &::after {
             content: attr(data-summary-label);
             position: absolute;
-            left: -1.7rem;
             top: 50%;
-            transform: translate(-50%, -50%) rotate(-90deg);
-            transform-origin: 50% 50%;
+            left: -0.9rem;
+            transform: translate(calc(-50% + 2px), -50%) rotate(180deg);
+            writing-mode: vertical-rl;
+            padding: 0.5rem 0.2rem;
+            background: var(--color-accent-primary);
+            color: var(--color-background);
+            border-radius: v.$border-radius-sm;
             text-transform: uppercase;
-            letter-spacing: 0.18em;
-            font-size: 0.6875rem;
+            letter-spacing: 0.12em;
+            font-size: 0.625rem;
             font-weight: 700;
-            color: var(--color-accent-primary);
             white-space: nowrap;
             pointer-events: none;
         }
 
+        // On phones the container gutter is only ~0.75rem — too tight for the
+        // vertical chip without grazing the text. Lay the label flat as a small
+        // pill at the top-left, sitting on the accent line above the text, so
+        // the text keeps its full body width and nothing overlaps.
         @media (max-width: 768px) {
-            &::before { left: 1rem; top: 1rem; bottom: 1.5rem; }
-            &::after { left: 0.125rem; }
+            padding: 1.5rem 0 1.25rem;
+
+            &::before { left: -0.55rem; }
+
+            &::after {
+                top: 0;
+                left: -0.4rem;
+                bottom: auto;
+                transform: none;
+                writing-mode: horizontal-tb;
+                padding: 0.15rem 0.5rem;
+                letter-spacing: 0.1em;
+            }
         }
     }
 

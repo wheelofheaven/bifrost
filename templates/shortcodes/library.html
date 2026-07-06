@@ -153,24 +153,25 @@
         {%- endif -%}
     </div>
 
-    {% if _final_path %}
-    <div class="library-quote__link">
-        <a href="{{ _final_path | safe }}" class="library-quote__button" title="Read full text in {{ _final_title }}">
-            <svg class="library-quote__icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path>
-            </svg>
-            <span class="library-quote__button-text">Read in {{ _final_title }}</span>
-            <svg class="library-quote__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M5 12h14"></path>
-                <path d="M12 5l7 7-7 7"></path>
-            </svg>
-        </a>
-    </div>
-    {% endif %}
+    {% if _final_path or _book or _chapter or _verse %}
+    <div class="library-quote__meta">
+        {% if _book or _chapter or _verse %}
+        <cite class="library-quote__citation">
+            {% if _final_title and _book %}{{ _final_title }}{% elif _book %}{{ _book }}{% endif %}{% if _chapter %} {{ _chapter }}{% if _verse %}:{{ _verse }}{% endif %}{% endif %}
+        </cite>
+        {% endif %}
 
-    {% if _book or _chapter or _verse %}
-    <cite class="library-quote__citation">
-        {% if _final_title and _book %}{{ _final_title }}{% elif _book %}{{ _book }}{% endif %}{% if _chapter %} {{ _chapter }}{% if _verse %}:{{ _verse }}{% endif %}{% endif %}
-    </cite>
+        {% if _final_path %}
+        <div class="library-quote__link">
+            <a href="{{ _final_path | safe }}" class="library-quote__button" title="Read full text in {{ _final_title }}">
+                <span class="library-quote__button-text">Read</span>
+                <svg class="library-quote__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M5 12h14"></path>
+                    <path d="M12 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+        {% endif %}
+    </div>
     {% endif %}
 </blockquote>

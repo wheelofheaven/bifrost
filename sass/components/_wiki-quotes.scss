@@ -303,15 +303,6 @@
     color: var(--color-text);
     letter-spacing: 0.01em;
 
-    &::before {
-        content: "📜";
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        font-size: 1rem;
-        opacity: 0.3;
-    }
-
     &__content {
         position: relative;
         z-index: 1;
@@ -328,30 +319,46 @@
         }
     }
 
+    // Footer row: the "Read" link sits right next to the citation. Same
+    // treatment on every breakpoint.
+    &__meta {
+        display: flex;
+        align-items: center;
+        justify-content: flex-start;
+        gap: 0.6rem;
+    }
+
     &__link {
-        position: absolute;
-        bottom: 0.75rem;
-        right: 0.75rem;
-    }
-
-    // "Read in <Book>" CTA — uses the shared glass-cloud-button
-    // mixin so it matches the lead-card visual language across
-    // /read/, /articles/, /news/. Override the cloud-duo here to
-    // signal "library / scripture" (warm mauve → cool cyan).
-    &__button {
-        @include gcc-btn.glass-cloud-button;
-        --cloud-a: #{c.$mauve-300};
-        --cloud-b: #{c.$cyan-300};
-    }
-
-    &__icon {
         flex-shrink: 0;
-        opacity: 0.8;
     }
 
-    &__button-text {
-        flex: 1;
-        white-space: nowrap;
+    // Subtle "Read" link — a quiet ghost pill, not a lead CTA, so it doesn't
+    // compete with the quoted scripture. The citation already names the book,
+    // so the label is simply "Read".
+    &__button {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.1rem 0.5rem;
+        font-family: var(--font-family-body);
+        font-size: 0.8rem;
+        font-weight: 500;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.4rem;
+        transition: color 0.2s ease, border-color 0.2s ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+            border-color: var(--color-border);
+
+            .library-quote__arrow {
+                transform: translateX(2px);
+            }
+        }
     }
 
     &__arrow {
@@ -360,14 +367,13 @@
     }
 
     &__citation {
-        margin-top: 0;
-        margin-bottom: 2.5rem;
+        margin: 0;
+        min-width: 0;
         padding-top: 0;
         border-top: none;
         font-style: italic;
         font-size: 0.9rem;
         color: var(--color-text-muted);
-        text-align: right;
         font-family: var(--font-family-body);
 
         &::before {

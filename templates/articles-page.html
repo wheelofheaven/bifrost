@@ -40,7 +40,7 @@
                 {% set summary_text = page.extra.summary | default(value=page.extra.tldr | default(value=page.description | default(value=""))) %}
                 {% if summary_text %}
                 <div class="article__summary" data-ai-summary="true" data-summary-label="{{ trans(key='summaryLabel', lang=detected_lang) }}">
-                    <p>{{ summary_text }}</p>
+                    <p>{{ summary_text | markdown(inline=true) | safe }}</p>
                 </div>
                 {% endif %}
 

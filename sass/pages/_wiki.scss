@@ -1648,60 +1648,76 @@
 // paragraph's left edge in the article's padding area.
 .wiki__lede {
     position: relative;
-    padding: 1.25rem 2rem 1.75rem;
-    min-height: 5.5rem; // ensures the rotated label has room to render
+    // Horizontal padding matches .wiki__content (2rem / 1.5rem) so the summary
+    // text is exactly as wide as the body text below it.
+    padding: 1.25rem 2rem 1.5rem;
+    min-height: 4.5rem;
 
-    @media (max-width: 900px) {
-        padding: 1rem 1.25rem 1.5rem;
+    @media (max-width: 768px) {
+        padding: 1rem 1.5rem 1.5rem;
     }
 
     p {
         margin: 0;
-        padding-left: 0.875rem; // breathing room between accent line and text
         font-size: 1.125rem;
         line-height: 1.6;
         color: var(--color-text);
     }
 
-    // Thick accent line — sits inside the article's left padding, just to the
-    // left of where the paragraph text starts.
+    // The "summary line": a thin full-height accent rule sitting just to the
+    // left of the paragraph text, inside the block's left padding.
     &::before {
         content: "";
         position: absolute;
-        left: 1.75rem;
         top: 1.25rem;
-        bottom: 1.75rem;
+        bottom: 1.5rem;
+        left: 1.1rem;
         width: 4px;
         background: var(--color-accent-primary);
         border-radius: 2px;
     }
 
-    // "SUMMARY" label — rotated -90° (reads bottom-to-top), suspended between
-    // the accent line and the paragraph's text edge.
+    // "SUMMARY" label overlaid on the line — colour-inverted (accent fill,
+    // page-background text), vertical, auto-sized to the word so it never
+    // clips regardless of language.
     &::after {
         content: attr(data-summary-label);
         position: absolute;
-        left: 0.875rem;
         top: 50%;
-        transform: translate(-50%, -50%) rotate(-90deg);
-        transform-origin: 50% 50%;
+        left: 1.1rem;
+        transform: translate(calc(-50% + 2px), -50%) rotate(180deg);
+        writing-mode: vertical-rl;
+        padding: 0.5rem 0.2rem;
+        background: var(--color-accent-primary);
+        color: var(--color-background);
+        border-radius: vars.$border-radius-sm;
         text-transform: uppercase;
-        letter-spacing: 0.18em;
-        font-size: 0.6875rem;
+        letter-spacing: 0.12em;
+        font-size: 0.625rem;
         font-weight: 700;
-        color: var(--color-accent-primary);
         white-space: nowrap;
         pointer-events: none;
     }
 
-    @media (max-width: 900px) {
+    // On phones lay the label flat as a small pill at the top-left, sitting on
+    // the accent line above the text — matches the article treatment and keeps
+    // the vertical chip from grazing the text in the narrow column.
+    @media (max-width: 768px) {
+        padding-top: 1.5rem;
+
         &::before {
-            left: 1rem;
-            top: 1rem;
-            bottom: 1.5rem;
+            top: 0;
+            bottom: 1.25rem;
+            left: 0.6rem;
         }
         &::after {
-            left: 0.125rem;
+            top: 0;
+            left: 0.5rem;
+            bottom: auto;
+            transform: none;
+            writing-mode: horizontal-tb;
+            padding: 0.15rem 0.5rem;
+            letter-spacing: 0.1em;
         }
     }
 }
