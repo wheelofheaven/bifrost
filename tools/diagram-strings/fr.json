@@ -25,12 +25,12 @@
     "foot":"Une Ère = un Grand Mois = 30° de précession ≈ 2 160 ans"
   },
   "wh": {
-    "title":"La Roue du Ciel — douze ères précessionnelles du projet",
+    "title":"Wheel of Heaven — douze ères précessionnelles du projet",
     "desc":"Les douze ères précessionnelles d'environ 2 160 ans lues comme les phases du projet de l'alliance, avec les années-frontières indiquées sur le pourtour : de l'Ère du Capricorne (~21 810 av. J.-C., ouverture du projet) à travers le Lion (humains créés), le Cancer (Éden), les Gémeaux (le Déluge), le Taureau (Babel), le Bélier (les prophètes), les Poissons (les Évangiles), jusqu'à l'actuelle Ère du Verseau (à partir de 1950 apr. J.-C.).",
     "gloss":{"leo":"humains créés","cancer":"Éden","gemini":"le Déluge","taurus":"Babel","aries":"les prophètes","pisces":"les Évangiles"},
     "here":"nous sommes ici","here_year":"1950 apr. J.-C.",
     "advance":"les ères avancent →",
-    "center":["La Roue","du Ciel"],
+    "center":["Wheel of","Heaven"],
     "sub":["douze ères du","projet de l'alliance"],
     "foot":"Une ère ≈ 2 160 ans · un tour complet ≈ une Grande Année",
     "years":{"15":"19,7k av. J.-C.","45":"17,5k av. J.-C.","75":"15,3k av. J.-C.","105":"13,2k av. J.-C.","135":"11,0k av. J.-C.","165":"8,85k av. J.-C.","195":"6,69k av. J.-C.","225":"4,53k av. J.-C.","255":"2,37k av. J.-C.","285":"210 av. J.-C."},

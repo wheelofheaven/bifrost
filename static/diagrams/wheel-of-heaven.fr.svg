@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
-  <title id="wh-t">La Roue du Ciel — douze ères précessionnelles du projet</title>
+  <title id="wh-t">Wheel of Heaven — douze ères précessionnelles du projet</title>
   <desc id="wh-d">Les douze ères précessionnelles d'environ 2 160 ans lues comme les phases du projet de l'alliance, avec les années-frontières indiquées sur le pourtour : de l'Ère du Capricorne (~21 810 av. J.-C., ouverture du projet) à travers le Lion (humains créés), le Cancer (Éden), les Gémeaux (le Déluge), le Taureau (Babel), le Bélier (les prophètes), les Poissons (les Évangiles), jusqu'à l'actuelle Ère du Verseau (à partir de 1950 apr. J.-C.).</desc>
   <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
   <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
@@ -57,8 +57,8 @@
   <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
   <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
   <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">les ères avancent →</text>
-  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">La Roue</text>
-  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">du Ciel</text>
+  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Wheel of</text>
+  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Heaven</text>
   <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">douze ères du</text>
   <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">projet de l'alliance</text>
   <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">Une ère ≈ 2 160 ans · un tour complet ≈ une Grande Année</text>

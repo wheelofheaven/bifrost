@@ -25,12 +25,12 @@
     "foot":"Ein Zeitalter = ein Großer Monat = 30° Präzession ≈ 2.160 Jahre"
   },
   "wh": {
-    "title":"Das Rad des Himmels — zwölf Präzessionszeitalter des Projekts",
+    "title":"Wheel of Heaven — zwölf Präzessionszeitalter des Projekts",
     "desc":"Die zwölf rund 2.160 Jahre langen Präzessionszeitalter als Phasen des Projekts der Allianz, mit Grenzjahren am Rand: vom Steinbock-Zeitalter (~21.810 v. Chr., Projektbeginn) über Löwe (Menschen erschaffen), Krebs (Eden), Zwillinge (die Sintflut), Stier (Babel), Widder (die Propheten), Fische (die Evangelien) bis zum aktuellen Wassermann-Zeitalter (ab 1950 n. Chr.).",
     "gloss":{"leo":"Menschen erschaffen","cancer":"Eden","gemini":"die Sintflut","taurus":"Babel","aries":"die Propheten","pisces":"die Evangelien"},
     "here":"wir sind hier","here_year":"1950 n.Chr.",
     "advance":"Zeitalter voran →",
-    "center":["Das Rad","des Himmels"],
+    "center":["Wheel of","Heaven"],
     "sub":["zwölf Zeitalter des","Projekts der Allianz"],
     "foot":"Ein Zeitalter ≈ 2.160 Jahre · eine volle Umdrehung ≈ ein Großes Jahr",
     "years":{"15":"19,7k v.Chr.","45":"17,5k v.Chr.","75":"15,3k v.Chr.","105":"13,2k v.Chr.","135":"11,0k v.Chr.","165":"8,85k v.Chr.","195":"6,69k v.Chr.","225":"4,53k v.Chr.","255":"2,37k v.Chr.","285":"210 v.Chr."},
