@@ -4,9 +4,16 @@
 {# Zola sitemap template - entries is provided by Zola with all pages and sections #}
 {# Skip noindexed pages and generated source-record stubs (extra.source_id):
    keeping them out of the sitemap stops them diluting crawl budget and avoids
-   advertising URLs we mark noindex. Mirrors the robots logic in partials/seo.html. #}
+   advertising URLs we mark noindex. Mirrors the robots logic in partials/seo.html.
+   Also skip machine-translated locales while the translation-dilution policy
+   is on (Decision 15 / H1.4). Zola does NOT expose config.extra to the sitemap
+   render context, so the locale list is inlined below — config.extra drives the
+   robots meta in partials/seo.html, and this mirrors it. When the policy is
+   lifted, revert BOTH: set config.extra.noindex_translations = false (robots)
+   AND remove the _is_translation guard here (sitemap). #}
 {% for sitemap_entry in entries %}
-{% if not sitemap_entry.extra.noindex and not sitemap_entry.extra.source_id %}
+{%- set _is_translation = sitemap_entry.permalink is containing('/de/') or sitemap_entry.permalink is containing('/fr/') or sitemap_entry.permalink is containing('/es/') or sitemap_entry.permalink is containing('/ru/') or sitemap_entry.permalink is containing('/ja/') or sitemap_entry.permalink is containing('/ko/') or sitemap_entry.permalink is containing('/zh/') or sitemap_entry.permalink is containing('/zh-Hant/') or sitemap_entry.permalink is containing('/he/') -%}
+{% if not sitemap_entry.extra.noindex and not sitemap_entry.extra.source_id and not _is_translation %}
     <url>
         <loc>{{ sitemap_entry.permalink | safe }}</loc>
         {% if sitemap_entry.date %}

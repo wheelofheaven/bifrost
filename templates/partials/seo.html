@@ -122,13 +122,22 @@
 {% endif %}
 
 <!-- Additional SEO Meta Tags -->
-{# Generated source records (extra.source_id) are boilerplate-dominated
-   bibliography stubs — noindex them so they don't dilute crawl budget.
-   An explicit page.extra.noindex still wins for anything else. #}
-{% set _noindex = page.extra.noindex or page.extra.source_id %}
-<meta name="robots" content="{% if _noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
-<meta name="googlebot" content="{% if _noindex %}noindex, nofollow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
-<meta name="bingbot" content="{% if _noindex %}noindex, nofollow{% else %}index, follow{% endif %}">
+{# Robots policy — two independent noindex reasons:
+   1. HARD noindex,nofollow — explicit page.extra.noindex, or generated
+      source-record stubs (extra.source_id): boilerplate we never want indexed
+      or crawled.
+   2. SOFT noindex,FOLLOW — machine-translated locales while the young domain
+      earns crawl trust (strategy-distribution-2026, Decision 15 / H1.4).
+      "follow" so link equity and hreflang still flow to the English core.
+      Toggled by config.extra.noindex_translations + index_languages, so a
+      locale can be re-opened without a content change. #}
+{% set _noindex_hard = page.extra.noindex or page.extra.source_id %}
+{% set _seo_lang = detected_lang | default(value="en") %}
+{% set _noindex_soft = config.extra.noindex_translations and (_seo_lang not in config.extra.index_languages) and not _noindex_hard %}
+{% set _noindex = _noindex_hard or _noindex_soft %}
+<meta name="robots" content="{% if _noindex_hard %}noindex, nofollow{% elif _noindex_soft %}noindex, follow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
+<meta name="googlebot" content="{% if _noindex_hard %}noindex, nofollow{% elif _noindex_soft %}noindex, follow{% else %}index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1{% endif %}">
+<meta name="bingbot" content="{% if _noindex_hard %}noindex, nofollow{% elif _noindex_soft %}noindex, follow{% else %}index, follow{% endif %}">
 <meta name="author" content="{% if page.extra.author %}{{ page.extra.author }}{% else %}{{ config.extra.author | default(value=config.title) }}{% endif %}">
 {% if page.extra.keywords %}
 <meta name="keywords" content="{{ page.extra.keywords | join(sep=", ") }}">
