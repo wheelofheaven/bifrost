@@ -802,10 +802,25 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 // coda's nebular backdrop continuing underneath, instead of a hard
 // background-colour edge. Scoped to the landing (footer only overlaps
 // when it follows the full-bleed landing scroller).
+// The footer's rounded corners reveal `main` at the very bottom (the strip
+// below the last section). Paint a soft pool there — a continuation of the
+// coda's teal backdrop — so the reveal reads as the section flowing under
+// the footer panel, not a flat body fill. Scoped to the landing.
+main:has(> .landing) {
+    padding-bottom: 0;
+    background: radial-gradient(
+            160% 12rem at 50% 100%,
+            rgba(c.$teal-300, 0.22) 0%,
+            transparent 100%
+        ) no-repeat center bottom / 100% 12rem;
+}
+
+// Lift the footer's rounded panel up over that bottom strip so its curved
+// top corners sit above the pool and reveal it.
 main:has(> .landing) ~ .footer {
     position: relative;
     z-index: 1;
-    margin-top: -2rem;
+    margin-top: -3rem;
 }
 
 // The featured cards borrow the read__path component, with two tweaks:
