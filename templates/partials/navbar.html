@@ -30,12 +30,12 @@
             </a>
 
             <a
-                href="{{ get_url(path='timeline', lang=detected_lang) }}"
-                class="navbar__link{% if current_path and current_path is starting_with('/timeline') %} navbar__link--active{% endif %}"
-                data-navbar-key="timeline"
-                {% if current_path and current_path is starting_with('/timeline') %}aria-current="true"{% endif %}
+                href="{{ get_url(path='articles', lang=detected_lang) }}"
+                class="navbar__link{% if current_path and current_path is starting_with('/articles') %} navbar__link--active{% endif %}"
+                data-navbar-key="articles"
+                {% if current_path and current_path is starting_with('/articles') %}aria-current="true"{% endif %}
             >
-                {{ trans(key="navbarTimeline", lang=detected_lang) }}
+                {{ trans(key="navbarArticles", lang=detected_lang) }}
             </a>
             <a
                 href="{{ get_url(path='news', lang=detected_lang) }}"
@@ -48,7 +48,7 @@
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="{{ trans(key='navbarKnowledgeSection', lang=detected_lang) }}">
                 <button
-                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/map') or current_path is starting_with('/wiki') or current_path is starting_with('/articles') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
+                    class="navbar__dropdown-trigger{% if current_path and (current_path is starting_with('/map') or current_path is starting_with('/wiki') or current_path is starting_with('/timeline') or current_path is starting_with('/resources') or current_path is starting_with('/library') or current_path is starting_with('/sources')) %} navbar__dropdown-trigger--active{% endif %}"
                     aria-expanded="false"
                     aria-haspopup="true"
                     aria-controls="knowledge-dropdown"
@@ -64,7 +64,7 @@
                 <div class="navbar__dropdown-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
                     <a href="{{ get_url(path='map', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="map">{{ trans(key="navbarMap", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="timeline">{{ trans(key="navbarTimeline", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='sources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
@@ -918,16 +918,16 @@
                             <div class="navbar-dropdown__link-description" data-navbar-key="mapDesc">{{ trans(key="navbarMapDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
-                    <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="navbar-dropdown__link">
+                    <a href="{{ get_url(path='timeline', lang=detected_lang) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/game-dna2.html" %}
+                            {% include "partials/icons/game-star-cycle.html" %}
                         </span>
                         <div>
                             <div class="navbar-dropdown__link-title">
-                                <span data-navbar-key="articles">{{ trans(key="navbarArticles", lang=detected_lang) }}</span>
+                                <span data-navbar-key="timeline">{{ trans(key="navbarTimeline", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="articlesDesc">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readBookDesc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">

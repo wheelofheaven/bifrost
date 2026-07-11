@@ -3,6 +3,12 @@
 {% import "macros/claim-badge.html" as claim_badge %}
 
 {% block content %}
+{# Featured articles for §8 — lang-aware fetch, newest first (articles
+   section is sort_by = "date"). slice(end=3) → the three latest published. #}
+{% set _lang_prefix = "" %}
+{% if detected_lang and detected_lang != config.default_language %}{% set _lang_prefix = detected_lang ~ "/" %}{% endif %}
+{% set _articles_sec = get_section(path=_lang_prefix ~ "articles/_index.md") %}
+{% set latest_articles = _articles_sec.pages | slice(end=3) %}
 <div class="landing" data-landing>
 
     {# Pagination dots — fixed sidebar nav. Each dot links to a section
@@ -15,6 +21,7 @@
         trans(key="landingNav5", lang=detected_lang),
         trans(key="landingNav6", lang=detected_lang),
         trans(key="landingNav7", lang=detected_lang),
+        trans(key="navbarArticles", lang=detected_lang),
         trans(key="landingNav8", lang=detected_lang)
     ] %}
     <nav class="landing__nav" aria-label="{{ trans(key='landingNavAria', lang=detected_lang) }}">
@@ -337,7 +344,42 @@
                 </article>
             </nav>
         </div>
-        <a href="#section-8" class="landing-section__hint" aria-label="{{ trans(key='landingHintCoda', lang=detected_lang) }}">
+        <a href="#section-8" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
+            <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </a>
+    </section>
+
+    {# §8 — Featured articles: the three latest published Explainers #}
+    <section id="section-8" class="landing-section landing-section--featured" data-section="8">
+        <div class="landing-section__inner">
+            <p class="landing-section__eyebrow">{{ trans(key="landingArticlesEyebrow", lang=detected_lang) }}</p>
+            <h2 class="landing-section__heading">
+                {{ trans(key="landingArticlesHeading", lang=detected_lang) }}
+            </h2>
+            <p class="landing-section__body">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</p>
+            {# Same card component as §7 Reading paths (read__path). #}
+            <nav class="read__paths" aria-label="{{ trans(key='landingArticlesHeading', lang=detected_lang) }}">
+                {% for page in latest_articles %}
+                <article class="read__path read__path--solo">
+                    <a class="read__path-main" href="{{ page.permalink }}">
+                        <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dna2.html" %}</span>
+                        <h3 class="read__path-title">{{ page.title }}</h3>
+                        {% if page.date %}<time class="read__path-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%b %d, %Y") }}</time>{% endif %}
+                        <p class="read__path-desc">{{ page.description }}</p>
+                        <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                    </a>
+                </article>
+                {% endfor %}
+            </nav>
+            <a class="landing-featured__all" href="{{ get_url(path='articles', lang=detected_lang) }}">
+                <span>{{ trans(key="landingArticlesAll", lang=detected_lang) }}</span>
+                {% include "partials/icons/arrow-right.html" %}
+            </a>
+        </div>
+        <a href="#section-9" class="landing-section__hint" aria-label="{{ trans(key='landingHintCoda', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintCoda", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>
@@ -345,8 +387,8 @@
         </a>
     </section>
 
-    {# §8 — Coda #}
-    <section id="section-8" class="landing-section landing-section--coda" data-section="8">
+    {# §9 — Coda #}
+    <section id="section-9" class="landing-section landing-section--coda" data-section="9">
         <div class="landing-section__inner">
             <blockquote class="landing-coda__quote">
                 <p>

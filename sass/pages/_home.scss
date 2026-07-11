@@ -200,11 +200,12 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         }
     }
 
-    // §7 hosts the three reading-path cards. The default 38rem inner
-    // width squeezes them into tall, elongated tiles where the title
-    // and desc wrap a lot; widen to match the `/read/` page layout so
-    // each card has room to breathe.
-    &--paths &__inner {
+    // §7 and §8 host three cards each (reading paths / featured articles).
+    // The default 38rem inner width squeezes them into tall, elongated
+    // tiles where the title and desc wrap a lot; widen to match the
+    // `/read/` page layout so each card has room to breathe.
+    &--paths &__inner,
+    &--featured &__inner {
         max-width: 64rem;
     }
 
@@ -751,7 +752,119 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 // Uses the .read__paths element from /read/ verbatim. See
 // `themes/bifrost/sass/pages/_read.scss` and `templates/read.html`.
 
-// ---- §8 — Coda ----
+// ---- §7 + §8 — Card-section backdrop ----
+// A shared nebular backdrop behind the two card sections (Reading paths
+// and Featured articles) so neither reads as a flat panel and the
+// glass-cloud cards have something to refract. The pools sit in the
+// top-right / bottom-left corners — the horizontal mirror of the cards'
+// own cloud duo (top-left / bottom-right) — so section and cards don't
+// stack their colour in the same corners.
+.landing-section--paths,
+.landing-section--featured {
+    position: relative;
+    isolation: isolate;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(60% 55% at 82% 12%, rgba(c.$lavender-400, 0.18) 0%, transparent 60%),
+            radial-gradient(55% 55% at 15% 88%, rgba(c.$blue-400, 0.16) 0%, transparent 60%);
+        pointer-events: none;
+    }
+}
+
+// ---- §9 — Coda backdrop ----
+// The closing quote reads Aquarius, the Water-Bearer — "what has been
+// contained is poured out." A cool source-pool up top flowing into a
+// second pool below evokes the pour, and gives the finale its own depth
+// (a vertical axis, distinct from the corner-pools of the card sections).
+.landing-section--coda {
+    position: relative;
+    isolation: isolate;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        background:
+            radial-gradient(65% 55% at 50% 16%, rgba(c.$blue-400, 0.16) 0%, transparent 62%),
+            radial-gradient(85% 42% at 50% 100%, rgba(c.$teal-300, 0.16) 0%, transparent 64%);
+        pointer-events: none;
+    }
+}
+
+// Landing → footer seam. The footer is a rounded-top panel; pull it up
+// over the coda and lift it above so its curved top corners reveal the
+// coda's nebular backdrop continuing underneath, instead of a hard
+// background-colour edge. Scoped to the landing (footer only overlaps
+// when it follows the full-bleed landing scroller).
+main:has(> .landing) ~ .footer {
+    position: relative;
+    z-index: 1;
+    margin-top: -2rem;
+}
+
+// The featured cards borrow the read__path component, with two tweaks:
+.landing-section--featured {
+    // Publish date tucked tight under the title (in place of the eyebrow,
+    // which claimed a full prominent line) — compact /library/-style meta.
+    .read__path-date {
+        display: block;
+        margin-top: -0.15rem; // hug the title against the flex-gap
+        font-family: $_landing-mono;
+        font-size: 0.625rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text-subtle);
+    }
+
+    // The article `description` runs much longer than the Reading-paths
+    // blurbs — which, in the stretch-to-tallest grid, elongates the row.
+    // Clamp it so §8's cards stay as compact as §7's.
+    .read__path-desc {
+        margin-top: v.$spacing-xs;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+.landing-featured__all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 50px;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    font-family: var(--font-family-body);
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+
+    svg {
+        width: 1rem;
+        height: 1rem;
+    }
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--color-accent-primary);
+        color: var(--color-accent-primary);
+        background: var(--color-hover);
+        outline: none;
+    }
+}
+
+// ---- §9 — Coda ----
 .landing-coda {
     // The closing line of the landing scroll. Layer 3 (citation
     // serif) — the corpus is framing itself as something *quoted*,
@@ -834,7 +947,8 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     &--question,
     &--arc,
     &--now,
-    &--paths {
+    &--paths,
+    &--featured {
         background: var(--color-background);
     }
 
