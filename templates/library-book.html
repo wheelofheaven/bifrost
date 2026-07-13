@@ -480,6 +480,8 @@
                     {% if out_spdx == "CC0-1.0" %}{% set_global out_label = "CC0 1.0" %}{% else %}{% set_global out_label = out_spdx %}{% endif %}
                 {% endif %}
                 {% if not out_url and out_spdx == "CC0-1.0" %}{% set_global out_url = "https://creativecommons.org/publicdomain/zero/1.0/" %}{% endif %}
+                {% include "partials/cite-book.html" %}
+
                 <section class="library-book__licensing" aria-labelledby="book-licensing-heading" data-ai-cite="true">
                     <h2 class="library-book__licensing-title" id="book-licensing-heading">Licensing</h2>
                     <dl class="library-book__licensing-list">
