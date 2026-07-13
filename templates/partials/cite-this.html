@@ -1,58 +1,19 @@
-{# "Cite this page" widget (Decision 15, H1.3). Derives four citation formats
-   plus a permalink from page metadata — no per-page editorial cost. Included
-   near the end of the article on wiki / article / timeline pages. Year falls
-   back date -> updated -> editorial_pass -> n.d. #}
-{%- set _title = page.title -%}
-{%- set _url = page.permalink -%}
-{%- set _site = config.title -%}
-{%- set _slug = page.slug -%}
+{# Page "Cite this page" widget (Decision 15, H1.3). Computes citation fields
+   from page metadata and defers rendering to macros/cite.html. Year falls back
+   date -> updated -> editorial_pass -> n.d. #}
 {%- set _author = page.extra.author | default(value=config.extra.author) | default(value=config.title) -%}
 {%- if page.date %}{% set_global _cite_year = page.date | date(format="%Y") %}
 {%- elif page.updated %}{% set_global _cite_year = page.updated | date(format="%Y") %}
 {%- elif page.extra.editorial_pass %}{% set_global _cite_year = page.extra.editorial_pass | truncate(length=4, end="") %}
 {%- else %}{% set_global _cite_year = "n.d." %}{%- endif -%}
-{%- set _year = _cite_year -%}
-{%- set lb = "{" -%}{%- set rb = "}" -%}
-<details class="cite" data-ai-cite="true">
-    <summary class="cite__summary">Cite this page</summary>
-    <div class="cite__body">
-        <div class="cite__format">
-            <div class="cite__format-head"><span class="cite__format-label">APA</span><button type="button" class="cite__copy" aria-label="Copy APA citation">Copy</button></div>
-            <pre class="cite__text">{{ _title }}. ({{ _year }}). {{ _site }}. {{ _url | safe }}</pre>
-        </div>
-        <div class="cite__format">
-            <div class="cite__format-head"><span class="cite__format-label">MLA</span><button type="button" class="cite__copy" aria-label="Copy MLA citation">Copy</button></div>
-            <pre class="cite__text">"{{ _title }}." {{ _site }}, {{ _year }}, {{ _url | safe }}.</pre>
-        </div>
-        <div class="cite__format">
-            <div class="cite__format-head"><span class="cite__format-label">Chicago</span><button type="button" class="cite__copy" aria-label="Copy Chicago citation">Copy</button></div>
-            <pre class="cite__text">"{{ _title }}." {{ _site }}, {{ _year }}. {{ _url | safe }}.</pre>
-        </div>
-        <div class="cite__format">
-            <div class="cite__format-head"><span class="cite__format-label">BibTeX</span><button type="button" class="cite__copy" aria-label="Copy BibTeX citation">Copy</button></div>
-            <pre class="cite__text">@misc{{ lb }}woh-{{ _slug }},
-  title        = {{ lb }}{{ _title }}{{ rb }},
-  author       = {{ lb }}{{ lb }}{{ _author }}{{ rb }}{{ rb }},
-  howpublished = {{ lb }}\url{{ lb }}{{ _url }}{{ rb }}{{ rb }},
-  year         = {{ lb }}{{ _year }}{{ rb }},
-  note         = {{ lb }}CC0-1.0 public domain{{ rb }}
-{{ rb }}</pre>
-        </div>
-    </div>
-</details>
-<script>
-(function () {
-    document.querySelectorAll(".cite__copy").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-            var pre = btn.closest(".cite__format").querySelector(".cite__text");
-            if (!navigator.clipboard) return;
-            navigator.clipboard.writeText(pre.textContent).then(function () {
-                var o = btn.textContent;
-                btn.textContent = "Copied";
-                btn.classList.add("cite__copy--done");
-                setTimeout(function () { btn.textContent = o; btn.classList.remove("cite__copy--done"); }, 1500);
-            });
-        });
-    });
-})();
-</script>
+{{ cite::widget(
+    label=trans(key="citeThisPage", lang=detected_lang),
+    title=page.title,
+    url=page.permalink,
+    slug=page.slug,
+    year=_cite_year,
+    site=config.title,
+    author=_author,
+    is_book=false,
+    entry_type="misc",
+    note="CC0-1.0 public domain") }}

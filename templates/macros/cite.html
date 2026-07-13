@@ -1,0 +1,39 @@
+{# Shared citation widget (Decision 15, H1.3). Renders the .cite <details>
+   block with APA / MLA / Chicago / BibTeX. Two callers:
+     - partials/cite-this.html  → page citation  (is_book=false, title-first, @misc)
+     - partials/cite-book.html  → book citation  (is_book=true, author-first, @book)
+   The copy-to-clipboard behaviour lives in static/js/cite-copy.js (core bundle),
+   so this macro emits no inline script. #}
+{% macro widget(label, title, url, slug, year, site, author="", is_book=false, entry_type="misc", note="CC0-1.0 public domain") %}
+{%- set lb = "{" -%}{%- set rb = "}" -%}
+{# Skip the period after a title that already ends in terminal punctuation. #}
+{%- set_global _dot = "." -%}
+{%- if title is ending_with("?") or title is ending_with("!") or title is ending_with(".") -%}{%- set_global _dot = "" -%}{%- endif -%}
+<details class="cite" data-ai-cite="true">
+    <summary class="cite__summary">{{ label }}</summary>
+    <div class="cite__body">
+        <div class="cite__format">
+            <div class="cite__format-head"><span class="cite__format-label">APA</span><button type="button" class="cite__copy" aria-label="Copy APA citation">Copy</button></div>
+            <pre class="cite__text">{% if is_book and author %}{{ author }}. ({{ year }}). {{ title }}{{ _dot }}{% else %}{{ title }}{{ _dot }} ({{ year }}).{% endif %} {{ site }}. {{ url | safe }}</pre>
+        </div>
+        <div class="cite__format">
+            <div class="cite__format-head"><span class="cite__format-label">MLA</span><button type="button" class="cite__copy" aria-label="Copy MLA citation">Copy</button></div>
+            <pre class="cite__text">{% if is_book and author %}{{ author }}. {{ title }}{{ _dot }} {{ year }}. {{ site }}, {{ url | safe }}.{% else %}"{{ title }}{{ _dot }}" {{ site }}, {{ year }}, {{ url | safe }}.{% endif %}</pre>
+        </div>
+        <div class="cite__format">
+            <div class="cite__format-head"><span class="cite__format-label">Chicago</span><button type="button" class="cite__copy" aria-label="Copy Chicago citation">Copy</button></div>
+            <pre class="cite__text">{% if is_book and author %}{{ author }}. {{ title }}{{ _dot }} {{ year }}. {{ site }}. {{ url | safe }}.{% else %}"{{ title }}{{ _dot }}" {{ site }}, {{ year }}. {{ url | safe }}.{% endif %}</pre>
+        </div>
+        <div class="cite__format">
+            <div class="cite__format-head"><span class="cite__format-label">BibTeX</span><button type="button" class="cite__copy" aria-label="Copy BibTeX citation">Copy</button></div>
+            <pre class="cite__text">@{{ entry_type }}{{ lb }}woh-{{ slug }},
+{% if author %}  author       = {{ lb }}{% if not is_book %}{{ lb }}{% endif %}{{ author }}{% if not is_book %}{{ rb }}{% endif %}{{ rb }},
+{% endif %}  title        = {{ lb }}{{ title }}{{ rb }},
+  year         = {{ lb }}{{ year }}{{ rb }},
+  howpublished = {{ lb }}\url{{ lb }}{{ url }}{{ rb }}{{ rb }},
+  note         = {{ lb }}{{ note }}{{ rb }}
+{{ rb }}</pre>
+        </div>
+    </div>
+</details>
+{% endmacro widget %}

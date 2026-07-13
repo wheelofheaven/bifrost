@@ -38,6 +38,7 @@ const bundles = {
     'prefetch.js',
     'listen-button.js',
     'category-rail.js',
+    'cite-copy.js',
   ],
   // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.
   'search.bundle.js': [
