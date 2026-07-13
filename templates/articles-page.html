@@ -2,6 +2,7 @@
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/article.html" as article %}
+{% import "macros/relatedness-graph.html" as relatedness_graph %}
 
 {% block content %}
 {% include "partials/schema/scholarly-article.html" %}
@@ -54,6 +55,7 @@
             {% if page.extra.see_also %}
             <section class="article__see-also" role="complementary" aria-label="Related articles">
                 <h2 class="article__section-title">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
+                {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang) }}
                 <ul class="article__link-list">
                     {% for item in page.extra.see_also %}
                     <li class="article__link-item">

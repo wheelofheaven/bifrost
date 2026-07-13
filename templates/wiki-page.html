@@ -2,6 +2,7 @@
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/translation-badge.html" as translation_badge %}
+{% import "macros/relatedness-graph.html" as relatedness_graph %}
 
 {% block content %}
 <!-- DefinedTerm Schema for Wiki Pages -->
@@ -63,6 +64,7 @@
                 {% if page.extra.see_also %}
                 <section class="wiki__see-also" role="complementary" aria-label="Related topics">
                     <h2 class="wiki__section-title" id="see-also-heading">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
+                    {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang) }}
                     <ul class="wiki__link-list">
                         {% for item in page.extra.see_also %}
                         <li class="wiki__link-item">

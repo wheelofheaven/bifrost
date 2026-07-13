@@ -1,0 +1,51 @@
+{# Relatedness mini-graph (Decision 15, G3 — see the wheelofheaven repo
+   .claude/plans/strategy-distribution-2026.md §"The graph / relatedness
+   surface"). A bounded SVG "neighbourhood" constellation: the current entry at
+   the centre, its curated see_also neighbours around it, each a real
+   (crawlable) link. It is a *visual companion* to the see_also list, which
+   stays the semantic / a11y / crawl backbone — so this figure is aria-hidden
+   and its links are pulled from the tab order (tabindex=-1) to avoid duplicate
+   announcements. Tera has no trig, so node positions are a precomputed
+   per-count coordinate table (flat [x0,y0,x1,y1,…]; centre 170,132; radius 92;
+   up to 8 neighbours). #}
+{% macro neighborhood(title, see_also, lang) %}
+{% set total = see_also | length %}
+{% set n = total %}{% if n > 8 %}{% set n = 8 %}{% endif %}
+{% if n > 0 %}
+{% if n == 1 %}{% set_global coords = [170,40] %}
+{% elif n == 2 %}{% set_global coords = [170,40, 170,224] %}
+{% elif n == 3 %}{% set_global coords = [170,40, 250,178, 90,178] %}
+{% elif n == 4 %}{% set_global coords = [170,40, 262,132, 170,224, 78,132] %}
+{% elif n == 5 %}{% set_global coords = [170,40, 257,104, 224,206, 116,206, 82,104] %}
+{% elif n == 6 %}{% set_global coords = [170,40, 250,86, 250,178, 170,224, 90,178, 90,86] %}
+{% elif n == 7 %}{% set_global coords = [170,40, 242,75, 260,152, 210,215, 130,215, 80,152, 98,75] %}
+{% else %}{% set_global coords = [170,40, 235,67, 262,132, 235,197, 170,224, 105,197, 78,132, 105,67] %}
+{% endif %}
+<figure class="relatedness-graph" aria-hidden="true">
+  <svg class="relatedness-graph__svg" viewBox="0 0 340 264" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+    <g class="relatedness-graph__edges">
+      {% for item in see_also %}{% if loop.index0 < 8 %}{% set ix = loop.index0 * 2 %}{% set iy = ix + 1 %}
+      <line class="relatedness-graph__edge" x1="170" y1="132" x2="{{ coords[ix] }}" y2="{{ coords[iy] }}"></line>
+      {% endif %}{% endfor %}
+    </g>
+    <g class="relatedness-graph__nodes">
+      {% for item in see_also %}{% if loop.index0 < 8 %}{% set ix = loop.index0 * 2 %}{% set iy = ix + 1 %}{% set x = coords[ix] %}{% set y = coords[iy] %}
+      {% if item.url %}{% set href = item.url %}{% else %}{% set href = get_url(path=item.path, lang=lang) %}{% endif %}
+      <a class="relatedness-graph__node" href="{{ href }}" tabindex="-1">
+        <title>{{ item.title }}</title>
+        <circle class="relatedness-graph__dot" cx="{{ x }}" cy="{{ y }}" r="7"></circle>
+        <text class="relatedness-graph__label"
+              text-anchor="{% if x >= 210 %}start{% elif x <= 130 %}end{% else %}middle{% endif %}"
+              x="{% if x >= 210 %}{{ x + 11 }}{% elif x <= 130 %}{{ x - 11 }}{% else %}{{ x }}{% endif %}"
+              y="{% if x >= 210 or x <= 130 %}{{ y + 3 }}{% elif y < 132 %}{{ y - 13 }}{% else %}{{ y + 20 }}{% endif %}">{{ item.title | truncate(length=12) }}</text>
+      </a>
+      {% endif %}{% endfor %}
+    </g>
+    <g class="relatedness-graph__center">
+      <circle class="relatedness-graph__dot relatedness-graph__dot--center" cx="170" cy="132" r="12"></circle>
+      <text class="relatedness-graph__label relatedness-graph__label--center" x="170" y="132" dy="4" text-anchor="middle">{{ title | truncate(length=20) }}</text>
+    </g>
+  </svg>
+</figure>
+{% endif %}
+{% endmacro neighborhood %}

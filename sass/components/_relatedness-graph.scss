@@ -1,0 +1,67 @@
+// components/_relatedness-graph.scss
+// Relatedness mini-graph (Decision 15, G3) — a bounded SVG "neighbourhood"
+// constellation rendered above the see_also list on wiki / article pages.
+// The see_also list remains the semantic / a11y / crawl backbone; this is the
+// visual companion. See templates/macros/relatedness-graph.html.
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.relatedness-graph {
+    margin: 0 auto v.$spacing-lg;
+    max-width: 380px;
+
+    &__svg {
+        display: block;
+        width: 100%;
+        height: auto;
+        overflow: visible;
+    }
+
+    // Spokes: translucent cyan so they read on both light and dark
+    // (--color-border is ~transparent in dark).
+    &__edge {
+        stroke: c.$cyan-500;
+        stroke-width: 1.5;
+        opacity: 0.42;
+    }
+
+    // Nodes fill with the page background (reliable in both themes) so they
+    // read as clean cyan-ringed "cut-out" nodes over the spokes.
+    &__dot {
+        fill: var(--color-background);
+        stroke: c.$cyan-500;
+        stroke-width: 2;
+        transition: fill v.$transition-base, stroke v.$transition-base;
+
+        &--center {
+            fill: c.$cyan-500;
+            stroke: c.$cyan-500;
+        }
+    }
+
+    &__label {
+        fill: var(--color-text-muted);
+        font-size: 10px;
+        font-weight: 500;
+        transition: fill v.$transition-base;
+
+        &--center {
+            fill: c.$cyan-900;
+            font-size: 11px;
+            font-weight: 600;
+        }
+    }
+
+    &__node {
+        cursor: pointer;
+
+        &:hover .relatedness-graph__dot {
+            fill: c.$cyan-300;
+            stroke: c.$cyan-600;
+        }
+
+        &:hover .relatedness-graph__label {
+            fill: var(--color-text);
+        }
+    }
+}
