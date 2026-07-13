@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="dataset dataset--index">
+    <header class="dataset__header">
+        <h1 class="dataset__title">{{ section.title }}</h1>
+        {% if section.description %}
+        <p class="dataset__description">{{ section.description }}</p>
+        {% endif %}
+    </header>
+
+    <div class="dataset__list">
+        {% for page in section.pages %}
+        <a class="dataset__card" href="{{ page.permalink }}">
+            <span class="dataset__card-title">{{ page.title }}</span>
+            {% if page.description %}<span class="dataset__card-desc">{{ page.description }}</span>{% endif %}
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}

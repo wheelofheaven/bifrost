@@ -1,0 +1,182 @@
+// pages/_datasets.scss
+// The /datasets/ landing pages — downloadable CC0 datasets (G2).
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.dataset {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: v.$spacing-2xl v.$spacing-lg;
+
+    &__header {
+        margin-bottom: v.$spacing-xl;
+    }
+
+    &__title {
+        font-size: v.$font-size-2xl;
+        font-weight: 700;
+        color: var(--color-text);
+        margin: 0 0 v.$spacing-sm;
+    }
+
+    &__description {
+        font-size: v.$font-size-lg;
+        color: var(--color-text-muted);
+        line-height: 1.6;
+        margin: 0 0 v.$spacing-sm;
+    }
+
+    &__license {
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+
+        a { color: c.$cyan-600; }
+    }
+
+    // Stats
+    &__stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: v.$spacing-md;
+        margin: 0 0 v.$spacing-xl;
+    }
+
+    &__stat {
+        padding: v.$spacing-md;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-md;
+        background: var(--color-surface);
+    }
+
+    &__stat-label {
+        font-size: v.$font-size-xs;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--color-text-muted);
+    }
+
+    &__stat-value {
+        margin: v.$spacing-2xs 0 0;
+        font-size: v.$font-size-xl;
+        font-weight: 700;
+        color: c.$cyan-500;
+    }
+
+    // Downloads
+    &__downloads {
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-md;
+        margin: 0 0 v.$spacing-xl;
+    }
+
+    &__download {
+        flex: 1 1 240px;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        padding: v.$spacing-lg;
+        border: 2px solid c.$cyan-500;
+        border-radius: v.$border-radius-lg;
+        background: var(--color-surface);
+        text-decoration: none;
+        transition: background v.$transition-base, transform v.$transition-base;
+
+        &:hover {
+            background: c.$cyan-500;
+            transform: translateY(-2px);
+
+            .dataset__download-label,
+            .dataset__download-note { color: c.$cyan-900; }
+        }
+    }
+
+    &__download-label {
+        font-size: v.$font-size-lg;
+        font-weight: 700;
+        color: c.$cyan-600;
+    }
+
+    &__download-note {
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+    }
+
+    // Body
+    &__content {
+        margin: v.$spacing-xl 0;
+        line-height: 1.7;
+        color: var(--color-text);
+    }
+
+    // Cite
+    &__cite {
+        margin-top: v.$spacing-2xl;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-border);
+    }
+
+    &__cite-heading {
+        font-size: v.$font-size-xl;
+        font-weight: 600;
+        margin: 0 0 v.$spacing-md;
+    }
+
+    &__cite-text {
+        color: var(--color-text-muted);
+        font-size: v.$font-size-sm;
+        margin: 0 0 v.$spacing-md;
+    }
+
+    &__cite-bibtex {
+        background: var(--color-surface);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-md;
+        padding: v.$spacing-md;
+        overflow-x: auto;
+        font-size: v.$font-size-sm;
+        margin: 0;
+    }
+
+    &__footer {
+        margin-top: v.$spacing-xl;
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-md;
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+
+        a { color: c.$cyan-600; word-break: break-all; }
+    }
+
+    // Section index
+    &__list {
+        display: grid;
+        gap: v.$spacing-md;
+    }
+
+    &__card {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xs;
+        padding: v.$spacing-lg;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-lg;
+        background: var(--color-surface);
+        text-decoration: none;
+        transition: border-color v.$transition-base;
+
+        &:hover { border-color: c.$cyan-500; }
+    }
+
+    &__card-title {
+        font-size: v.$font-size-lg;
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    &__card-desc {
+        font-size: v.$font-size-sm;
+        color: var(--color-text-muted);
+    }
+}

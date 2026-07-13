@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% include "partials/schema/dataset.html" %}
+<div class="dataset">
+    <article class="dataset__article" role="article" aria-labelledby="dataset-title">
+        <header class="dataset__header">
+            <h1 class="dataset__title" id="dataset-title">{{ page.title }}</h1>
+            {% if page.description %}
+            <p class="dataset__description">{{ page.description }}</p>
+            {% endif %}
+            {% if page.extra.license %}
+            <p class="dataset__license">
+                {% if page.extra.license_url %}<a href="{{ page.extra.license_url }}" rel="license">{{ page.extra.license }}</a>{% else %}{{ page.extra.license }}{% endif %}
+                &middot; public domain{% if page.extra.updated %} &middot; updated {{ page.extra.updated }}{% endif %}
+            </p>
+            {% endif %}
+        </header>
+
+        {% if page.extra.stats %}
+        <dl class="dataset__stats" aria-label="Dataset summary">
+            {% for s in page.extra.stats %}
+            <div class="dataset__stat">
+                <dt class="dataset__stat-label">{{ s.label }}</dt>
+                <dd class="dataset__stat-value">{{ s.value }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+        {% endif %}
+
+        {% if page.extra.downloads %}
+        <section class="dataset__downloads" aria-label="Downloads">
+            {% for d in page.extra.downloads %}
+            <a class="dataset__download" href="{{ d.url }}" download>
+                <span class="dataset__download-label">{{ d.label }}</span>
+                {% if d.note %}<span class="dataset__download-note">{{ d.note }}</span>{% endif %}
+            </a>
+            {% endfor %}
+        </section>
+        {% endif %}
+
+        {% if page.content %}
+        <div class="dataset__content">{{ page.content | safe }}</div>
+        {% endif %}
+
+        {% if page.extra.citation_text or page.extra.citation_bibtex %}
+        <section class="dataset__cite" aria-labelledby="cite-heading">
+            <h2 class="dataset__cite-heading" id="cite-heading">Cite this dataset</h2>
+            {% if page.extra.citation_text %}
+            <p class="dataset__cite-text" data-ai-cite="true">{{ page.extra.citation_text }}</p>
+            {% endif %}
+            {% if page.extra.citation_bibtex %}
+            <pre class="dataset__cite-bibtex"><code>{{ page.extra.citation_bibtex }}</code></pre>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <footer class="dataset__footer">
+            {% if page.extra.api_url %}<span>API: <a href="{{ page.extra.api_url }}">{{ page.extra.api_url }}</a></span>{% endif %}
+            {% if page.extra.schema_url %}<span>Schema: <a href="{{ page.extra.schema_url }}">{{ page.extra.schema_url }}</a></span>{% endif %}
+        </footer>
+    </article>
+</div>
+{% endblock content %}

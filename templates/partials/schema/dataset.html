@@ -1,0 +1,33 @@
+<!-- Schema.org Dataset - for /datasets/ landing pages (Google Dataset Search) -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "@id": "{{ current_url | safe }}",
+  "name": "{{ page.extra.dataset_name | default(value=page.title) | escape }}",
+  "description": "{{ page.description | default(value='') | escape }}",
+  "url": "{{ current_url | safe }}",
+  "license": "{{ page.extra.license_url | default(value='https://creativecommons.org/publicdomain/zero/1.0/') }}",
+  "isAccessibleForFree": true,
+  "inLanguage": "en",
+  {% if page.extra.keywords %}"keywords": [{% for k in page.extra.keywords %}"{{ k | escape }}"{% if not loop.last %}, {% endif %}{% endfor %}],{% endif %}
+  {% if page.extra.updated %}"datePublished": "{{ page.extra.updated }}",{% endif %}
+  "creator": {
+    "@type": "Organization",
+    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
+    "name": "{{ config.title }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+  }{% if page.extra.downloads %},
+  "distribution": [
+    {% for d in page.extra.downloads %}{
+      "@type": "DataDownload",
+      "encodingFormat": "{{ d.format | default(value='application/json') }}",
+      "contentUrl": "{{ d.url | safe }}"
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+  ]{% endif %}
+}
+</script>
