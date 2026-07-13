@@ -1,0 +1,72 @@
+// components/_cite.scss
+// "Cite this page" widget (Decision 15, H1.3) — a <details> block with four
+// citation formats + permalink, rendered near the end of reference pages.
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.cite {
+    margin: v.$spacing-xl 0;
+    border: 1px solid var(--color-border);
+    border-radius: v.$border-radius-md;
+    background: var(--color-surface);
+
+    &__summary {
+        cursor: pointer;
+        padding: v.$spacing-md v.$spacing-lg;
+        font-weight: 600;
+        color: var(--color-text);
+        user-select: none;
+    }
+
+    &[open] &__summary {
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    &__body {
+        padding: v.$spacing-md v.$spacing-lg v.$spacing-lg;
+        display: grid;
+        gap: v.$spacing-md;
+    }
+
+    &__format-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: v.$spacing-2xs;
+    }
+
+    &__format-label {
+        font-size: v.$font-size-xs;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-weight: 700;
+        color: var(--color-text-muted);
+    }
+
+    &__copy {
+        font-size: v.$font-size-xs;
+        padding: v.$spacing-2xs v.$spacing-sm;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-sm;
+        background: transparent;
+        color: c.$cyan-600;
+        cursor: pointer;
+        transition: border-color v.$transition-base, color v.$transition-base;
+
+        &:hover { border-color: c.$cyan-500; }
+        &--done { color: c.$cyan-700; border-color: c.$cyan-500; }
+    }
+
+    &__text {
+        margin: 0;
+        padding: v.$spacing-sm v.$spacing-md;
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-sm;
+        font-size: v.$font-size-sm;
+        line-height: 1.55;
+        white-space: pre-wrap;
+        word-break: break-word;
+        color: var(--color-text);
+    }
+}
