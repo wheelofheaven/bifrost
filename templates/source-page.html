@@ -54,19 +54,44 @@
             {% endif %}
         </header>
 
-        <div class="source-page__layout">
+        {% set has_main = source_description or page.content or (backlinks and backlinks | length > 0) %}
+        <div class="source-page__layout{% if not has_main %} source-page__layout--meta-only{% endif %}">
+            {% if has_main %}
             <article class="source-page__article" role="article" aria-labelledby="page-title">
                 {% if source_description or page.content %}
                 <div class="source-page__content">
                     {% if source_description %}
-                    <p>{{ source_description }}</p>
+                    {# Harvested blurbs may carry markdown links/emphasis;
+                       render them rather than printing the raw syntax. #}
+                    {{ source_description | markdown | safe }}
                     {% endif %}
                     {% if page.content %}
                     {{ page.content | safe }}
                     {% endif %}
                 </div>
                 {% endif %}
+
+                {% if backlinks and backlinks | length > 0 %}
+                <section class="source-page__cited" aria-label="Cited by">
+                    <h2 class="source-page__section-title">
+                        Cited by
+                        <span class="source-page__section-count">{{ backlinks | length }}</span>
+                    </h2>
+                    <ul class="source-page__source-list">
+                        {% for cite in backlinks %}
+                        <li class="source-page__source-item">
+                            {% set cite_path = cite.path | trim_start_matches(pat="/") %}
+                            <a href="{{ get_url(path=cite_path, lang=detected_lang) }}" class="source-page__source-link">
+                                <span class="source-page__source-title">{{ cite.title }}</span>
+                                <span class="source-page__source-family">{{ cite.section }}</span>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </section>
+                {% endif %}
             </article>
+            {% endif %}
 
             <aside class="source-page__aside" role="complementary" aria-label="Source metadata">
                 {% if source %}
@@ -101,23 +126,6 @@
                     <ul class="source-page__chip-list">
                         {% for topic in source.topics %}
                         <li class="source-page__chip">{{ topic }}</li>
-                        {% endfor %}
-                    </ul>
-                </section>
-                {% endif %}
-
-                {% if backlinks and backlinks | length > 0 %}
-                <section class="source-page__aside-block">
-                    <h2 class="source-page__aside-title">Cited by</h2>
-                    <ul class="source-page__source-list">
-                        {% for cite in backlinks %}
-                        <li class="source-page__source-item">
-                            {% set cite_path = cite.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=cite_path, lang=detected_lang) }}" class="source-page__source-link">
-                                <span class="source-page__source-title">{{ cite.title }}</span>
-                                <span class="source-page__source-family">{{ cite.section }}</span>
-                            </a>
-                        </li>
                         {% endfor %}
                     </ul>
                 </section>

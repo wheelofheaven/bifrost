@@ -467,6 +467,275 @@
     }
 }
 
+// ---------------------------------------------------------------------------
+// Source detail page (/sources/{id}/).
+//
+// Rendered by themes/bifrost/templates/source-page.html from a generated
+// stub + data/sources.json + data/sources/cited-by.json. Two-column layout:
+// the record description on the left, a metadata rail on the right whose
+// load-bearing module is "Cited by" — the reverse index that turns each
+// source into a navigation hub back into the corpus (sources-migration
+// Phase 6). Mirrors the .news article+rail pattern and reuses the
+// .source-card cite treatment for visual continuity with the overview.
+// ---------------------------------------------------------------------------
+.source-page {
+    &__container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: v.$spacing-xl v.$spacing-lg;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-xl;
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-sm;
+    }
+
+    &__kind-row {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: v.$spacing-xs;
+    }
+
+    // "Source" label + optional "Cited N times" — small tech micro-labels,
+    // dot-separated from the second one onward.
+    &__kind {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-subtle);
+
+        & + & {
+            display: inline-flex;
+            align-items: center;
+            gap: v.$spacing-xs;
+
+            &::before {
+                content: "·";
+                color: var(--color-hairline);
+            }
+        }
+    }
+
+    &__title {
+        margin: 0;
+        font-size: v.$font-size-2xl;
+        line-height: 1.25;
+        color: var(--color-text);
+    }
+
+    &__summary {
+        margin: 0;
+        font-size: v.$font-size-lg;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+    }
+
+    &__layout {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 18rem;
+        gap: v.$spacing-2xl;
+        align-items: start;
+
+        @media (max-width: 1023px) {
+            grid-template-columns: minmax(0, 1fr);
+            gap: v.$spacing-xl;
+        }
+
+        // Undescribed, uncited stub: no article column at all. Collapse to
+        // a single centered metadata column instead of a lopsided rail.
+        &--meta-only {
+            grid-template-columns: minmax(0, 1fr);
+            max-width: 640px;
+            margin-inline: auto;
+        }
+    }
+
+    &__article {
+        min-width: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-2xl;
+    }
+
+    &__content {
+        font-size: v.$font-size-base;
+        line-height: 1.7;
+        color: var(--color-text);
+
+        p { margin: 0 0 v.$spacing-md; }
+        p:last-child { margin-bottom: 0; }
+    }
+
+    // "Cited by" reverse index — the main-column payload of the page. It is
+    // the substance of a bibliography hub (every corpus page that draws on
+    // this source), so it sits in the main column, not the rail.
+    &__cited {
+        min-width: 0;
+    }
+
+    &__section-title {
+        display: flex;
+        align-items: baseline;
+        gap: v.$spacing-xs;
+        margin: 0 0 v.$spacing-md;
+        font-size: v.$font-size-xl;
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    &__section-count {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-sm;
+        color: var(--color-text-subtle);
+        font-variant-numeric: tabular-nums;
+    }
+
+    // Right rail — stacked metadata modules. Sticky on desktop so the
+    // "Cited by" index stays visible while the record scrolls.
+    &__aside {
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-lg;
+
+        @media (min-width: 1024px) {
+            position: sticky;
+            top: calc(0.5rem + 4rem); // navbar + breathing room
+        }
+    }
+
+    &__aside-block {
+        padding: v.$spacing-lg;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-md;
+        background: var(--color-background);
+    }
+
+    &__aside-title {
+        margin: 0 0 v.$spacing-md;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--color-text-subtle);
+    }
+
+    // Record facts (By / Date / Type).
+    &__fact-list {
+        margin: 0;
+        display: flex;
+        flex-direction: column;
+        gap: v.$spacing-sm;
+    }
+
+    &__fact {
+        display: grid;
+        grid-template-columns: minmax(3rem, max-content) minmax(0, 1fr);
+        gap: v.$spacing-sm;
+        align-items: baseline;
+    }
+
+    &__fact-label {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        color: var(--color-text-subtle);
+    }
+
+    &__fact-value {
+        margin: 0;
+        font-size: v.$font-size-sm;
+        line-height: 1.45;
+        color: var(--color-text);
+    }
+
+    &__chip-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-2xs;
+    }
+
+    &__chip {
+        display: inline-block;
+        padding: 0.15rem v.$spacing-xs;
+        background: var(--color-background-secondary);
+        border: 1px solid var(--color-hairline-subtle);
+        border-radius: v.$border-radius-full;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+    }
+
+    // The list itself — links back into each citing corpus page. Flows into
+    // as many columns as fit so a source cited 50+ times stays compact.
+    &__source-list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+        gap: 0 v.$spacing-xl;
+    }
+
+    &__source-item {
+        border-bottom: 1px solid var(--color-hairline-subtle);
+    }
+
+    &__source-link {
+        display: flex;
+        flex-direction: column;
+        gap: 0.1rem;
+        padding: v.$spacing-xs 0;
+        text-decoration: none;
+
+        &:hover .source-page__source-title,
+        &:focus .source-page__source-title {
+            color: var(--color-accent-primary);
+        }
+    }
+
+    &__source-title {
+        font-size: v.$font-size-sm;
+        line-height: 1.4;
+        color: var(--color-text);
+        transition: color 0.2s ease;
+    }
+
+    &__source-family {
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        text-transform: capitalize;
+        color: var(--color-text-subtle);
+    }
+
+    &__visit {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-2xs;
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        color: var(--color-accent-primary);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: all 0.2s ease;
+
+        &:hover {
+            border-bottom-color: var(--color-accent-primary);
+            transform: translateX(2px);
+        }
+    }
+}
+
 @media (max-width: 640px) {
     .sources__header {
         flex-direction: column;
@@ -477,5 +746,9 @@
         flex-direction: column;
         align-items: flex-start;
         gap: 0.75rem;
+    }
+
+    .source-page__container {
+        padding: v.$spacing-lg v.$spacing-md;
     }
 }
