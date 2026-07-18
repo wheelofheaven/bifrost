@@ -145,11 +145,12 @@
                 </div>
                 {% endif %}
 
-                {# Reciprocal link to the CC0 parallel-corpus dataset on Hugging Face,
-                   set per page via [extra] hf_dataset. #}
-                {% if page.extra.hf_dataset %}
+                {# Reciprocal links to the CC0 parallel-corpus dataset mirrors,
+                   set per page via [extra] hf_dataset / kaggle_dataset. #}
+                {% if page.extra.hf_dataset or page.extra.kaggle_dataset %}
                 <p class="library-book__dataset">
-                    <a href="{{ page.extra.hf_dataset }}" rel="external nofollow" class="library-book__dataset-link">Available as a CC0 dataset on Hugging Face &rarr;</a>
+                    Available as a CC0 dataset on
+                    {% if page.extra.hf_dataset %}<a href="{{ page.extra.hf_dataset }}" rel="external nofollow" class="library-book__dataset-link">Hugging Face</a>{% endif %}{% if page.extra.hf_dataset and page.extra.kaggle_dataset %} &middot; {% endif %}{% if page.extra.kaggle_dataset %}<a href="{{ page.extra.kaggle_dataset }}" rel="external nofollow" class="library-book__dataset-link">Kaggle</a>{% endif %} &rarr;
                 </p>
                 {% endif %}
 
