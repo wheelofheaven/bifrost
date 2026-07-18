@@ -145,6 +145,14 @@
                 </div>
                 {% endif %}
 
+                {# Reciprocal link to the CC0 parallel-corpus dataset on Hugging Face,
+                   set per page via [extra] hf_dataset. #}
+                {% if page.extra.hf_dataset %}
+                <p class="library-book__dataset">
+                    <a href="{{ page.extra.hf_dataset }}" rel="external nofollow" class="library-book__dataset-link">Available as a CC0 dataset on Hugging Face &rarr;</a>
+                </p>
+                {% endif %}
+
                 <!-- Book Content -->
                 <div class="library-book__content">
                     {% for chapter in book_chapters %}
