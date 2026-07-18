@@ -273,6 +273,11 @@
             width: 1.5rem;
             height: 1.5rem;
         }
+
+        // Hugging Face brand-yellow on hover (the mark uses fill=currentColor).
+        &--huggingface:hover {
+            color: #ffd21e;
+        }
     }
 }
 
