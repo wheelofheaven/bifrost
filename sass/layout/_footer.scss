@@ -274,10 +274,13 @@
             height: 1.5rem;
         }
 
-        // Hugging Face brand-yellow on hover (the mark uses fill=currentColor).
-        &--huggingface:hover {
-            color: #ffd21e;
-        }
+        // Brand colour on hover for the platforms that have a real brand
+        // colour (X and GitHub are monochrome brands, left as-is). The marks
+        // use currentColor, so tinting the link colour tints the icon.
+        &--telegram:hover         { color: #26a5e4; }
+        &--youtube:hover          { color: #ff0000; }
+        &--open-collective:hover  { color: #297eff; }
+        &--huggingface:hover      { color: #ffd21e; }
     }
 }
 
