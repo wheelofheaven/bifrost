@@ -325,10 +325,40 @@
 
                     {% include "partials/map/icons.html" %}
                 </svg>
+
+                <div class="map-graph" id="map-graph" hidden data-graph-src="https://api.wheelofheaven.world/v1/graph/content-graph.json">
+                    <a class="map-graph__skip" href="#map-graph-footer">{{ map_copy.graphSkip }}</a>
+                    <svg
+                        class="map-graph__canvas"
+                        viewBox="0 0 2000 2000"
+                        preserveAspectRatio="xMidYMid meet"
+                        role="group"
+                        aria-label="{{ map_copy.graphAria }}"
+                        lang="en"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <rect class="map-graph__bg" x="0" y="0" width="2000" height="2000" />
+                        <g class="map-graph__edges" aria-hidden="true">
+                            <path class="map-graph__edge-batch map-graph__edge-batch--see-also" d="" />
+                            <path class="map-graph__edge-batch map-graph__edge-batch--in-body" d="" />
+                            <g class="map-graph__edges-active"></g>
+                        </g>
+                        <g class="map-graph__nodes"></g>
+                        <g class="map-graph__labels" aria-hidden="true"></g>
+                    </svg>
+                    <div class="map-graph__status" role="status">
+                        <p class="map-graph__status-loading" hidden>{{ map_copy.graphLoading }}</p>
+                        <p class="map-graph__status-error" hidden>{{ map_copy.graphError }}</p>
+                        <button class="map-graph__retry" type="button" hidden>{{ map_copy.graphRetry }}</button>
+                    </div>
+                </div>
             </div>
 
             <div class="map-zoom-controls" aria-label="{{ map_copy.zoomControlsAria }}">
-                <button class="map-zoom-controls__button" id="map-poster-toggle" type="button" aria-pressed="false" aria-label="{{ map_copy.posterToggle }}" title="{{ map_copy.posterToggle }}">
+                <button class="map-zoom-controls__button map-zoom-controls__button--graph" id="map-graph-toggle" type="button" hidden aria-pressed="false" aria-label="{{ map_copy.graphToggle }}" title="{{ map_copy.graphToggle }}">
+                    {% include "partials/icons/lucide-waypoints.html" %}
+                </button>
+                <button class="map-zoom-controls__button map-zoom-controls__button--poster" id="map-poster-toggle" type="button" aria-pressed="false" aria-label="{{ map_copy.posterToggle }}" title="{{ map_copy.posterToggle }}">
                     {% include "partials/icons/feather-image.html" %}
                 </button>
                 <button class="map-zoom-controls__button" id="map-zoom-out" type="button" aria-label="{{ trans(key='mapZoomOut', lang=detected_lang) }}" title="{{ trans(key='mapZoomOut', lang=detected_lang) }}">
@@ -339,9 +369,59 @@
                 </button>
             </div>
 
+            <div class="map-graph-title-wrap" aria-hidden="false">
+                {% include "partials/brand/graph-title.html" %}
+            </div>
+
+            <nav class="map-graph-legend" aria-label="{{ map_copy.graphLegend }}" data-label-shown="{{ map_copy.graphShown }}" data-label-hidden="{{ map_copy.graphHidden }}" data-label-links="{{ map_copy.graphLinks }}">
+                <ul class="map-graph-legend__sections">
+                    {% set legend_sections = ["wiki", "articles", "timeline", "news"] %}
+                    {% set legend_keys = ["navbarWiki", "navbarArticles", "navbarTimeline", "navbarNews"] %}
+                    {% for section_id in legend_sections %}
+                    <li class="map-graph-legend__item">
+                        <button type="button" class="map-graph-legend__filter" data-graph-filter="{{ section_id }}" aria-pressed="true">
+                            <span class="map-graph-legend__swatch map-graph-legend__swatch--{{ section_id }}" aria-hidden="true"></span>
+                            <span class="map-graph-legend__name" data-graph-section-name="{{ section_id }}">{{ trans(key=legend_keys[loop.index0], lang=detected_lang) }}</span>
+                            <span class="map-graph-legend__count" data-graph-count="{{ section_id }}" aria-hidden="true"></span>
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+                <ul class="map-graph-legend__claims">
+                    {% set legend_claims = ["direct", "framework", "inferred", "speculative"] %}
+                    {% set legend_claim_keys = ["claimTypeDirect", "claimTypeFramework", "claimTypeInferred", "claimTypeSpeculative"] %}
+                    {% for claim_id in legend_claims %}
+                    <li class="map-graph-legend__item map-graph-legend__item--claim">
+                        <span class="map-graph-legend__ring map-graph-legend__ring--{{ claim_id }}" aria-hidden="true"></span>
+                        <span class="map-graph-legend__name" data-graph-claim-name="{{ claim_id }}">{{ trans(key=legend_claim_keys[loop.index0], lang=detected_lang) }}</span>
+                    </li>
+                    {% endfor %}
+                    <li class="map-graph-legend__item map-graph-legend__item--claim">
+                        <span class="map-graph-legend__ring map-graph-legend__ring--unset" aria-hidden="true"></span>
+                        <span class="map-graph-legend__name" data-graph-claim-name="unset">{{ map_copy.graphClaimUnset }}</span>
+                    </li>
+                </ul>
+                <p class="map-graph-legend__announce" role="status" aria-live="polite" id="map-graph-announce"></p>
+            </nav>
+
+            <div class="map-graph-card" id="map-graph-card" hidden>
+                <p class="map-graph-card__title"></p>
+                <p class="map-graph-card__meta"></p>
+            </div>
+
+            <footer class="map-graph-footer" id="map-graph-footer">
+                <span class="map-graph-footer__label">{{ map_copy.graphDownload }}:</span>
+                <a class="map-graph-footer__link" href="https://api.wheelofheaven.world/v1/graph/content-graph.json" download>JSON</a>
+                <span class="map-graph-footer__sep" aria-hidden="true">·</span>
+                <a class="map-graph-footer__link" href="https://api.wheelofheaven.world/v1/graph/content-graph.graphml" download>GraphML</a>
+                <span class="map-graph-footer__sep" aria-hidden="true">·</span>
+                <a class="map-graph-footer__link" href="{{ get_url(path='datasets/content-graph/') }}">{{ map_copy.graphAbout }}</a>
+            </footer>
+
         </div>
     </section>
 </div>
 
-<script src="{{ get_url(path='js/map-native.js') }}" defer></script>
+<script src="{{ get_url(path='js/map-native.js', cachebust=true) | safe }}" defer></script>
+<script src="{{ get_url(path='js/map-graph.js', cachebust=true) | safe }}" defer></script>
 {% endblock content %}

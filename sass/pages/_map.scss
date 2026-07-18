@@ -33,6 +33,9 @@ body:has(.map-page) .to-top {
     // so its backdrop blur actually has map content to sample.
     --map-top-clearance: 0rem;
     --map-frame: 1.25rem;
+    // Top inset for the scroll stage so the canvas (story + graph) starts
+    // clear of the floating navbar instead of tucking behind it.
+    --map-top-gap: calc(var(--navbar-h, 4rem) + var(--map-frame));
     --map-zoom: 1;
     --map-bg: var(--map-surface-bg);
     --map-line: color-mix(in srgb, var(--color-text) 44%, transparent);
@@ -148,6 +151,7 @@ body:has(.map-page) .to-top {
     border: 0;
     border-radius: 0;
     padding: var(--map-frame);
+    padding-top: var(--map-top-gap);
     background: var(--map-bg);
     overflow: auto;
     box-shadow: none;
@@ -164,6 +168,9 @@ body:has(.map-page) .to-top {
     margin-inline: auto;
     aspect-ratio: 1668 / 2388;
     font-family: var(--font-family-body);
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
 
     @media (max-width: 760px) {
         width: calc(48rem * var(--map-zoom));
@@ -173,9 +180,18 @@ body:has(.map-page) .to-top {
         margin-inline: auto;
     }
 
+    &.is-grabbing {
+        cursor: grabbing;
+
+        a {
+            cursor: grabbing;
+        }
+    }
+
     a {
         color: inherit;
         text-decoration: none;
+        cursor: pointer;
 
         &:focus-visible {
             outline: none;
@@ -987,6 +1003,7 @@ body:has(.map-page) .to-top {
         overflow: visible;
         border: 0;
         box-shadow: none;
+        padding-top: var(--map-frame);
     }
 
     .map-canvas {

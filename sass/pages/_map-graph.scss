@@ -1,0 +1,570 @@
+// Graph mode for the interactive map page — renders the full content
+// graph (the CC0 dataset served by api.wheelofheaven.world) as a 2D
+// constellation. Node fill encodes the section, the stroke ring encodes
+// the claim type, radius encodes degree. Layout, data, and interaction
+// live in js/map-graph.js; mode state lives in js/map-native.js.
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.map-page {
+    --graph-node-wiki: #{c.$blue-500};
+    --graph-node-articles: #{c.$teal-500};
+    --graph-node-timeline: #{c.$green-500};
+    --graph-node-news: #{c.$pink-500};
+    --graph-ring-direct: #{c.$cyan-600};
+    --graph-ring-framework: #{c.$mauve-600};
+    --graph-ring-inferred: #{c.$yellow-600};
+    --graph-ring-speculative: #{c.$lavender-600};
+    --graph-ring-unset: var(--map-line-soft);
+    --graph-edge-active: #{c.$cyan-600};
+    --graph-label: var(--map-muted);
+}
+
+[data-theme="dark"] .map-page {
+    --graph-node-wiki: #{c.$blue-300};
+    --graph-node-articles: #{c.$teal-300};
+    --graph-node-timeline: #{c.$green-300};
+    --graph-node-news: #{c.$pink-300};
+    --graph-ring-direct: #{c.$cyan-300};
+    --graph-ring-framework: #{c.$mauve-300};
+    --graph-ring-inferred: #{c.$yellow-300};
+    --graph-ring-speculative: #{c.$lavender-300};
+    --graph-edge-active: #{c.$cyan-300};
+}
+
+// Mode gates. The #map-graph container's `hidden` attribute is managed
+// by JS and stays the source of truth for the graph layer itself; CSS
+// only gates the story canvas and the graph-mode overlays.
+.map-page.is-graph .map-canvas {
+    display: none;
+}
+
+.map-page.is-graph .map-zoom-controls__button--poster {
+    display: none;
+}
+
+.map-page:not(.is-graph) .map-graph-legend,
+.map-page:not(.is-graph) .map-graph-card,
+.map-page:not(.is-graph) .map-graph-footer,
+.map-page:not(.is-graph) .map-graph-title-wrap {
+    display: none;
+}
+
+// View wordmark — mirrors the story map's brand title (same "WHEEL OF
+// HEAVEN" vector), with a "Graph" accent in the lead display face. A
+// non-interactive overlay pinned below the navbar so it stays put while
+// the canvas pans and zooms beneath it.
+.map-graph-title-wrap {
+    position: absolute;
+    top: calc(var(--navbar-h, 4rem) + 1.5rem);
+    left: 50%;
+    z-index: 3;
+    width: min(32rem, 64vw);
+    transform: translateX(-50%);
+    pointer-events: none;
+}
+
+.map-graph-title {
+    display: block;
+    width: 100%;
+    height: auto;
+    fill: var(--map-text);
+    opacity: 0.9;
+
+    &__suffix {
+        font-family: var(--font-family-lead);
+        font-style: italic;
+        font-weight: 500;
+        font-size: 58px;
+    }
+}
+
+.map-graph {
+    // Same width mechanics as .map-canvas so the shared --map-zoom +
+    // stage-scroll pan machinery applies unchanged. No `display` here:
+    // the [hidden] attribute must keep working.
+    position: relative;
+    width: calc(100% * var(--map-zoom));
+    min-width: 0;
+    max-width: none;
+    margin-inline: auto;
+
+    @media (max-width: 760px) {
+        width: calc(48rem * var(--map-zoom));
+        min-width: calc(48rem * var(--map-zoom));
+        max-width: none;
+    }
+
+    &__skip {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        z-index: 5;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+
+        &:focus-visible {
+            width: auto;
+            height: auto;
+            clip: auto;
+            padding: 0.5rem 0.875rem;
+            border-radius: v.$border-radius-md;
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-hairline);
+            color: var(--color-text);
+            font-size: v.$font-size-sm;
+            text-decoration: none;
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+    }
+
+    &__canvas {
+        display: block;
+        width: 100%;
+        height: auto;
+        aspect-ratio: 1 / 1;
+        font-family: var(--font-family-body);
+        cursor: grab;
+        user-select: none;
+        -webkit-user-select: none;
+    }
+
+    // Transparent full-viewBox rect so the empty space between nodes is a
+    // grabbable pointer target (an SVG root doesn't hit-test bare areas).
+    &__bg {
+        fill: transparent;
+        pointer-events: all;
+    }
+
+    &.is-grabbing {
+        cursor: grabbing;
+
+        .map-graph__canvas,
+        .map-graph-node,
+        .map-graph-node circle {
+            cursor: grabbing;
+        }
+    }
+
+    &__edge-batch {
+        fill: none;
+        stroke: var(--map-line);
+        stroke-width: 1;
+
+        &--see-also {
+            stroke-opacity: 0.3;
+            stroke-width: 1.1;
+        }
+
+        &--in-body {
+            stroke-opacity: 0.13;
+        }
+    }
+
+    &__edge-active {
+        fill: none;
+        stroke: var(--graph-edge-active);
+        stroke-width: 1.6;
+        stroke-opacity: 0.85;
+    }
+
+    &__label {
+        fill: var(--graph-label);
+        font-size: 17px;
+        text-anchor: middle;
+        opacity: 0;
+        pointer-events: none;
+
+        &--major {
+            font-size: 20px;
+            opacity: 1;
+        }
+
+        &.is-active,
+        &.is-related {
+            fill: var(--map-text);
+            opacity: 1;
+        }
+
+        &.is-filtered {
+            display: none;
+        }
+    }
+
+    &.is-labels-all &__label:not(.is-filtered) {
+        opacity: 1;
+    }
+
+    &__status {
+        position: absolute;
+        inset: 0;
+        z-index: 3;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+        text-align: center;
+        pointer-events: none;
+
+        p {
+            margin: 0;
+            max-width: 24rem;
+            padding: 0.75rem 1rem;
+            border-radius: v.$border-radius-md;
+            background: var(--color-card-bg);
+            border: 1px solid var(--color-hairline);
+            color: var(--map-muted);
+            font-size: v.$font-size-sm;
+
+            &[hidden] {
+                display: none;
+            }
+        }
+    }
+
+    &__retry {
+        pointer-events: auto;
+        padding: 0.5rem 1.1rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-md;
+        background: var(--color-card-bg);
+        color: var(--color-text);
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        cursor: pointer;
+
+        &[hidden] {
+            display: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+    }
+}
+
+.map-graph-node {
+    cursor: pointer;
+
+    circle {
+        fill: var(--map-node);
+        stroke: var(--graph-ring-unset);
+        stroke-width: 2;
+    }
+
+    &--wiki circle {
+        fill: var(--graph-node-wiki);
+    }
+
+    &--articles circle {
+        fill: var(--graph-node-articles);
+    }
+
+    &--timeline circle {
+        fill: var(--graph-node-timeline);
+    }
+
+    &--news circle {
+        fill: var(--graph-node-news);
+    }
+
+    &.is-claim-direct circle {
+        stroke: var(--graph-ring-direct);
+    }
+
+    &.is-claim-framework circle {
+        stroke: var(--graph-ring-framework);
+    }
+
+    &.is-claim-inferred circle {
+        stroke: var(--graph-ring-inferred);
+    }
+
+    &.is-claim-speculative circle {
+        stroke: var(--graph-ring-speculative);
+    }
+
+    opacity: 0.88;
+
+    &:hover,
+    &.is-active,
+    &.is-related {
+        opacity: 1;
+    }
+
+    &.is-filtered {
+        display: none;
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+    }
+
+    &:focus-visible circle {
+        stroke-width: 4;
+    }
+}
+
+// Ego highlight: dim everything that isn't the active node or one of
+// its neighbors while a node is hovered/focused.
+.map-graph__canvas.is-dimmed {
+    .map-graph-node:not(.is-active):not(.is-related) {
+        opacity: 0.14;
+    }
+
+    .map-graph__edge-batch {
+        stroke-opacity: 0.05;
+    }
+
+    .map-graph__label--major:not(.is-active):not(.is-related) {
+        opacity: 0;
+    }
+}
+
+.map-graph-legend {
+    position: absolute;
+    left: calc(var(--map-frame) + 0.25rem);
+    bottom: calc(var(--map-frame) + 0.25rem);
+    z-index: 4;
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    max-width: min(17rem, 58vw);
+    padding: 0.75rem 0.875rem;
+    border-radius: v.$border-radius-md;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-hairline);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    font-size: v.$font-size-xs;
+    color: var(--color-text-muted);
+
+    &__sections,
+    &__claims {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 0.75rem;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__claims {
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+    }
+
+    &__filter {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.15rem 0.3rem;
+        margin: -0.15rem -0.3rem;
+        border: 0;
+        border-radius: v.$border-radius-xs;
+        background: none;
+        color: inherit;
+        font: inherit;
+        cursor: pointer;
+
+        &:hover {
+            color: var(--color-text);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 1px;
+        }
+
+        &[aria-pressed="false"] {
+            opacity: 0.45;
+            text-decoration: line-through;
+        }
+    }
+
+    &__swatch {
+        flex: none;
+        width: 0.7rem;
+        height: 0.7rem;
+        border-radius: 50%;
+
+        &--wiki {
+            background: var(--graph-node-wiki);
+        }
+
+        &--articles {
+            background: var(--graph-node-articles);
+        }
+
+        &--timeline {
+            background: var(--graph-node-timeline);
+        }
+
+        &--news {
+            background: var(--graph-node-news);
+        }
+    }
+
+    &__ring {
+        flex: none;
+        width: 0.7rem;
+        height: 0.7rem;
+        margin-inline-end: 0.4rem;
+        border-radius: 50%;
+        border: 2px solid var(--graph-ring-unset);
+        background: transparent;
+
+        &--direct {
+            border-color: var(--graph-ring-direct);
+        }
+
+        &--framework {
+            border-color: var(--graph-ring-framework);
+        }
+
+        &--inferred {
+            border-color: var(--graph-ring-inferred);
+        }
+
+        &--speculative {
+            border-color: var(--graph-ring-speculative);
+        }
+    }
+
+    &__count {
+        color: var(--color-text-muted);
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__announce {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: -1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+
+    @media (max-width: 760px) {
+        max-width: calc(100vw - 2 * var(--map-frame) - 0.5rem);
+        font-size: 0.6875rem;
+    }
+}
+
+.map-graph-card {
+    position: absolute;
+    top: calc(var(--navbar-h, 4rem) + 1.25rem);
+    left: calc(var(--map-frame) + 0.25rem);
+    z-index: 4;
+    max-width: min(20rem, 70vw);
+    padding: 0.75rem 0.875rem;
+    border-radius: v.$border-radius-md;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-hairline);
+    box-shadow: 0 12px 32px rgb(0 0 0 / 18%);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    pointer-events: none;
+
+    &__title {
+        margin: 0 0 0.25rem;
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    &__meta {
+        margin: 0;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+    }
+}
+
+.map-graph-footer {
+    position: absolute;
+    right: calc(var(--map-frame) + 0.25rem);
+    bottom: calc(var(--map-frame) + 0.25rem);
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    max-width: 38vw;
+    padding: 0.5rem 0.875rem;
+    border-radius: v.$border-radius-md;
+    background: var(--color-card-bg);
+    border: 1px solid var(--color-hairline);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    font-size: v.$font-size-xs;
+    color: var(--color-text-muted);
+
+    &__link {
+        color: var(--color-text);
+        text-decoration: none;
+        font-weight: 600;
+
+        &:hover {
+            text-decoration: underline;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 2px;
+        }
+    }
+
+    // On small screens the legend owns the bottom edge — move the
+    // download strip up under the zoom controls to avoid overlap.
+    @media (max-width: 760px) {
+        bottom: auto;
+        top: calc(var(--navbar-h, 4rem) + 5.35rem);
+        max-width: 60vw;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .map-graph-node,
+    .map-graph__label,
+    .map-graph__edge-batch {
+        transition: opacity v.$transition-base ease;
+    }
+}
+
+@media print {
+    .map-page.is-graph {
+        .map-graph-card,
+        .map-graph-footer,
+        .map-graph__status {
+            display: none !important;
+        }
+
+        .map-graph {
+            width: 100% !important;
+            min-width: 0 !important;
+        }
+
+        .map-graph-legend {
+            position: static;
+            box-shadow: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            max-width: none;
+        }
+    }
+}
