@@ -155,6 +155,28 @@
         background: var(--color-background);
     }
 
+    &__portrait {
+        margin: 0 0 1.25rem;
+    }
+
+    &__portrait-image {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        border: 1px solid var(--color-hairline);
+        border-radius: 0.5rem;
+        background: var(--color-background-secondary);
+        box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.08);
+    }
+
+    &__portrait-caption {
+        margin: 0.5rem 0 0;
+        color: var(--color-text-muted);
+        font-size: 0.75rem;
+        line-height: 1.45;
+    }
+
     // Page header lives in the main column, above the article body.
     &__page-header {
         padding: 0.5rem 2rem 1.25rem;
@@ -896,20 +918,31 @@
     // serif). Numbers stay in mono (layer 4) via ::marker so the
     // catalogue feel survives even when individual references wrap
     // across multiple lines.
-    &__references {
-        padding: 2rem;
-        background: var(--color-background);
-        border-top: 1px solid var(--color-hairline);
+    // References and Footnotes sections share the same footer
+    // typography. Both render inside the chapter content wrapper so
+    // the h2 inherits the chapter section-heading style; we add a
+    // single hairline under the h2 as the only divider (no per-item
+    // separator, no leading separator above the heading).
+    &__references,
+    &__footnotes {
+        margin: 2.5rem 0 2rem;
+
+        > h2 {
+            padding-bottom: 0.625rem;
+            border-bottom: 1px solid var(--color-hairline);
+        }
     }
 
-    &__reference-list {
+    &__reference-list,
+    &__footnote-list {
         margin: 0;
         padding-left: 0;
         list-style: none;
     }
 
     &__reference-item {
-        margin-bottom: 0.875rem;
+        margin-bottom: 0.625rem;
+        padding: 0;
         font-family: var(--font-family-citation);
         font-size: 1rem;
         line-height: 1.65;
@@ -935,41 +968,44 @@
         border-bottom-color: var(--color-accent-primary);
     }
 
-    // Footnotes section — rendered above References when both are
-    // present. Visually quieter than References (smaller, italic
-    // back-link, no accent color) so the bibliographic apparatus
-    // remains the primary reference structure and editorial notes
-    // sit below as supporting matter.
+    // Footnotes section. The <h2> inside this section inherits the
+    // chapter's section-heading styling from .timeline-page__content
+    // h2 — the template renders both the prose body and the
+    // Notes/References sections inside the same content wrapper so
+    // their visual hierarchy stays consistent. No leading separator
+    // (the h2 itself provides the break).
     &__footnotes {
         margin: 2.5rem 0 2rem;
-        padding-top: 1.5rem;
-        border-top: 1px solid var(--color-hairline-subtle);
     }
 
-    &__footnote-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
+    // .wiki__footnote-list is grouped with .wiki__reference-list above
+    // (shared list-style: none + padding: 0 + margin: 0).
 
     &__footnote-item {
         margin-bottom: 0.625rem;
+        padding: 0;
         font-family: var(--font-family-citation);
-        font-size: 0.9375rem;
-        line-height: 1.6;
+        font-size: 1rem;
+        line-height: 1.65;
         color: var(--color-text);
+        font-feature-settings: "kern" 1, "liga" 1;
+        text-rendering: optimizeLegibility;
 
         &:last-child {
             margin-bottom: 0;
         }
     }
 
+    // `a.` `b.` `c.` back-link — letter + period, no brackets.
+    // Wikipedia-style "back to the citation in the text" affordance,
+    // styled in the citation/text register rather than the accent
+    // color (the bracketed [N] superscripts in the prose remain the
+    // visually loud markers; the footer back-link is supportive).
     &__footnote-backlink {
         display: inline-block;
         margin-right: 0.5rem;
         font-family: var(--font-family-tech);
         font-size: 0.875rem;
-        font-style: italic;
         font-weight: 600;
         color: var(--color-text-muted);
         text-decoration: none;
@@ -978,30 +1014,27 @@
 
         &:hover,
         &:focus-visible {
-            color: var(--color-accent-primary);
+            color: var(--color-text);
         }
     }
 
     &__footnote-content {
-        // Inline so the footnote letter and the note body read as a
-        // single paragraph.
         display: inline;
 
-        // Markdown rendering can produce <p> wrapping; flatten so the
-        // backlink and content stay on the same line.
         p {
             display: inline;
             margin: 0;
         }
     }
 
-    // [N] back-link from each reference item to the place in the
+    // `[N]` back-link from each reference item to the place in the
     // prose where the reference was first cited (anchor `#citeref-N`).
     // This is the *visible* reference number — the original CSS
     // `::before` decimal counter was removed because this anchor
-    // supersedes it (the counter wasn't clickable). The back-link
-    // matches the cite shortcode's [N] superscript so the round-trip
-    // [N] → ref → back to [N] reads as a single matched pair.
+    // supersedes it (the counter wasn't clickable). Harmonised with
+    // the footnote back-link: muted text register, accent only on
+    // hover. Matches the visual register the rest of the catalog
+    // typography uses.
     &__reference-backlink {
         display: inline-block;
         margin-right: 0.5rem;
@@ -1009,7 +1042,7 @@
         font-size: 0.875rem;
         font-weight: 700;
         line-height: 1.4;
-        color: var(--color-accent-primary);
+        color: var(--color-text-muted);
         text-decoration: none;
         border-bottom: none;
         transition: color 0.15s ease;
@@ -1121,38 +1154,11 @@
     }
 
     // Reference List
-    &__reference-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-    }
-
-    &__reference-item {
-        margin-bottom: 0;
-        padding: 1rem 0;
-        position: relative;
-        transition: all 0.2s ease;
-
-        // Numbering is now provided by the inline `.wiki__reference-backlink`
-        // anchor that the template emits (a clickable [N] that jumps back to
-        // `#citeref-N` in the prose). The pseudo-element decimal was removed
-        // because the back-link supersedes it.
-
-        &::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 1px;
-            background: var(--color-hairline-subtle);
-            transition: background 0.2s ease;
-        }
-
-        &:last-child::after {
-            display: none;
-        }
-    }
+    // (Reference list + item rules consolidated above near the
+    // .wiki__references section; the duplicate block that lived here
+    // was removed because the earlier set already covers the same
+    // selectors and the chapter-content wrapper changed the layout
+    // assumptions the later block was making.)
 
     &__reference-link {
         color: var(--color-accent-primary);
@@ -1187,42 +1193,13 @@
         color: var(--color-text-muted);
     }
 
-    // Footnotes Section
-    &__footnotes {
-        padding: 2rem;
-        background: var(--color-background);
-        border-top: 1px solid var(--color-hairline);
-
-        .footnote-definition {
-            padding: 1rem 0;
-            margin-bottom: 0;
-            position: relative;
-            transition: all 0.2s ease;
-
-            &::after {
-                content: "";
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                right: 0;
-                height: 1px;
-                background: var(--color-hairline-subtle);
-                transition: background 0.2s ease;
-            }
-
-            &:hover {
-                padding-left: 0.5rem;
-
-                &::after {
-                    background: var(--color-accent-primary);
-                }
-            }
-
-            &:last-child::after {
-                display: none;
-            }
-        }
-    }
+    // Footnotes section styling lives at the top of the .wiki block —
+    // shared with .wiki__references because both render at the chapter
+    // footer with the same typography. The older block that lived here
+    // (padding 2rem, background, border-top, and the per-item separator
+    // on legacy .footnote-definition elements) has been removed; the
+    // .footnote-definition base styling that handles Zola's native
+    // markdown footnote syntax is in components/_wiki-cite.scss.
 }
 
 // Inline Reference Citations
@@ -1317,29 +1294,10 @@
             padding: 1.5rem 1rem;
         }
 
-        &__reference-list {
-            margin-left: 0;
-        }
-
-        &__reference-item {
-            padding: 1rem 0 1rem 1.25rem;
-
-            &::before {
-                left: -1.25rem;
-                width: 1rem;
-            }
-
-            @media (max-width: 480px) {
-                padding: 1rem 0;
-
-                &::before {
-                    position: static;
-                    display: inline-block;
-                    margin-right: 0.5rem;
-                    width: auto;
-                }
-            }
-        }
+        // (Legacy mobile padding + ::before pseudo-decimal counter for
+        // reference items removed; the new layout uses the inline
+        // .wiki__reference-backlink [N] anchor and inherits item padding
+        // from the desktop rules.)
     }
 }
 

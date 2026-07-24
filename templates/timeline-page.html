@@ -54,50 +54,53 @@
                 {% if page.content %}
                 <div class="timeline-page__content">
                     {{ page.content | safe }}
+
+                    {# Footnotes and References are rendered inside the
+                       content wrapper so their h2 / list typography
+                       inherits the same chapter-section styling as the
+                       prose headings above. #}
+
+                    {% if page.extra.footnotes %}
+                    <section class="wiki__footnotes" role="doc-endnotes" aria-label="Footnotes" data-ai-cite="true">
+                        <h2 id="notes">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</h2>
+                        <ol class="wiki__footnote-list">
+                            {% set letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split(pat=" ") %}
+                            {% for fn in page.extra.footnotes %}
+                            {% set idx = loop.index0 %}
+                            {% set display = letters[idx] | default(value=loop.index) %}
+                            <li class="wiki__footnote-item" id="fn-{{ loop.index }}">
+                                <a href="#fnref-{{ loop.index }}" class="wiki__footnote-backlink" aria-label="Jump back to footnote {{ display }} in the text" title="Jump back to footnote">{{ display }}.</a>
+                                <span class="wiki__footnote-content">{{ fn.content | markdown(inline=true) | safe }}</span>
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </section>
+                    {% endif %}
+
+                    {% if page.extra.references %}
+                    <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
+                        <h2 id="references">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
+                        <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
+                            {% for ref in page.extra.references %}
+                            <li class="wiki__reference-item" id="ref-{{ loop.index }}">
+                                <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
+                                {% if ref.url %}
+                                <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                                {% elif ref.path %}
+                                <a href="{{ ref.path }}" class="wiki__reference-link">{{ ref.title }}</a>
+                                {% else %}
+                                <span class="wiki__reference-title">{{ ref.title }}</span>
+                                {% endif %}
+                                {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
+                                {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
+                                {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
+                                {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
+                            </li>
+                            {% endfor %}
+                        </ol>
+                    </section>
+                    {% endif %}
                 </div>
-                {% endif %}
-
-                <!-- Footnotes Section -->
-                {% if page.extra.footnotes %}
-                <section class="wiki__footnotes" role="doc-endnotes" aria-label="Footnotes" data-ai-cite="true">
-                    <h2 class="wiki__section-title" id="footnotes-heading">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</h2>
-                    <ol class="wiki__footnote-list">
-                        {% set letters = "a b c d e f g h i j k l m n o p q r s t u v w x y z" | split(pat=" ") %}
-                        {% for fn in page.extra.footnotes %}
-                        {% set idx = loop.index0 %}
-                        {% set display = letters[idx] | default(value=loop.index) %}
-                        <li class="wiki__footnote-item" id="fn-{{ loop.index }}">
-                            <a href="#fnref-{{ loop.index }}" class="wiki__footnote-backlink" aria-label="Jump back to footnote {{ display }} in the text" title="Jump back to footnote">{{ display }}</a>
-                            <span class="wiki__footnote-content">{{ fn.content | markdown(inline=true) | safe }}</span>
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </section>
-                {% endif %}
-
-                <!-- References Section -->
-                {% if page.extra.references %}
-                <section class="wiki__references timeline-page__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
-                    <h2 class="wiki__section-title" id="references-heading">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
-                    <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
-                        {% for ref in page.extra.references %}
-                        <li class="wiki__reference-item" id="ref-{{ loop.index }}">
-                            <a href="#citeref-{{ loop.index }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
-                            {% if ref.url %}
-                            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
-                            {% elif ref.path %}
-                            <a href="{{ ref.path }}" class="wiki__reference-link">{{ ref.title }}</a>
-                            {% else %}
-                            <span class="wiki__reference-title">{{ ref.title }}</span>
-                            {% endif %}
-                            {% if ref.author %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ ref.author }}</span>{% endif %}
-                            {% if ref.publication %}<span class="wiki__reference-publication">{{ ref.publication }}</span>{% endif %}
-                            {% if ref.date %}<span class="wiki__reference-date">({{ ref.date }})</span>{% endif %}
-                            {% if ref.description %}<p class="wiki__reference-description">{{ ref.description }}</p>{% endif %}
-                        </li>
-                        {% endfor %}
-                    </ol>
-                </section>
                 {% endif %}
 
                 <!-- Chapter Navigation -->
@@ -405,6 +408,21 @@
                             {% endif %}
                         </li>
                         {% endfor %}
+                        {# Footnotes + References appear at the chapter
+                           footer. The headings live inside `page.content`
+                           but Zola's `page.toc` is built only from the
+                           markdown body, so we append them manually here
+                           so the ToC reflects the full chapter outline. #}
+                        {% if page.extra.footnotes %}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                            <a href="#notes" class="timeline-page__toc-link">{{ trans(key="sectionFootnotes", lang=detected_lang) }}</a>
+                        </li>
+                        {% endif %}
+                        {% if page.extra.references %}
+                        <li class="timeline-page__toc-item timeline-page__toc-item--level-1">
+                            <a href="#references" class="timeline-page__toc-link">{{ trans(key="sectionReferences", lang=detected_lang) }}</a>
+                        </li>
+                        {% endif %}
 
                         {# Mirror the Read Next + Read Also discovery blocks
                            in the TOC so the reader sees the full reading flow. #}

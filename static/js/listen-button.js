@@ -653,7 +653,11 @@
             const chapEntry = manifest.chapters.find((c) => c.n === targetChapter);
             const timingUrl = `${ASSETS_BASE}/${chapEntry.timing_url}`;
             try {
-                const r = await fetch(timingUrl, { cache: 'force-cache' });
+                // Revalidate: timing sidecars keep stable, unhashed names and
+                // are regenerated on every render. force-cache would pin a
+                // stale sidecar against re-rendered audio. no-cache => cheap
+                // conditional GET (304 when unchanged).
+                const r = await fetch(timingUrl, { cache: 'no-cache' });
                 if (!r.ok) return null;
                 const timingData = await r.json();
                 return {

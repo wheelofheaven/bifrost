@@ -97,18 +97,44 @@
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
-{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text) %}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false) %}
     {% set has_commentary = verse.commentary | default(value="") | trim != "" %}
     {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
     {% set has_hebrew_pair = verse.he | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
+    {% set speaker_id = "" %}
+    {% if portrait_registry and verse.speaker and portrait_registry.speakerAliases and portrait_registry.speakerAliases[verse.speaker] %}
+    {% set speaker_id = portrait_registry.speakerAliases[verse.speaker] %}
+    {% endif %}
+    {% set speaker_portrait = false %}
+    {% if speaker_id and portrait_registry.portraits and portrait_registry.portraits[speaker_id] %}
+    {% set speaker_portrait = portrait_registry.portraits[speaker_id] %}
+    {% endif %}
     <div class="library-book__paragraph{% if has_commentary %} library-book__paragraph--has-commentary{% endif %}"
          id="c{{ chapter_n }}p{{ verse.n }}"
          data-ref-id="{{ verse.refId | default(value='') }}"
+         {% if verse.speaker %}data-speaker="{{ verse.speaker }}"{% endif %}
+         {% if speaker_id %}data-speaker-id="{{ speaker_id }}"{% endif %}
          onclick="selectParagraph('c{{ chapter_n }}p{{ verse.n }}')">
         <div class="library-book__para-num">{{ verse.n }}</div>
+        {% if speaker_portrait %}
+        <a class="library-book__speaker"
+           href="{{ speaker_portrait.wiki | safe }}"
+           aria-label="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }} speaking"
+           title="{{ speaker_portrait.displayName | default(value=speaker_portrait.name) }}"
+           onclick="event.stopPropagation()">
+            <picture>
+                {% if speaker_portrait.thumbAvif %}<source srcset="{{ speaker_portrait.thumbAvif | safe }}" type="image/avif">{% endif %}
+                <img class="library-book__speaker-image"
+                     src="{{ speaker_portrait.thumb | default(value=speaker_portrait.image) | safe }}"
+                     alt="{{ speaker_portrait.alt }}"
+                     loading="lazy"
+                     decoding="async">
+            </picture>
+        </a>
+        {% endif %}
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
                 {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}{% if has_commentary %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" aria-label="Open commentary for verse {{ verse.n }}" aria-expanded="false" title="Open commentary"><span class="library-book__commentary-link-bracket" aria-hidden="true">[</span><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg><span class="library-book__commentary-link-bracket" aria-hidden="true">]</span></button>{% endif %}

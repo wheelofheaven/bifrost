@@ -7,6 +7,7 @@
 {% block content %}
 {% set book_slug = page.slug %}
 {% set catalog = load_data(path="data/library/catalog.json") %}
+{% set portrait_registry = load_data(path="data/personality_portraits.json", required=false) %}
 
 {# Try split format first (directory with _meta.json), fall back to single file #}
 {% set book_meta = load_data(path="data/library/" ~ book_slug ~ "/_meta.json", required=false) %}
@@ -158,7 +159,7 @@
                                     <div class="library-book__segment-label" aria-label="Segment {{ segment.id }}">Segment {{ segment.id }}</div>
                                     {% endif %}
                                     {% for verse in segment.lines %}
-                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="") }}
+                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry) }}
                                     {% endfor %}
                                 {% endfor %}
                             {% else %}
@@ -173,7 +174,7 @@
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
                                         {% endif %}
                                     {% endif %}
-                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text) }}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry) }}
                                 {% endfor %}
                             {% endif %}
                         </div>
@@ -265,6 +266,33 @@
                        Hebrew/Greek books rely on. #}
                     <span class="library-book__original-text" lang="{{ original_lang }}">{% if current_book_entry and current_book_entry.originalTitle %}{{ current_book_entry.originalTitle }}{% else %}{{ book_data.titles[original_lang] }}{% endif %}</span>
                 </div>
+                {% endif %}
+
+                {% if portrait_registry and book_data.portraits %}
+                <section class="library-book__portraits" aria-label="People and figures in this book">
+                    <div class="library-book__meta-label">People</div>
+                    <div class="library-book__portrait-list">
+                        {% for portrait_ref in book_data.portraits %}
+                        {% if portrait_ref.id and portrait_registry.portraits and portrait_registry.portraits[portrait_ref.id] %}
+                        {% set portrait = portrait_registry.portraits[portrait_ref.id] %}
+                        <a class="library-book__portrait" href="{{ portrait.wiki | safe }}">
+                            <picture class="library-book__portrait-media">
+                                {% if portrait.thumbAvif %}<source srcset="{{ portrait.thumbAvif | safe }}" type="image/avif">{% endif %}
+                                <img class="library-book__portrait-image"
+                                     src="{{ portrait.thumb | default(value=portrait.image) | safe }}"
+                                     alt="{{ portrait.alt }}"
+                                     loading="lazy"
+                                     decoding="async">
+                            </picture>
+                            <span class="library-book__portrait-text">
+                                <span class="library-book__portrait-name">{{ portrait.displayName | default(value=portrait.name) }}</span>
+                                {% if portrait_ref.role %}<span class="library-book__portrait-role">{{ portrait_ref.role }}</span>{% endif %}
+                            </span>
+                        </a>
+                        {% endif %}
+                        {% endfor %}
+                    </div>
+                </section>
                 {% endif %}
 
                 <div class="library-book__meta">
