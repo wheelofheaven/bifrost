@@ -76,21 +76,16 @@ function initSearch() {
     if (searchInitPromise) return searchInitPromise;
     searchInitPromise = (async () => {
     try {
-        currentLanguage = document.documentElement.lang || "en";
-
-        let response;
-        try {
-            response = await fetch(`/search_index.${currentLanguage}.json`);
-            searchIndex = await response.json();
-            if (!searchIndex || searchIndex.length < 5) {
-                throw new Error("Search index too small, falling back to English");
-            }
-        } catch (error) {
-            console.warn(`Failed to load search index for ${currentLanguage}, falling back to English:`, error);
-            response = await fetch("/search_index.en.json");
-            searchIndex = await response.json();
-            currentLanguage = "en";
-        }
+        // Every locale shares one master index: search_index.en.json holds
+        // all records (Zola's directory-based localisation is invisible to
+        // its language system, so the per-language search_index.<lang>.json
+        // files are empty stubs). Load the master directly — one request, no
+        // stub fetch + fallback. currentLanguage stays "en" so results stay
+        // English-scoped, exactly as before: translated locales previously
+        // reached this same state via the fallback.
+        currentLanguage = "en";
+        const response = await fetch("/search_index.en.json");
+        searchIndex = await response.json();
 
         // Enhanced Fuse.js options for better fuzzy matching
         const options = {
