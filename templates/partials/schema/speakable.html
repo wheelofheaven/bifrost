@@ -1,5 +1,6 @@
 <!-- Schema.org Speakable - For voice assistant optimization -->
 {% set website_id = config.base_url ~ '/#website' %}
+{% set webpage_id = current_url ~ '#webpage' %}
 {% set speak_name = config.title | default(value='Wheel of Heaven') %}
 {% if page and page.title %}{% set speak_name = page.title %}{% elif section and section.title %}{% set speak_name = section.title %}{% endif %}
 {% set speak_desc = config.description | default(value='Wheel of Heaven - Exploring the hypothesis of our engineered origins') %}
@@ -8,7 +9,7 @@
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "@id": "{{ current_url | safe }}",
+  "@id": {{ webpage_id | json_encode | safe }},
   "name": {{ speak_name | json_encode | safe }},
   "description": {{ speak_desc | json_encode | safe }},
   "speakable": {

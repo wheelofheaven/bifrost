@@ -225,11 +225,17 @@
 <!-- Schema.org Structured Data - Main Entity -->
 {% set website_id = config.base_url ~ '/#website' %}
 {% set home_url = config.base_url ~ '/' %}
+{% set webpage_id = current_url ~ '#webpage' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "{% if page %}{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% else %}Article{% endif %}{% elif section %}CollectionPage{% else %}WebSite{% endif %}",
+  {# Page-wrapper node (#webpage), distinct from the WebSite (#organization/
+     #website) and from the section-specific content entity (@id = current_url,
+     e.g. DefinedTerm/ScholarlyArticle/Book emitted by the section schema
+     partial). Keeps each @id to a single entity. #}
+  "@type": "{% if page %}WebPage{% elif section %}CollectionPage{% else %}WebSite{% endif %}",
   {% if page %}
+  "@id": {{ webpage_id | json_encode | safe }},
   "headline": {{ page.title | default(value="") | json_encode | safe }},
   "name": {{ page.title | default(value="") | json_encode | safe }},
   "description": {{ page.description | default(value=config.description) | default(value="") | json_encode | safe }},
@@ -291,10 +297,6 @@
     }
     {% endif %}
   },
-  "mainEntityOfPage": {
-    "@type": "WebPage",
-    "@id": "{{ current_url | safe }}"
-  },
   "isPartOf": {
     "@type": "WebSite",
     "@id": {{ website_id | json_encode | safe }},
@@ -302,7 +304,7 @@
     "url": {{ config.base_url | json_encode | safe }}
   }
   {% else %}
-  "@id": {{ website_id | json_encode | safe }},
+  "@id": {{ webpage_id | json_encode | safe }},
   "name": {{ config.title | default(value="") | json_encode | safe }},
   "description": {{ config.description | default(value="") | json_encode | safe }},
   "url": {{ config.base_url | json_encode | safe }},
