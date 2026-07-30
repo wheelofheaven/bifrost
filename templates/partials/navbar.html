@@ -608,7 +608,7 @@
                                 <span data-navbar-key="readingList">{{ trans(key="openReadingList", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="readingListDesc">Pages you've bookmarked for later. <span class="reading-list-toggle__badge" aria-label="bookmark count">0</span></div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readingListDesc">{{ trans(key="navbarReadingListDesc", lang=detected_lang) }} <span class="reading-list-toggle__badge" aria-label="bookmark count">0</span></div>
                         </div>
                     </button>
                 </div>
@@ -649,7 +649,7 @@
                                 <span data-navbar-key="timeline">{{ trans(key="navbarTimeline", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="readBookDesc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="timelineDesc">{{ trans(key="navbarTimelineDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar-dropdown__link">
