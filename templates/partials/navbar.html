@@ -79,6 +79,9 @@
                     <a href="{{ get_url(path='library', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='sources', lang=detected_lang) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='datasets', lang=detected_lang) }}" class="navbar__dropdown-inline-link">{{ trans(key="navbarDatasets", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='gallery', lang=detected_lang) }}" class="navbar__dropdown-inline-link">{{ trans(key="footerGallery", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='listen', lang=detected_lang) }}" class="navbar__dropdown-inline-link">{{ trans(key="navbarListen", lang=detected_lang) }}</a>
                 </div>
             </div>
 
@@ -684,6 +687,27 @@
                             </div>
                             <div class="navbar-dropdown__link-description" data-navbar-key="resourcesNavDesc">{{ trans(key="navbarResourcesNavDesc", lang=detected_lang) }}</div>
                         </div>
+                    </a>
+                    <a href="{{ get_url(path='datasets', lang=detected_lang) }}" class="navbar-dropdown__link navbar-dropdown__link--simple">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/feather-archive.html" %}
+                        </span>
+                        <span>{{ trans(key="navbarDatasets", lang=detected_lang) }}</span>
+                        <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                    </a>
+                    <a href="{{ get_url(path='gallery', lang=detected_lang) }}" class="navbar-dropdown__link navbar-dropdown__link--simple">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/feather-image.html" %}
+                        </span>
+                        <span>{{ trans(key="footerGallery", lang=detected_lang) }}</span>
+                        <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                    </a>
+                    <a href="{{ get_url(path='listen', lang=detected_lang) }}" class="navbar-dropdown__link navbar-dropdown__link--simple">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/game-lyre.html" %}
+                        </span>
+                        <span>{{ trans(key="navbarListen", lang=detected_lang) }}</span>
+                        <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                     </a>
                 </div>
             </div>

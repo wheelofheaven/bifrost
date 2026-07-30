@@ -197,6 +197,97 @@
         }
     }
 
+    // Inline table of contents — collapsible <details> box between the
+    // header and the body. Mirrors the wiki TOC link styling but sits in
+    // the single-column article flow rather than a sticky sidebar.
+    &__toc {
+        margin: v.$spacing-xl 0;
+        padding: v.$spacing-md v.$spacing-lg;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-md;
+        background: var(--color-surface);
+        font-family: var(--font-family-body);
+    }
+
+    &__toc-title {
+        cursor: pointer;
+        font-family: var(--font-family-heading);
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+        }
+    }
+
+    &__toc[open] &__toc-title {
+        margin-bottom: v.$spacing-sm;
+    }
+
+    &__toc-list,
+    &__toc-sublist {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__toc-sublist {
+        margin: 0.125rem 0 0 0;
+        padding-left: 0.875rem;
+    }
+
+    &__toc-item {
+        margin: 0;
+
+        &--level-1 {
+            margin-top: 0.25rem;
+        }
+    }
+
+    &__toc-link {
+        display: block;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        padding: 0.2rem 0.5rem 0.2rem 0.625rem;
+        border-left: 2px solid transparent;
+        font-size: 0.8125rem;
+        line-height: 1.45;
+        transition: color 0.15s ease, border-color 0.15s ease;
+
+        &:hover {
+            color: var(--color-text);
+            border-left-color: var(--color-border-strong);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: -2px;
+        }
+
+        .article__toc-item--level-1 > & {
+            font-weight: 400;
+            font-size: 0.875rem;
+        }
+
+        .article__toc-item--level-2 > & {
+            font-size: 0.8125rem;
+        }
+
+        .article__toc-item--level-3 > & {
+            font-size: 0.75rem;
+            color: var(--color-text-subtle);
+        }
+    }
+
     &__content {
         font-size: v.$font-size-base;
         line-height: 1.75;

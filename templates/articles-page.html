@@ -49,6 +49,43 @@
                 {% include "partials/social-share.html" %}
             </header>
 
+            {# Table of contents — inline collapsible, built from the article's
+               own headings (page.toc). Long-form Explainers are the site's
+               longest reads; this gives in-page navigation and wires up the
+               "skip to table of contents" link (targets .article__toc-title). #}
+            {% if page.toc %}
+            <details class="article__toc" open>
+                <summary class="article__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</summary>
+                <nav class="article__toc-nav" aria-labelledby="toc-heading">
+                    <ul class="article__toc-list">
+                        {% for h1 in page.toc %}
+                        <li class="article__toc-item article__toc-item--level-1">
+                            <a href="#{{ h1.id }}" class="article__toc-link">{{ h1.title }}</a>
+                            {% if h1.children %}
+                            <ul class="article__toc-sublist">
+                                {% for h2 in h1.children %}
+                                <li class="article__toc-item article__toc-item--level-2">
+                                    <a href="#{{ h2.id }}" class="article__toc-link">{{ h2.title }}</a>
+                                    {% if h2.children %}
+                                    <ul class="article__toc-sublist">
+                                        {% for h3 in h2.children %}
+                                        <li class="article__toc-item article__toc-item--level-3">
+                                            <a href="#{{ h3.id }}" class="article__toc-link">{{ h3.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </details>
+            {% endif %}
+
             {% if page.content %}
             <div class="article__content">{{ page.content | safe }}</div>
             {% endif %}
