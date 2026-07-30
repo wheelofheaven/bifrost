@@ -39,6 +39,7 @@ const bundles = {
     'listen-button.js',
     'category-rail.js',
     'cite-copy.js',
+    'claim-badge.js',
   ],
   // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.
   'search.bundle.js': [

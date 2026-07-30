@@ -540,55 +540,6 @@
     if (MQ.addEventListener) MQ.addEventListener('change', placeToc);
     else MQ.addListener(placeToc);
 
-    // Claim-badge state machine — mirrors the wiki page behavior.
-    const badges = Array.from(document.querySelectorAll('.claim-badges .claim-badge'));
-    if (badges.length) {
-        const isExpanded = (b) =>
-            b.classList.contains('claim-badge--active') ||
-            b.classList.contains('claim-badge--expanded') ||
-            b.matches(':hover');
-
-        const collapseInactive = (except) => {
-            badges.forEach((b) => {
-                if (b === except) return;
-                if (!b.classList.contains('claim-badge--active')) {
-                    b.classList.remove('claim-badge--expanded');
-                }
-                b.classList.remove('claim-badge--tooltip-open');
-            });
-        };
-
-        badges.forEach((badge) => {
-            badge.addEventListener('click', (e) => {
-                e.stopPropagation();
-                const expanded = isExpanded(badge);
-
-                if (expanded) {
-                    const willOpen = !badge.classList.contains('claim-badge--tooltip-open');
-                    collapseInactive(badge);
-                    badge.classList.toggle('claim-badge--tooltip-open', willOpen);
-                } else {
-                    collapseInactive(badge);
-                    badge.classList.add('claim-badge--expanded');
-                }
-            });
-
-            badge.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    badge.click();
-                }
-            });
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.claim-badges')) collapseInactive(null);
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') collapseInactive(null);
-        });
-    }
-
     // "Copy for LLMs" — fetch raw markdown source and write to clipboard.
     const copyBtn = document.querySelector('.timeline-page__agent-btn[data-action="copy-md"]');
     if (copyBtn) {
