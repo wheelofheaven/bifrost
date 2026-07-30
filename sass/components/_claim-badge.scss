@@ -194,10 +194,15 @@
     }
 
     // Tooltip visibility:
-    //  - active badge: hover/focus surfaces it
+    //  - active badge on hover
+    //  - ANY badge on keyboard focus (so Tab reveals the explanation on
+    //    every template, independent of the click JS which only some
+    //    templates wire up). The tooltip body is also the
+    //    aria-describedby target, so assistive tech reads the text
+    //    regardless of visual state.
     //  - any badge with .--tooltip-open (set by JS click)
     &--active:hover &__tooltip,
-    &--active:focus-visible &__tooltip,
+    &:focus-visible &__tooltip,
     &--tooltip-open &__tooltip {
         opacity: 1;
         visibility: visible;
