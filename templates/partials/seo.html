@@ -223,16 +223,19 @@
 {% endif %}
 
 <!-- Schema.org Structured Data - Main Entity -->
+{% set website_id = config.base_url ~ '/#website' %}
+{% set home_url = config.base_url ~ '/' %}
+{% set search_target = config.base_url ~ '/search?q={search_term_string}' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "{% if page %}{% if page.extra.schema_type %}{{ page.extra.schema_type }}{% else %}Article{% endif %}{% elif section %}CollectionPage{% else %}WebSite{% endif %}",
   {% if page %}
-  "headline": "{{ page.title | default(value="") | escape }}",
-  "name": "{{ page.title | default(value="") | escape }}",
-  "description": "{% if page.description %}{{ page.description | escape }}{% else %}{{ config.description | default(value="") | escape }}{% endif %}",
+  "headline": {{ page.title | default(value="") | json_encode | safe }},
+  "name": {{ page.title | default(value="") | json_encode | safe }},
+  "description": {{ page.description | default(value=config.description) | default(value="") | json_encode | safe }},
   {% if page.extra.tldr %}
-  "abstract": "{{ page.extra.tldr | escape }}",
+  "abstract": {{ page.extra.tldr | json_encode | safe }},
   {% endif %}
   "url": "{{ current_url | safe }}",
   {% if page.date %}
@@ -245,18 +248,24 @@
   {% endif %}
   {% if page.extra.image or page.extra.header_image %}
   {% set image_object_url = page.extra.image | default(value=page.extra.header_image) %}
+  {% set image_object_full = get_url(path=image_object_url) %}
+  {% if image_object_url is starting_with("http") %}{% set image_object_full = image_object_url %}{% endif %}
+  {% set image_title = page.title | default(value='') %}
+  {% set image_desc = 'Featured image for ' ~ image_title %}
+  {% if page.extra.image_alt %}{% set image_desc = page.extra.image_alt %}{% elif page.description %}{% set image_desc = page.description | truncate(length=150) %}{% endif %}
+  {% set image_name = image_title ~ ' - Featured Image' %}
   "image": {
     "@type": "ImageObject",
-    "url": "{% if image_object_url is starting_with("http") %}{{ image_object_url | safe }}{% else %}{{ get_url(path=image_object_url) }}{% endif %}",
-    "name": "{{ page.title | default(value='') | escape }} - Featured Image",
-    "description": "{% if page.extra.image_alt %}{{ page.extra.image_alt | escape }}{% elif page.description %}{{ page.description | truncate(length=150) | escape }}{% else %}Featured image for {{ page.title | default(value='') | escape }}{% endif %}",
+    "url": {{ image_object_full | json_encode | safe }},
+    "name": {{ image_name | json_encode | safe }},
+    "description": {{ image_desc | json_encode | safe }},
     "width": 1200,
     "height": 630,
-    "caption": "{% if page.extra.image_caption %}{{ page.extra.image_caption | escape }}{% else %}{{ page.title | default(value='') | escape }}{% endif %}"
+    "caption": {{ page.extra.image_caption | default(value=page.title | default(value='')) | json_encode | safe }}
   },
   {% endif %}
   {% if page.extra.category %}
-  "articleSection": "{{ page.extra.category }}",
+  "articleSection": {{ page.extra.category | json_encode | safe }},
   {% endif %}
   {% if page.reading_time %}
   "timeRequired": "PT{{ page.reading_time }}M",
@@ -268,18 +277,18 @@
   "isAccessibleForFree": true,
   "author": {
     "@type": "{{ config.extra.author_type | default(value='Organization') }}",
-    "name": "{% if page.extra.author %}{{ page.extra.author | escape }}{% else %}{{ config.extra.author | default(value=config.title) | default(value="") | escape }}{% endif %}",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "name": {{ page.extra.author | default(value=config.extra.author) | default(value=config.title) | default(value="") | json_encode | safe }},
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   },
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title | default(value="") | escape }}",
-    "url": "{{ config.base_url }}",
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | default(value="") | json_encode | safe }},
+    "url": {{ config.base_url | json_encode | safe }},
     {% if config.extra.logo %}
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ get_url(path=config.extra.logo) }}"
+      "url": {{ get_url(path=config.extra.logo) | json_encode | safe }}
     }
     {% endif %}
   },
@@ -289,35 +298,35 @@
   },
   "isPartOf": {
     "@type": "WebSite",
-    "@id": "{{ config.base_url }}/#website",
-    "name": "{{ config.title }}",
-    "url": "{{ config.base_url }}"
+    "@id": {{ website_id | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }},
+    "url": {{ config.base_url | json_encode | safe }}
   }
   {% else %}
-  "@id": "{{ config.base_url }}/#website",
-  "name": "{{ config.title | default(value="") | escape }}",
-  "description": "{{ config.description | default(value="") | escape }}",
-  "url": "{{ config.base_url }}",
+  "@id": {{ website_id | json_encode | safe }},
+  "name": {{ config.title | default(value="") | json_encode | safe }},
+  "description": {{ config.description | default(value="") | json_encode | safe }},
+  "url": {{ config.base_url | json_encode | safe }},
   "inLanguage": "{{ detected_lang | default(value='en') }}",
   {% if config.extra.logo %}
-  "logo": "{{ get_url(path=config.extra.logo) }}",
+  "logo": {{ get_url(path=config.extra.logo) | json_encode | safe }},
   {% endif %}
   "sameAs": [
     {% if config.extra.social_links %}
       {% for link in config.extra.social_links %}
-    "{{ link }}"{% if not loop.last %},{% endif %}
+    {{ link | json_encode | safe }}{% if not loop.last %},{% endif %}
       {% endfor %}
     {% endif %}
   ],
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   },
   "potentialAction": {
     "@type": "SearchAction",
     "target": {
       "@type": "EntryPoint",
-      "urlTemplate": "{{ config.base_url }}/search?q={search_term_string}"
+      "urlTemplate": {{ search_target | json_encode | safe }}
     },
     "query-input": "required name=search_term_string"
   }
@@ -341,7 +350,7 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ config.base_url }}/"
+      "item": {{ home_url | json_encode | safe }}
     }
     {% for ancestor in page.ancestors %}
       {% set ancestor_section = get_section(path=ancestor) %}
@@ -350,7 +359,7 @@
       ,{
         "@type": "ListItem",
         "position": {{ loop.index + 1 }},
-        "name": "{{ ancestor_name | escape }}",
+        "name": {{ ancestor_name | json_encode | safe }},
         "item": "{{ ancestor_section.permalink | safe }}"
       }
       {% endif %}
@@ -358,7 +367,7 @@
     ,{
       "@type": "ListItem",
       "position": {{ page.ancestors | length + 2 }},
-      "name": "{{ page.title | default(value=config.title) | escape }}"
+      "name": {{ page.title | default(value=config.title) | json_encode | safe }}
     }
   ]
 }
@@ -375,7 +384,7 @@
       "@type": "ListItem",
       "position": 1,
       "name": "Home",
-      "item": "{{ config.base_url }}/"
+      "item": {{ home_url | json_encode | safe }}
     }
     {% for ancestor in section.ancestors %}
       {% set ancestor_section = get_section(path=ancestor) %}
@@ -384,7 +393,7 @@
       ,{
         "@type": "ListItem",
         "position": {{ loop.index + 1 }},
-        "name": "{{ ancestor_name | escape }}",
+        "name": {{ ancestor_name | json_encode | safe }},
         "item": "{{ ancestor_section.permalink | safe }}"
       }
       {% endif %}
@@ -392,7 +401,7 @@
     ,{
       "@type": "ListItem",
       "position": {{ section.ancestors | length + 2 }},
-      "name": "{{ section.title | default(value=config.title) | escape }}"
+      "name": {{ section.title | default(value=config.title) | json_encode | safe }}
     }
   ]
 }

@@ -1,44 +1,46 @@
 <!-- Schema.org Person - Author E-E-A-T signals for better search visibility -->
 {% if page.extra.author_info %}
+{% set person_slug = page.extra.author_info.id | default(value=page.extra.author | slugify) %}
+{% set person_id = config.base_url ~ '/#person-' ~ person_slug %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "@id": "{{ config.base_url }}/#person-{{ page.extra.author_info.id | default(value=page.extra.author | slugify) }}",
-  "name": "{{ page.extra.author_info.name | default(value=page.extra.author) | escape }}",
+  "@id": {{ person_id | json_encode | safe }},
+  "name": {{ page.extra.author_info.name | default(value=page.extra.author) | json_encode | safe }},
   {% if page.extra.author_info.url %}
-  "url": "{{ page.extra.author_info.url }}",
+  "url": {{ page.extra.author_info.url | json_encode | safe }},
   {% endif %}
   {% if page.extra.author_info.image %}
   "image": {
     "@type": "ImageObject",
-    "url": "{{ get_url(path=page.extra.author_info.image) }}",
+    "url": {{ get_url(path=page.extra.author_info.image) | json_encode | safe }},
     "width": 200,
     "height": 200
   },
   {% endif %}
   {% if page.extra.author_info.job_title %}
-  "jobTitle": "{{ page.extra.author_info.job_title | escape }}",
+  "jobTitle": {{ page.extra.author_info.job_title | json_encode | safe }},
   {% endif %}
   {% if page.extra.author_info.description %}
-  "description": "{{ page.extra.author_info.description | escape }}",
+  "description": {{ page.extra.author_info.description | json_encode | safe }},
   {% endif %}
   "worksFor": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }}
   },
   {% if page.extra.author_info.same_as %}
   "sameAs": [
     {% for link in page.extra.author_info.same_as %}
-    "{{ link }}"{% if not loop.last %},{% endif %}
+    {{ link | json_encode | safe }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
   {% if page.extra.author_info.knows_about %}
   "knowsAbout": [
     {% for topic in page.extra.author_info.knows_about %}
-    "{{ topic }}"{% if not loop.last %},{% endif %}
+    {{ topic | json_encode | safe }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
@@ -47,29 +49,31 @@
     {% for credential in page.extra.author_info.credentials %}
     {
       "@type": "EducationalOccupationalCredential",
-      "name": "{{ credential | escape }}"
+      "name": {{ credential | json_encode | safe }}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
   "memberOf": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   }
 }
 </script>
 {% elif page.extra.author %}
 <!-- Simplified Person schema for basic author attribution -->
+{% set author_slug = page.extra.author | slugify %}
+{% set person_id = config.base_url ~ '/#person-' ~ author_slug %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
-  "@id": "{{ config.base_url }}/#person-{{ page.extra.author | slugify }}",
-  "name": "{{ page.extra.author | escape }}",
+  "@id": {{ person_id | json_encode | safe }},
+  "name": {{ page.extra.author | json_encode | safe }},
   "worksFor": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }}
   }
 }
 </script>

@@ -1,39 +1,40 @@
 <!-- Schema.org NewsArticle - For Newsroom dispatches -->
+{% set about_url = config.base_url ~ '/about/' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "NewsArticle",
   "@id": "{{ current_url | safe }}",
-  "headline": "{{ page.title | escape }}",
-  "description": "{{ page.description | default(value='') | escape }}",
+  "headline": {{ page.title | json_encode | safe }},
+  "description": {{ page.description | default(value='') | json_encode | safe }},
   "url": "{{ current_url | safe }}",
   "articleSection": "Newsroom",
   {% if page.extra.event_type %}
-  "keywords": ["{{ page.extra.event_type }}", "Wheel of Heaven", "Newsroom"],
+  "keywords": [{{ page.extra.event_type | json_encode | safe }}, "Wheel of Heaven", "Newsroom"],
   {% else %}
   "keywords": ["Wheel of Heaven", "Newsroom"],
   {% endif %}
   {% if page.extra.header_image %}
   "image": {
     "@type": "ImageObject",
-    "url": "{{ get_url(path=page.extra.header_image) }}",
+    "url": {{ get_url(path=page.extra.header_image) | json_encode | safe }},
     "width": 1200,
     "height": 630
   },
   {% endif %}
   "author": {
     "@type": "{{ config.extra.author_type | default(value='Organization') }}",
-    "name": "{{ page.extra.author | default(value=config.extra.author) | default(value=config.title) }}",
-    "url": "{{ config.base_url }}/about/"
+    "name": {{ page.extra.author | default(value=config.extra.author) | default(value=config.title) | json_encode | safe }},
+    "url": {{ about_url | json_encode | safe }}
   },
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title }}",
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }},
     {% if config.extra.logo %}
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ get_url(path=config.extra.logo) }}"
+      "url": {{ get_url(path=config.extra.logo) | json_encode | safe }}
     }
     {% endif %}
   },
@@ -48,15 +49,15 @@
     {% for src in page.extra.sources %}
     {
       "@type": "CreativeWork",
-      "name": "{{ src.title | escape }}"
+      "name": {{ src.title | json_encode | safe }}
       {% if src.outlet %},
-      "publisher": "{{ src.outlet | escape }}"
+      "publisher": {{ src.outlet | json_encode | safe }}
       {% endif %}
       {% if src.date %},
-      "datePublished": "{{ src.date }}"
+      "datePublished": {{ src.date | json_encode | safe }}
       {% endif %}
       {% if src.url %},
-      "url": "{{ src.url | safe }}"
+      "url": {{ src.url | json_encode | safe }}
       {% endif %}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
@@ -64,6 +65,6 @@
   {% endif %}
   "inLanguage": "{{ detected_lang | default(value='en') }}",
   "isAccessibleForFree": true,
-  "license": "https://creativecommons.org/licenses/by-sa/4.0/"
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/"
 }
 </script>

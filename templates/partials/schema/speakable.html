@@ -1,11 +1,16 @@
 <!-- Schema.org Speakable - For voice assistant optimization -->
+{% set website_id = config.base_url ~ '/#website' %}
+{% set speak_name = config.title | default(value='Wheel of Heaven') %}
+{% if page and page.title %}{% set speak_name = page.title %}{% elif section and section.title %}{% set speak_name = section.title %}{% endif %}
+{% set speak_desc = config.description | default(value='Wheel of Heaven - Exploring the hypothesis of our engineered origins') %}
+{% if page and page.description %}{% set speak_desc = page.description %}{% elif section and section.description %}{% set speak_desc = section.description %}{% endif %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebPage",
   "@id": "{{ current_url | safe }}",
-  "name": "{% if page and page.title %}{{ page.title | escape }}{% elif section and section.title %}{{ section.title | escape }}{% else %}{{ config.title | default(value='Wheel of Heaven') | escape }}{% endif %}",
-  "description": "{% if page and page.description %}{{ page.description | escape }}{% elif section and section.description %}{{ section.description | escape }}{% elif config.description %}{{ config.description | escape }}{% else %}Wheel of Heaven - Exploring the hypothesis of our engineered origins{% endif %}",
+  "name": {{ speak_name | json_encode | safe }},
+  "description": {{ speak_desc | json_encode | safe }},
   "speakable": {
     "@type": "SpeakableSpecification",
     "cssSelector": [
@@ -51,7 +56,7 @@
   "inLanguage": "{{ detected_lang | default(value='en') }}",
   "isPartOf": {
     "@type": "WebSite",
-    "@id": "{{ config.base_url }}/#website"
+    "@id": {{ website_id | json_encode | safe }}
   },
   "url": "{{ current_url | safe }}"
 }

@@ -1,32 +1,35 @@
 <!-- Schema.org DefinedTerm - For Wiki entries -->
+{% set term_set_id = config.base_url ~ '/wiki/#term-set' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "DefinedTerm",
   "@id": "{{ current_url | safe }}",
-  "name": "{{ page.title }}",
-  "description": "{{ page.description | default(value='') | escape }}",
+  "name": {{ page.title | json_encode | safe }},
+  "description": {{ page.description | default(value='') | json_encode | safe }},
   "url": "{{ current_url | safe }}",
   {% if page.extra.alternative_names %}
   "alternateName": [
     {% for name in page.extra.alternative_names %}
-    "{{ name }}"{% if not loop.last %},{% endif %}
+    {{ name | json_encode | safe }}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}
   "inDefinedTermSet": {
     "@type": "DefinedTermSet",
-    "@id": "{{ config.base_url }}/wiki/#term-set",
+    "@id": {{ term_set_id | json_encode | safe }},
     "name": "Wheel of Heaven Wiki",
     "description": "Encyclopedia of concepts, figures, and themes related to the hypothesis that life on Earth was created by an extraterrestrial civilization"
   },
   {% if page.extra.timeline %}
   "isPartOf": [
     {% for age in page.extra.timeline %}
+    {% set age_cap = age | capitalize %}
+    {% set age_name = 'Age of ' ~ age_cap %}
     {
       "@type": "CreativeWork",
-      "name": "Age of {{ age | capitalize }}",
-      "url": "{{ get_url(path='timeline/age-of-' ~ age, lang=detected_lang) }}"
+      "name": {{ age_name | json_encode | safe }},
+      "url": {{ get_url(path='timeline/age-of-' ~ age, lang=detected_lang) | json_encode | safe }}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
@@ -34,7 +37,7 @@
   {% if page.extra.see_also %}
   "relatedLink": [
     {% for item in page.extra.see_also %}
-    "{% if item.url %}{{ item.url }}{% else %}{{ get_url(path=item.path, lang=detected_lang) }}{% endif %}"{% if not loop.last %},{% endif %}
+    {% if item.url %}{{ item.url | json_encode | safe }}{% else %}{{ get_url(path=item.path, lang=detected_lang) | json_encode | safe }}{% endif %}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}

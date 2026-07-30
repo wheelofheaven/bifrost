@@ -1,48 +1,52 @@
 <!-- Schema.org WebSite - Site-level schema with search action for homepage -->
+{% set website_id = config.base_url ~ '/#website' %}
+{% set webpage_id = config.base_url ~ '/#webpage' %}
+{% set home_name = config.title ~ ' - Home' %}
+{% set search_target = config.base_url ~ '/search/?q={search_term_string}' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "@id": "{{ config.base_url }}/#website",
-  "name": "{{ config.title }}",
+  "@id": {{ website_id | json_encode | safe }},
+  "name": {{ config.title | json_encode | safe }},
   "alternateName": ["WoH", "Wheel of Heaven Project", "wheelofheaven.world", "wheelofheaven.io"],
-  "description": "{{ config.description | escape }}",
-  "url": "{{ config.base_url }}",
+  "description": {{ config.description | json_encode | safe }},
+  "url": {{ config.base_url | json_encode | safe }},
   "inLanguage": "{{ detected_lang | default(value='en') }}",
   {% if config.extra.logo %}
   "image": {
     "@type": "ImageObject",
-    "url": "{{ get_url(path=config.extra.logo) }}",
+    "url": {{ get_url(path=config.extra.logo) | json_encode | safe }},
     "width": 512,
     "height": 512
   },
   {% endif %}
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   },
   "potentialAction": [
     {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "{{ config.base_url }}/search/?q={search_term_string}"
+        "urlTemplate": {{ search_target | json_encode | safe }}
       },
       "query-input": "required name=search_term_string"
     },
     {
       "@type": "ReadAction",
-      "target": "{{ config.base_url }}"
+      "target": {{ config.base_url | json_encode | safe }}
     }
   ],
   "mainEntity": {
     "@type": "WebPage",
-    "@id": "{{ config.base_url }}/#webpage",
-    "name": "{{ config.title }} - Home",
-    "description": "{{ config.description | escape }}",
-    "url": "{{ config.base_url }}",
+    "@id": {{ webpage_id | json_encode | safe }},
+    "name": {{ home_name | json_encode | safe }},
+    "description": {{ config.description | json_encode | safe }},
+    "url": {{ config.base_url | json_encode | safe }},
     "isPartOf": {
-      "@id": "{{ config.base_url }}/#website"
+      "@id": {{ website_id | json_encode | safe }}
     },
     "about": {
       "@type": "Thing",
@@ -56,7 +60,7 @@
           "@type": "ListItem",
           "position": 1,
           "name": "Home",
-          "item": "{{ config.base_url }}"
+          "item": {{ config.base_url | json_encode | safe }}
         }
       ]
     }
@@ -65,43 +69,43 @@
     {
       "@type": "WebPage",
       "name": "Wiki",
-      "url": "{{ get_url(path='wiki/', lang=detected_lang) }}",
+      "url": {{ get_url(path='wiki/', lang=detected_lang) | json_encode | safe }},
       "description": "Encyclopedia of concepts and terms"
     },
     {
       "@type": "WebPage",
       "name": "Articles",
-      "url": "{{ get_url(path='articles/', lang=detected_lang) }}",
+      "url": {{ get_url(path='articles/', lang=detected_lang) | json_encode | safe }},
       "description": "Evergreen Explainers — long-form, thesis-driven analyses of the hypothesis"
     },
     {
       "@type": "WebPage",
       "name": "Library",
-      "url": "{{ get_url(path='library/', lang=detected_lang) }}",
+      "url": {{ get_url(path='library/', lang=detected_lang) | json_encode | safe }},
       "description": "Collection of sacred texts and interpretations"
     },
     {
       "@type": "WebPage",
       "name": "Resources",
-      "url": "{{ get_url(path='resources/', lang=detected_lang) }}",
+      "url": {{ get_url(path='resources/', lang=detected_lang) | json_encode | safe }},
       "description": "Curated external books, films, and references"
     },
     {
       "@type": "WebPage",
       "name": "Timeline",
-      "url": "{{ get_url(path='timeline/', lang=detected_lang) }}",
+      "url": {{ get_url(path='timeline/', lang=detected_lang) | json_encode | safe }},
       "description": "Chronological history of world ages"
     },
     {
       "@type": "WebPage",
       "name": "Newsroom",
-      "url": "{{ get_url(path='news/', lang=detected_lang) }}",
+      "url": {{ get_url(path='news/', lang=detected_lang) | json_encode | safe }},
       "description": "Time-anchored dispatches reading current events through the canon"
     }
   ],
   "copyrightHolder": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   },
   "license": "https://creativecommons.org/publicdomain/zero/1.0/",
   "isAccessibleForFree": true

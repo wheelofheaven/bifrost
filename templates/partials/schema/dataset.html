@@ -4,28 +4,28 @@
   "@context": "https://schema.org",
   "@type": "Dataset",
   "@id": "{{ current_url | safe }}",
-  "name": "{{ page.extra.dataset_name | default(value=page.title) | escape }}",
-  "description": "{{ page.description | default(value='') | escape }}",
+  "name": {{ page.extra.dataset_name | default(value=page.title) | json_encode | safe }},
+  "description": {{ page.description | default(value='') | json_encode | safe }},
   "url": "{{ current_url | safe }}",
-  "license": "{{ page.extra.license_url | default(value='https://creativecommons.org/publicdomain/zero/1.0/') }}",
+  "license": {{ page.extra.license_url | default(value='https://creativecommons.org/publicdomain/zero/1.0/') | json_encode | safe }},
   "isAccessibleForFree": true,
   "inLanguage": "en",
-  {% if page.extra.keywords %}"keywords": [{% for k in page.extra.keywords %}"{{ k | escape }}"{% if not loop.last %}, {% endif %}{% endfor %}],{% endif %}
-  {% if page.extra.updated %}"datePublished": "{{ page.extra.updated }}",{% endif %}
+  {% if page.extra.keywords %}"keywords": [{% for k in page.extra.keywords %}{{ k | json_encode | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],{% endif %}
+  {% if page.extra.updated %}"datePublished": {{ page.extra.updated | json_encode | safe }},{% endif %}
   "creator": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }}
   },
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   }{% if page.extra.downloads %},
   "distribution": [
     {% for d in page.extra.downloads %}{
       "@type": "DataDownload",
-      "encodingFormat": "{{ d.format | default(value='application/json') }}",
-      "contentUrl": "{{ d.url | safe }}"
+      "encodingFormat": {{ d.format | default(value='application/json') | json_encode | safe }},
+      "contentUrl": {{ d.url | json_encode | safe }}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]{% endif %}

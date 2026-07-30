@@ -4,19 +4,19 @@
   "@context": "https://schema.org",
   "@type": "Book",
   "@id": "{{ current_url | safe }}",
-  "name": "{{ page.title }}",
-  "description": "{{ page.description | default(value='') | escape }}",
+  "name": {{ page.title | json_encode | safe }},
+  "description": {{ page.description | default(value='') | json_encode | safe }},
   "url": "{{ current_url | safe }}",
   {% if page.extra.author %}
   "author": {
     "@type": "Person",
-    "name": "{{ page.extra.author }}"
+    "name": {{ page.extra.author | json_encode | safe }}
   },
   {% endif %}
   "publisher": {
     "@type": "Organization",
-    "@id": "{{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') }}",
-    "name": "{{ config.title }}"
+    "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }},
+    "name": {{ config.title | json_encode | safe }}
   },
   {% if page.date %}
   "datePublished": "{{ page.date | date(format='%Y-%m-%d') }}",
@@ -24,13 +24,13 @@
   "inLanguage": ["en", "de", "fr", "es", "ru", "ja", "zh", "zh-Hant", "ko", "he"],
   "bookFormat": "https://schema.org/EBook",
   "isAccessibleForFree": true,
-  "license": "https://creativecommons.org/licenses/by-sa/4.0/",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
   "genre": ["Religious Text", "Ancient Literature", "Commentary"],
   "about": [
     {
       "@type": "Thing",
       "name": "Elohim",
-      "url": "{{ get_url(path='wiki/elohim', lang=detected_lang) }}"
+      "url": {{ get_url(path='wiki/elohim', lang=detected_lang) | json_encode | safe }}
     },
     {
       "@type": "Thing",
