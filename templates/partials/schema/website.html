@@ -1,8 +1,7 @@
-<!-- Schema.org WebSite - Site-level schema with search action for homepage -->
+<!-- Schema.org WebSite - Site-level schema for homepage -->
 {% set website_id = config.base_url ~ '/#website' %}
 {% set webpage_id = config.base_url ~ '/#webpage' %}
 {% set home_name = config.title ~ ' - Home' %}
-{% set search_target = config.base_url ~ '/search/?q={search_term_string}' %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -25,20 +24,10 @@
     "@type": "Organization",
     "@id": {{ config.extra.organization_id | default(value=config.base_url ~ '/#organization') | json_encode | safe }}
   },
-  "potentialAction": [
-    {
-      "@type": "SearchAction",
-      "target": {
-        "@type": "EntryPoint",
-        "urlTemplate": {{ search_target | json_encode | safe }}
-      },
-      "query-input": "required name=search_term_string"
-    },
-    {
-      "@type": "ReadAction",
-      "target": {{ config.base_url | json_encode | safe }}
-    }
-  ],
+  "potentialAction": {
+    "@type": "ReadAction",
+    "target": {{ config.base_url | json_encode | safe }}
+  },
   "mainEntity": {
     "@type": "WebPage",
     "@id": {{ webpage_id | json_encode | safe }},
