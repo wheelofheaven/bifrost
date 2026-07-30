@@ -103,11 +103,11 @@
     // Falls back to link.textContent when no better label is available.
     function resolveTerm(link) {
         const card = link.closest(
-            '.wiki-card, .explainer-card, .timeline-card, .library-card, .news-card, article'
+            '.wiki-card, .timeline-card, .library-card, .news-card, article'
         );
         if (card) {
             const titleEl = card.querySelector(
-                '.wiki-card__title, .wiki-card__link, .explainer-card__title, ' +
+                '.wiki-card__title, .wiki-card__link, ' +
                 '.timeline-card__title, .library-card__title, .news-card__title, ' +
                 'h1, h2, h3'
             );

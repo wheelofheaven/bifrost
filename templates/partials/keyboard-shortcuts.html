@@ -88,12 +88,12 @@
     // Get navigation links for j/k
     function getArticleLinks() {
         // Look for prev/next links in navigation
-        const prevLink = document.querySelector('.essentials__nav-link--prev, .wiki__nav-prev, [rel="prev"], a[href*="prev"]');
-        const nextLink = document.querySelector('.essentials__nav-link--next, .wiki__nav-next, [rel="next"], a[href*="next"]');
+        const prevLink = document.querySelector('.wiki__nav-prev, [rel="prev"], a[href*="prev"]');
+        const nextLink = document.querySelector('.wiki__nav-next, [rel="next"], a[href*="next"]');
 
         // Or get links from section listing
         const articleLinks = Array.from(document.querySelectorAll(
-            '.wiki-section__link, .essentials-section__link, .articles-section__link'
+            '.wiki-section__link, .articles-section__link'
         ));
 
         return { prevLink, nextLink, articleLinks };

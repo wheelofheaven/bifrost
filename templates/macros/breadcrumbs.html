@@ -115,30 +115,6 @@
 {% endmacro news %}
 
 {# Convenience macro for Essentials pages #}
-{% macro essentials(page, lang="en") %}
-<nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
-    <ol class="breadcrumbs__list">
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
-                {% include "partials/brand/logomark.html" %}
-                <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
-            </a>
-            <meta itemprop="position" content="1" />
-        </li>
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/essentials/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
-                <span itemprop="name">Essentials</span>
-            </a>
-            <meta itemprop="position" content="2" />
-        </li>
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span class="breadcrumbs__current" itemprop="name">{{ page.title }}</span>
-            <meta itemprop="position" content="3" />
-        </li>
-    </ol>
-</nav>
-{% endmacro essentials %}
-
 {# Convenience macro for Library pages #}
 {% macro library(book_title, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
@@ -211,41 +187,6 @@
 {% endmacro community %}
 
 {# Convenience macro for Resources pages #}
-{% macro resources(page, lang="en") %}
-<nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
-    <ol class="breadcrumbs__list">
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
-                {% include "partials/brand/logomark.html" %}
-                <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
-            </a>
-            <meta itemprop="position" content="1" />
-        </li>
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/resources/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
-                <span itemprop="name">{{ trans(key="navbarResourcesNav", lang=lang) }}</span>
-            </a>
-            <meta itemprop="position" content="2" />
-        </li>
-        {% if page.extra.medium %}
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span class="breadcrumbs__current" itemprop="name">{{ page.extra.medium | replace(from="-", to=" ") | title }}</span>
-            <meta itemprop="position" content="3" />
-        </li>
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span class="breadcrumbs__current" itemprop="name">{{ page.title }}</span>
-            <meta itemprop="position" content="4" />
-        </li>
-        {% else %}
-        <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <span class="breadcrumbs__current" itemprop="name">{{ page.title }}</span>
-            <meta itemprop="position" content="3" />
-        </li>
-        {% endif %}
-    </ol>
-</nav>
-{% endmacro resources %}
-
 {# Convenience macro for Timeline pages #}
 {% macro timeline(page, lang="en") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">

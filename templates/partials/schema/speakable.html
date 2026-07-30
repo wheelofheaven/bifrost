@@ -22,19 +22,6 @@
       ".wiki__content > p:nth-of-type(2)",
       "[data-ai-summary]",
       "[data-ai-definition]"
-      {% elif current_path is containing('/essentials/') %}
-      ".essentials__summary",
-      ".essentials__content > p:first-of-type",
-      ".essentials__content > p:nth-of-type(2)",
-      "[data-ai-summary]",
-      ".quick-answer",
-      ".howto-step__text"
-      {% elif current_path is containing('/explainers/') %}
-      ".explainer__summary",
-      ".explainer__content > p:first-of-type",
-      ".explainer__content > p:nth-of-type(2)",
-      "[data-ai-summary]",
-      "[data-ai-answer]"
       {% elif current_path is containing('/timeline/') %}
       ".timeline__summary",
       ".timeline__content > p:first-of-type",
