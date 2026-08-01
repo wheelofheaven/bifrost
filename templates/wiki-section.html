@@ -79,7 +79,10 @@
                     {% endif %}
                     <h3 class="wiki-featured__card-title">{{ page.title }}</h3>
                     {% if page.extra.summary or page.description %}
-                    <p class="wiki-featured__card-desc">{{ page.extra.summary | default(value=page.description) | striptags | truncate(length=140, end="…") }}</p>
+                    {# Hoisted set: an inline `default()` in output position escapes its
+                       fallback twice under autoescape (Tera bug) — visible &#x27; on cards. #}
+                    {% set card_desc = page.extra.summary | default(value=page.description) %}
+                    <p class="wiki-featured__card-desc">{{ card_desc | markdown(inline=true) | striptags | truncate(length=140, end="…") | safe }}</p>
                     {% endif %}
                     <span class="wiki-featured__card-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
                 </a>
@@ -275,8 +278,9 @@
                             </div>
 
                             {% if page.extra.summary or page.description %}
+                            {% set card_summary = page.extra.summary | default(value=page.description) %}
                             <div class="wiki-card__summary">
-                                {{ page.extra.summary | default(value=page.description) | markdown(inline=true) | safe }}
+                                {{ card_summary | markdown(inline=true) | safe }}
                             </div>
                             {% endif %}
 

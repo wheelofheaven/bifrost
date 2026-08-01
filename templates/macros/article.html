@@ -70,8 +70,11 @@
         <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
+    {# Hoisted set: inline `default()` in output position double-escapes its fallback
+       (Tera bug); markdown(inline=true) renders the summary's *emphasis* properly. #}
+    {% set card_summary = page.extra.summary | default(value=page.description) %}
     <p class="article-card__summary">
-        {{ page.extra.summary | default(value=page.description) }}
+        {{ card_summary | markdown(inline=true) | safe }}
     </p>
     {% endif %}
 </article>
@@ -106,8 +109,11 @@
         <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
+    {# Hoisted set: inline `default()` in output position double-escapes its fallback
+       (Tera bug); markdown(inline=true) renders the summary's *emphasis* properly. #}
+    {% set card_summary = page.extra.summary | default(value=page.description) %}
     <p class="article-card__summary">
-        {{ page.extra.summary | default(value=page.description) }}
+        {{ card_summary | markdown(inline=true) | safe }}
     </p>
     {% endif %}
 </article>

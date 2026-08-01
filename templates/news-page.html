@@ -30,8 +30,9 @@
                 </p>
 
                 {% if page.extra.summary or page.description %}
+                {% set dispatch_summary = page.extra.summary | default(value=page.description) %}
                 <div class="dispatch__summary" data-ai-summary="true" data-summary-label="{{ trans(key='summaryLabel', lang=detected_lang) }}">
-                    <p>{{ page.extra.summary | default(value=page.description) }}</p>
+                    <p>{{ dispatch_summary | markdown(inline=true) | safe }}</p>
                 </div>
                 {% endif %}
 

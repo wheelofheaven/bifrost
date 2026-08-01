@@ -34,8 +34,9 @@
             </div>
             <h1 class="tradition-hub__title" id="page-title">{{ page.title }}</h1>
             {% if page.extra.summary or page.description %}
+            {% set hub_summary = page.extra.summary | default(value=page.description) %}
             <p class="tradition-hub__summary" data-ai-summary="true" data-ai-answer="true">
-                {{ page.extra.summary | default(value=page.description) }}
+                {{ hub_summary | markdown(inline=true) | safe }}
             </p>
             {% endif %}
         </header>

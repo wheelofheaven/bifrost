@@ -89,8 +89,9 @@
         <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
+    {% set card_summary = page.extra.summary | default(value=page.description) %}
     <p class="dispatch-card__summary">
-        {{ page.extra.summary | default(value=page.description) }}
+        {{ card_summary | markdown(inline=true) | safe }}
     </p>
     {% endif %}
     {{ self::attribution(page=page, lang=lang) }}
@@ -125,8 +126,9 @@
         <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
+    {% set card_summary = page.extra.summary | default(value=page.description) %}
     <p class="dispatch-card__summary">
-        {{ page.extra.summary | default(value=page.description) }}
+        {{ card_summary | markdown(inline=true) | safe }}
     </p>
     {% endif %}
     {{ self::attribution(page=page, lang=lang) }}
