@@ -3,6 +3,7 @@
 // BEM-based styling for wiki pages with frosted glass/futuristic aesthetic
 
 @use "../abstracts/variables" as vars;
+@use "../abstracts/mixins" as mix;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 @use "../components/glass-cloud-button" as gcc-btn;
@@ -846,6 +847,7 @@
             background: var(--color-background-secondary);
             border-radius: 0.5rem;
             overflow: hidden;
+            @include mix.mobile-table-scroll;
         }
 
         th,

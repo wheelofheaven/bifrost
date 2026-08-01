@@ -40,6 +40,17 @@
     font-size: clamp(#{$min}px, 2vw, #{$max}px);
 }
 
+// Wide prose tables: below tablet width the table scrolls inside its own
+// container instead of clipping at the viewport edge (the page itself
+// never scrolls horizontally, so clipped columns would be unreachable).
+@mixin mobile-table-scroll($breakpoint: 768px) {
+    @media (max-width: $breakpoint) {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
 // Media query shortcut (unused)
 @mixin respond($breakpoint) {
     @if $breakpoint == sm {

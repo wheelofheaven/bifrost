@@ -1,4 +1,5 @@
 @use "../abstracts/variables" as vars;
+@use "../abstracts/mixins" as mix;
 @use "../base/typography" as typo;
 
 // Shared hero section styles
@@ -215,6 +216,7 @@
         border-radius: 8px;
         overflow: hidden;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        @include mix.mobile-table-scroll;
     }
 
     th, td {

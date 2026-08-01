@@ -5,6 +5,7 @@
 //   .dispatch — single dispatch page
 
 @use "../abstracts/variables" as v;
+@use "../abstracts/mixins" as mix;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 @use "../components/glass-cloud-card" as gcc;
@@ -650,6 +651,7 @@
             margin: v.$spacing-lg 0;
             border-collapse: collapse;
             font-size: 0.95em;
+            @include mix.mobile-table-scroll;
         }
 
         th,

@@ -3,6 +3,7 @@
 // Styling for various shortcode-based components used in wiki content
 
 @use "../base/typography" as typo;
+@use "../abstracts/mixins" as mix;
 
 // Info Box Shortcode Component
 .wiki-info-box {
@@ -347,6 +348,7 @@
     width: 100%;
     border-collapse: collapse;
     margin: 1.5rem 0;
+    @include mix.mobile-table-scroll;
     background: var(--color-glass-bg);
     border: 1px solid var(--color-glass-border);
     border-radius: 0.75rem;
