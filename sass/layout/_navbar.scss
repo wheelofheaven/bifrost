@@ -846,6 +846,23 @@ html:has(body.mobile-nav-open) {
         padding: 0.5rem 1rem;
         transition: transform 0.3s ease;
 
+        // iOS Safari drops `backdrop-filter` when an ancestor carries a
+        // `transform` — and this pill is centered with
+        // `transform: translateX(-50%)`. So on iPhone the blur silently
+        // fails and every glass chrome surface in the navbar subtree (the
+        // bar's ::before, the dropped burger menu `.navbar__content`, the
+        // inline dropdowns, the language pane) falls back to the bare
+        // ~10%-alpha `--color-navbar-bg` and reads as fully transparent —
+        // nav text sits directly on top of the page content. `@supports`
+        // can't catch this: iOS *does* support -webkit-backdrop-filter, it
+        // just won't render it here. Fix it by pointing the whole subtree's
+        // navbar-bg token at the theme-aware near-opaque `--color-glass-bg`
+        // on mobile, so the surface stays legible with the blur OR without
+        // it. Both bar and dropped menu share the token, so they still read
+        // as one continuous surface. Desktop (blur works) is untouched, and
+        // body-fixed glass (to-top, reader FAB) keeps the root token.
+        --color-navbar-bg: var(--color-glass-bg);
+
         // Prevent logo from shrinking on mobile
         &__logo {
             img,
@@ -1519,12 +1536,12 @@ html:has(body.mobile-nav-open) {
 // Light theme mobile expanded state
 @media (max-width: 999px) {
     [data-theme="light"] .navbar--mobile-expanded {
-        // The overlay's background is already `var(--color-navbar-bg)`
-        // (set in the base mobile block) which resolves to the same
-        // rgba(255,255,255,0.65) used by the navbar bar. Don't hardcode
-        // a different alpha here — that's what caused the navbar and
-        // its dropped menu to read as two slightly different surfaces
-        // in light mode.
+        // The overlay's background is `var(--color-navbar-bg)`, which the
+        // mobile `.navbar` block remaps to the near-opaque
+        // `--color-glass-bg` (see the note there) so it stays legible when
+        // iOS drops the blur. The bar's ::before reads the same remapped
+        // token, so both still render as one continuous surface — don't
+        // hardcode a different alpha here or they'll split into two.
         .navbar__content {
             border-color: rgba(0, 0, 0, 0.1);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);

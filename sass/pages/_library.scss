@@ -1433,7 +1433,12 @@
         gap: 0.125rem;
         padding: 0.25rem;
         border-radius: 999px;
-        background: var(--color-navbar-bg);
+        // Near-opaque glass, not the ~10%-alpha `--color-navbar-bg`: this
+        // deck overlays paragraph text, and iOS Safari drops backdrop-filter
+        // under a transformed ancestor, which would leave the action icons
+        // floating on bare content. `--color-glass-bg` stays legible with or
+        // without the blur (matches how other overlay menus stay opaque).
+        background: var(--color-glass-bg);
         backdrop-filter: blur(12px) saturate(180%);
         -webkit-backdrop-filter: blur(12px) saturate(180%);
         border: 1px solid var(--color-border);
@@ -3768,7 +3773,10 @@
         padding: 0.25rem;
         min-width: 100%;
         list-style: none;
-        background: var(--color-navbar-bg);
+        // Near-opaque glass (not the ~10%-alpha `--color-navbar-bg`) so the
+        // options stay legible when iOS Safari drops backdrop-filter under a
+        // transformed ancestor. See `&__para-actions` above.
+        background: var(--color-glass-bg);
         backdrop-filter: blur(14px) saturate(150%);
         -webkit-backdrop-filter: blur(14px) saturate(150%);
         border: 1px solid var(--color-hairline);
