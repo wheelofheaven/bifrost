@@ -21,27 +21,21 @@
     max-width: calc(100vw - 2rem);
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+    // Fade-only, and no translateX centering: the glass blur lives on the
+    // child `__content`, and WebKit drops backdrop-filter under a
+    // transformed ancestor. JS (positionTooltip) centers via a measured
+    // `left` instead.
+    transition: opacity 0.2s ease, visibility 0.2s ease;
     pointer-events: none;
-
-    // Default: positioned above the link (fallback), arrow at bottom
-    transform: translateX(-50%) translateY(-8px);
 
     &--visible {
         opacity: 1;
         visibility: visible;
-        transform: translateX(-50%) translateY(0);
         pointer-events: auto;
     }
 
     // When positioned below the link (default behavior), arrow at top
     &--bottom {
-        transform: translateX(-50%) translateY(8px);
-
-        &.glossary-tooltip--visible {
-            transform: translateX(-50%) translateY(0);
-        }
-
         .glossary-tooltip__arrow {
             bottom: auto;
             top: -6px;

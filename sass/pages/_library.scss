@@ -1433,12 +1433,12 @@
         gap: 0.125rem;
         padding: 0.25rem;
         border-radius: 999px;
-        // Near-opaque glass, not the ~10%-alpha `--color-navbar-bg`: this
-        // deck overlays paragraph text, and iOS Safari drops backdrop-filter
-        // under a transformed ancestor, which would leave the action icons
-        // floating on bare content. `--color-glass-bg` stays legible with or
-        // without the blur (matches how other overlay menus stay opaque).
-        background: var(--color-glass-bg);
+        // Shared translucent glass token — same recipe as the navbar and
+        // FABs, so all chrome reads as one material. This deck overlays
+        // paragraph text, so its ancestor chain (paragraph → reader
+        // content) must stay transform-free or iOS/WebKit drops the blur
+        // and the icons float on bare content.
+        background: var(--color-navbar-bg);
         backdrop-filter: blur(12px) saturate(180%);
         -webkit-backdrop-filter: blur(12px) saturate(180%);
         border: 1px solid var(--color-border);
@@ -3773,10 +3773,10 @@
         padding: 0.25rem;
         min-width: 100%;
         list-style: none;
-        // Near-opaque glass (not the ~10%-alpha `--color-navbar-bg`) so the
-        // options stay legible when iOS Safari drops backdrop-filter under a
-        // transformed ancestor. See `&__para-actions` above.
-        background: var(--color-glass-bg);
+        // Shared translucent glass token — same recipe as the navbar and
+        // FABs. Ancestors must stay transform-free so WebKit renders the
+        // blur; see `&__para-actions` above.
+        background: var(--color-navbar-bg);
         backdrop-filter: blur(14px) saturate(150%);
         -webkit-backdrop-filter: blur(14px) saturate(150%);
         border: 1px solid var(--color-hairline);

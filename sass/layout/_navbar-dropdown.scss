@@ -12,7 +12,10 @@
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
-    // Only transition opacity/visibility, not transform (JS sets translateX for centering)
+    // Only transition opacity/visibility. Centering is done by JS via a
+    // measured `left` (positionDropdown), never `translateX(-50%)` — a
+    // transformed ancestor makes iOS/WebKit drop the container's
+    // backdrop-filter, so this element must stay transform-free.
     transition: opacity 0.2s ease, visibility 0.2s ease;
 
     &--active {
@@ -33,13 +36,10 @@
         border: 1px solid var(--color-hairline);
         border-radius: 1rem;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-        // Slide down animation
-        transform: translateY(-8px);
-        transition: transform 0.2s ease-out;
-
-        .navbar-dropdown--active & {
-            transform: translateY(0);
-        }
+        // No translateY slide — the parent fades the panel in/out. A
+        // transform on this glass surface (even the resting identity one)
+        // risks WebKit dropping its backdrop-filter; keep it
+        // transform-free so the blur renders on every engine.
     }
 
     &__content {

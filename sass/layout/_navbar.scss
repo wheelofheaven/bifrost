@@ -35,8 +35,15 @@ html:has(body.mobile-nav-open) {
     border-radius: 1rem;
     position: fixed;
     top: 0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
+    // Centered with auto margins, NOT `left: 50% + translateX(-50%)`:
+    // iOS/WebKit silently refuses to render `backdrop-filter` on any
+    // element under a transformed ancestor, and a transform here killed
+    // the ::before glass blur for the whole navbar subtree on iPhone.
+    // Keep this element (and every ancestor of a glass surface)
+    // transform-free so the blur paints on every engine.
+    left: 0;
+    right: 0;
+    margin-inline: auto;
     width: 90%;
     max-width: 80rem;
     z-index: 50;
@@ -623,8 +630,9 @@ html:has(body.mobile-nav-open) {
         box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-8px);
-        transition: all 0.2s ease;
+        // Fade only — a transform on this glass popover (even during the
+        // open animation) makes iOS/WebKit drop its backdrop-filter.
+        transition: opacity 0.2s ease, visibility 0.2s ease;
         z-index: 100;
 
         // Backdrop blur for glassmorphism effect
@@ -634,7 +642,6 @@ html:has(body.mobile-nav-open) {
         &--open {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0);
         }
     }
 
@@ -844,24 +851,18 @@ html:has(body.mobile-nav-open) {
     .navbar {
         width: 95%;
         padding: 0.5rem 1rem;
-        transition: transform 0.3s ease;
-
-        // iOS Safari drops `backdrop-filter` when an ancestor carries a
-        // `transform` — and this pill is centered with
-        // `transform: translateX(-50%)`. So on iPhone the blur silently
-        // fails and every glass chrome surface in the navbar subtree (the
-        // bar's ::before, the dropped burger menu `.navbar__content`, the
-        // inline dropdowns, the language pane) falls back to the bare
-        // ~10%-alpha `--color-navbar-bg` and reads as fully transparent —
-        // nav text sits directly on top of the page content. `@supports`
-        // can't catch this: iOS *does* support -webkit-backdrop-filter, it
-        // just won't render it here. Fix it by pointing the whole subtree's
-        // navbar-bg token at the theme-aware near-opaque `--color-glass-bg`
-        // on mobile, so the surface stays legible with the blur OR without
-        // it. Both bar and dropped menu share the token, so they still read
-        // as one continuous surface. Desktop (blur works) is untouched, and
-        // body-fixed glass (to-top, reader FAB) keeps the root token.
-        --color-navbar-bg: var(--color-glass-bg);
+        // Animate `top`, not `transform`: a transform on the pill (even
+        // only during the hide/show slide) makes iOS/WebKit drop the
+        // ::before backdrop-filter for the whole navbar subtree — the bar
+        // would slide in glassless and the blur would pop in at rest.
+        // One small fixed element re-laid-out for 300ms is cheap; a
+        // transform-free ancestor chain is what keeps the glass identical
+        // across engines. (The old near-opaque `--color-glass-bg` remap
+        // that compensated for the dropped blur is gone — the shared
+        // translucent token + working blur is the single glass recipe now;
+        // `themes/_init.scss` carries a solid @supports fallback for
+        // engines with no backdrop-filter at all.)
+        transition: top 0.3s ease;
 
         // Prevent logo from shrinking on mobile
         &__logo {
@@ -874,9 +875,11 @@ html:has(body.mobile-nav-open) {
 
         // Hide on scroll down — slide off the top edge, no fade.
         // (Earlier `opacity: 0` made the pill dissolve in place
-        // instead of scrolling away with the page.)
+        // instead of scrolling away with the page.) Slides via `top`
+        // rather than `transform` so the glass blur never drops out —
+        // see the transition note on the pill above.
         &--hidden {
-            transform: translateX(-50%) translateY(-100%);
+            top: -6rem;
         }
 
         &__content {
@@ -1045,13 +1048,13 @@ html:has(body.mobile-nav-open) {
                     z-index: 10000;
                     display: none;
                     opacity: 0;
-                    transform: translateY(8px);
+                    // No translateY slide: keep glass popovers
+                    // transform-free so WebKit renders their blur.
 
                     &--open {
                         display: block;
                         opacity: 1;
                         visibility: visible;
-                        transform: translateY(0);
                     }
                 }
             }
@@ -1280,8 +1283,11 @@ html:has(body.mobile-nav-open) {
                 padding: 1.25rem 1rem 2rem;
                 z-index: 9998; // sits below the navbar bar (z 50, but navbar's own ::before is layered)
                 opacity: 0;
-                transform: translateY(-10px);
-                transition: opacity 0.3s ease, transform 0.3s ease;
+                // Fade only — no translateY slide. Animating a transform on
+                // this glass surface makes iOS/WebKit drop its
+                // backdrop-filter mid-animation (glassless flash, blur pops
+                // in at rest). Keep the overlay transform-free.
+                transition: opacity 0.3s ease;
                 pointer-events: none;
                 overflow-y: auto;
                 overflow-x: hidden;
@@ -1508,10 +1514,10 @@ html:has(body.mobile-nav-open) {
                 }
             }
 
-            // Animate content in when expanded
+            // Animate content in when expanded (fade only — see the
+            // transform-free note on the collapsed state)
             .navbar__content {
                 opacity: 1;
-                transform: translateY(0);
                 pointer-events: all;
             }
 
@@ -1536,12 +1542,11 @@ html:has(body.mobile-nav-open) {
 // Light theme mobile expanded state
 @media (max-width: 999px) {
     [data-theme="light"] .navbar--mobile-expanded {
-        // The overlay's background is `var(--color-navbar-bg)`, which the
-        // mobile `.navbar` block remaps to the near-opaque
-        // `--color-glass-bg` (see the note there) so it stays legible when
-        // iOS drops the blur. The bar's ::before reads the same remapped
-        // token, so both still render as one continuous surface — don't
-        // hardcode a different alpha here or they'll split into two.
+        // The overlay's background is `var(--color-navbar-bg)` — the same
+        // shared translucent glass token the bar's ::before reads, so both
+        // render as one continuous surface. Don't hardcode a different
+        // alpha here or they'll split into two. (Engines without
+        // backdrop-filter get the solid fallback from `themes/_init.scss`.)
         .navbar__content {
             border-color: rgba(0, 0, 0, 0.1);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);

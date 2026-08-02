@@ -140,6 +140,24 @@
     }
 }
 
+// No-backdrop-filter fallback. Every glass chrome surface (navbar, burger
+// overlay, dropdowns, FABs, reader popovers) shares `--color-navbar-bg` at
+// ~10% alpha + blur — one glass recipe on every engine that renders
+// backdrop-filter (all evergreen browsers). The WebKit
+// transformed-ancestor caveat is handled structurally: ancestor chains of
+// glass surfaces stay transform-free (see layout/_navbar.scss). If an
+// engine truly lacks backdrop-filter, a 10% surface would be illegible —
+// swap the token for the near-opaque glass tone instead. The `var()`
+// indirection resolves per theme, and the selector list matches every
+// theme branch's specificity so the fallback always wins.
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    :root,
+    :root:not([data-theme]),
+    :root[data-theme] {
+        --color-navbar-bg: var(--color-glass-bg);
+    }
+}
+
 // Reduced motion support
 @media (prefers-reduced-motion: reduce) {
     * {

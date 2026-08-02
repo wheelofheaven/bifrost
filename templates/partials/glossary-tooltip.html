@@ -251,8 +251,12 @@
             left = window.innerWidth - tooltipWidth / 2 - padding;
         }
 
+        // Center via measured left — the CSS deliberately has no
+        // translateX(-50%) (a transformed ancestor would make WebKit drop
+        // the glass blur on the tooltip content).
+        const measuredWidth = tooltip.offsetWidth || tooltipWidth;
         tooltip.style.top = `${top + window.scrollY}px`;
-        tooltip.style.left = `${left}px`;
+        tooltip.style.left = `${left - measuredWidth / 2}px`;
     }
 
     function showTooltip() {

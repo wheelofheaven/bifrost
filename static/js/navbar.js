@@ -188,10 +188,12 @@ class NavbarDropdown {
       const topPosition = navbarRect.bottom + 1;
       dropdown.style.top = `${topPosition}px`;
 
-      // Center dropdown under trigger
+      // Center dropdown under trigger with a measured `left` — never
+      // `translateX(-50%)`: a transform on the dropdown makes iOS/WebKit
+      // drop the container's backdrop-filter (glass renders untinted).
       const triggerCenter = triggerRect.left + (triggerRect.width / 2);
-      dropdown.style.left = `${triggerCenter}px`;
-      dropdown.style.transform = 'translateX(-50%)';
+      dropdown.style.left = `${triggerCenter - (dropdown.offsetWidth / 2)}px`;
+      dropdown.style.transform = 'none';
 
       // Check bounds after positioning
       requestAnimationFrame(() => {
