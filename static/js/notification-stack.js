@@ -166,11 +166,28 @@
     }
 
     function updateNavbarTop() {
-        if (!navbar || range <= 0) return;
+        if (!navbar) return;
+        // Never write `navbar.style.top` directly: an inline `top`
+        // outranks every class rule — including the mobile scroll-hide
+        // state (`.navbar--hidden { top: -6rem }`, which slides via
+        // `top` rather than `transform` so the glass blur survives on
+        // iOS) — and would pin the navbar on screen forever. Publish
+        // the interpolated dock position as a CSS var instead;
+        // `_notification-stack.scss` consumes it only while the stack
+        // has visible cards, with a higher-specificity `--hidden`
+        // exception so scroll-hide still wins.
+        if (bannerH <= 0 || range <= 0) {
+            document.documentElement.style.removeProperty(
+                "--navbar-dock-top"
+            );
+            return;
+        }
         const scrollY = Math.max(0, window.scrollY);
         const ratio = Math.min(1, scrollY / range);
-        const top = navbarStart - range * ratio;
-        navbar.style.top = top + "px";
+        document.documentElement.style.setProperty(
+            "--navbar-dock-top",
+            navbarStart - range * ratio + "px"
+        );
     }
 
     let scheduled = false;

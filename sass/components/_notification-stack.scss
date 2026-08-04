@@ -361,8 +361,26 @@ body:has(.notification-stack:not([data-visible-count="0"])) {
     // `main` clears the navbar with another 1rem buffer. All four terms
     // matter — without the 0.5rem the navbar would land inside the
     // stack's visible band.
+    //
+    // `--navbar-dock-top` is written per scroll frame by the JS
+    // controller: it interpolates from the docked position down to the
+    // settled 0.5rem as the stack scrolls out of view. It is a CSS var,
+    // NOT an inline `style.top` on the navbar — an inline top would
+    // outrank `.navbar--hidden` and permanently defeat the mobile
+    // scroll-hide. The calc() below is the first-paint / no-JS fallback.
     .navbar {
-        top: calc(0.5rem + var(--notification-stack-h) + 1rem);
+        top: var(
+            --navbar-dock-top,
+            calc(0.5rem + var(--notification-stack-h) + 1rem)
+        );
+
+        // This docked rule outranks the plain `.navbar--hidden` from
+        // _navbar.scss (body:has(...) boosts specificity), so restate
+        // the hidden state here at higher specificity still — mobile
+        // scroll-hide must win even while the stack has visible cards.
+        &.navbar--hidden {
+            top: -6rem;
+        }
     }
 
     main {
