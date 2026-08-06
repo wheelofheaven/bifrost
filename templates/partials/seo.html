@@ -66,6 +66,9 @@
     {% set og_image_url = get_url(path="brand/wheel-of-heaven.jpg") %}
 {% endif %}
 
+<!-- Search snippet -->
+<meta name="description" content="{% if page.description %}{{ page.description }}{% elif page.extra.tldr %}{{ page.extra.tldr }}{% elif section.description %}{{ section.description }}{% else %}{{ config.description }}{% endif %}">
+
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="{% if page %}article{% else %}website{% endif %}">
 <meta property="og:url" content="{{ current_url | safe }}">
