@@ -15,6 +15,9 @@
     {% endfor %}
   ],
   {% endif %}
+  {% if page.extra.same_as %}
+  "sameAs": {{ page.extra.same_as | json_encode | safe }},
+  {% endif %}
   "inDefinedTermSet": {
     "@type": "DefinedTermSet",
     "@id": {{ term_set_id | json_encode | safe }},
