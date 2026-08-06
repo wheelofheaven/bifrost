@@ -7,6 +7,9 @@
   "name": {{ page.title | json_encode | safe }},
   "description": {{ page.description | default(value='') | json_encode | safe }},
   "url": "{{ current_url | safe }}",
+  {% if page.extra.same_as %}
+  "sameAs": {{ page.extra.same_as | json_encode | safe }},
+  {% endif %}
   {% if page.extra.start_year %}
   "startDate": {{ page.extra.start_year | json_encode | safe }},
   {% endif %}
