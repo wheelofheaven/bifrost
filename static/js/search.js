@@ -417,13 +417,19 @@ function setupSuggestionHandlers(modal) {
 }
 
 // Highlight matching text
+function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, ch => (
+        { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]
+    ));
+}
+
 function highlightText(text, query) {
     if (!query || query.trim().length < 2) return text;
 
     const searchTerms = query.toLowerCase().split(/\s+/).filter(term => term.length >= 2);
     if (searchTerms.length === 0) return text;
 
-    let result = text;
+    let result = escapeHtml(text);
     searchTerms.forEach(term => {
         const escapedTerm = term.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
         const regex = new RegExp(`(${escapedTerm})`, "gi");
@@ -482,7 +488,7 @@ function filterResults(results) {
 // punctuation around the placeholder (e.g. JP 「…」, FR « … ») stays
 // visually consistent with the emphasized term.
 function formatEmptyBody(template, query) {
-    const safeQuery = `<strong>${query}</strong>`;
+    const safeQuery = `<strong>${escapeHtml(query)}</strong>`;
     return template.replace('{query}', safeQuery);
 }
 
@@ -515,7 +521,7 @@ function createResultsCount(count, query) {
         : t('resultsForMany', '{count} results for "{query}"');
     const text = tmpl
         .replace('{count}', `<span class="search-results-count__number">${count}</span>`)
-        .replace('{query}', query);
+        .replace('{query}', escapeHtml(query));
     return `
         <div class="search-results-count">
             <span class="search-results-count__text">${text}</span>
@@ -552,10 +558,10 @@ function renderSearchResults(results, query = "") {
         const section = extractSection(item.url);
 
         return `
-            <a href="${item.url}" class="search-result">
+            <a href="${escapeHtml(item.url)}" class="search-result">
                 <div class="search-result__left">
                     <div class="search-result__title">${highlightedTitle}</div>
-                    <div class="search-result__url">${uri}</div>
+                    <div class="search-result__url">${escapeHtml(uri)}</div>
                     <div class="search-result__section">
                         <span class="search-result__section-icon">${getSectionIcon(section)}</span>
                         ${sectionLabel(section)}
