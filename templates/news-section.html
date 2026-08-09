@@ -70,6 +70,10 @@
             </div>
 
             <aside class="newsroom__rail" aria-label="{{ trans(key='newsroomSidebarLabel', lang=detected_lang) }}">
+                {# Only worth a filter rail when there's more than one event
+                   type; with the announcement-only taxonomy the single type
+                   equals "All dispatches", so the module would be pure noise. #}
+                {% if event_type_keys | length > 1 %}
                 <section class="newsroom__rail-module">
                     <h3 class="newsroom__rail-heading">{{ trans(key="newsroomFiledUnder", lang=detected_lang) }}</h3>
                     <ul class="newsroom__filter-list">
@@ -91,6 +95,7 @@
                         </li>
                     </ul>
                 </section>
+                {% endif %}
 
                 <section class="newsroom__rail-module newsroom__rail-module--subscribe">
                     <h3 class="newsroom__rail-heading">{{ trans(key="newsroomSubscribeHeading", lang=detected_lang) }}</h3>
