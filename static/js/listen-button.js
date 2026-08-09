@@ -199,6 +199,8 @@
         const percent = Math.max(0, Math.min(fraction, 1)) * 100;
         progressFill.style.width = `${percent}%`;
         progressHandle.style.left = `${percent}%`;
+        const ap = document.getElementById('audioProgress');
+        if (ap) { ap.setAttribute('aria-valuenow', Math.round(percent)); ap.setAttribute('aria-valuetext', `${Math.round(percent)}%`); }
         // v4.4 — keep the play-button progress ring in sync too.
         if (playPauseBtn) playPauseBtn.style.setProperty('--progress', percent.toFixed(2));
         timeCurrent.textContent = formatTime((fraction || 0) * estimatedDuration);
@@ -1315,6 +1317,8 @@
             const pct = Math.max(0, Math.min(ratio || 0, 1)) * 100;
             if (barFill) barFill.style.width = `${pct}%`;
             if (barHandle) barHandle.style.left = `${pct}%`;
+            const cp = document.getElementById('cinematicProgress');
+            if (cp) { cp.setAttribute('aria-valuenow', Math.round(pct)); cp.setAttribute('aria-valuetext', `${Math.round(pct)}%`); }
             if (barCur && typeof cur === 'number') barCur.textContent = formatTime(cur);
             if (barTotal && typeof total === 'number' && total && !Number.isNaN(total)) {
                 barTotal.textContent = formatTime(total);
@@ -1650,8 +1654,32 @@
             const pct = ratio * 100;
             progressFill.style.width = `${pct}%`;
             progressHandle.style.left = `${pct}%`;
+            progressBar.setAttribute('aria-valuenow', Math.round(pct));
+            progressBar.setAttribute('aria-valuetext', `${Math.round(pct)}%`);
             if (playPauseBtn) playPauseBtn.style.setProperty('--progress', pct.toFixed(2));
         };
+        // a11y — keyboard seek (arrows +/-5%, Home/End). #audioProgress is role=slider, focusable.
+        progressBar.addEventListener('keydown', (e) => {
+            if (!currentEngine || typeof currentEngine.seek !== 'function') return;
+            const cur = (parseFloat(progressBar.getAttribute('aria-valuenow')) || 0) / 100;
+            let next;
+            switch (e.key) {
+                case 'ArrowRight': case 'ArrowUp': next = cur + 0.05; break;
+                case 'ArrowLeft': case 'ArrowDown': next = cur - 0.05; break;
+                case 'Home': next = 0; break;
+                case 'End': next = 1; break;
+                default: return;
+            }
+            e.preventDefault();
+            next = Math.max(0, Math.min(1, next));
+            currentEngine.seek(next);
+            const kp = next * 100;
+            progressFill.style.width = `${kp}%`;
+            progressHandle.style.left = `${kp}%`;
+            progressBar.setAttribute('aria-valuenow', Math.round(kp));
+            progressBar.setAttribute('aria-valuetext', `${Math.round(kp)}%`);
+            if (playPauseBtn) playPauseBtn.style.setProperty('--progress', kp.toFixed(2));
+        });
         progressBar.addEventListener('pointerdown', (e) => {
             e.preventDefault();
             isDragging = true;
@@ -1745,6 +1773,19 @@
             } else if (e.key === ' ' || e.code === 'Space') {
                 e.preventDefault();
                 togglePlayPause();
+            } else if (['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) {
+                if (!currentEngine || typeof currentEngine.seek !== 'function') return;
+                const cp = document.getElementById('cinematicProgress');
+                const cur = (parseFloat(cp && cp.getAttribute('aria-valuenow')) || 0) / 100;
+                let next = cur;
+                if (e.key === 'ArrowRight' || e.key === 'ArrowUp') next = cur + 0.05;
+                else if (e.key === 'ArrowLeft' || e.key === 'ArrowDown') next = cur - 0.05;
+                else if (e.key === 'Home') next = 0;
+                else if (e.key === 'End') next = 1;
+                e.preventDefault();
+                next = Math.max(0, Math.min(1, next));
+                currentEngine.seek(next);
+                cinematic.setProgress(next);
             }
         });
     }
