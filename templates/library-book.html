@@ -65,10 +65,11 @@
 {% endif %}
 {% set show_reference_toggle = ref_chapters | length > 0 %}
 
-{% if book_data %}
-<!-- Book Schema -->
+<!-- Book Schema (renders from frontmatter, independent of book_data, so
+     data-less reference pages still carry their sameAs / identity) -->
 {% include "partials/schema/book.html" %}
 
+{% if book_data %}
 {# Pre-resolve a few values to keep the template body tidy. #}
 {% set book_title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
 {% set book_subtitle = library_macros::get_book_subtitle(book_data=book_data, lang=detected_lang) | trim %}
