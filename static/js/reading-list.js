@@ -452,7 +452,7 @@
             if (e.ctrlKey || e.metaKey || e.altKey) return;
 
             // Check if any modal is open
-            const anyModalOpen = document.querySelector('.search-modal--open, .keyboard-shortcuts-modal--open');
+            const anyModalOpen = document.querySelector('.search-modal--active, .keyboard-shortcuts-modal--open');
 
             if (e.key === 'b' && !e.shiftKey && !anyModalOpen) {
                 // Toggle bookmark for current page
@@ -492,6 +492,7 @@
 
     // Show snackbar
     function showSnackbar(message) {
+        if (typeof window.showSnackbar === 'function') { window.showSnackbar(message); return; }
         const snackbar = document.querySelector('.snackbar');
         if (snackbar) {
             snackbar.textContent = message;

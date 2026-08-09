@@ -247,6 +247,7 @@
 
     // Show snackbar message
     function showSnackbar(message) {
+        if (typeof window.showSnackbar === 'function') { window.showSnackbar(message); return; }
         // Use existing snackbar if available
         const snackbar = document.querySelector('.snackbar');
         if (snackbar) {

@@ -540,8 +540,6 @@ function renderSearchResults(results, query = "") {
         } else {
             container.innerHTML = createInitialState();
         }
-        setupFilterHandlers(document.getElementById('search-modal'));
-        setupSuggestionHandlers(document.getElementById('search-modal'));
         return;
     }
 
@@ -579,8 +577,6 @@ function renderSearchResults(results, query = "") {
         ${createResultsCount(results.length, query)}
         ${resultsHTML}
     `;
-
-    setupFilterHandlers(document.getElementById('search-modal'));
 }
 
 // Debounce function
@@ -673,6 +669,7 @@ function hideSearchModal() {
     const body = document.body;
 
     if (modal) {
+        if (!modal.classList.contains("search-modal--active")) return;
         modal.classList.remove("search-modal--active");
         body.classList.remove("search-modal-open");
 

@@ -30,10 +30,13 @@
    unique outlet names; both columns cap at 4 with a "+N more" overflow
    indicator. #}
 {% macro attribution(page, lang="en") %}
-{% set outlets = [] %}
+{% set_global outlets = [] %}
 {% if page.extra.sources %}
-    {% set outlets = page.extra.sources | map(attribute="outlet") | unique %}
+{% for s in page.extra.sources %}
+{% if s.outlet %}{% set_global outlets = outlets | concat(with=s.outlet) %}{% endif %}
+{% endfor %}
 {% endif %}
+{% set outlets = outlets | unique %}
 {% set canon = page.extra.canon_links | default(value=[]) %}
 {% if outlets | length > 0 or canon | length > 0 %}
 <footer class="dispatch-card__attribution">
