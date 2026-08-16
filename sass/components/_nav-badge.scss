@@ -1,0 +1,37 @@
+// Nav badge — small encircled count pinned to the corner of a nav control
+//
+// Used by continue-reading.js on the burger toggle to show how many open
+// reading items exist. Positioned with top/right only: a transform here
+// would sit inside the navbar's backdrop-filter subtree, and WebKit drops
+// the glass effect for any element with a transformed ancestor.
+
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+
+.nav-badge {
+    position: absolute;
+    top: 0;
+    right: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    line-height: 1;
+    color: white;
+    background-color: c.$pink;
+    border-radius: v.$border-radius-full;
+    pointer-events: none;
+
+    &--visible {
+        display: flex;
+    }
+}
+
+// The badge anchors to the burger button, which is otherwise unpositioned.
+.navbar__mobile-toggle {
+    position: relative;
+}

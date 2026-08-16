@@ -88,10 +88,10 @@ const LibraryReader = (function() {
         // Restore reading progress
         restoreProgress();
 
-        // Add to reading history
+        // Add to reading history. The ref recorded here is the load-time
+        // position; scheduleProgressSave() refreshes it as the reader moves.
         if (window.LibraryStorage) {
-            const title = document.querySelector('.library-book__title')?.textContent || state.bookSlug;
-            window.LibraryStorage.addToHistory(state.bookSlug, title, getCurrentRef());
+            window.LibraryStorage.addToHistory(state.bookSlug, getBookTitle(), getCurrentRef());
         }
 
         state.isInitialized = true;
@@ -449,6 +449,15 @@ const LibraryReader = (function() {
     }
 
     /**
+     * Display title for the current book, falling back to the slug.
+     */
+    function getBookTitle() {
+        const el = document.querySelector('.library-book__title');
+        const fromDom = (el?.textContent || '').trim();
+        return fromDom || elements.container?.dataset.bookTitle || state.bookSlug;
+    }
+
+    /**
      * Schedule progress save (debounced)
      */
     function scheduleProgressSave() {
@@ -458,12 +467,23 @@ const LibraryReader = (function() {
         state.progressSaveTimeout = setTimeout(() => {
             const prefs = window.LibraryStorage.getPreferences();
             if (prefs.autoSaveProgress) {
+                const ref = getCurrentRef();
+                const title = getBookTitle();
                 window.LibraryStorage.updateProgress(state.bookSlug, {
                     chapter: state.currentChapter,
                     paragraph: state.currentParagraph,
-                    refId: getCurrentRef(),
-                    scrollPosition: window.scrollY
+                    refId: ref,
+                    scrollPosition: window.scrollY,
+                    // Carried so surfaces outside the library bundle (the
+                    // Continue panel) can label and localize the entry
+                    // without loading the book page first.
+                    bookTitle: title,
+                    lang: document.documentElement.lang || 'en'
                 });
+                // Keep history's lastRefId in step with where the reader
+                // actually is; it was previously frozen at the load-time
+                // position, which is always chapter 1, paragraph 1.
+                window.LibraryStorage.addToHistory(state.bookSlug, title, ref);
             }
         }, CONFIG.progressSaveInterval);
     }

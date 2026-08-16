@@ -247,6 +247,7 @@ const LibraryStorage = (function() {
         }
 
         allHighlights[bookSlug].push({
+            id: newHighlightId(),
             refId,
             color,
             text,
@@ -256,10 +257,22 @@ const LibraryStorage = (function() {
         return setItem(KEYS.HIGHLIGHTS, allHighlights);
     }
 
+    function newHighlightId() {
+        if (typeof crypto !== 'undefined' && crypto.randomUUID) return crypto.randomUUID();
+        return `h-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    }
+
+    /**
+     * Remove by highlight id. Highlights created before ids were written
+     * have none, so a refId is accepted as a fallback selector for them.
+     */
     function removeHighlight(bookSlug, highlightId) {
         const allHighlights = getItem(KEYS.HIGHLIGHTS) || {};
         if (allHighlights[bookSlug]) {
-            allHighlights[bookSlug] = allHighlights[bookSlug].filter(h => h.id !== highlightId);
+            allHighlights[bookSlug] = allHighlights[bookSlug].filter(h => {
+                if (h.id) return h.id !== highlightId;
+                return h.refId !== highlightId;
+            });
             return setItem(KEYS.HIGHLIGHTS, allHighlights);
         }
         return true;
@@ -373,10 +386,14 @@ const LibraryStorage = (function() {
     /**
      * Parse "BOOKCODE-CHAPTER:PARAGRAPH" into {chapter, paragraph}.
      * Returns nulls if the refId doesn't fit the expected pattern.
+     *
+     * Book codes themselves contain hyphens (GEN-WOH, TBWTT-WOH), so the
+     * code segment is matched greedily up to the last hyphen before the
+     * chapter:paragraph pair.
      */
     function parseRefId(refId) {
         if (typeof refId !== 'string') return { chapter: null, paragraph: null };
-        const m = refId.match(/^[A-Za-z0-9]+-(\d+):(\d+)$/);
+        const m = refId.match(/^.+-(\d+):(\d+)$/);
         if (!m) return { chapter: null, paragraph: null };
         return { chapter: Number(m[1]), paragraph: Number(m[2]) };
     }

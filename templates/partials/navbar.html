@@ -216,6 +216,9 @@
                 <span class="navbar__menu-icon--menu">{% include "partials/icons/feather-menu.html" %}</span>
                 <span class="navbar__menu-icon--close">{% include "partials/icons/feather-x.html" %}</span>
             </span>
+            {# Count of open reading items (in-progress books + saved pages).
+               Populated by continue-reading.js; hidden until non-zero. #}
+            <span class="nav-badge" data-continue-badge aria-hidden="false">0</span>
         </button>
 
         <!-- Hidden input that powers the search modal. Click the desktop

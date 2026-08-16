@@ -65,6 +65,13 @@
         }
     }
 
+    // Corner-pinned count badges — keep them on the visually-trailing
+    // corner of their control rather than always top-right.
+    .nav-badge {
+        right: auto;
+        left: 0;
+    }
+
     // Snackbar / toast positioning — default is bottom-right; mirror it.
     .snackbar {
         right: auto;

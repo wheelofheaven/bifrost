@@ -41,6 +41,9 @@
         } catch (e) {
             console.error('[ReadingList] Error saving:', e);
         }
+        // The saved count feeds the shared "open items" badge owned by
+        // continue-reading.js.
+        document.dispatchEvent(new CustomEvent('woh:reading-list-changed'));
     }
 
     // Add item to reading list
@@ -171,7 +174,7 @@
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
                         </svg>
-                        ${getTranslation('readingList', 'Reading List')}
+                        ${getTranslation('continuePanelTitle', 'Your reading')}
                     </h2>
                     <button class="reading-list-panel__close" aria-label="${getTranslation('close', 'Close')}" data-close-reading-list>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -188,7 +191,13 @@
                         <p>${getTranslation('emptyReadingList', 'Your reading list is empty')}</p>
                         <p class="reading-list-panel__empty-hint">${getTranslation('emptyReadingListHint', 'Bookmark articles to save them for later')}</p>
                     </div>
-                    <ul class="reading-list-panel__list"></ul>
+                    <!-- continue-reading.js renders its in-progress and
+                         notes groups here, above the saved-for-later list. -->
+                    <div data-continue-mount></div>
+                    <section class="reading-list-panel__group" data-saved-group>
+                        <h3 class="reading-list-panel__group-title">${getTranslation('continueSaved', 'Saved for later')}</h3>
+                        <ul class="reading-list-panel__list"></ul>
+                    </section>
                 </div>
                 <footer class="reading-list-panel__footer">
                     <button class="reading-list-panel__export" data-export-reading-list>
@@ -249,6 +258,7 @@
     function updatePanel() {
         if (!panel) return;
 
+        const savedGroup = panel.querySelector('[data-saved-group]');
         const listEl = panel.querySelector('.reading-list-panel__list');
         const emptyEl = panel.querySelector('.reading-list-panel__empty');
         const footerEl = panel.querySelector('.reading-list-panel__footer');
@@ -260,8 +270,13 @@
         // want to restore a backup). Only the destructive/whole-list
         // actions are gated on having items.
         if (readingList.length === 0) {
-            emptyEl.style.display = 'flex';
-            listEl.style.display = 'none';
+            // The panel also hosts in-progress books and notes, so the
+            // "nothing here" state belongs to the panel as a whole — not
+            // to the saved list alone.
+            const hasOtherContent = (window.ContinueReading?.getOpenItemCount() || 0) > 0 ||
+                (window.ContinueReading?.getNotesCount() || 0) > 0;
+            emptyEl.style.display = hasOtherContent ? 'none' : 'flex';
+            if (savedGroup) savedGroup.style.display = 'none';
             footerEl.style.display = 'flex';
             if (clearBtn) clearBtn.style.display = 'none';
             if (exportBtn) exportBtn.style.display = 'none';
@@ -270,6 +285,7 @@
         }
 
         emptyEl.style.display = 'none';
+        if (savedGroup) savedGroup.style.display = 'block';
         listEl.style.display = 'block';
         footerEl.style.display = 'flex';
         if (clearBtn) clearBtn.style.display = '';

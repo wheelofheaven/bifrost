@@ -828,8 +828,9 @@ const LibraryStudyTools = (function() {
         // Try to find by data-ref-id first, then by id
         let para = document.querySelector(`[data-ref-id="${refId}"]`);
         if (!para) {
-            // Convert ref format (TBWTT-1:5) to id format (c1p5)
-            const match = refId.match(/^\w+-(\d+):(\d+)$/);
+            // Convert ref format (TBWTT-1:5, GEN-WOH-1:5) to id format (c1p5).
+            // Book codes contain hyphens, so the code segment matches greedily.
+            const match = refId.match(/^.+-(\d+):(\d+)$/);
             if (match) {
                 para = document.getElementById(`c${match[1]}p${match[2]}`);
             }

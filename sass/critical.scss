@@ -128,7 +128,11 @@ html:not(.css-loaded) {
     .claim-badges,
     // Separate from .reader-fab — the TOC sheet is in DOM but styled
     // entirely in main.css.
-    .reader-fab-toc {
+    .reader-fab-toc,
+    // The open-items count sits in the burger button from first paint,
+    // but its display/positioning rules live in components/_nav-badge.scss
+    // — without this it flashes as a stray "0" next to the burger icon.
+    .nav-badge {
         opacity: 0;
         visibility: hidden;
     }
