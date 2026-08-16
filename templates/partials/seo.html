@@ -215,7 +215,15 @@
 <link rel="alternate" type="text/markdown" title="{{ config.title }} - llms-full.txt" href="{{ get_url(path='llms-full.txt') }}">
 
 <!-- JSON API twin (every HTML page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
-<link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1{{ current_path | default(value='/') }}">
+{# Two hazards here, both previously live:
+   1. default() in output position double-escapes — slashes became &#x2F;,
+      which naive (non-entity-decoding) agent scrapers read as a broken URL.
+      Hoist into a set, then emit with | safe.
+   2. current_path has no leading slash on some language homepages (ja, ko,
+      ru, zh, zh-Hant), which produced ".../v1ja/". Strip any leading slash
+      and re-add exactly one, so the result cannot depend on that. #}
+{% set _api_twin_path = current_path | default(value='/') | trim_start_matches(pat='/') %}
+<link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1/{{ _api_twin_path | safe }}">
 
 <!-- Organization Schema (included on all pages) -->
 {% include "partials/schema/organization.html" %}
