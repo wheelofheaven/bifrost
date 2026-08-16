@@ -214,16 +214,39 @@
 <link rel="alternate" type="text/markdown" title="{{ config.title }} - llms.txt" href="{{ get_url(path='llms.txt') }}">
 <link rel="alternate" type="text/markdown" title="{{ config.title }} - llms-full.txt" href="{{ get_url(path='llms-full.txt') }}">
 
-<!-- JSON API twin (every HTML page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
-{# Two hazards here, both previously live:
+{# Three hazards here, all previously live:
    1. default() in output position double-escapes — slashes became &#x2F;,
       which naive (non-entity-decoding) agent scrapers read as a broken URL.
       Hoist into a set, then emit with | safe.
    2. current_path has no leading slash on some language homepages (ja, ko,
       ru, zh, zh-Hant), which produced ".../v1ja/". Strip any leading slash
-      and re-add exactly one, so the result cannot depend on that. #}
+      and re-add exactly one, so the result cannot depend on that.
+   3. The link used to be emitted unconditionally, but the API only mirrors
+      six content sections — so /about/, /read/, /faq/, /map/, /datasets/,
+      the taxonomy and policy pages, and every language homepage advertised
+      a twin that 404s. A rel="alternate" pointing at nothing is worse than
+      no link, so emit only where a counterpart genuinely exists.
+   Language prefixes are stripped by chaining trim_start_matches: a pattern
+   that does not match leaves the string untouched, so the chain is safe.
+
+   /about/ and /method/ are the two pages whose counterpart exists under a
+   different path (/v1/context/ and /v1/context/method/). Those two endpoints
+   are English-only — /v1/de/context/ is a 404 — so the override matches the
+   full path, not the language-stripped section. /de/about/ therefore falls
+   through and is correctly suppressed rather than advertising an English
+   twin. #}
 {% set _api_twin_path = current_path | default(value='/') | trim_start_matches(pat='/') %}
+{% set _api_twin_section = _api_twin_path | trim_start_matches(pat='de/') | trim_start_matches(pat='es/') | trim_start_matches(pat='fr/') | trim_start_matches(pat='he/') | trim_start_matches(pat='ja/') | trim_start_matches(pat='ko/') | trim_start_matches(pat='ru/') | trim_start_matches(pat='zh-Hant/') | trim_start_matches(pat='zh/') %}
+{% if _api_twin_path == 'about/' %}
+<!-- JSON API twin (this page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
+<link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1/context/">
+{% elif _api_twin_path == 'method/' %}
+<!-- JSON API twin (this page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
+<link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1/context/method/">
+{% elif _api_twin_path == '' or _api_twin_section is starting_with('wiki/') or _api_twin_section is starting_with('timeline/') or _api_twin_section is starting_with('articles/') or _api_twin_section is starting_with('news/') or _api_twin_section is starting_with('library/') or _api_twin_section is starting_with('sources/') %}
+<!-- JSON API twin (this page has a structured JSON counterpart at api.wheelofheaven.world/v1/...) -->
 <link rel="alternate" type="application/json" title="{{ config.title }} - JSON API twin" href="https://api.wheelofheaven.world/v1/{{ _api_twin_path | safe }}">
+{% endif %}
 
 <!-- Organization Schema (included on all pages) -->
 {% include "partials/schema/organization.html" %}
