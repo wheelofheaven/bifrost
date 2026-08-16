@@ -53,6 +53,11 @@ const SAFELIST = [
   // Reading list
   /^reading-list/,
 
+  // Continue surfaces — the chip, the /read/ module and the shared
+  // progress hairline exist only as strings inside continue-reading.js,
+  // so PurgeCSS can't see them in any template.
+  /^continue-/,
+
   // Toast/snackbar
   /^snackbar/,
   /^toast/,

@@ -56,13 +56,19 @@
     // Reading list / sliding panels that come in from a screen edge —
     // come in from the opposite edge in RTL so they enter from the side
     // the eye expects.
+    //
+    // Which edge the card docks to is already handled: the panel is a flex
+    // row with `justify-content: flex-end`, and flex-end is direction-aware,
+    // so the card sits on the left in RTL on its own. What is *not*
+    // direction-aware is the transform that parks it off-canvas — CSS
+    // translate is always physical — so flip the sign of the closed offset.
+    //
+    // (The rules this replaces were dead: they set `right`/`left` on an
+    // `inset: 0` element, and hung the transform on a `--closed` modifier
+    // that no longer exists — the JS toggles `--open`. So RTL had been
+    // sliding the panel sideways across the viewport rather than off it.)
     .reading-list-panel {
-        right: auto;
-        left: 0;
-
-        &--closed {
-            transform: translateX(-100%);
-        }
+        --panel-closed-x: calc(-100% - var(--panel-inset));
     }
 
     // Corner-pinned count badges — keep them on the visually-trailing
@@ -70,6 +76,14 @@
     .nav-badge {
         right: auto;
         left: 0;
+    }
+
+    // The resume chip's arrow means "onward", so it has to point the way
+    // the reader is going. Transforming the icon is safe here: it is a
+    // descendant of the chip's backdrop-filter element, not an ancestor
+    // of it, so the glass survives in WebKit.
+    .continue-chip__arrow svg {
+        transform: scaleX(-1);
     }
 
     // Snackbar / toast positioning — default is bottom-right; mirror it.

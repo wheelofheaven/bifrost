@@ -74,6 +74,11 @@
                 — {{ trans(key="landingS1SubLead", lang=detected_lang) }} —
                 {{ trans(key="landingS1SubTrail", lang=detected_lang) }}
             </p>
+            {# Resume slot. continue-reading.js fills this after idle if the
+               reader has something open, and leaves it empty otherwise —
+               empty means zero-height, so a first-time visitor's hero (the
+               page's LCP) is byte-for-byte what it was. #}
+            <div class="continue-chip" data-continue-chip></div>
         </div>
         <a href="#section-2" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>

@@ -132,7 +132,13 @@ html:not(.css-loaded) {
     // The open-items count sits in the burger button from first paint,
     // but its display/positioning rules live in components/_nav-badge.scss
     // — without this it flashes as a stray "0" next to the burger icon.
-    .nav-badge {
+    .nav-badge,
+    // Resume slots in the landing hero and on /read/. They are empty in the
+    // HTML and filled by continue-reading.js, but if main.css is slow the
+    // fill can land first and paint as unstyled default-flow content inside
+    // the hero. Their `display: none` base lives in components/_continue.scss.
+    .continue-chip,
+    .continue-module {
         opacity: 0;
         visibility: hidden;
     }

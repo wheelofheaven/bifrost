@@ -454,6 +454,49 @@ html:has(body.mobile-nav-open) {
         }
     }
 
+    // Desktop Continue-panel toggle. Sibling of `__search-btn` and sized to
+    // match it, so the two icon controls read as one pair. `position:
+    // relative` anchors the open-items `.nav-badge`; no transform here —
+    // a transformed ancestor kills backdrop-filter for the navbar's glass
+    // subtree in WebKit.
+    &__reading-btn {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        padding: 0;
+        background: none;
+        border: none;
+        border-radius: vars.$border-radius-md;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        flex-shrink: 0;
+        transition: background-color vars.$transition-base ease, color vars.$transition-base ease;
+
+        &:hover {
+            background-color: var(--color-hover);
+            color: var(--color-text);
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+        }
+
+        &__icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            svg {
+                width: 22px;
+                height: 22px;
+            }
+        }
+    }
+
     // Icon-only search trigger that cycles between magnifying glass and the
     // "/" shortcut hint. Sized to match `.reading-list-toggle` (40×40).
     &__search-btn {

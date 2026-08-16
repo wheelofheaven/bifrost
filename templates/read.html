@@ -26,6 +26,12 @@
         {% endif %}
     </header>
 
+    {# Open items, rendered client-side by continue-reading.js. Sits above
+       the paths because "carry on with what you started" beats "choose a
+       new way in" for anyone who has been here before. Stays empty — and
+       so invisible — for first-time readers. #}
+    <section class="continue-module" data-continue-module aria-live="polite"></section>
+
     {# Three reading paths. Each is an <article> with two clickable
        regions: the main link (top, fills most of the card) and the
        Discover button (bottom). Discover switches which carousel is

@@ -5,58 +5,90 @@
 
 <script>
 (function() {
-    const progress = document.getElementById('readingProgress');
-    const bar = document.getElementById('readingProgressBar');
+    // base.html includes this partial at the very top of <body>, so <main>
+    // has not been parsed when this script runs. Querying the content
+    // selectors here matched nothing on every page, the `hasContent` guard
+    // hid the bar, and the hairline never appeared anywhere on the site.
+    // Wait for the document before looking for content.
+    function start() {
+        const progress = document.getElementById('readingProgress');
+        const bar = document.getElementById('readingProgressBar');
 
-    if (!progress || !bar) return;
+        if (!progress || !bar) return;
 
-    // Only show on content pages
-    const contentSelectors = [
-        '.wiki__content',
-        '.article__content',
-        '.library__content',
-        '.info-page__content',
-        'article'
-    ];
+        // Only show on content pages
+        const contentSelectors = [
+            '.wiki__content',
+            '.article__content',
+            '.dispatch__content',
+            '.timeline-page__content',
+            '.library__content',
+            '.info-page__content',
+            'article'
+        ];
 
-    const hasContent = contentSelectors.some(sel => document.querySelector(sel));
-    if (!hasContent) {
-        progress.style.display = 'none';
-        return;
-    }
+        let content = null;
+        for (const sel of contentSelectors) {
+            content = document.querySelector(sel);
+            if (content) break;
+        }
 
-    let ticking = false;
-
-    function updateProgress() {
-        const scrollTop = window.scrollY;
-        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-
-        if (docHeight <= 0) {
-            bar.style.width = '0%';
+        if (!content) {
+            progress.style.display = 'none';
             return;
         }
 
-        const scrollPercent = Math.min((scrollTop / docHeight) * 100, 100);
-        bar.style.width = `${scrollPercent}%`;
+        let ticking = false;
 
-        // Show/hide based on scroll position
-        if (scrollTop > 100) {
-            progress.classList.add('reading-progress--visible');
-        } else {
-            progress.classList.remove('reading-progress--visible');
+        function updateProgress() {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+
+            const scrollPercent = docHeight > 0
+                ? Math.min((scrollTop / docHeight) * 100, 100)
+                : 0;
+            bar.style.width = `${scrollPercent}%`;
+
+            // Show/hide based on scroll position
+            if (scrollTop > 100) {
+                progress.classList.add('reading-progress--visible');
+            } else {
+                progress.classList.remove('reading-progress--visible');
+            }
+
+            // How far through the *article* the reader is, as opposed to how
+            // far down the document. The footer is tall enough that a fully
+            // read short entry never approaches 100% of the document, which
+            // would keep finished pages pinned in the Continue panel forever.
+            const top = scrollTop + content.getBoundingClientRect().top;
+            const span = Math.max(1, content.offsetHeight);
+            const seen = scrollTop + window.innerHeight - top;
+            const contentPercent = Math.max(0, Math.min((seen / span) * 100, 100));
+
+            // page-progress.js persists off this instead of running a second
+            // scroll loop of its own.
+            document.dispatchEvent(new CustomEvent('woh:reading-progress', {
+                detail: { percent: scrollPercent, contentPercent, content }
+            }));
+
+            ticking = false;
         }
 
-        ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(updateProgress);
+                ticking = true;
+            }
+        }, { passive: true });
+
+        // Initial update
+        updateProgress();
     }
 
-    window.addEventListener('scroll', () => {
-        if (!ticking) {
-            requestAnimationFrame(updateProgress);
-            ticking = true;
-        }
-    }, { passive: true });
-
-    // Initial update
-    updateProgress();
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', start);
+    } else {
+        start();
+    }
 })();
 </script>

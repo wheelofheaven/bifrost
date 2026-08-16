@@ -27,6 +27,11 @@ const bundles = {
     'navbar-mobile-toggle.js',
     'search-loader.js',
     'reading-list.js',
+    // page-progress records where the reader got to on long-form pages;
+    // continue-reading reads what it writes. Order between them is not
+    // load-bearing (they share only localStorage and a document event),
+    // but reading them in write-then-read order matches the data flow.
+    'page-progress.js',
     // continue-reading must follow reading-list: it mounts its groups
     // into the panel that reading-list.js builds.
     'continue-reading.js',

@@ -148,12 +148,17 @@
     }
 
     // Update the counter badge
+    //
+    // Toggles a modifier rather than writing an inline display, matching how
+    // continue-reading.js drives .nav-badge. An inline style here would win
+    // over every rule in the stylesheet, so the two badges could not share
+    // any responsive or theme override.
     function updateCounterBadge() {
         const badges = document.querySelectorAll('.reading-list-toggle__badge');
         const count = readingList.length;
         badges.forEach(badge => {
             badge.textContent = count;
-            badge.style.display = count > 0 ? 'flex' : 'none';
+            badge.classList.toggle('reading-list-toggle__badge--visible', count > 0);
         });
     }
 
@@ -188,8 +193,8 @@
                         <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
                         </svg>
-                        <p>${getTranslation('emptyReadingList', 'Your reading list is empty')}</p>
-                        <p class="reading-list-panel__empty-hint">${getTranslation('emptyReadingListHint', 'Bookmark articles to save them for later')}</p>
+                        <p>${getTranslation('continueEmptyTitle', 'Nothing open yet')}</p>
+                        <p class="reading-list-panel__empty-hint">${getTranslation('continueEmptyHint', 'Pages you read or bookmark show up here, ready to pick up again.')}</p>
                     </div>
                     <!-- continue-reading.js renders its in-progress and
                          notes groups here, above the saved-for-later list. -->
@@ -537,7 +542,15 @@
         close: closePanel,
         toggle: togglePanel,
         exportList: exportList,
-        importList: importList
+        importList: importList,
+        // The panel's "nothing here" state depends on what continue-reading.js
+        // has, but core.bundle.js is deferred: by the time it executes,
+        // readyState is already past "loading", so every module in it inits
+        // synchronously in bundle order and this one runs first — before
+        // window.ContinueReading exists. continue-reading.js calls this once
+        // it has initialized so the empty state can be re-decided with the
+        // real counts.
+        refreshPanel: updatePanel
     };
 
     // Initialize when DOM is ready

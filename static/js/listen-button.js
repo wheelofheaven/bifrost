@@ -57,6 +57,134 @@
         return;
     }
 
+    // --- Listening position --------------------------------------------------
+    //
+    // Mirrors woh_library_progress / woh_page_progress so an interrupted
+    // listen becomes an open item in the Continue surface rather than
+    // vanishing when the tab closes. Keyed by locale-stripped path, so a
+    // page listened to in French and then in English is one entry.
+    //
+    //   woh_listen_progress  { "<path>": { path, title, section, chapter,
+    //                                      chapterTitle, percent, seconds,
+    //                                      duration, lang, updatedAt } }
+    //
+    // Only the prerecorded engine has a real clock; the studio/system
+    // engines report unit boundaries, which still give a usable percent.
+    const listenProgress = (function () {
+        const KEY = 'woh_listen_progress';
+        const LOCALES = ['de', 'es', 'fr', 'ja', 'ko', 'ru', 'zh', 'zh-Hant', 'he'];
+        // Past this the session is finished, not resumable.
+        const DONE_PERCENT = 97;
+        // A listen is a continuous write source; throttle so a 40-minute
+        // chapter costs a handful of localStorage writes, not thousands.
+        const SAVE_INTERVAL_MS = 5000;
+
+        let lastWrite = 0;
+        let chapter = null;
+        let chapterTitle = '';
+        let pending = null;
+
+        function canonicalPath() {
+            const parts = window.location.pathname.split('/').filter(Boolean);
+            if (parts.length && LOCALES.includes(parts[0])) parts.shift();
+            return parts.length ? `/${parts.join('/')}/` : '/';
+        }
+
+        function pageTitle() {
+            const h1 = document.querySelector('main h1');
+            const text = (h1?.textContent || '').trim();
+            return text || (document.title || '').split('|')[0].trim();
+        }
+
+        function readStore() {
+            try {
+                const raw = localStorage.getItem(KEY);
+                const parsed = raw ? JSON.parse(raw) : null;
+                return parsed && typeof parsed === 'object' ? parsed : {};
+            } catch (e) {
+                return {};
+            }
+        }
+
+        function writeStore(store) {
+            try {
+                localStorage.setItem(KEY, JSON.stringify(store));
+            } catch (e) { /* quota or private mode — listening still works */ }
+        }
+
+        function announce() {
+            document.dispatchEvent(new CustomEvent('woh:continue-changed'));
+        }
+
+        function commit(record) {
+            const store = readStore();
+            const path = canonicalPath();
+            const existed = Object.prototype.hasOwnProperty.call(store, path);
+
+            if (record.percent >= DONE_PERCENT) {
+                if (!existed) return;
+                delete store[path];
+                writeStore(store);
+                announce();
+                return;
+            }
+
+            const parts = path.split('/').filter(Boolean);
+            store[path] = {
+                path,
+                title: pageTitle(),
+                section: parts[0] || '',
+                chapter,
+                chapterTitle,
+                percent: Math.round(record.percent),
+                seconds: record.seconds || 0,
+                duration: record.duration || 0,
+                lang: document.documentElement.lang || 'en',
+                updatedAt: new Date().toISOString()
+            };
+            writeStore(store);
+            if (!existed) announce();
+        }
+
+        return {
+            setChapter(n, title) {
+                chapter = n != null ? n : null;
+                chapterTitle = title || '';
+            },
+            /**
+             * @param {number} percent  0–100 through the current chapter
+             */
+            save(percent, seconds, duration) {
+                if (typeof percent !== 'number' || Number.isNaN(percent)) return;
+                pending = { percent, seconds, duration };
+                const now = Date.now();
+                if (now - lastWrite < SAVE_INTERVAL_MS) return;
+                lastWrite = now;
+                commit(pending);
+            },
+            /** Write whatever the last tick reported, ignoring the throttle. */
+            flush() {
+                if (!pending) return;
+                lastWrite = Date.now();
+                commit(pending);
+            },
+            clear() {
+                const store = readStore();
+                const path = canonicalPath();
+                if (!store[path]) return;
+                delete store[path];
+                writeStore(store);
+                pending = null;
+                announce();
+            }
+        };
+    })();
+
+    window.addEventListener('pagehide', () => listenProgress.flush());
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'hidden') listenProgress.flush();
+    });
+
     // --- Language routing ----------------------------------------------------
 
     // Returns the page's primary language tag as ['family', 'fullTag'].
@@ -1383,6 +1511,10 @@
         // Fraction reflects the start of unit i; bar advances per unit.
         const total = playQueue.length || 1;
         setProgressFraction(i / total);
+        // Studio/system engines have no clock, so the unit boundary is the
+        // only position signal there is. The prerecorded engine overwrites
+        // this with real seconds on its next onProgress tick.
+        listenProgress.save((i / total) * 100, 0, 0);
     }
 
     // Cached prerecorded engine + probe result. Probe is async; we run it once
@@ -1436,11 +1568,14 @@
             }
             // v5 — drive the cinematic scene/caption/seek-bar off the same clock.
             cinematic.onProgress(ratio, currentSeconds, totalSeconds);
+            listenProgress.save(percent, currentSeconds, totalSeconds);
         },
         onPause: () => {
             isPaused = true;
             updatePlayState(false);
             cinematic.setPlaying(false);
+            // Pausing is the clearest "I am stopping here" signal there is.
+            listenProgress.flush();
         },
         onResume: () => {
             isPaused = false;
@@ -1455,6 +1590,7 @@
             renderChapterMenu();
             // v5 — load the cinematic timeline for the new chapter.
             cinematic.onChapter(n);
+            listenProgress.setChapter(n, title);
         },
         onEnd: () => {
             isPlaying = false;
@@ -1464,6 +1600,8 @@
             updatePlayState(false);
             stopTitleCycle();
             cinematic.setPlaying(false);
+            // Heard to the end — no longer something to come back to.
+            listenProgress.clear();
         },
     };
 

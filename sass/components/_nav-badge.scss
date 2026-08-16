@@ -1,12 +1,15 @@
 // Nav badge — small encircled count pinned to the corner of a nav control
 //
-// Used by continue-reading.js on the burger toggle to show how many open
-// reading items exist. Positioned with top/right only: a transform here
-// would sit inside the navbar's backdrop-filter subtree, and WebKit drops
-// the glass effect for any element with a transformed ancestor.
+// Used by continue-reading.js on the burger toggle (mobile) and
+// .navbar__reading-btn (desktop) to show how many open reading items
+// exist. Positioned with top/right only: a transform here would sit inside
+// the navbar's backdrop-filter subtree, and WebKit drops the glass effect
+// for any element with a transformed ancestor.
+//
+// Colours come from --color-badge-bg / --color-badge-text (themes/), not
+// from the palette directly, because the pair has to invert per theme.
 
 @use "../abstracts/variables" as v;
-@use "../abstracts/colors" as c;
 
 .nav-badge {
     position: absolute;
@@ -18,11 +21,17 @@
     min-width: 18px;
     height: 18px;
     padding: 0 5px;
-    font-size: 0.6875rem;
-    font-weight: 600;
+    font-size: 0.75rem;
+    font-weight: 700;
     line-height: 1;
-    color: white;
-    background-color: c.$pink;
+    // Theme-aware. The fill used to be the static `c.$pink` — which
+    // resolves to `$pink-300`, a pale peach — with white text on top: about
+    // 1.2:1, illegible in either theme. The pair inverts per theme so the
+    // digit clears 4.5:1 *and* the chip clears the chrome behind it: pale
+    // fill / deep digit on the dark navbar, deep fill / white digit on the
+    // light one, where a pale chip would disappear into the near-white bar.
+    color: var(--color-badge-text);
+    background-color: var(--color-badge-bg);
     border-radius: v.$border-radius-full;
     pointer-events: none;
 
@@ -32,6 +41,8 @@
 }
 
 // The badge anchors to the burger button, which is otherwise unpositioned.
+// Its desktop host, `.navbar__reading-btn`, sets `position: relative` in
+// layout/_navbar.scss as part of its own rule.
 .navbar__mobile-toggle {
     position: relative;
 }

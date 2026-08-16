@@ -6,6 +6,9 @@
 //   woh_library_progress  in-progress books (chapter/paragraph/lastRead)
 //   woh_library_history   book titles (progress records predating the
 //                         bookTitle field fall back to this)
+//   woh_page_progress     wiki/article/timeline/news scroll position,
+//                         written by page-progress.js
+//   woh_listen_progress   audio position, written by listen-button.js
 //   woh_library_notes     verse-anchored user notes
 //   woh-reading-list      pages saved for later
 //
@@ -14,9 +17,10 @@
 // on every page outside /library/<book>/, which is exactly where this
 // surface needs to work.
 //
-// Renders into the reading-list panel's [data-continue-mount] slot and
-// owns the burger-menu badge. Loads after reading-list.js so the panel
-// exists by the time this initializes.
+// Renders three surfaces: the reading-list panel's [data-continue-mount]
+// slot, the landing hero's [data-continue-chip], and the /read/ hub's
+// [data-continue-module] — plus the badges in the navbar. Loads after
+// reading-list.js so the panel exists by the time this initializes.
 (function() {
     'use strict';
 
@@ -24,13 +28,16 @@
         PROGRESS: 'woh_library_progress',
         HISTORY: 'woh_library_history',
         NOTES: 'woh_library_notes',
-        READING_LIST: 'woh-reading-list'
+        READING_LIST: 'woh-reading-list',
+        PAGES: 'woh_page_progress',
+        LISTEN: 'woh_listen_progress'
     };
 
     // An in-progress book stops being an "open item" once it has been
     // untouched this long. Without it the badge only ever grows.
     const MAX_AGE_DAYS = 90;
     const MAX_NOTES_SHOWN = 5;
+    const MAX_MODULE_ITEMS = 6;
     const BADGE_CAP = 9;
 
     // Locales that carry a URL prefix. Book slugs are shared across all
@@ -39,6 +46,8 @@
     const LOCALES = ['de', 'es', 'fr', 'ja', 'ko', 'ru', 'zh', 'zh-Hant', 'he'];
 
     let mount = null;
+    let chip = null;
+    let module_ = null;
 
     function read(key) {
         try {
@@ -69,6 +78,18 @@
         return LOCALES.includes(seg) ? `/${seg}` : '';
     }
 
+    /**
+     * This page's path with any locale prefix stripped — the same identity
+     * page-progress.js and listen-button.js store under. Derived locally
+     * rather than borrowed from window.PageProgress so this module carries
+     * no bundle-order dependency on it.
+     */
+    function canonicalPath() {
+        const parts = window.location.pathname.split('/').filter(Boolean);
+        if (parts.length && LOCALES.includes(parts[0])) parts.shift();
+        return parts.length ? `/${parts.join('/')}/` : '/';
+    }
+
     function titleFromSlug(slug) {
         return String(slug)
             .split('-')
@@ -80,6 +101,42 @@
         const then = Date.parse(iso);
         if (Number.isNaN(then)) return Infinity;
         return (Date.now() - then) / 86400000;
+    }
+
+    /**
+     * "2 days ago" in the reader's own language. Intl does the work, so
+     * this needs no translation keys of its own — which matters when the
+     * alternative is four more strings across ten locale tables.
+     */
+    function relativeTime(iso) {
+        const then = Date.parse(iso);
+        if (Number.isNaN(then)) return '';
+
+        let rtf;
+        try {
+            rtf = new Intl.RelativeTimeFormat(document.documentElement.lang || 'en', { numeric: 'auto' });
+        } catch (e) {
+            return '';
+        }
+
+        const minutes = Math.round((Date.now() - then) / 60000);
+        if (minutes < 60) return rtf.format(-minutes, 'minute');
+        const hours = Math.round(minutes / 60);
+        if (hours < 24) return rtf.format(-hours, 'hour');
+        const days = Math.round(hours / 24);
+        if (days < 30) return rtf.format(-days, 'day');
+        return rtf.format(-Math.round(days / 30), 'month');
+    }
+
+    function sectionLabel(section) {
+        const map = {
+            wiki: t('sectionWiki', 'Wiki'),
+            articles: t('sectionArticles', 'Articles'),
+            timeline: t('sectionTimeline', 'Timeline'),
+            news: t('sectionNews', 'Newsroom'),
+            library: t('sectionLibrary', 'Library')
+        };
+        return map[section] || '';
     }
 
     function historyTitles() {
@@ -111,16 +168,106 @@
                 if (!record.chapter || !record.paragraph) return null;
                 if (daysSince(record.lastRead) > MAX_AGE_DAYS) return null;
                 return {
+                    kind: 'book',
+                    id: slug,
                     slug,
                     title: record.bookTitle || titles[slug] || titleFromSlug(slug),
                     chapter: record.chapter,
                     paragraph: record.paragraph,
+                    section: 'library',
+                    // Chapter counts aren't in the progress record, so a
+                    // book reports its place rather than a percentage.
+                    percent: null,
+                    meta: [sectionLabel('library'), chapterLabel(record.chapter)]
+                        .filter(Boolean).join(' · '),
                     lastRead: record.lastRead || '',
+                    updatedAt: record.lastRead || '',
                     url: `${prefix}/library/${slug}/#c${record.chapter}p${record.paragraph}`
                 };
             })
             .filter(Boolean)
             .sort((a, b) => (b.lastRead || '').localeCompare(a.lastRead || ''));
+    }
+
+    /**
+     * Wiki entries, articles, timeline chapters and dispatches the reader
+     * is part-way down, most recent first.
+     */
+    function getPagesInProgress() {
+        const store = read(KEYS.PAGES);
+        if (!store || typeof store !== 'object') return [];
+
+        const prefix = localePrefix();
+
+        return Object.keys(store)
+            .map(path => {
+                const record = store[path] || {};
+                if (!record.path || !record.title) return null;
+                if (daysSince(record.updatedAt) > MAX_AGE_DAYS) return null;
+                return {
+                    kind: 'page',
+                    id: record.path,
+                    title: record.title,
+                    section: record.section || '',
+                    percent: typeof record.percent === 'number' ? record.percent : null,
+                    meta: sectionLabel(record.section),
+                    updatedAt: record.updatedAt || '',
+                    url: `${prefix}${record.path}${record.anchor ? `#${record.anchor}` : ''}`
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+    }
+
+    /**
+     * Pages with an unfinished audio session.
+     */
+    function getListening() {
+        const store = read(KEYS.LISTEN);
+        if (!store || typeof store !== 'object') return [];
+
+        const prefix = localePrefix();
+
+        return Object.keys(store)
+            .map(path => {
+                const record = store[path] || {};
+                if (!record.path || !record.title) return null;
+                if (daysSince(record.updatedAt) > MAX_AGE_DAYS) return null;
+                const parts = [sectionLabel(record.section)];
+                if (record.chapter != null) parts.push(chapterLabel(record.chapter));
+                return {
+                    kind: 'audio',
+                    id: record.path,
+                    title: record.title,
+                    section: record.section || '',
+                    percent: typeof record.percent === 'number' ? record.percent : null,
+                    meta: parts.filter(Boolean).join(' · '),
+                    updatedAt: record.updatedAt || '',
+                    url: `${prefix}${record.path}`
+                };
+            })
+            .filter(Boolean)
+            .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+    }
+
+    /**
+     * Everything the reader is mid-way through — books and pages together,
+     * newest first — minus the page they are looking at right now, which is
+     * not somewhere to "jump back" to.
+     */
+    function getContinueItems() {
+        const here = canonicalPath();
+        const hereBook = here.startsWith('/library/') ? here.split('/')[2] : null;
+
+        return getInProgress()
+            .filter(item => item.slug !== hereBook)
+            .concat(getPagesInProgress().filter(item => item.id !== here))
+            .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''));
+    }
+
+    function getListeningItems() {
+        const here = canonicalPath();
+        return getListening().filter(item => item.id !== here);
     }
 
     /**
@@ -183,21 +330,30 @@
     }
 
     /**
-     * Items a reader can act on right now: things in progress plus things
-     * saved for later. Notes are annotations on those, not a separate
-     * pile of unfinished business, so they stay out of the badge count.
+     * Items a reader can act on right now: things in progress — read or
+     * listened — plus things saved for later. Notes are annotations on
+     * those, not a separate pile of unfinished business, so they stay out
+     * of the badge count.
      */
     function openItemCount() {
-        return getInProgress().length + savedCount();
+        return getContinueItems().length + getListeningItems().length + savedCount();
     }
 
-    function dismiss(slug) {
-        const progress = read(KEYS.PROGRESS);
-        if (!progress || !progress[slug]) return false;
-        delete progress[slug];
-        write(KEYS.PROGRESS, progress);
-        render();
-        updateBadges();
+    /**
+     * Drop an item from whichever store it came from.
+     */
+    function dismiss(kind, id) {
+        const key = kind === 'book' ? KEYS.PROGRESS
+            : kind === 'page' ? KEYS.PAGES
+            : kind === 'audio' ? KEYS.LISTEN
+            : null;
+        if (!key) return false;
+
+        const store = read(key);
+        if (!store || !store[id]) return false;
+        delete store[id];
+        write(key, store);
+        refresh();
         return true;
     }
 
@@ -208,12 +364,17 @@
         const label = t('continueBadgeLabel', 'items to continue reading');
         document.querySelectorAll('[data-continue-badge]').forEach(badge => {
             badge.textContent = count > BADGE_CAP ? `${BADGE_CAP}+` : String(count);
-            badge.setAttribute('aria-label', `${count} ${label}`);
+            // "items to continue reading: 1" rather than "1 items to
+            // continue reading" — the label is a plural noun phrase in
+            // every locale table, and prefixing the count made it
+            // ungrammatical at one. Reading it as a label/value pair works
+            // for any count without a plural rule per language.
+            badge.setAttribute('aria-label', `${label}: ${count}`);
             badge.classList.toggle('nav-badge--visible', count > 0);
         });
     }
 
-    // ── Panel groups ────────────────────────────────────────────────────
+    // ── Markup helpers ──────────────────────────────────────────────────
 
     function escapeHtml(text) {
         const div = document.createElement('div');
@@ -230,6 +391,33 @@
         return t('continueChapterFormat', 'Ch. {n}').replace('{n}', n);
     }
 
+    /**
+     * "42% · 2 days ago" — how far in, and how long ago.
+     */
+    function detailLine(item) {
+        return [
+            item.percent != null ? `${Math.round(item.percent)}%` : '',
+            relativeTime(item.updatedAt)
+        ].filter(Boolean).join(' · ');
+    }
+
+    /**
+     * "Wiki · 42% · 2 days ago" — detailLine with the section in front, for
+     * the surfaces that show one line per item. The /read/ module puts the
+     * section in its own eyebrow instead and uses detailLine directly, so
+     * the two don't repeat each other.
+     */
+    function metaLine(item) {
+        return [item.meta, detailLine(item)].filter(Boolean).join(' · ');
+    }
+
+    function progressBarMarkup(item) {
+        if (item.percent == null) return '';
+        return `<span class="continue-bar" style="--continue-progress: ${Math.round(item.percent)}%" aria-hidden="true"></span>`;
+    }
+
+    // ── Panel groups ────────────────────────────────────────────────────
+
     function groupMarkup(titleKey, titleFallback, itemsHtml) {
         return `
             <section class="reading-list-panel__group">
@@ -243,12 +431,14 @@
         return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(item.url)}" class="reading-list-panel__link">
-                    <span class="reading-list-panel__section">${escapeHtml(chapterLabel(item.chapter))}</span>
+                    <span class="reading-list-panel__section">${escapeHtml(metaLine(item))}</span>
                     <span class="reading-list-panel__item-title">${escapeHtml(item.title)}</span>
+                    ${progressBarMarkup(item)}
                 </a>
                 <button
                     class="reading-list-panel__remove"
-                    data-continue-dismiss="${escapeHtml(item.slug)}"
+                    data-continue-dismiss="${escapeHtml(item.id)}"
+                    data-continue-kind="${escapeHtml(item.kind)}"
                     aria-label="${escapeHtml(t('continueRemove', 'Remove from continue list'))}"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -275,18 +465,27 @@
         `;
     }
 
-    function render() {
+    function renderPanel() {
         if (!mount) return;
 
-        const inProgress = getInProgress();
+        const reading = getContinueItems();
+        const listening = getListeningItems();
         const notes = getRecentNotes();
         let html = '';
 
-        if (inProgress.length) {
+        if (reading.length) {
             html += groupMarkup(
                 'continueInProgress',
                 'Continue reading',
-                inProgress.map(progressItemMarkup).join('')
+                reading.map(progressItemMarkup).join('')
+            );
+        }
+
+        if (listening.length) {
+            html += groupMarkup(
+                'continueListening',
+                'Continue listening',
+                listening.map(progressItemMarkup).join('')
             );
         }
 
@@ -304,41 +503,137 @@
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                dismiss(btn.dataset.continueDismiss);
+                dismiss(btn.dataset.continueKind, btn.dataset.continueDismiss);
             });
         });
     }
 
+    // ── Landing chip ────────────────────────────────────────────────────
+
+    /**
+     * A single "pick up where you left off" link in the landing hero. The
+     * slot is reserved in the markup and stays empty — and therefore
+     * zero-height — for first-time readers, so it can't shift the hero.
+     */
+    function renderChip() {
+        if (!chip) return;
+
+        const item = getContinueItems()[0] || getListeningItems()[0];
+        if (!item) {
+            chip.innerHTML = '';
+            chip.classList.remove('continue-chip--visible');
+            return;
+        }
+
+        chip.innerHTML = `
+            <a class="continue-chip__link" href="${escapeHtml(item.url)}">
+                <span class="continue-chip__label">${escapeHtml(t('continueLanding', 'Pick up where you left off'))}</span>
+                <span class="continue-chip__title">${escapeHtml(truncate(item.title, 60))}</span>
+                <span class="continue-chip__meta">${escapeHtml(metaLine(item))}</span>
+                <span class="continue-chip__arrow" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </span>
+            </a>
+        `;
+        chip.classList.add('continue-chip--visible');
+    }
+
+    // ── /read/ hub module ───────────────────────────────────────────────
+
+    function moduleItemMarkup(item) {
+        return `
+            <li class="continue-module__item">
+                <a class="continue-module__link" href="${escapeHtml(item.url)}">
+                    <span class="continue-module__section">${escapeHtml(item.meta)}</span>
+                    <span class="continue-module__item-title">${escapeHtml(truncate(item.title, 70))}</span>
+                    <span class="continue-module__meta">${escapeHtml(detailLine(item))}</span>
+                    ${progressBarMarkup(item)}
+                </a>
+            </li>
+        `;
+    }
+
+    function renderModule() {
+        if (!module_) return;
+
+        const items = getContinueItems()
+            .concat(getListeningItems())
+            .sort((a, b) => (b.updatedAt || '').localeCompare(a.updatedAt || ''))
+            .slice(0, MAX_MODULE_ITEMS);
+
+        if (!items.length) {
+            module_.innerHTML = '';
+            module_.classList.remove('continue-module--visible');
+            return;
+        }
+
+        module_.innerHTML = `
+            <h2 class="continue-module__title">${escapeHtml(t('continueLanding', 'Pick up where you left off'))}</h2>
+            <ul class="continue-module__list">${items.map(moduleItemMarkup).join('')}</ul>
+        `;
+        module_.classList.add('continue-module--visible');
+    }
+
     // ── Init ────────────────────────────────────────────────────────────
+
+    function refresh() {
+        renderPanel();
+        renderChip();
+        renderModule();
+        updateBadges();
+        // reading-list.js owns the panel's empty state but decides it before
+        // this module exists (see ReadingList.refreshPanel). Re-run it now
+        // that the open-item counts can actually be read, or the "nothing
+        // here" block sits on top of a populated panel.
+        window.ReadingList?.refreshPanel?.();
+    }
 
     function init() {
         mount = document.querySelector('[data-continue-mount]');
-        render();
+        chip = document.querySelector('[data-continue-chip]');
+        module_ = document.querySelector('[data-continue-module]');
+
+        renderPanel();
+        renderModule();
         updateBadges();
+        window.ReadingList?.refreshPanel?.();
+
+        // The landing hero is the page's LCP. Populating the chip is not
+        // worth competing with it, so it waits for the first idle slot.
+        if (chip) {
+            const paint = () => renderChip();
+            if ('requestIdleCallback' in window) {
+                requestIdleCallback(paint, { timeout: 2000 });
+            } else {
+                setTimeout(paint, 600);
+            }
+        }
 
         // reading-list.js fires this whenever the saved list changes, so
-        // the shared badge total stays in step with it.
-        document.addEventListener('woh:reading-list-changed', () => {
-            render();
-            updateBadges();
-        });
+        // the shared badge total stays in step with it. page-progress.js
+        // and listen-button.js fire woh:continue-changed when an item
+        // appears or is finished.
+        document.addEventListener('woh:reading-list-changed', refresh);
+        document.addEventListener('woh:continue-changed', refresh);
 
         // Another tab edited the same storage.
         window.addEventListener('storage', (e) => {
-            if (e.key && Object.values(KEYS).includes(e.key)) {
-                render();
-                updateBadges();
-            }
+            if (e.key && Object.values(KEYS).includes(e.key)) refresh();
         });
     }
 
     window.ContinueReading = {
         getInProgress,
+        getPagesInProgress,
+        getListening,
+        getContinueItems,
         getRecentNotes,
         getOpenItemCount: openItemCount,
         getNotesCount: notesCount,
         dismiss,
-        refresh: () => { render(); updateBadges(); }
+        refresh
     };
 
     if (document.readyState === 'loading') {
