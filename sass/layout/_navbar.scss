@@ -1288,16 +1288,29 @@ html:has(body.mobile-nav-open) {
             // to read as the same visual weight — all three bar-controls
             // icons should look equal-sized, using the bookmark as the
             // reference.
-            #mobile-theme-toggle .navbar__theme-icon {
-                width: 26px;
-                height: 26px;
+            #mobile-theme-toggle {
+                // `.navbar__bar-btn` carries `padding: 0 0.75rem` for the
+                // pill form with a text label. Both icon-only siblings reset
+                // it; this one did not, which left a 14px content box inside
+                // the 44px button. The icon below is a flex item at the
+                // default `flex-shrink: 1`, so it was squeezed to 14px wide
+                // while keeping its 26px height — a visibly narrower, taller
+                // glyph than the 24px globe and 22px bookmark beside it.
+                padding: 0;
 
-                // The moon/sun glyphs live in absolutely-positioned
-                // `.icon` layers (inset: 0); make their SVGs fill the
-                // layer so they track the container size.
-                .icon svg {
-                    width: 100%;
-                    height: 100%;
+                .navbar__theme-icon {
+                    width: 26px;
+                    height: 26px;
+                    // Never let the row's spacing squash the glyph again.
+                    flex-shrink: 0;
+
+                    // The moon/sun glyphs live in absolutely-positioned
+                    // `.icon` layers (inset: 0); make their SVGs fill the
+                    // layer so they track the container size.
+                    .icon svg {
+                        width: 100%;
+                        height: 100%;
+                    }
                 }
             }
 
