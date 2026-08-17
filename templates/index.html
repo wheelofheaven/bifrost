@@ -55,11 +55,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/01-question-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/01-question.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/01-question-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/01-question.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -97,11 +98,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/02-hypothesis.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -130,11 +132,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/03-arc-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/03-arc-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/03-arc-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/03-arc.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/03-arc-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/03-arc.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -181,11 +184,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/04-clock-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/04-clock-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/04-clock-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/04-clock.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/04-clock-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/04-clock.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner landing-section__inner--clock">
@@ -247,11 +251,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/05-now-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/05-now-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/05-now-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/05-now.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/05-now-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/05-now.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -281,11 +286,12 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/landing/06-method-poster.webp"
+                data-poster-dark="{{ config.extra.cdn_url }}/videos/landing/06-method-poster.webp"
+                data-poster-light="{{ config.extra.cdn_url }}/videos/landing/06-method-light-poster.webp"
+                data-video-dark="{{ config.extra.cdn_url }}/videos/landing/06-method.webm"
+                data-video-light="{{ config.extra.cdn_url }}/videos/landing/06-method-light.webm"
                 onloadedmetadata="this.playbackRate = 0.5;"
-            >
-                <source src="{{ config.extra.cdn_url }}/videos/landing/06-method.webm" type="video/webm">
-            </video>
+            ></video>
             <div class="landing-section__overlay"></div>
         </div>
         <div class="landing-section__inner">
@@ -423,6 +429,60 @@
 <script>
 (function () {
     "use strict";
+    const landingVideos = document.querySelectorAll('.landing-section__video');
+
+    // Choose exactly one poster/video pair per section. Keeping the URLs in
+    // data attributes prevents the browser from fetching both themes, while
+    // the synchronous first call runs before the page's initial paint.
+    const applyThemeMedia = () => {
+        const theme = document.documentElement.getAttribute('data-theme') === 'light'
+            ? 'light'
+            : 'dark';
+
+        landingVideos.forEach((video) => {
+            const nextPoster = theme === 'light'
+                ? video.dataset.posterLight
+                : video.dataset.posterDark;
+            const nextVideo = theme === 'light'
+                ? video.dataset.videoLight
+                : video.dataset.videoDark;
+            const currentVideo = video.getAttribute('src');
+            const wasPlaying = !video.paused;
+
+            if (nextPoster && video.getAttribute('poster') !== nextPoster) {
+                video.setAttribute('poster', nextPoster);
+            }
+
+            if (nextVideo && currentVideo !== nextVideo) {
+                if (currentVideo) video.pause();
+                video.setAttribute('src', nextVideo);
+
+                // Reload only a clip that was actually playing. Calling
+                // load() on every paused off-screen video would defeat
+                // preload="none" and download the whole alternate theme.
+                if (currentVideo && wasPlaying) {
+                    video.load();
+                    const resume = () => {
+                        const p = video.play();
+                        if (p && typeof p.catch === 'function') p.catch(() => {});
+                    };
+                    video.addEventListener('canplay', resume, { once: true });
+                }
+            }
+        });
+    };
+
+    applyThemeMedia();
+
+    new MutationObserver((mutations) => {
+        if (mutations.some((mutation) => mutation.attributeName === 'data-theme')) {
+            applyThemeMedia();
+        }
+    }).observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ['data-theme'],
+    });
+
     // IntersectionObserver drives three things off the same "active section"
     // signal: the pagination dot highlight, the `is-active` class on the
     // section (which fades the pinned video background in/out via CSS), and

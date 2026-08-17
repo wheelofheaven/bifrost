@@ -18,6 +18,10 @@
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+        {# Resolve the persisted theme before any theme-dependent preload or
+           stylesheet is discovered, preventing both a colour-scheme flash
+           and a request for the wrong landing poster. #}
+        {% include "partials/theme-init.html" %}
         <!-- Preconnect to CDN for faster resource loading -->
         <link rel="preconnect" href="https://assets.wheelofheaven.world" crossorigin />
         <link rel="dns-prefetch" href="https://assets.wheelofheaven.world" />
@@ -29,12 +33,23 @@
         {% set_global _is_landing = _p == "/" or _p == "/de/" or _p == "/es/" or _p == "/fr/" or _p == "/he/" or _p == "/ja/" or _p == "/ko/" or _p == "/ru/" or _p == "/zh/" or _p == "/zh-Hant/" %}
         {% if _is_landing %}
         <link
+            id="landing-poster-preload"
             rel="preload"
             as="image"
             type="image/webp"
-            href="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp"
+            data-cdn-base="{{ config.extra.cdn_url }}"
             fetchpriority="high"
         />
+        <script>
+            (function () {
+                const preload = document.getElementById("landing-poster-preload");
+                const isLight = document.documentElement.getAttribute("data-theme") === "light";
+                const filename = isLight
+                    ? "01-question-light-poster.webp"
+                    : "01-question-poster.webp";
+                preload.href = preload.dataset.cdnBase + "/videos/landing/" + filename;
+            })();
+        </script>
         {% endif %}
         <title>
             {% if page.title %}{{ page.title }} | {% endif %}{{ config.title }}

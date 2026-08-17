@@ -448,15 +448,3 @@
 {% elif section.extra.image %}
 <link rel="preload" as="image" href="{% if section.extra.image is starting_with("http") %}{{ section.extra.image | safe }}{% else %}{{ get_url(path=section.extra.image) }}{% endif %}" fetchpriority="high">
 {% endif %}
-
-{# Homepage LCP hint: the first landing-section video poster is the
-   most likely LCP candidate above the fold. Preloading it shaves
-   FCP/LCP on slow networks.
-
-   No `crossorigin` attribute — the `<video poster>` consumer fetches
-   the image as no-CORS by default, and a CORS-enabled preload would
-   not match it (the browser would fetch the poster twice and log a
-   "preloaded resource not used" warning). #}
-{% if (current_path == "/" or current_path == "") and config.extra.cdn_url %}
-<link rel="preload" as="image" href="{{ config.extra.cdn_url }}/videos/landing/01-question-poster.webp" fetchpriority="high" type="image/webp">
-{% endif %}
