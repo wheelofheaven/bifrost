@@ -24,15 +24,20 @@
     font-size: 0.75rem;
     font-weight: 700;
     line-height: 1;
-    // Theme-aware. The fill used to be the static `c.$pink` — which
-    // resolves to `$pink-300`, a pale peach — with white text on top: about
-    // 1.2:1, illegible in either theme. The pair inverts per theme so the
-    // digit clears 4.5:1 *and* the chip clears the chrome behind it: pale
-    // fill / deep digit on the dark navbar, deep fill / white digit on the
-    // light one, where a pale chip would disappear into the near-white bar.
+    // Theme-aware, and drawn from the *accent* family rather than an
+    // unrelated pink, so the count reads as part of the same UI as the
+    // links, focus rings and section chips: mint on the dark theme, mauve
+    // on the light one. The pair inverts per theme so the digit clears
+    // 4.5:1 and the chip clears the chrome behind it — a pale fill pops on
+    // the dark navbar but vanishes into the near-white light one.
     color: var(--color-badge-text);
     background-color: var(--color-badge-bg);
     border-radius: v.$border-radius-full;
+    // The badge overlaps the icon it annotates, so without separation the
+    // two shapes merge into one blob. A ring in the page colour cuts it
+    // free and is what makes the count read as a distinct chip rather than
+    // part of the glyph.
+    box-shadow: 0 0 0 2px var(--color-background);
     pointer-events: none;
 
     &--visible {

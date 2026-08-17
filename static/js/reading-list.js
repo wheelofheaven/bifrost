@@ -264,7 +264,16 @@
         if (!panel) return;
 
         const savedGroup = panel.querySelector('[data-saved-group]');
-        const listEl = panel.querySelector('.reading-list-panel__list');
+        // Scope to the saved group. `.reading-list-panel__list` is not unique
+        // in this panel — continue-reading.js mounts its own groups, each
+        // with a list of that class, *above* this one. A panel-wide
+        // querySelector therefore returned the Continue group's <ul>, and the
+        // saved items were written over the open items: with both kinds
+        // present, "Continue reading" showed your bookmarks and the things
+        // you were actually part-way through vanished.
+        const listEl = savedGroup
+            ? savedGroup.querySelector('.reading-list-panel__list')
+            : panel.querySelector('.reading-list-panel__list');
         const emptyEl = panel.querySelector('.reading-list-panel__empty');
         const footerEl = panel.querySelector('.reading-list-panel__footer');
         const clearBtn = panel.querySelector('[data-clear-reading-list]');
@@ -296,21 +305,29 @@
         if (clearBtn) clearBtn.style.display = '';
         if (exportBtn) exportBtn.style.display = '';
 
-        listEl.innerHTML = readingList.map(item => `
+        // Same three-part row as the Continue and Notes groups render, so
+        // the whole panel reads as one list: accent section chip, title,
+        // then the quieter supporting line. `savedAgo` is that line here,
+        // matching the "42% · 2 hours ago" the other groups show.
+        listEl.innerHTML = readingList.map(item => {
+            const when = savedAgo(item.addedAt);
+            const removeLabel = `${getTranslation('remove', 'Remove')}: ${item.title}`;
+            return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(item.url)}" class="reading-list-panel__link">
                     ${item.section ? `<span class="reading-list-panel__section">${escapeHtml(item.section)}</span>` : ''}
                     <span class="reading-list-panel__item-title">${escapeHtml(item.title)}</span>
                     ${item.description ? `<span class="reading-list-panel__item-desc">${escapeHtml(truncate(item.description, 100))}</span>` : ''}
+                    ${when ? `<span class="reading-list-panel__meta">${escapeHtml(when)}</span>` : ''}
                 </a>
-                <button class="reading-list-panel__remove" data-remove-url="${escapeHtml(item.url)}" aria-label="${getTranslation('remove', 'Remove')}">
+                <button class="reading-list-panel__remove" data-remove-url="${escapeHtml(item.url)}" aria-label="${escapeHtml(removeLabel)}">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
                         <line x1="6" y1="6" x2="18" y2="18"></line>
                     </svg>
                 </button>
-            </li>
-        `).join('');
+            </li>`;
+        }).join('');
 
         // Setup remove buttons
         listEl.querySelectorAll('[data-remove-url]').forEach(btn => {
@@ -509,6 +526,33 @@
     function truncate(text, length) {
         if (text.length <= length) return text;
         return text.substring(0, length).trim() + '…';
+    }
+
+    // "3 days ago", in the reader's language, from the epoch ms stored on a
+    // saved item. Intl does the wording, so this needs no translation keys.
+    //
+    // Deliberately a local copy of continue-reading.js's `relativeTime`
+    // rather than a shared import: this module has to keep working when
+    // that one is absent, which is the same reason it owns the panel and
+    // only lends it a mount point.
+    function savedAgo(addedAt) {
+        const then = Number(addedAt);
+        if (!then || Number.isNaN(then)) return '';
+
+        let rtf;
+        try {
+            rtf = new Intl.RelativeTimeFormat(document.documentElement.lang || 'en', { numeric: 'auto' });
+        } catch (e) {
+            return '';
+        }
+
+        const minutes = Math.round((Date.now() - then) / 60000);
+        if (minutes < 60) return rtf.format(-minutes, 'minute');
+        const hours = Math.round(minutes / 60);
+        if (hours < 24) return rtf.format(-hours, 'hour');
+        const days = Math.round(hours / 24);
+        if (days < 30) return rtf.format(-days, 'day');
+        return rtf.format(-Math.round(days / 30), 'month');
     }
 
     // Show snackbar

@@ -3,6 +3,7 @@
 
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
 
 // Bookmark button (inline with content)
 .bookmark-btn {
@@ -104,18 +105,24 @@
     }
 }
 
-// Reading List Panel (slide-out)
+// Reading List Panel
 //
-// Styled as a *floating* glass card docked to the trailing edge, not an
-// edge-welded drawer — same grammar as the other overlays in the theme
-// (keyboard-shortcuts modal, navbar dropdowns, highlight-share): hairline
-// border on all four sides, 1rem radius, `--color-navbar-bg` + blur, and
-// the house drop shadow over an 8px-blurred scrim.
+// Deliberately built to the same recipe as `.search-modal` so the two
+// overlays read as one family: a transparent container whose glass lives on
+// a `::before`, an almost-invisible `--color-border` edge, the same triple
+// box-shadow (drop + outer ring + inner top highlight), and an unblurred
+// scrim that leaves the page behind it sharp.
+//
+// Note what that recipe costs: the panel no longer *slides*. The glass can
+// live on a pseudo-element only while nothing above it is transformed —
+// WebKit drops backdrop-filter for any element with a transformed ancestor —
+// so `.search-modal` centres itself with `margin-inline: auto` rather than
+// `translateX(-50%)` and animates opacity alone. Following it means giving
+// up `transform: translateX()` here too. The panel now cross-fades in place,
+// which also retires the `--panel-closed-x` bookkeeping and its RTL flip.
 .reading-list-panel {
-    // Gap between the card and the viewport edges. The closed position has
-    // to clear it too, or a sliver of the panel stays on screen.
+    // Gap between the card and the viewport edges.
     --panel-inset: 0.75rem;
-    --panel-closed-x: calc(100% + var(--panel-inset));
 
     position: fixed;
     inset: 0;
@@ -126,12 +133,6 @@
     opacity: 0;
     visibility: hidden;
     transition: opacity v.$transition-base ease, visibility v.$transition-base ease;
-    // Defensive clip: the inner content sits off-canvas when closed, which
-    // Chrome and iOS Safari count toward `document.scrollWidth` even though
-    // it's not visible. The primary fix is `overflow-x: clip` on <html> (in
-    // _reset.scss), but clipping here too keeps the off-canvas box from
-    // leaking into any ancestor that lacks the document-level clip.
-    overflow: hidden;
 
     @media (max-width: 480px) {
         --panel-inset: 0.5rem;
@@ -140,21 +141,19 @@
     &--open {
         opacity: 1;
         visibility: visible;
-
-        .reading-list-panel__content {
-            transform: translateX(0);
-        }
     }
 
     &__backdrop {
-        // Fixed, not absolute: the panel now carries padding, and an
+        // Fixed, not absolute: the panel carries padding, and an
         // absolutely-positioned `inset: 0` would resolve against the padding
-        // box and leave an unblurred rim around the scrim.
+        // box and leave an unscrimmed rim.
         position: fixed;
         inset: 0;
-        background-color: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
+        // Unblurred, like the search overlay's — it keeps the navbar and the
+        // page behind the panel legible instead of smearing them.
+        background-color: rgba(0, 0, 0, 0.3);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
     }
 
     &__content {
@@ -164,31 +163,47 @@
         width: 100%;
         max-width: 400px;
         height: 100%;
-        background-color: var(--color-navbar-bg);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid var(--color-hairline);
+        background: transparent;
+        border: 1px solid var(--color-border);
         border-radius: 1rem;
-        box-shadow: 0 24px 48px rgba(0, 0, 0, 0.3);
+        // Same three layers as `.search-modal__container`: the drop shadow
+        // that lifts it off the page, a 1px outer ring that defines the edge
+        // without a hard border, and an inner top highlight that reads as
+        // light catching the rim.
+        box-shadow:
+            0 25px 50px rgba(0, 0, 0, 0.25),
+            0 0 0 1px rgba(255, 255, 255, 0.05),
+            inset 0 1px 0 rgba(255, 255, 255, 0.1);
         // Clip the header rule and the scrolling body to the radius.
         overflow: hidden;
-        transform: translateX(var(--panel-closed-x));
-        transition: transform v.$transition-slow cubic-bezier(0.4, 0, 0.2, 1);
 
-        // The glass deliberately stays on this element rather than moving to
-        // a `::before` the way _search-modal.scss does it. This element is
-        // the one that transforms, and WebKit only drops backdrop-filter for
-        // a *transformed ancestor* — a self-transform is fine. Hosting the
-        // blur on a pseudo would turn that self-transform into an ancestor
-        // transform and kill the glass on iOS.
+        // Glass on the pseudo, matching `.search-modal__container::before` —
+        // and the navbar pill above it. Keep this element transform-free or
+        // WebKit drops the blur.
+        &::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background-color: var(--color-navbar-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: -1;
+            pointer-events: none;
+        }
     }
 
+    // Header sits on its own faint blur, like `.search-modal__header`, so it
+    // stays readable when the body scrolls content up behind it.
     &__header {
         display: flex;
         align-items: center;
         justify-content: space-between;
         padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--color-hairline);
+        background: transparent;
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     &__title {
@@ -283,29 +298,27 @@
         list-style: none;
         margin: 0;
         padding: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 0.5rem;
     }
 
-    // Rows, not cards. An opaque `--color-surface` fill sat on top of the
-    // panel's glass and read as a stack of tiles pasted onto an overlay;
-    // every other overlay list in the theme (navbar-dropdown links,
-    // keyboard-shortcut rows) uses a transparent row that only tints on
-    // hover, which lets the blur behind it stay visible.
+    // Rows separated by a rule, not floated as cards — the `.search-result`
+    // idiom. Cards (border + fill on every row) fought the panel's glass and
+    // made a short list look like a pile of receipts; a hairline between
+    // borderless rows lets the blur read through and puts the emphasis on
+    // the titles.
     &__item {
         display: flex;
         align-items: flex-start;
         gap: 0.5rem;
-        padding: 0.75rem;
-        background-color: transparent;
-        border: 1px solid transparent;
-        border-radius: v.$border-radius-md;
-        transition: background-color v.$transition-base ease, border-color v.$transition-base ease;
+        padding: 0.75rem 0.5rem;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        transition: background-color v.$transition-base ease;
+
+        &:last-child {
+            border-bottom: none;
+        }
 
         &:hover {
-            background-color: var(--color-hover);
-            border-color: var(--color-hairline);
+            background-color: rgba(255, 255, 255, 0.05);
 
             .reading-list-panel__remove {
                 opacity: 1;
@@ -315,6 +328,7 @@
 
     &__link {
         flex: 1;
+        min-width: 0; // let long titles ellipsize instead of stretching the row
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
@@ -332,7 +346,15 @@
         }
     }
 
+    // Section chip — accent, uppercase, tech face. Matches how
+    // `.search-result__section` actually renders. (That rule also declares
+    // `rgba(var(--color-accent-primary), 0.1)` for a tint and border, but
+    // `--color-accent-primary` holds a hex, so `rgba()` gets an invalid
+    // argument and the browser drops both declarations. It renders as bare
+    // accent text — which is what this matches. Worth fixing there
+    // separately; doing it here alone would break the family resemblance.)
     &__section {
+        font-family: typo.$font-family-tech;
         font-size: 0.6875rem;
         font-weight: 600;
         text-transform: uppercase;
@@ -342,16 +364,36 @@
 
     &__item-title {
         font-size: v.$font-size-sm;
-        font-weight: 500;
+        font-weight: 600;
         color: var(--color-text);
-        line-height: 1.4;
+        line-height: 1.35;
         transition: color v.$transition-base ease;
     }
 
+    // "42% · 2 hours ago" — the quantitative line, quieter than the title
+    // and set in the tech face like `.search-result__url`.
+    //
+    // One deliberate divergence from that rule: it uses
+    // `--color-text-subtle` at `opacity: 0.7`, which on the light theme is
+    // $gray-500 — 2.1:1 against the panel before the opacity even applies,
+    // and this text carries real information (how far in, how long ago).
+    // `--color-text-muted` is the same role one step darker and clears 4.5:1,
+    // so it wins over matching that particular declaration exactly.
+    &__meta {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+    }
+
+    // Also used for the quoted passage a note is anchored to, which is a
+    // `<q>` — the element supplies locale-correct quotation marks itself,
+    // so nothing here should add its own.
     &__item-desc {
+        display: block;
         font-size: 0.75rem;
         color: var(--color-text-muted);
         line-height: 1.4;
+        font-style: italic;
     }
 
     &__remove {
@@ -389,7 +431,8 @@
         justify-content: center;
         gap: 0.5rem;
         padding: 0.75rem 1rem;
-        border-top: 1px solid var(--color-hairline);
+        // Same rule weight as the header's, per the search-overlay recipe.
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     &__export,

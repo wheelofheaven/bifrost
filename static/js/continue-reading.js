@@ -427,19 +427,32 @@
         `;
     }
 
+    /**
+     * One open item. The section, the title and the quantitative line are
+     * three separate elements rather than one run-together string: the
+     * section is an accent chip, the title carries the weight, and
+     * "42% · 2 hours ago" sits under both in the quieter tech face — the
+     * same three-part shape `.search-result` and the /read/ cards use.
+     */
     function progressItemMarkup(item) {
+        const detail = detailLine(item);
+        // Name the item in the label. With several rows open, a column of
+        // buttons all announcing "Remove from continue list" tells a screen
+        // reader user nothing about which one they are on.
+        const removeLabel = `${t('continueRemove', 'Remove from continue list')}: ${item.title}`;
         return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(item.url)}" class="reading-list-panel__link">
-                    <span class="reading-list-panel__section">${escapeHtml(metaLine(item))}</span>
+                    ${item.meta ? `<span class="reading-list-panel__section">${escapeHtml(item.meta)}</span>` : ''}
                     <span class="reading-list-panel__item-title">${escapeHtml(item.title)}</span>
+                    ${detail ? `<span class="reading-list-panel__meta">${escapeHtml(detail)}</span>` : ''}
                     ${progressBarMarkup(item)}
                 </a>
                 <button
                     class="reading-list-panel__remove"
                     data-continue-dismiss="${escapeHtml(item.id)}"
                     data-continue-kind="${escapeHtml(item.kind)}"
-                    aria-label="${escapeHtml(t('continueRemove', 'Remove from continue list'))}"
+                    aria-label="${escapeHtml(removeLabel)}"
                 >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -454,12 +467,14 @@
         const ref = note.chapter != null
             ? `${note.bookTitle} · ${chapterLabel(note.chapter)}`
             : note.bookTitle;
+        const when = relativeTime(note.updatedAt);
         return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(note.url)}" class="reading-list-panel__link">
                     <span class="reading-list-panel__section">${escapeHtml(ref)}</span>
                     <span class="reading-list-panel__item-title">${escapeHtml(truncate(note.content, 90))}</span>
-                    ${note.quote ? `<span class="reading-list-panel__item-desc">“${escapeHtml(truncate(note.quote, 80))}”</span>` : ''}
+                    ${note.quote ? `<q class="reading-list-panel__item-desc">${escapeHtml(truncate(note.quote, 80))}</q>` : ''}
+                    ${when ? `<span class="reading-list-panel__meta">${escapeHtml(when)}</span>` : ''}
                 </a>
             </li>
         `;
