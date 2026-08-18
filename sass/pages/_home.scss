@@ -451,6 +451,10 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     inset: 0;
     z-index: 0;
     overflow: hidden;
+    background-color: var(--color-background);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     opacity: 0;
     pointer-events: none;
     transition: opacity 0.7s ease-in-out;
@@ -467,7 +471,8 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .landing-section__media {
+    .landing-section__media,
+    .landing-section__video {
         transition: none;
     }
 }
@@ -481,6 +486,12 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     object-fit: cover;
     transform: translate(-50%, -50%);
     pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease-in-out;
+
+    &--ready {
+        opacity: 1;
+    }
 }
 
 .landing-section__overlay {

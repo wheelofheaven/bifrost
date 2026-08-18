@@ -451,9 +451,15 @@
 
             if (nextPoster && video.getAttribute('poster') !== nextPoster) {
                 video.setAttribute('poster', nextPoster);
+                const media = video.closest('.landing-section__media');
+                if (media) media.style.backgroundImage = `url("${nextPoster}")`;
             }
 
             if (nextVideo && currentVideo !== nextVideo) {
+                video.classList.remove('landing-section__video--ready');
+                video.addEventListener('loadeddata', () => {
+                    video.classList.add('landing-section__video--ready');
+                }, { once: true });
                 if (currentVideo) video.pause();
                 video.setAttribute('src', nextVideo);
 
