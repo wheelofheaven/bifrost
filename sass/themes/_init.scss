@@ -31,6 +31,13 @@
     --color-focus: #{colors.$mint};
 
     // Component-specific colors
+    //
+    // The landing's video sections paint this behind their pinned media.
+    // It is the frame the cross-fade dissolves against, and it is what
+    // shows in the strip of the *next* section that peeks above the fold
+    // before that section goes active — so it has to follow the theme or
+    // light mode gets a black band under every hero.
+    --color-landing-backdrop: #0a0a0a;
     --color-navbar-bg: rgba(27, 31, 34, 0.1);
     --color-badge-bg: #{colors.$mint-300};
     --color-badge-text: #{colors.$mint-900};
@@ -91,6 +98,7 @@
         --color-focus: #{colors.$mauve-600};
 
         // Component-specific colors
+        --color-landing-backdrop: #{colors.$white};
         --color-navbar-bg: rgba(255, 255, 255, 0.1);
         --color-badge-bg: #{colors.$mauve-700};
         --color-badge-text: #{colors.$white};

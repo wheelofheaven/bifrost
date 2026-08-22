@@ -26,6 +26,25 @@
     --color-warning: #{colors.$yellow-500};
 
     // Component-specific colors
+    --color-landing-backdrop: #{colors.$white};
+
+    // Deliberately far more opaque than the dark theme's 0.1, and not a
+    // leftover: light-theme chrome draws *dark* glyphs, so anything dark
+    // passing under a transparent bar destroys them. Measured over the
+    // gallery's artwork, nav labels run 1.5:1 at 0.1 versus 7.6:1 here.
+    // Dark theme gets away with 0.1 because its glyphs are white and the
+    // content behind is dark — identical alpha cannot mean identical
+    // legibility when the text colours are inverted.
+    //
+    // The landing's hero sections are the one place light chrome sits on a
+    // deliberately dark scene, and they are handled separately: see the
+    // over-hero remap in pages/_home.scss, which lends the chrome the dark
+    // theme's tokens for exactly as long as a hero is behind it.
+    //
+    // (It used to render at ~0.88 effective, because the navbar and the
+    // translation notice each took a *second* fill on the element on top of
+    // the one their `::before` paints — see below. That second layer is
+    // gone, so this value is now what actually reaches the screen.)
     --color-navbar-bg: rgba(255, 255, 255, 0.65);
     --color-badge-bg: #{colors.$mauve-700};
     --color-badge-text: #{colors.$white};
@@ -66,16 +85,13 @@
     border: 1px solid var(--color-border);
 }
 
-[data-theme="light"] .navbar {
-    background-color: var(--color-navbar-bg);
-}
-
-// Mirror the navbar's direct background-color override on the
-// translation-notice pill so the two glass elements match in light
-// theme. (In dark theme both rely on `::before` only.)
-[data-theme="light"] .translation-notice {
-    background-color: var(--color-navbar-bg);
-}
+// The navbar and the translation-notice pill used to take a *second* fill
+// here, on the element itself, on top of the one their `::before` already
+// paints. `.navbar` is `position: fixed; z-index: 50`, so it opens a
+// stacking context and its `z-index: -1` pseudo-element composites above
+// the element's own background rather than replacing it — two 0.65 layers
+// resolving to ~0.88. Dark theme never had the second layer. Both now rely
+// on `::before` alone, in both themes.
 
 // See `_init.scss` for the rationale: keep navbar-style glass surfaces
 // legible when the user requests reduced transparency, since the
