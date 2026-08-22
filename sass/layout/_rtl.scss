@@ -66,6 +66,15 @@
         left: 0;
     }
 
+    // Same flip for the inset variant on the burger overlay's bookmark
+    // button. It needs its own rule: the LTR inset is more specific than
+    // the plain `.nav-badge` above, so without this the `right: 4px` there
+    // survives alongside `left: 0` and stretches the chip across the button.
+    .reading-list-toggle.navbar__bar-btn .nav-badge {
+        right: auto;
+        left: 4px;
+    }
+
     // The resume chip's arrow means "onward", so it has to point the way
     // the reader is going. Transforming the icon is safe here: it is a
     // descendant of the chip's backdrop-filter element, not an ancestor

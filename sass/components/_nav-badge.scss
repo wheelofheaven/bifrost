@@ -47,7 +47,25 @@
 
 // The badge anchors to the burger button, which is otherwise unpositioned.
 // Its desktop host, `.navbar__reading-btn`, sets `position: relative` in
-// layout/_navbar.scss as part of its own rule.
+// layout/_navbar.scss as part of its own rule; the bookmark button inside
+// the burger overlay gets it from `.reading-list-toggle`.
 .navbar__mobile-toggle {
     position: relative;
+}
+
+// Inside the burger overlay the host is a 44px bordered pill around a 22px
+// glyph, so the button's own corner sits well clear of the bookmark it
+// annotates — and a badge pinned there straddles the pill's rounded edge.
+// Bring it in to the icon's shoulder.
+.reading-list-toggle.navbar__bar-btn .nav-badge {
+    top: 4px;
+    right: 4px;
+}
+
+// While the menu is open, the count belongs to the bookmark button inside
+// it: the burger has turned into a close control, and a count riding an X
+// reads as "3 things to close". Hand the number over for as long as the
+// overlay is up rather than showing it twice on two different meanings.
+.navbar--mobile-expanded .navbar__mobile-toggle .nav-badge {
+    display: none;
 }

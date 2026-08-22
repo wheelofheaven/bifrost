@@ -162,6 +162,36 @@
         });
     }
 
+    // Sections that can carry a bookmark button, i.e. the only first path
+    // segments a saved row can have. Same five as continue-reading.js
+    // labels, and the keys section-icons.js is generated for.
+    const SECTIONS = ['articles', 'library', 'news', 'timeline', 'wiki'];
+    const LOCALES = ['de', 'es', 'fr', 'he', 'ja', 'ko', 'ru', 'zh', 'zh-Hant'];
+
+    /**
+     * The section slug for a saved row, read off its URL.
+     *
+     * A saved row stores `section` as the section's *title* — that's what
+     * the bookmark button's data-section carries, and it is translated, so
+     * it differs per locale and can't key an icon map. The path can: it is
+     * stable, and rows saved before this existed have one too.
+     */
+    function sectionSlugFromUrl(url) {
+        const parts = String(url || '').split(/[?#]/)[0]
+            .replace(/^https?:\/\/[^/]+/, '')
+            .replace(/^\/+/, '')
+            .split('/');
+        if (LOCALES.indexOf(parts[0]) !== -1) parts.shift();
+        return SECTIONS.indexOf(parts[0]) !== -1 ? parts[0] : '';
+    }
+
+    // Section identity glyph, from the map section-icons.js puts on the
+    // window. Empty string for an unknown section, so the chip falls back
+    // to the bare label it has always rendered.
+    function sectionIcon(slug) {
+        return (window.WohSectionIcons && window.WohSectionIcons.markup(slug)) || '';
+    }
+
     // Create the reading list panel
     function createPanel() {
         panel = document.createElement('div');
@@ -315,7 +345,7 @@
             return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(item.url)}" class="reading-list-panel__link">
-                    ${item.section ? `<span class="reading-list-panel__section">${escapeHtml(item.section)}</span>` : ''}
+                    ${item.section ? `<span class="reading-list-panel__section">${sectionIcon(sectionSlugFromUrl(item.url))}${escapeHtml(item.section)}</span>` : ''}
                     <span class="reading-list-panel__item-title">${escapeHtml(item.title)}</span>
                     ${item.description ? `<span class="reading-list-panel__item-desc">${escapeHtml(truncate(item.description, 100))}</span>` : ''}
                     ${when ? `<span class="reading-list-panel__meta">${escapeHtml(when)}</span>` : ''}

@@ -156,7 +156,14 @@
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
                 </svg>
-                <span class="reading-list-toggle__badge">0</span>
+                {# The same open-items count the burger and the desktop
+                   bookmark button carry — one number, one meaning, wherever
+                   the reader meets it. This used to be a
+                   `.reading-list-toggle__badge`, which reading-list.js fills
+                   with the *saved* count alone: opening the burger swapped a
+                   populated badge for a blank icon, because the icon inside
+                   was counting something else. #}
+                <span class="nav-badge" data-continue-badge aria-hidden="false">0</span>
             </button>
         </div>
         </div><!-- /.navbar__pane--main -->

@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "bundle": "node scripts/bundle.js",
+    "section-icons": "node scripts/section-icons.js",
     "bundle:watch": "node scripts/bundle.js --watch",
     "purgecss": "node scripts/purgecss.js",
     "inline-critical": "node scripts/inline-critical.js"

@@ -13,6 +13,7 @@
 const esbuild = require('esbuild');
 const fs = require('fs');
 const path = require('path');
+const { buildSectionIcons } = require('./section-icons');
 
 const JS_DIR = path.join(__dirname, '../static/js');
 const OUT_DIR = path.join(__dirname, '../static/js/dist');
@@ -23,6 +24,10 @@ const bundles = {
   // Loaded on every page (deferred). Tiny stub for search loads the
   // real search bundle on first interaction — see search-loader.js.
   'core.bundle.js': [
+    // Generated from data/icons.json — see scripts/section-icons.js. Must
+    // precede reading-list.js/continue-reading.js, which read the map it
+    // puts on the window when they render a section chip.
+    'section-icons.js',
     'navbar.js',
     'navbar-mobile-toggle.js',
     'search-loader.js',
@@ -63,6 +68,9 @@ const bundles = {
 };
 
 async function bundle() {
+  // Refresh the generated section-icon map before anything reads it.
+  buildSectionIcons();
+
   // Ensure output directory exists
   if (!fs.existsSync(OUT_DIR)) {
     fs.mkdirSync(OUT_DIR, { recursive: true });

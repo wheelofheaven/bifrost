@@ -14,6 +14,23 @@
 // behind the menu.
 html:has(body.mobile-nav-open) {
     overflow-y: hidden;
+
+    // The burger overlay covers the viewport, but the fixed corner FABs sit
+    // at z-index 110 and stayed on top of it — right where the overlay puts
+    // its bar-controls row (theme, language, reading list). The reading-list
+    // button was swallowed whole: its count painted underneath the search
+    // FAB, and a tap on it opened search. Retire the corner while the menu
+    // is up; search, theme and the reading list are all inside the menu.
+    //
+    // Hung off `html:has()` rather than `body.mobile-nav-open` for the
+    // weight: components/_reader-fab.scss reveals the FAB with
+    // `body:has(.wiki__sidebar) .reader-fab`, which ties a plain
+    // `body.mobile-nav-open .reader-fab` on specificity and wins on order.
+    .search-fab,
+    .reader-fab,
+    .to-top {
+        display: none;
+    }
 }
 
 @keyframes logo-spin {

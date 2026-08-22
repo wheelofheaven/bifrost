@@ -128,6 +128,13 @@
         return rtf.format(-Math.round(days / 30), 'month');
     }
 
+    // Section identity glyph, from the map section-icons.js puts on the
+    // window. Empty string for an unknown section, so the chip falls back
+    // to the bare label it has always rendered.
+    function sectionIcon(slug) {
+        return (window.WohSectionIcons && window.WohSectionIcons.markup(slug)) || '';
+    }
+
     function sectionLabel(section) {
         const map = {
             wiki: t('sectionWiki', 'Wiki'),
@@ -443,7 +450,7 @@
         return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(item.url)}" class="reading-list-panel__link">
-                    ${item.meta ? `<span class="reading-list-panel__section">${escapeHtml(item.meta)}</span>` : ''}
+                    ${item.meta ? `<span class="reading-list-panel__section">${sectionIcon(item.section)}${escapeHtml(item.meta)}</span>` : ''}
                     <span class="reading-list-panel__item-title">${escapeHtml(item.title)}</span>
                     ${detail ? `<span class="reading-list-panel__meta">${escapeHtml(detail)}</span>` : ''}
                     ${progressBarMarkup(item)}
@@ -471,7 +478,7 @@
         return `
             <li class="reading-list-panel__item">
                 <a href="${escapeHtml(note.url)}" class="reading-list-panel__link">
-                    <span class="reading-list-panel__section">${escapeHtml(ref)}</span>
+                    <span class="reading-list-panel__section">${sectionIcon('library')}${escapeHtml(ref)}</span>
                     <span class="reading-list-panel__item-title">${escapeHtml(truncate(note.content, 90))}</span>
                     ${note.quote ? `<q class="reading-list-panel__item-desc">${escapeHtml(truncate(note.quote, 80))}</q>` : ''}
                     ${when ? `<span class="reading-list-panel__meta">${escapeHtml(when)}</span>` : ''}

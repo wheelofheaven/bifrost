@@ -354,12 +354,35 @@
     // accent text — which is what this matches. Worth fixing there
     // separately; doing it here alone would break the family resemblance.)
     &__section {
+        // Glyph + label as one row. The section marks are pictograms with
+        // no baseline of their own, so left on the text baseline they sit
+        // visibly low against uppercase micro-type; a flex row centres them
+        // against the cap height instead. `align-self` keeps the chip as
+        // wide as its content inside the column-flex link.
+        display: flex;
+        align-items: center;
+        align-self: flex-start;
+        gap: 0.25rem;
         font-family: typo.$font-family-tech;
         font-size: 0.6875rem;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
         color: var(--color-accent-primary);
+
+        .section-mark {
+            // Sized in rem, not the inherited 1em: at this font-size a 1em
+            // glyph is 11px, and these are detailed Game-Icons marks that
+            // turn to mush well before that.
+            width: 0.9375rem;
+            height: 0.9375rem;
+            // Take the chip's accent rather than the mark's muted default,
+            // so glyph and label read as one token.
+            color: currentColor;
+            // The row's `gap` already does this; the chip modifier's own
+            // margin would double it.
+            margin-right: 0;
+        }
     }
 
     &__item-title {
