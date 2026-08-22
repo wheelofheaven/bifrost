@@ -159,10 +159,10 @@
                 {# The same open-items count the burger and the desktop
                    bookmark button carry — one number, one meaning, wherever
                    the reader meets it. This used to be a
-                   `.reading-list-toggle__badge`, which reading-list.js fills
-                   with the *saved* count alone: opening the burger swapped a
-                   populated badge for a blank icon, because the icon inside
-                   was counting something else. #}
+                   `.reading-list-toggle__badge`, counting saved bookmarks
+                   alone: opening the burger swapped a populated badge for a
+                   blank icon, because the icon inside was counting something
+                   else. #}
                 <span class="nav-badge" data-continue-badge aria-hidden="false">0</span>
             </button>
         </div>
@@ -639,7 +639,7 @@
                                 <span data-navbar-key="readingList">{{ trans(key="openReadingList", lang=detected_lang) }}</span>
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="readingListDesc">{{ trans(key="navbarReadingListDesc", lang=detected_lang) }} <span class="reading-list-toggle__badge" aria-label="bookmark count">0</span></div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readingListDesc">{{ trans(key="navbarReadingListDesc", lang=detected_lang) }} {# Inline variant of the same open-items count the bookmark button beside this row carries. It used to be a `.reading-list-toggle__badge` (saved bookmarks only), so the dropdown and the button next to it disagreed about what "your reading" adds up to. The hardcoded English aria-label went with it — continue-reading.js writes a translated one. #}<span class="nav-badge nav-badge--inline" data-continue-badge>0</span></div>
                         </div>
                     </button>
                 </div>

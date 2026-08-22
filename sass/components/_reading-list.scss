@@ -53,7 +53,9 @@
     }
 }
 
-// Reading list toggle button (navbar)
+// Reading list toggle button (navbar). `position: relative` is the
+// containing block for the corner `.nav-badge` it hosts inside the burger
+// overlay — see components/_nav-badge.scss.
 .reading-list-toggle {
     position: relative;
     display: flex;
@@ -79,30 +81,6 @@
         outline-offset: 2px;
     }
 
-    &__badge {
-        position: absolute;
-        top: 4px;
-        right: 4px;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        min-width: 18px;
-        height: 18px;
-        padding: 0 5px;
-        font-size: 0.75rem;
-        font-weight: 700;
-        // Same theme-aware pair as `.nav-badge` — these two are the same
-        // affordance in two places and had the same illegible white-on-pale
-        // fill. See components/_nav-badge.scss for the contrast rationale.
-        color: var(--color-badge-text);
-        background-color: var(--color-badge-bg);
-        border-radius: 8px;
-
-        // Set by reading-list.js when the saved list is non-empty.
-        &--visible {
-            display: flex;
-        }
-    }
 }
 
 // Reading List Panel

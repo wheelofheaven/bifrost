@@ -142,25 +142,11 @@
                 iconOutline.style.display = isBookmarked ? 'none' : 'block';
             }
         });
-
-        // Update counter badge
-        updateCounterBadge();
     }
 
-    // Update the counter badge
-    //
-    // Toggles a modifier rather than writing an inline display, matching how
-    // continue-reading.js drives .nav-badge. An inline style here would win
-    // over every rule in the stylesheet, so the two badges could not share
-    // any responsive or theme override.
-    function updateCounterBadge() {
-        const badges = document.querySelectorAll('.reading-list-toggle__badge');
-        const count = readingList.length;
-        badges.forEach(badge => {
-            badge.textContent = count;
-            badge.classList.toggle('reading-list-toggle__badge--visible', count > 0);
-        });
-    }
+    // Every count in the chrome is now the shared open-items badge, owned by
+    // continue-reading.js and driven by the `woh:reading-list-changed` event
+    // saveReadingList() dispatches. Nothing here to update.
 
     // Sections that can carry a bookmark button, i.e. the only first path
     // segments a saved row can have. Same five as continue-reading.js
@@ -324,7 +310,6 @@
             footerEl.style.display = 'flex';
             if (clearBtn) clearBtn.style.display = 'none';
             if (exportBtn) exportBtn.style.display = 'none';
-            updateCounterBadge();
             return;
         }
 
@@ -369,8 +354,6 @@
                 showSnackbar(getTranslation('removedFromList', 'Removed from reading list'));
             });
         });
-
-        updateCounterBadge();
     }
 
     // Open panel

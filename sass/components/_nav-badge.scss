@@ -43,6 +43,29 @@
     &--visible {
         display: flex;
     }
+
+    // Inline variant — sits after the description text in the Read
+    // dropdown's reading-list row rather than pinned to a control's
+    // corner, so it opts out of the corner geometry. It keeps the family's
+    // pill shape and colour tokens: it is the same count, so it should be
+    // the same chip.
+    //
+    // The ring goes: it exists to cut the badge free from the glyph it
+    // overlaps, and inline in a text row there is nothing to cut it free
+    // from. `margin-inline-start` rather than `margin-left` so the gap
+    // follows the text direction without an RTL override.
+    &--inline {
+        position: static;
+        margin-inline-start: 0.375rem;
+        vertical-align: middle;
+        box-shadow: none;
+
+        // Outranks `--visible` (0,2,0 vs 0,1,0) so the badge joins the text
+        // flow rather than becoming a block-level flex item.
+        &.nav-badge--visible {
+            display: inline-flex;
+        }
+    }
 }
 
 // The badge anchors to the burger button, which is otherwise unpositioned.
