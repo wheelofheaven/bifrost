@@ -546,7 +546,15 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 // The global background-color/color transition eases the swap.
 html[data-theme="light"]:has(.landing-section--question.is-active),
 html[data-theme="light"]:has(.landing-section--video.is-active) {
+    // `.translation-notice` is in this list and `.notification-stack` is
+    // deliberately not. Both read the same four tokens, so both *could*
+    // flip — but the stack's job is the PWA install card, which is a call
+    // to action. A pale card on a dark hero is more prominent than a
+    // dark-glass one that dissolves into the chrome beside it, and that
+    // prominence is the point. The translation notice is informational and
+    // has no such argument, so it matches.
     .navbar,
+    .translation-notice,
     .search-fab,
     .to-top {
         --color-navbar-bg: rgba(27, 31, 34, 0.1);
