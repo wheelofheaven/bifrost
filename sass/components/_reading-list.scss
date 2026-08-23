@@ -226,6 +226,10 @@
     &__body {
         flex: 1;
         overflow-y: auto;
+        // Stop a flick that runs off the end of the list from chaining into
+        // whatever is behind the panel — the page on a normal route, the
+        // burger menu when the panel was opened from it.
+        overscroll-behavior: contain;
         padding: 1rem;
     }
 
@@ -471,6 +475,16 @@
             color: c.$pink;
         }
     }
+}
+
+// Scroll lock while the panel is up, set by reading-list.js.
+//
+// Hung off the root element rather than <body>: the document scrolls on
+// <html>, so `body { overflow: hidden }` locks nothing on iOS Safari. Same
+// recipe, and the same reason, as `html:has(body.mobile-nav-open)` in
+// layout/_navbar.scss.
+html:has(body.reading-list-open) {
+    overflow-y: hidden;
 }
 
 // Social share bookmark button variant

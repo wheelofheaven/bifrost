@@ -361,7 +361,13 @@
         if (!panel) return;
         panel.classList.add('reading-list-panel--open');
         panel.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
+        // Lock the root element, not <body>. The document scrolls on
+        // <html>, so `body { overflow: hidden }` — what this used to set
+        // inline — locks nothing on iOS Safari, and the page carried on
+        // scrolling behind the open panel. The burger menu hit the same
+        // wall and solved it the same way: see
+        // `html:has(body.mobile-nav-open)` in layout/_navbar.scss.
+        document.body.classList.add('reading-list-open');
 
         // Focus first focusable element
         const firstFocusable = panel.querySelector('button, a');
@@ -373,7 +379,7 @@
         if (!panel) return;
         panel.classList.remove('reading-list-panel--open');
         panel.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
+        document.body.classList.remove('reading-list-open');
     }
 
     // Toggle panel

@@ -257,12 +257,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // Touch event handler to prevent body scroll but allow mobile content scroll
   let mobileContentEl = null;
 
+  // Overlays that mount on <body> — outside .navbar__content — but paint
+  // above the burger menu. A touchmove inside one of them is never the page
+  // rubber-banding behind the menu, so the guard below has to let it
+  // through. Without this, the reading-list panel opened from the menu's
+  // bar-controls row rendered its full list with every scroll gesture
+  // cancelled: unreachable rows on any phone whose viewport the list
+  // outgrew. Mouse wheels don't fire touchmove, which is why it only ever
+  // showed up on touch devices.
+  const OVERLAY_SELECTOR =
+    ".reading-list-panel, .search-modal, .keyboard-shortcuts-modal";
+
   function preventBodyScroll(e) {
     if (!mobileContentEl) return;
 
     // Allow scrolling if touch is inside mobile content
     if (mobileContentEl.contains(e.target)) {
       return; // Don't prevent - allow normal scrolling inside content
+    }
+    // Allow scrolling inside an overlay stacked above the menu
+    if (e.target?.closest?.(OVERLAY_SELECTOR)) {
+      return;
     }
     // Prevent scroll on body/outside elements
     e.preventDefault();
@@ -403,6 +418,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       }
     });
+
+    // Close mobile nav when the reading-list button in the bar-controls row
+    // is tapped. The panel it opens is a full-viewport overlay mounted on
+    // <body>, so leaving the menu up behind it kept both of the menu's
+    // scroll locks installed — the root-element lock and the touchmove
+    // guard above — while the reader was looking at the panel. Same
+    // treatment mobileSearchToggle already gives the search overlay.
+    //
+    // The dropdown's own reading-list entry is a .navbar-dropdown__link and
+    // is already covered by the link handler below; this listener is
+    // idempotent for it.
+    navbar
+      .querySelectorAll(".navbar__content [data-toggle-reading-list]")
+      .forEach((btn) => {
+        btn.addEventListener("click", () => {
+          if (isMobileNavExpanded) {
+            closeMobileNav();
+          }
+        });
+      });
 
     // Close mobile nav when a link is clicked
     const mobileNavLinks = navbar.querySelectorAll(
