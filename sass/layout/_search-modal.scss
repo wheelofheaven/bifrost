@@ -17,7 +17,16 @@
     max-width: 80rem; // Same as navbar max-width
     opacity: 0;
     visibility: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease;
+    // `visibility` is stepped, not eased. Easing it over the same 0.3s as
+    // the opacity means the modal computes as `hidden` for the whole
+    // fade-in — and nothing inside a hidden subtree can take focus, so for
+    // 300ms after opening, the results are unreachable: ArrowDown, which
+    // focuses `allFocusable[0]`, silently did nothing. Flip to `visible`
+    // immediately on open, and on close delay the flip by the length of
+    // the fade so the modal stays on screen while it fades out. Same
+    // animation, correct focusability. (`.reading-list-panel` is built to
+    // this same recipe and hit this first.)
+    transition: opacity 0.3s ease, visibility 0s linear 0.3s;
     pointer-events: none;
 
     // Mobile positioning adjustments
@@ -30,6 +39,7 @@
         opacity: 1;
         visibility: visible;
         pointer-events: all;
+        transition: opacity 0.3s ease, visibility 0s linear 0s;
     }
 
     &__backdrop {
@@ -140,7 +150,10 @@
         cursor: pointer;
         padding: 0.5rem;
         border-radius: 0.5rem;
-        transition: all 0.2s ease;
+        // Enumerated, never `all`: `visibility` is inherited, so `all`
+        // animates the modal's hidden -> visible change here and holds this
+        // element unfocusable for the duration. See the note on `.search-modal`.
+        transition: background-color 0.2s ease, color 0.2s ease;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -242,7 +255,8 @@
     gap: 1.5rem;
     padding: 1rem 1.5rem;
     border-bottom: 1px solid var(--color-hairline-subtle);
-    transition: all 0.2s ease;
+    // Enumerated, never `all` — see the note on `.search-modal`.
+    transition: background-color 0.2s ease, transform 0.2s ease;
     color: inherit;
     text-decoration: none;
     cursor: pointer;
@@ -636,7 +650,10 @@
         cursor: pointer;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
-        transition: all 0.2s ease;
+        // Enumerated, never `all`: `visibility` is inherited, so `all`
+        // animates the modal's hidden -> visible change here and holds this
+        // element unfocusable for the duration. See the note on `.search-modal`.
+        transition: background-color 0.2s ease, color 0.2s ease;
 
         &:hover {
             background: var(--color-hover);
@@ -664,7 +681,8 @@
     font-weight: 500;
     color: var(--color-text-muted);
     cursor: pointer;
-    transition: all 0.2s ease;
+    // Enumerated, never `all` — see the note on `.search-modal`.
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 
     &:hover {
         border-color: var(--color-accent-primary);
@@ -729,7 +747,10 @@
         cursor: pointer;
         padding: 0.25rem 0.5rem;
         border-radius: 0.25rem;
-        transition: all 0.2s ease;
+        // Enumerated, never `all`: `visibility` is inherited, so `all`
+        // animates the modal's hidden -> visible change here and holds this
+        // element unfocusable for the duration. See the note on `.search-modal`.
+        transition: background-color 0.2s ease, color 0.2s ease;
 
         &:hover {
             background: var(--color-hover);
@@ -755,7 +776,8 @@
     font-size: 0.875rem;
     color: var(--color-text);
     cursor: pointer;
-    transition: all 0.2s ease;
+    // Enumerated, never `all` — see the note on `.search-modal`.
+    transition: background-color 0.2s ease, border-color 0.2s ease;
     text-align: left;
 
     &:hover {
