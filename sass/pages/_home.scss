@@ -553,10 +553,20 @@ html[data-theme="light"]:has(.landing-section--video.is-active) {
     // dark-glass one that dissolves into the chrome beside it, and that
     // prominence is the point. The translation notice is informational and
     // has no such argument, so it matches.
+    //
+    // `.continue-chip` joined the list when it stopped carrying its own
+    // white-on-black palette and started being built from navbar material
+    // (see components/_continue.scss). It is the one member that is not
+    // chrome but hero content — which is exactly why it belongs here: it
+    // sits *inside* the hero it has to stay legible against, so it has more
+    // need of the remap than the bar floating above it, not less. If
+    // `:has()` is unavailable the chip degrades the same way the navbar
+    // does, to a pale glass with dark text, which stays readable.
     .navbar,
     .translation-notice,
     .search-fab,
-    .to-top {
+    .to-top,
+    .continue-chip {
         --color-navbar-bg: rgba(27, 31, 34, 0.1);
         --color-text: #{c.$white};
         --color-text-muted: rgba(255, 255, 255, 0.75);
