@@ -18,9 +18,13 @@
 // surface needs to work.
 //
 // Renders three surfaces: the reading-list panel's [data-continue-mount]
-// slot, the landing hero's [data-continue-chip], and the /read/ hub's
+// slots, the landing hero's [data-continue-chip], and the /read/ hub's
 // [data-continue-module] — plus the badges in the navbar. Loads after
 // reading-list.js so the panel exists by the time this initializes.
+//
+// The panel is tabbed, so it offers two mounts rather than one:
+// [data-continue-mount="reading"] takes the in-progress and listening
+// groups, [data-continue-mount="notes"] takes the notes list.
 (function() {
     'use strict';
 
@@ -37,6 +41,10 @@
     // untouched this long. Without it the badge only ever grows.
     const MAX_AGE_DAYS = 90;
     const MAX_NOTES_SHOWN = 5;
+    // The notes tab is a surface of its own rather than a trailing group
+    // under two other lists, so it can afford a deeper slice than the
+    // five that used to have to share the panel with everything else.
+    const MAX_NOTES_IN_PANEL = 30;
     const MAX_MODULE_ITEMS = 6;
     const BADGE_CAP = 9;
 
@@ -45,7 +53,8 @@
     // whichever language the reader is currently browsing.
     const LOCALES = ['de', 'es', 'fr', 'ja', 'ko', 'ru', 'zh', 'zh-Hant', 'he'];
 
-    let mount = null;
+    let readingMount = null;
+    let notesMount = null;
     let chip = null;
     let module_ = null;
 
@@ -337,13 +346,21 @@
     }
 
     /**
+     * Everything the reader is part-way through, read or listened. This is
+     * the panel's reading tab, and the first two thirds of the badge.
+     */
+    function readingCount() {
+        return getContinueItems().length + getListeningItems().length;
+    }
+
+    /**
      * Items a reader can act on right now: things in progress — read or
      * listened — plus things saved for later. Notes are annotations on
      * those, not a separate pile of unfinished business, so they stay out
      * of the badge count.
      */
     function openItemCount() {
-        return getContinueItems().length + getListeningItems().length + savedCount();
+        return readingCount() + savedCount();
     }
 
     /**
@@ -429,9 +446,15 @@
         return `
             <section class="reading-list-panel__group">
                 <h3 class="reading-list-panel__group-title">${escapeHtml(t(titleKey, titleFallback))}</h3>
-                <ul class="reading-list-panel__list">${itemsHtml}</ul>
+                ${listMarkup(itemsHtml)}
             </section>
         `;
+    }
+
+    // A group's list without its heading, for the tabs where the pill
+    // above already names what is in it.
+    function listMarkup(itemsHtml) {
+        return `<ul class="reading-list-panel__list">${itemsHtml}</ul>`;
     }
 
     /**
@@ -488,40 +511,50 @@
     }
 
     function renderPanel() {
-        if (!mount) return;
+        renderReadingTab();
+        renderNotesTab();
+    }
+
+    function renderReadingTab() {
+        if (!readingMount) return;
 
         const reading = getContinueItems();
         const listening = getListeningItems();
-        const notes = getRecentNotes();
+        // The tab already says "Reading", so a lone group needs no heading
+        // of its own — it would only repeat the pill above it. Two groups
+        // in one tab do need telling apart.
+        const titled = reading.length > 0 && listening.length > 0;
         let html = '';
 
         if (reading.length) {
-            html += groupMarkup(
-                'continueInProgress',
-                'Continue reading',
-                reading.map(progressItemMarkup).join('')
-            );
+            const items = reading.map(progressItemMarkup).join('');
+            html += titled
+                ? groupMarkup('continueInProgress', 'Continue reading', items)
+                : listMarkup(items);
         }
 
         if (listening.length) {
-            html += groupMarkup(
-                'continueListening',
-                'Continue listening',
-                listening.map(progressItemMarkup).join('')
-            );
+            const items = listening.map(progressItemMarkup).join('');
+            html += titled
+                ? groupMarkup('continueListening', 'Continue listening', items)
+                : listMarkup(items);
         }
 
-        if (notes.length) {
-            html += groupMarkup(
-                'continueNotes',
-                'Recent notes',
-                notes.map(noteItemMarkup).join('')
-            );
-        }
+        readingMount.innerHTML = html;
+        bindDismissButtons(readingMount);
+    }
 
-        mount.innerHTML = html;
+    function renderNotesTab() {
+        if (!notesMount) return;
 
-        mount.querySelectorAll('[data-continue-dismiss]').forEach(btn => {
+        const notes = getRecentNotes(MAX_NOTES_IN_PANEL);
+        notesMount.innerHTML = notes.length
+            ? listMarkup(notes.map(noteItemMarkup).join(''))
+            : '';
+    }
+
+    function bindDismissButtons(root) {
+        root.querySelectorAll('[data-continue-dismiss]').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
@@ -613,7 +646,8 @@
     }
 
     function init() {
-        mount = document.querySelector('[data-continue-mount]');
+        readingMount = document.querySelector('[data-continue-mount="reading"]');
+        notesMount = document.querySelector('[data-continue-mount="notes"]');
         chip = document.querySelector('[data-continue-chip]');
         module_ = document.querySelector('[data-continue-module]');
 
@@ -653,6 +687,7 @@
         getContinueItems,
         getRecentNotes,
         getOpenItemCount: openItemCount,
+        getReadingCount: readingCount,
         getNotesCount: notesCount,
         dismiss,
         refresh

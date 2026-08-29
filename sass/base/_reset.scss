@@ -44,10 +44,10 @@ html {
     scroll-padding-top: 5.5rem;
     // Clip horizontal overflow at the document level — the body-level
     // `overflow-x: clip` below alone is not enough because the page
-    // scrolls on <html>, not <body>. Without this, off-canvas
-    // elements like .reading-list-panel__content (transformed off the
-    // right edge) make the page horizontally scrollable on iOS Safari
-    // and cause "page wider than device" auto-zoom-out.
+    // scrolls on <html>, not <body>. Without this, any off-canvas
+    // element (a drawer parked past the right edge, a wide table) makes
+    // the page horizontally scrollable on iOS Safari and causes "page
+    // wider than device" auto-zoom-out.
     overflow-x: clip;
 }
 

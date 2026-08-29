@@ -24,6 +24,30 @@ window.readingListTranslations = {
     continueLanding: "{{ trans(key='continueLanding', lang=detected_lang) }}",
     continueEmptyTitle: "{{ trans(key='continueEmptyTitle', lang=detected_lang) }}",
     continueEmptyHint: "{{ trans(key='continueEmptyHint', lang=detected_lang) }}",
+    // Tab strip. Short labels of their own rather than the group titles
+    // above: "Saved for later" is a heading, not a tab, and three of those
+    // side by side don't fit a phone.
+    continueTabReading: {{ trans(key='continueTabReading', lang=detected_lang) | json_encode() | safe }},
+    continueTabSaved: {{ trans(key='continueTabSaved', lang=detected_lang) | json_encode() | safe }},
+    continueTabNotes: {{ trans(key='continueTabNotes', lang=detected_lang) | json_encode() | safe }},
+    continueNotesEmptyTitle: {{ trans(key='continueNotesEmptyTitle', lang=detected_lang) | json_encode() | safe }},
+    continueNotesEmptyHint: {{ trans(key='continueNotesEmptyHint', lang=detected_lang) | json_encode() | safe }},
+    // Export / Import and their outcome snackbars. These shipped without
+    // translation keys and so rendered English in all ten locales; the
+    // panel's footer made that permanently visible rather than transient.
+    exportReadingList: {{ trans(key='exportReadingList', lang=detected_lang) | json_encode() | safe }},
+    importReadingList: {{ trans(key='importReadingList', lang=detected_lang) | json_encode() | safe }},
+    readingListExported: {{ trans(key='readingListExported', lang=detected_lang) | json_encode() | safe }},
+    importInvalidJson: {{ trans(key='importInvalidJson', lang=detected_lang) | json_encode() | safe }},
+    importWrongKind: {{ trans(key='importWrongKind', lang=detected_lang) | json_encode() | safe }},
+    importTooNew: {{ trans(key='importTooNew', lang=detected_lang) | json_encode() | safe }},
+    importNothingNew: {{ trans(key='importNothingNew', lang=detected_lang) | json_encode() | safe }},
+    imported: {{ trans(key='imported', lang=detected_lang) | json_encode() | safe }},
+    // The panel wears the search overlay's "Press Esc to close" hint, so it
+    // reads the same string rather than keeping a duplicate of it. It
+    // carries a <kbd> element, hence json_encode over a quoted interpolation
+    // — Tera HTML-escapes .html templates and would ship &lt;kbd&gt;.
+    closeHint: {{ trans(key='searchModalCloseHint', lang=detected_lang) | json_encode() | safe }},
     // Section labels for open items. Reuses the navbar's existing section
     // names rather than adding parallel strings to all ten locale tables.
     sectionWiki: "{{ trans(key='navbarWiki', lang=detected_lang) }}",
