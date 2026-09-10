@@ -33,16 +33,16 @@
 <picture>
   <source
     type="image/avif"
-    srcset="{{ base }}{{ img_path }}.avif"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.avif"
     sizes="{{ sizes }}"
   >
   <source
     type="image/webp"
-    srcset="{{ base }}{{ img_path }}.webp"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp"
     sizes="{{ sizes }}"
   >
   <img
-    src="{{ base }}{{ img_path }}.webp"
+    src="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp"
     alt="{{ alt }}"
     {% if class %}class="{{ class }}"{% endif %}
     {% if lazy %}loading="lazy" decoding="async"{% endif %}
@@ -62,17 +62,17 @@
 <picture>
   <source
     type="image/avif"
-    srcset="{{ base }}{{ img_path }}_thumb.avif 400w, {{ base }}{{ img_path }}.avif 1200w"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.avif 400w, {{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.avif 1200w"
     sizes="{{ sizes }}"
   >
   <source
     type="image/webp"
-    srcset="{{ base }}{{ img_path }}_thumb.webp 400w, {{ base }}{{ img_path }}.webp 1200w"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.webp 400w, {{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp 1200w"
     sizes="{{ sizes }}"
   >
   <img
-    src="{{ base }}{{ img_path }}_thumb.webp"
-    data-src="{{ base }}{{ img_path }}.webp"
+    src="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.webp"
+    data-src="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp"
     alt="{{ alt }}"
     {% if class %}class="{{ class }}"{% endif %}
     loading="lazy"
@@ -93,16 +93,16 @@
 <picture>
   <source
     type="image/avif"
-    srcset="{{ base }}{{ img_path }}.avif"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.avif"
     sizes="{{ sizes }}"
   >
   <source
     type="image/webp"
-    srcset="{{ base }}{{ img_path }}.webp"
+    srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp"
     sizes="{{ sizes }}"
   >
   <img
-    src="{{ base }}{{ img_path }}.webp"
+    src="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.webp"
     alt="{{ alt }}"
     {% if class %}class="{{ class }}"{% endif %}
     fetchpriority="high"
@@ -118,10 +118,10 @@
 {% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
 <picture>
-  <source type="image/avif" srcset="{{ base }}{{ img_path }}_thumb.avif">
-  <source type="image/webp" srcset="{{ base }}{{ img_path }}_thumb.webp">
+  <source type="image/avif" srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.avif">
+  <source type="image/webp" srcset="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.webp">
   <img
-    src="{{ base }}{{ img_path }}_thumb.webp"
+    src="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}_thumb.webp"
     alt="{{ alt }}"
     {% if class %}class="{{ class }}"{% endif %}
     loading="lazy"
@@ -145,5 +145,5 @@
 {% macro preload(path) %}
 {% set base = config.extra.cdn_url | default(value="https://assets.wheelofheaven.world") %}
 {% set img_path = "/images/" ~ path %}
-<link rel="preload" as="image" type="image/avif" href="{{ base }}{{ img_path }}.avif">
+<link rel="preload" as="image" type="image/avif" href="{{ base | escape_xml | safe }}{{ img_path | escape_xml | safe }}.avif">
 {% endmacro preload %}

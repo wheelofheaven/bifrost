@@ -78,8 +78,8 @@
                 {% for age in ages_data %}
                 {% set avif = age.earth_texture | replace(from=".webp", to=".avif") %}
                 <picture class="chronology__earth-layer{% if loop.index0 == today_index %} is-active{% endif %}" data-earth="{{ loop.index0 }}">
-                    <source srcset="{{ avif }}" type="image/avif">
-                    <img class="chronology__earth-img" src="{{ age.earth_texture }}" alt="" loading="lazy" decoding="async">
+                    <source srcset="{{ avif | escape_xml | safe }}" type="image/avif">
+                    <img class="chronology__earth-img" src="{{ age.earth_texture | escape_xml | safe }}" alt="" loading="lazy" decoding="async">
                 </picture>
                 {% endfor %}
                 <div class="chronology__earth-shade"></div>
@@ -187,8 +187,8 @@
         {% set t_avif = today_age.vignette | replace(from=".webp", to=".avif") %}
         <figure class="chronology__chapter-art" data-readout-art>
             <picture>
-                <source data-readout-art-avif srcset="{{ t_avif }}" type="image/avif">
-                <img data-readout-art-img src="{{ today_age.vignette }}" alt="{{ today_name }}" loading="lazy" decoding="async">
+                <source data-readout-art-avif srcset="{{ t_avif | escape_xml | safe }}" type="image/avif">
+                <img data-readout-art-img src="{{ today_age.vignette | escape_xml | safe }}" alt="{{ today_name }}" loading="lazy" decoding="async">
             </picture>
         </figure>
         {% endif %}

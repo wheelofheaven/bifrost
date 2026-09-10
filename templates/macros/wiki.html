@@ -18,7 +18,7 @@
 {% macro reference_entry(ref, index) %}
     <li class="wiki__reference-item" id="ref-{{ index }}">
         {% if ref.url %}
-            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">
+            <a href="{{ ref.url | escape_xml | safe }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">
                 {{ ref.title }}
             </a>
         {% else %}
@@ -47,7 +47,7 @@
 {% macro see_also_item(item, lang="en") %}
     <li class="wiki__link-item">
         {% if item.url %}
-            <a href="{{ item.url }}" class="wiki__link">{{ item.title }}</a>
+            <a href="{{ item.url | escape_xml | safe }}" class="wiki__link">{{ item.title }}</a>
         {% else %}
             <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="wiki__link">{{ item.title }}</a>
         {% endif %}
@@ -60,7 +60,7 @@
 {# Macro for rendering an external link item #}
 {% macro external_link_item(link) %}
     <li class="wiki__link-item">
-        <a href="{{ link.url }}" class="wiki__link wiki__link--external" target="_blank" rel="noopener noreferrer">
+        <a href="{{ link.url | escape_xml | safe }}" class="wiki__link wiki__link--external" target="_blank" rel="noopener noreferrer">
             {{ link.title }}
             <svg class="wiki__external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -79,7 +79,7 @@
     <article class="wiki-card">
         <div class="wiki-card__header">
             <h3 class="wiki-card__title">
-                <a href="{{ page.permalink }}" class="wiki-card__link">{{ page.title }}</a>
+                <a href="{{ page.permalink | escape_xml | safe }}" class="wiki-card__link">{{ page.title }}</a>
             </h3>
             {% if page.extra.category %}
             <span class="wiki-card__category">{{ page.extra.category }}</span>
@@ -99,7 +99,7 @@
             </time>
             {% endif %}
             <span class="wiki-card__read-more">
-                <a href="{{ page.permalink }}" class="wiki-card__read-link">
+                <a href="{{ page.permalink | escape_xml | safe }}" class="wiki-card__read-link">
                     Read more
                     <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M5 12h14"></path>

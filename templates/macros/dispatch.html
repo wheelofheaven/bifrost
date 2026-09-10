@@ -89,7 +89,7 @@
         {% endif %}
     </div>
     <h2 class="dispatch-card__title">
-        <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
+        <a href="{{ page.permalink | escape_xml | safe }}" class="dispatch-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
     {% set card_summary = page.extra.summary | default(value=page.description) %}
@@ -126,7 +126,7 @@
         {% endif %}
     </div>
     <h2 class="dispatch-card__title">
-        <a href="{{ page.permalink }}" class="dispatch-card__link">{{ page.title }}</a>
+        <a href="{{ page.permalink | escape_xml | safe }}" class="dispatch-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
     {% set card_summary = page.extra.summary | default(value=page.description) %}

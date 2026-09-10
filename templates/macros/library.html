@@ -444,7 +444,7 @@
                         {{ chapter.n }}
                     </a>
                 {% else %}
-                    <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}#chapter-{{ chapter.n }}"
+                    <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}#chapter-{{ chapter.n | escape_xml | safe }}"
                        class="chapter-navigation__button"
                        style="--chapter-index: {{ chapter.n }}">
                         {{ chapter.n }}

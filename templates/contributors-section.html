@@ -23,7 +23,7 @@
         {% for page in section.pages %}
         <article class="contributors__card">
             <h2 class="contributors__name">
-                <a href="{{ page.permalink }}">{{ page.title }}</a>
+                <a href="{{ page.permalink | escape_xml | safe }}">{{ page.title }}</a>
             </h2>
             {% if page.extra.role %}
             <p class="contributors__role">{{ page.extra.role }}</p>
@@ -32,7 +32,7 @@
             <p class="contributors__bio">{{ page.description }}</p>
             {% endif %}
             {% if page.extra.github %}
-            <a href="https://github.com/{{ page.extra.github }}" class="contributors__github" rel="noopener">
+            <a href="https://github.com/{{ page.extra.github | escape_xml | safe }}" class="contributors__github" rel="noopener">
                 @{{ page.extra.github }}
             </a>
             {% endif %}

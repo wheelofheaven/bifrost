@@ -96,10 +96,10 @@
                 loop
                 playsinline
                 preload="none"
-                poster="{{ config.extra.cdn_url }}/videos/timeline/timeline-hero-poster.webp"
+                poster="{{ config.extra.cdn_url | escape_xml | safe }}/videos/timeline/timeline-hero-poster.webp"
                 onloadedmetadata="this.playbackRate = 0.5;"
             >
-                <source src="{{ config.extra.cdn_url }}/videos/timeline/timeline-hero.webm" type="video/webm">
+                <source src="{{ config.extra.cdn_url | escape_xml | safe }}/videos/timeline/timeline-hero.webm" type="video/webm">
             </video>
             <div class="landing-section__overlay"></div>
         </div>
@@ -132,10 +132,10 @@
                        always "in viewport"), so all slides would otherwise
                        decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp"
                              alt=""
                              decoding="async"
                              sizes="100vw">
@@ -216,10 +216,10 @@
                        always "in viewport"), so all slides would otherwise
                        decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp"
                              alt=""
                              decoding="async"
                              sizes="100vw">
@@ -278,10 +278,10 @@
                        always "in viewport"), so all slides would otherwise
                        decode at once and exhaust iOS Safari's per-tab memory. #}
                     <picture class="landing-section__slide-picture">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.avif" type="image/avif" sizes="100vw">
-                        <source data-srcset="{{ timeline_cdn }}/images/{{ frame.src }}.webp" type="image/webp" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.avif" type="image/avif" sizes="100vw">
+                        <source data-srcset="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp" type="image/webp" sizes="100vw">
                         <img class="landing-section__slide-image"
-                             data-src="{{ timeline_cdn }}/images/{{ frame.src }}.webp"
+                             data-src="{{ timeline_cdn | escape_xml | safe }}/images/{{ frame.src | escape_xml | safe }}.webp"
                              alt=""
                              decoding="async"
                              sizes="100vw">

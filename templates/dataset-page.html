@@ -11,7 +11,7 @@
             {% endif %}
             {% if page.extra.license %}
             <p class="dataset__license">
-                {% if page.extra.license_url %}<a href="{{ page.extra.license_url }}" rel="license">{{ page.extra.license }}</a>{% else %}{{ page.extra.license }}{% endif %}
+                {% if page.extra.license_url %}<a href="{{ page.extra.license_url | escape_xml | safe }}" rel="license">{{ page.extra.license }}</a>{% else %}{{ page.extra.license }}{% endif %}
                 &middot; public domain{% if page.extra.updated %} &middot; updated {{ page.extra.updated }}{% endif %}
             </p>
             {% endif %}
@@ -31,7 +31,7 @@
         {% if page.extra.downloads %}
         <section class="dataset__downloads" aria-label="Downloads">
             {% for d in page.extra.downloads %}
-            <a class="dataset__download" href="{{ d.url }}" download>
+            <a class="dataset__download" href="{{ d.url | escape_xml | safe }}" download>
                 <span class="dataset__download-label">{{ d.label }}</span>
                 {% if d.note %}<span class="dataset__download-note">{{ d.note }}</span>{% endif %}
             </a>
@@ -56,8 +56,8 @@
         {% endif %}
 
         <footer class="dataset__footer">
-            {% if page.extra.api_url %}<span>API: <a href="{{ page.extra.api_url }}">{{ page.extra.api_url }}</a></span>{% endif %}
-            {% if page.extra.schema_url %}<span>Schema: <a href="{{ page.extra.schema_url }}">{{ page.extra.schema_url }}</a></span>{% endif %}
+            {% if page.extra.api_url %}<span>API: <a href="{{ page.extra.api_url | escape_xml | safe }}">{{ page.extra.api_url }}</a></span>{% endif %}
+            {% if page.extra.schema_url %}<span>Schema: <a href="{{ page.extra.schema_url | escape_xml | safe }}">{{ page.extra.schema_url }}</a></span>{% endif %}
         </footer>
     </article>
 </div>

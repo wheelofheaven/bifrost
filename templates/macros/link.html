@@ -9,7 +9,7 @@
     {% endif %}
   {% endif %}
 
-  <a href="{{ url }}"
+  <a href="{{ url | escape_xml | safe }}"
      {% if title %}title="{{ title }}"{% endif %}
      {% if class %}class="{{ class }}"{% endif %}
      {% if is_external %}target="_blank" rel="noopener noreferrer"{% endif %}>
@@ -36,7 +36,7 @@
     {% endif %}
   {% endif %}
 
-  <a href="{{ final_url }}"
+  <a href="{{ final_url | escape_xml | safe }}"
      {% if title %}title="{{ title }}"{% endif %}
      {% if class %}class="{{ class }}"{% endif %}
      {% if is_external %}target="_blank" rel="noopener noreferrer"{% endif %}>

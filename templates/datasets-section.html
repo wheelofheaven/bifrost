@@ -11,7 +11,7 @@
 
     <div class="dataset__list">
         {% for page in section.pages %}
-        <a class="dataset__card" href="{{ page.permalink }}">
+        <a class="dataset__card" href="{{ page.permalink | escape_xml | safe }}">
             <span class="dataset__card-title">{{ page.title }}</span>
             {% if page.description %}<span class="dataset__card-desc">{{ page.description }}</span>{% endif %}
         </a>

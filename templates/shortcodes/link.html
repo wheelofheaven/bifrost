@@ -32,7 +32,7 @@
 {% endif %}
 
 {# Build the link #}
-<a href="{{ final_url }}"
+<a href="{{ final_url | escape_xml | safe }}"
    {% if title_attr %}title="{{ title_attr }}"{% endif %}
    {% if classes %}class="{{ classes }}"{% endif %}
    {% if is_external or target_attr %}target="{{ target_attr | default(value="_blank") }}"{% endif %}

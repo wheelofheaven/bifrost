@@ -437,7 +437,7 @@
 
 <!-- DNS Prefetch for External Resources -->
 {% if config.extra.analytics_domain %}
-<link rel="dns-prefetch" href="//{{ config.extra.analytics_domain }}">
+<link rel="dns-prefetch" href="//{{ config.extra.analytics_domain | escape_xml | safe }}">
 {% endif %}
 
 <!-- Preload Critical Resources -->

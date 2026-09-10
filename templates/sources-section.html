@@ -84,7 +84,7 @@
                     <summary class="source-card__summary">
                         <div class="source-card__header">
                             <h2 class="source-card__title">
-                                <a href="{{ source_url }}" class="source-card__title-link">{{ src.title }}</a>
+                                <a href="{{ source_url | escape_xml | safe }}" class="source-card__title-link">{{ src.title }}</a>
                             </h2>
                             <div class="source-card__chips">
                                 {% if src.cite_count > 0 %}

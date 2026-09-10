@@ -154,7 +154,7 @@
                 </header>
                 <div class="category-rail__track">
                     {% for page in featured_wiki %}
-                    <a class="category-rail__tile category-rail__tile--wiki" href="{{ page.permalink }}">
+                    <a class="category-rail__tile category-rail__tile--wiki" href="{{ page.permalink | escape_xml | safe }}">
                         {% if page.extra.category %}
                         <span class="category-rail__tile-badge">{{ page.extra.category }}</span>
                         {% endif %}
@@ -193,7 +193,7 @@
                     {% set t_peek = t_complete | concat(with=t_all | filter(attribute="status", value="partial")) %}
                     <a class="category-rail__tile"
                        data-tradition="{{ tradition.id }}"
-                       href="{{ get_url(path='library', lang=detected_lang) }}#tradition-{{ tradition.id }}">
+                       href="{{ get_url(path='library', lang=detected_lang) }}#tradition-{{ tradition.id | escape_xml | safe }}">
                         <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
                         <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
                         <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>

@@ -112,7 +112,7 @@
                         <circle class="map-earth__atmosphere" cx="834" cy="2174.6" r="726" />
                         <g clip-path="url(#map-earth-clip)">
                             <image
-                                href="{{ config.extra.cdn_url }}/images/earth/earth-ocean-blue.webp"
+                                href="{{ config.extra.cdn_url | escape_xml | safe }}/images/earth/earth-ocean-blue.webp"
                                 x="134"
                                 y="1474.6"
                                 width="1400"

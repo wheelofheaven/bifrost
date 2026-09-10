@@ -15,7 +15,7 @@
         <div class="page-list">
             {% for page in section.pages %}
             <article class="page-card">
-                <h3><a href="{{ page.permalink }}">{{ page.title }}</a></h3>
+                <h3><a href="{{ page.permalink | escape_xml | safe }}">{{ page.title }}</a></h3>
                 {% if page.description %}
                 <p class="page-description">{{ page.description }}</p>
                 {% endif %} {% if page.date %}
@@ -35,7 +35,7 @@
             get_section(path=subsection_path) %}
             <div class="subsection-card">
                 <h3>
-                    <a href="{{ subsection.permalink }}"
+                    <a href="{{ subsection.permalink | escape_xml | safe }}"
                         >{{ subsection.title }}</a
                     >
                 </h3>

@@ -73,7 +73,7 @@
             </header>
             <div class="wiki-featured__grid">
                 {% for page in featured_pages %}
-                <a class="wiki-featured__card" href="{{ page.permalink }}" data-featured-order="{{ page.extra.featured_order }}">
+                <a class="wiki-featured__card" href="{{ page.permalink | escape_xml | safe }}" data-featured-order="{{ page.extra.featured_order }}">
                     {% if page.extra.category and page.extra.category != page.title %}
                     <span class="wiki-featured__card-eyebrow">{{ page.extra.category }}</span>
                     {% endif %}
@@ -267,7 +267,7 @@
 
                             <div class="wiki-card__header">
                                 <h3 class="wiki-card__title">
-                                    <a href="{{ page.permalink }}" class="wiki-card__link">{{ page.title }}</a>
+                                    <a href="{{ page.permalink | escape_xml | safe }}" class="wiki-card__link">{{ page.title }}</a>
                                 </h3>
                                 {% if page.extra.category %}
                                 <span class="wiki-card__category">
@@ -303,7 +303,7 @@
                                 </time>
                                 {% endif %}
                                 <span class="wiki-card__read-more">
-                                    <a href="{{ page.permalink }}" class="wiki-card__read-link" aria-label="{{ trans(key='readMore', lang=detected_lang) }}: {{ page.title }}">
+                                    <a href="{{ page.permalink | escape_xml | safe }}" class="wiki-card__read-link" aria-label="{{ trans(key='readMore', lang=detected_lang) }}: {{ page.title }}">
                                         {{ trans(key="readMore", lang=detected_lang) }}
                                         <svg class="wiki-card__arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                             <path d="M5 12h14"></path>
@@ -342,7 +342,7 @@
                 <div class="wiki-subsection-card">
                     <h3 class="wiki-subsection-card__title">
                         <a
-                            href="{{ subsection.permalink }}"
+                            href="{{ subsection.permalink | escape_xml | safe }}"
                             class="wiki-subsection-card__link"
                         >
                             {{ subsection.title }}
@@ -405,7 +405,7 @@
                 <h3 class="wiki-footer__recent-title">{{ trans(key="wikiRecentlyUpdated", lang=detected_lang) }}</h3>
                 <div class="wiki-footer__recent-grid">
                     {% for page in recent_pages %}
-                    <a href="{{ page.permalink }}" class="wiki-footer__recent-link">
+                    <a href="{{ page.permalink | escape_xml | safe }}" class="wiki-footer__recent-link">
                         {{ page.title }}
                         {% if page.date %}
                         <span class="wiki-footer__recent-date">{{ page.date | date(format="%b %d") }}</span>

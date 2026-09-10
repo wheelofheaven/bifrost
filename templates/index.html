@@ -375,7 +375,7 @@
             <nav class="read__paths" aria-label="{{ trans(key='landingArticlesHeading', lang=detected_lang) }}">
                 {% for page in latest_articles %}
                 <article class="read__path read__path--solo">
-                    <a class="read__path-main" href="{{ page.permalink }}">
+                    <a class="read__path-main" href="{{ page.permalink | escape_xml | safe }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dna2.html" %}</span>
                         <h3 class="read__path-title">{{ page.title }}</h3>
                         {% if page.date %}<time class="read__path-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%b %d, %Y") }}</time>{% endif %}

@@ -19,8 +19,8 @@
                 {% if page.extra.image %}
                 <div class="author__portrait">
                     <picture>
-                        {% if page.extra.image_avif %}<source srcset="{{ page.extra.image_avif }}" type="image/avif">{% endif %}
-                        <img src="{{ page.extra.image }}" alt="{{ page.extra.image_alt | default(value=page.title) | escape }}" width="176" height="176" decoding="async">
+                        {% if page.extra.image_avif %}<source srcset="{{ page.extra.image_avif | escape_xml | safe }}" type="image/avif">{% endif %}
+                        <img src="{{ page.extra.image | escape_xml | safe }}" alt="{{ page.extra.image_alt | default(value=page.title) | escape }}" width="176" height="176" decoding="async">
                     </picture>
                 </div>
                 {% endif %}

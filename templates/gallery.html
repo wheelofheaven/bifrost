@@ -30,9 +30,9 @@
         {% for img in gallery.images %}
         <li class="gallery__item" data-category="{{ img.category }}"{% if img.used_on | length == 0 %} data-unused="true"{% endif %}>
             <button class="gallery__tile" type="button"
-                    data-full="{{ img.full }}"
-                    data-full-webp="{{ img.full_webp }}"
-                    data-full-src="{{ img.full_src }}"
+                    data-full="{{ img.full | escape_xml | safe }}"
+                    data-full-webp="{{ img.full_webp | escape_xml | safe }}"
+                    data-full-src="{{ img.full_src | escape_xml | safe }}"
                     data-alt="{{ img.alt | escape }}"
                     data-caption="{{ img.caption | escape }}"
                     data-category="{{ img.category }}"
@@ -40,9 +40,9 @@
                     data-used='{{ img.used_on | json_encode }}'
                     aria-label="{{ img.alt | default(value=img.name) | escape }}">
                 <picture>
-                    <source srcset="{{ img.thumb }}" type="image/avif">
-                    <source srcset="{{ img.thumb_webp }}" type="image/webp">
-                    <img src="{{ img.thumb_webp }}" alt="{{ img.alt | escape }}" loading="lazy" decoding="async">
+                    <source srcset="{{ img.thumb | escape_xml | safe }}" type="image/avif">
+                    <source srcset="{{ img.thumb_webp | escape_xml | safe }}" type="image/webp">
+                    <img src="{{ img.thumb_webp | escape_xml | safe }}" alt="{{ img.alt | escape }}" loading="lazy" decoding="async">
                 </picture>
             </button>
         </li>

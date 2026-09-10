@@ -51,7 +51,7 @@
     </h2>
     <div class="related-content__grid">
         {% for related in related_pages %}
-        <a href="{{ related.permalink }}" class="related-content__card">
+        <a href="{{ related.permalink | escape_xml | safe }}" class="related-content__card">
             {% if related.extra.category %}
             <span class="related-content__card-category">{{ related.extra.category }}</span>
             {% endif %}

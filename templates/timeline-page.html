@@ -106,7 +106,7 @@
                                 <span class="wiki__reference-title">{{ ref.id }}</span>
                                 {% endif %}
                                 {% elif ref.url %}
-                                <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                                <a href="{{ ref.url | escape_xml | safe }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                                 {% elif ref.path %}
                                 {# ref.path is a raw EN path from frontmatter (e.g. "/library/genesis-woh/"); strip
                                    the leading slash and route via get_url so internal reference links land in the
@@ -215,7 +215,7 @@
                            Rebuild the href so it lands on the same-language
                            chapter when one exists. #}
                         {% set rel_href = get_url(path='timeline/' ~ related.slug, lang=detected_lang) %}
-                        <a href="{{ rel_href }}" class="related-content__card">
+                        <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
                             {% endif %}
@@ -280,7 +280,7 @@
                            gives us ["wiki", "<slug>"]. #}
                         {% set rel_section = related.components | first %}
                         {% set rel_href = get_url(path=rel_section ~ '/' ~ related.slug, lang=detected_lang) %}
-                        <a href="{{ rel_href }}" class="related-content__card">
+                        <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
                             {% endif %}
@@ -350,7 +350,7 @@
                 <a class="timeline-page__earth-link" href="{{ get_url(path='timeline/chronology', lang='en') }}" aria-label="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">
                     <figure class="timeline-page__earth-figure">
                         <img class="timeline-page__earth-image"
-                             src="{{ age_data.earth_texture }}"
+                             src="{{ age_data.earth_texture | escape_xml | safe }}"
                              alt=""
                              loading="lazy"
                              decoding="async">

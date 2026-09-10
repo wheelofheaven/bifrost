@@ -16,7 +16,7 @@ author_data = authors.authors[author_key] %} {% endif %}
             <div class="author-profile__work">
                 {% if url %}
                 <a
-                    href="{{ url }}"
+                    href="{{ url | escape_xml | safe }}"
                     class="author-profile__work-link"
                     target="_blank"
                     rel="noopener noreferrer"
@@ -73,7 +73,7 @@ author_data = authors.authors[author_key] %} {% endif %}
             <div class="author-profile__work">
                 {% if url %}
                 <a
-                    href="{{ url }}"
+                    href="{{ url | escape_xml | safe }}"
                     class="author-profile__work-link"
                     target="_blank"
                     rel="noopener noreferrer"

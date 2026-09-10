@@ -65,11 +65,11 @@
                 {% if paginator and paginator.number_pagers > 1 %}
                 <nav class="articles-feed__pagination" aria-label="{{ trans(key='articlesPaginationLabel', lang=detected_lang) }}">
                     {% if paginator.previous %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.previous }}" rel="prev">{{ trans(key="paginationPrev", lang=detected_lang) }}</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.previous | escape_xml | safe }}" rel="prev">{{ trans(key="paginationPrev", lang=detected_lang) }}</a>
                     {% endif %}
                     <span class="articles-feed__pagination-info">{{ paginator.current_index }} / {{ paginator.number_pagers }}</span>
                     {% if paginator.next %}
-                    <a class="articles-feed__pagination-link" href="{{ paginator.next }}" rel="next">{{ trans(key="paginationNext", lang=detected_lang) }}</a>
+                    <a class="articles-feed__pagination-link" href="{{ paginator.next | escape_xml | safe }}" rel="next">{{ trans(key="paginationNext", lang=detected_lang) }}</a>
                     {% endif %}
                 </nav>
                 {% endif %}
@@ -92,7 +92,7 @@
                         {% for cat in cats %}
                         {% set matches = all_pages | filter(attribute="extra.category", value=cat) %}
                         <li class="articles-feed__filter-item" data-cat="{{ cat | lower }}">
-                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}?category={{ cat | urlencode }}">{{ cat }}</a>
+                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}?category={{ cat | urlencode | escape_xml | safe }}">{{ cat }}</a>
                             <span class="articles-feed__filter-count">{{ matches | length }}</span>
                         </li>
                         {% endfor %}

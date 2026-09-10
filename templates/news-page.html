@@ -50,7 +50,7 @@
                     {% for item in page.extra.canon_links %}
                     <li class="dispatch__link-item">
                         {% if item.url %}
-                        <a href="{{ item.url }}" class="dispatch__link">{{ item.title }}</a>
+                        <a href="{{ item.url | escape_xml | safe }}" class="dispatch__link">{{ item.title }}</a>
                         {% else %}
                         <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="dispatch__link">{{ item.title }}</a>
                         {% endif %}
@@ -70,7 +70,7 @@
                     {% for src in page.extra.sources %}
                     <li class="dispatch__source-item" id="src-{{ loop.index }}">
                         {% if src.url %}
-                        <a href="{{ src.url }}" class="dispatch__source-link" target="_blank" rel="noopener noreferrer">
+                        <a href="{{ src.url | escape_xml | safe }}" class="dispatch__source-link" target="_blank" rel="noopener noreferrer">
                             {{ src.title }}
                         </a>
                         {% else %}

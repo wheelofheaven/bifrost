@@ -59,11 +59,11 @@
                 {% if paginator and paginator.number_pagers > 1 %}
                 <nav class="newsroom__pagination" aria-label="{{ trans(key='newsroomPaginationLabel', lang=detected_lang) }}">
                     {% if paginator.previous %}
-                    <a class="newsroom__pagination-link" href="{{ paginator.previous }}" rel="prev">{{ trans(key="paginationPrev", lang=detected_lang) }}</a>
+                    <a class="newsroom__pagination-link" href="{{ paginator.previous | escape_xml | safe }}" rel="prev">{{ trans(key="paginationPrev", lang=detected_lang) }}</a>
                     {% endif %}
                     <span class="newsroom__pagination-info">{{ paginator.current_index }} / {{ paginator.number_pagers }}</span>
                     {% if paginator.next %}
-                    <a class="newsroom__pagination-link" href="{{ paginator.next }}" rel="next">{{ trans(key="paginationNext", lang=detected_lang) }}</a>
+                    <a class="newsroom__pagination-link" href="{{ paginator.next | escape_xml | safe }}" rel="next">{{ trans(key="paginationNext", lang=detected_lang) }}</a>
                     {% endif %}
                 </nav>
                 {% endif %}

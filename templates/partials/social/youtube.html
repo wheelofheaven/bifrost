@@ -1,5 +1,5 @@
 <a
-    href="{{ trans(key='youtubeChannelUrl', lang=detected_lang) }}"
+    href="{{ trans(key='youtubeChannelUrl', lang=detected_lang) | escape_xml | safe }}"
     target="_blank"
     rel="noopener"
     class="footer__social-link footer__social-link--youtube"

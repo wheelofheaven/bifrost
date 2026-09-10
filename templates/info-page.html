@@ -35,7 +35,7 @@
                 <p class="info-page__footer-text">{{ page.extra.cta_text }}</p>
                 {% endif %}
                 <p class="info-page__footer-cta">
-                    <a href="{{ page.extra.cta_url }}"{% if page.extra.cta_external %} target="_blank" rel="noopener"{% endif %}>{{ page.extra.cta_label | default(value="Continue") }} →</a>
+                    <a href="{{ page.extra.cta_url | escape_xml | safe }}"{% if page.extra.cta_external %} target="_blank" rel="noopener"{% endif %}>{{ page.extra.cta_label | default(value="Continue") }} →</a>
                 </p>
             </footer>
             {% endif %}

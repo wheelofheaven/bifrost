@@ -67,7 +67,7 @@
         {% endif %}
     </div>
     <h2 class="article-card__title">
-        <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
+        <a href="{{ page.permalink | escape_xml | safe }}" class="article-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
     {# Hoisted set: inline `default()` in output position double-escapes its fallback
@@ -106,7 +106,7 @@
         {% endif %}
     </div>
     <h2 class="article-card__title">
-        <a href="{{ page.permalink }}" class="article-card__link">{{ page.title }}</a>
+        <a href="{{ page.permalink | escape_xml | safe }}" class="article-card__link">{{ page.title }}</a>
     </h2>
     {% if page.extra.summary or page.description %}
     {# Hoisted set: inline `default()` in output position double-escapes its fallback
