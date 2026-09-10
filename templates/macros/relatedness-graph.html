@@ -1,51 +1,87 @@
 {# Relatedness mini-graph (Decision 15, G3 — see the wheelofheaven repo
    .claude/plans/strategy-distribution-2026.md §"The graph / relatedness
-   surface"). A bounded SVG "neighbourhood" constellation: the current entry at
-   the centre, its curated see_also neighbours around it, each a real
-   (crawlable) link. It is a *visual companion* to the see_also list, which
-   stays the semantic / a11y / crawl backbone — so this figure is aria-hidden
-   and its links are pulled from the tab order (tabindex=-1) to avoid duplicate
-   announcements. Tera has no trig, so node positions are a precomputed
-   per-count coordinate table (flat [x0,y0,x1,y1,…]; centre 170,132; radius 92;
-   up to 8 neighbours). #}
-{% macro neighborhood(title, see_also, lang) %}
-{% set total = see_also | length %}
-{% set n = total %}{% if n > 8 %}{% set n = 8 %}{% endif %}
-{% if n > 0 %}
-{% if n == 1 %}{% set_global coords = [170,40] %}
-{% elif n == 2 %}{% set_global coords = [170,40, 170,224] %}
-{% elif n == 3 %}{% set_global coords = [170,40, 250,178, 90,178] %}
-{% elif n == 4 %}{% set_global coords = [170,40, 262,132, 170,224, 78,132] %}
-{% elif n == 5 %}{% set_global coords = [170,40, 257,104, 224,206, 116,206, 82,104] %}
-{% elif n == 6 %}{% set_global coords = [170,40, 250,86, 250,178, 170,224, 90,178, 90,86] %}
-{% elif n == 7 %}{% set_global coords = [170,40, 242,75, 260,152, 210,215, 130,215, 80,152, 98,75] %}
-{% else %}{% set_global coords = [170,40, 235,67, 262,132, 235,197, 170,224, 105,197, 78,132, 105,67] %}
+   surface").
+
+   A scoped view of the content graph: the current entry at the centre, the
+   entries it links to around it, and one further ring of context — the
+   neighbours' own neighbours — drawn small and unlabelled. Reading the shape
+   should tell you something about where the entry sits: a dense mesh means a
+   tightly-bound cluster, a sparse fan means a bridging entry.
+
+   Geometry is precomputed. The positions come from a force simulation
+   (scripts/build_relatedness_layout.py -> data/relatedness.json), because
+   Tera has neither mutable float loops nor trigonometry. What lands here is
+   already drawable: line segments and points in viewBox coordinates, so this
+   macro only loops and emits SVG. An earlier version laid the neighbours on a
+   fixed coordinate ring, which always read as a star however the edges were
+   drawn, and found its edges by scanning whole sections at render time.
+
+   Accessibility: the figure is decorative and aria-hidden — the see_also list
+   below it is the semantic, crawlable backbone — so first-ring links are
+   pulled from the tab order. The "full graph" link is deliberately outside
+   the figure so it stays reachable.
+
+   Positions are language-independent, so translations share one layout; keys
+   are canonical ("wiki/eden") with any locale prefix stripped. #}
+
+{% macro neighborhood(title, see_also, lang, page_path) %}
+{% set RG_LOCALES = ["de", "es", "fr", "he", "ja", "ko", "ru", "zh", "zh-Hant"] %}
+
+{# Canonical key for this page, e.g. "/de/wiki/eden/" -> "wiki/eden". #}
+{% set rg_key = page_path | trim_start_matches(pat="/") | trim_end_matches(pat="/") %}
+{% set rg_parts = rg_key | split(pat="/") %}
+{% if rg_parts | length > 1 and rg_parts[0] in RG_LOCALES %}
+    {% set rg_key = rg_parts | slice(start=1) | join(sep="/") %}
 {% endif %}
-<figure class="relatedness-graph" aria-hidden="true">
-  <svg class="relatedness-graph__svg" viewBox="0 0 340 264" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+
+{% set rg_all = load_data(path="data/relatedness.json", required=false) %}
+{% set rg = rg_all[rg_key] | default(value=false) %}
+
+{% if rg %}
+{% set rg_map_url = get_url(path='map/', lang=lang) ~ '?view=graph' %}
+<div class="relatedness-graph">
+<figure class="relatedness-graph__figure" aria-hidden="true">
+  <svg class="relatedness-graph__svg" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
     <g class="relatedness-graph__edges">
-      {% for item in see_also %}{% if loop.index0 < 8 %}{% set ix = loop.index0 * 2 %}{% set iy = ix + 1 %}
-      <line class="relatedness-graph__edge" x1="170" y1="132" x2="{{ coords[ix] }}" y2="{{ coords[iy] }}"></line>
-      {% endif %}{% endfor %}
+      {% for e in rg.e %}
+      <line class="relatedness-graph__edge relatedness-graph__edge--{% if e[4] == 0 %}spoke{% elif e[4] == 1 %}chord{% else %}outer{% endif %}"
+            x1="{{ e[0] }}" y1="{{ e[1] }}" x2="{{ e[2] }}" y2="{{ e[3] }}"></line>
+      {% endfor %}
+    </g>
+    <g class="relatedness-graph__context">
+      {% for p in rg.s %}
+      <circle class="relatedness-graph__dot relatedness-graph__dot--context" cx="{{ p[0] }}" cy="{{ p[1] }}" r="2.6"></circle>
+      {% endfor %}
     </g>
     <g class="relatedness-graph__nodes">
-      {% for item in see_also %}{% if loop.index0 < 8 %}{% set ix = loop.index0 * 2 %}{% set iy = ix + 1 %}{% set x = coords[ix] %}{% set y = coords[iy] %}
+      {% for item in see_also %}
+      {% set nkey = item.path | default(value="") | trim_start_matches(pat="/") | trim_end_matches(pat="/") %}
+      {% set nparts = nkey | split(pat="/") %}
+      {% if nparts | length > 1 and nparts[0] in RG_LOCALES %}{% set nkey = nparts | slice(start=1) | join(sep="/") %}{% endif %}
+      {% set pos = rg.n[nkey] | default(value=false) %}
+      {% if pos %}
       {% if item.url %}{% set href = item.url %}{% else %}{% set href = get_url(path=item.path, lang=lang) %}{% endif %}
-      <a class="relatedness-graph__node" href="{{ href }}" tabindex="-1">
+      <a class="relatedness-graph__node" href="{{ href | escape_xml | safe }}" tabindex="-1">
         <title>{{ item.title }}</title>
-        <circle class="relatedness-graph__dot" cx="{{ x }}" cy="{{ y }}" r="7"></circle>
-        <text class="relatedness-graph__label"
-              text-anchor="{% if x >= 210 %}start{% elif x <= 130 %}end{% else %}middle{% endif %}"
-              x="{% if x >= 210 %}{{ x + 11 }}{% elif x <= 130 %}{{ x - 11 }}{% else %}{{ x }}{% endif %}"
-              y="{% if x >= 210 or x <= 130 %}{{ y + 3 }}{% elif y < 132 %}{{ y - 13 }}{% else %}{{ y + 20 }}{% endif %}">{{ item.title | truncate(length=12) }}</text>
+        <circle class="relatedness-graph__dot" cx="{{ pos[0] }}" cy="{{ pos[1] }}" r="6"></circle>
+        {# Label above the node in the upper half of the frame, below it in the
+           lower half, so labels lean away from the crowded middle. #}
+        <text class="relatedness-graph__label" text-anchor="middle"
+              x="{{ pos[0] }}" y="{% if pos[1] < 170 %}{{ pos[1] - 12 }}{% else %}{{ pos[1] + 17 }}{% endif %}">{{ item.title | truncate(length=14) }}</text>
       </a>
-      {% endif %}{% endfor %}
+      {% endif %}
+      {% endfor %}
     </g>
     <g class="relatedness-graph__center">
-      <circle class="relatedness-graph__dot relatedness-graph__dot--center" cx="170" cy="132" r="12"></circle>
-      <text class="relatedness-graph__label relatedness-graph__label--center" x="170" y="132" dy="4" text-anchor="middle">{{ title | truncate(length=20) }}</text>
+      <circle class="relatedness-graph__dot relatedness-graph__dot--center" cx="{{ rg.c[0] }}" cy="{{ rg.c[1] }}" r="11"></circle>
+      <text class="relatedness-graph__label relatedness-graph__label--center" text-anchor="middle"
+            x="{{ rg.c[0] }}" y="{{ rg.c[1] + 24 }}">{{ title | truncate(length=18) }}</text>
     </g>
   </svg>
 </figure>
+<a class="relatedness-graph__full" href="{{ rg_map_url | escape_xml | safe }}">
+  {{ trans(key="seeAlsoFullGraph", lang=lang) }}<span class="relatedness-graph__full-arrow" aria-hidden="true">&rarr;</span>
+</a>
+</div>
 {% endif %}
 {% endmacro neighborhood %}

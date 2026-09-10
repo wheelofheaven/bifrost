@@ -34,7 +34,7 @@
                 <aside class="wiki__redirect" role="note" aria-label="This entry redirects to another page">
                     <span class="wiki__redirect-label">{{ trans(key="wikiRedirectsTo", lang=detected_lang) }}</span>
                     <a class="wiki__redirect-link"
-                       href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url }}{% else %}{{ get_url(path=page.extra.redirect_to.path, lang=detected_lang) }}{% endif %}">
+                       href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url | escape_xml | safe }}{% else %}{{ get_url(path=page.extra.redirect_to.path, lang=detected_lang) }}{% endif %}">
                         {{ page.extra.redirect_to.title }}
                         <svg class="wiki__redirect-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -65,12 +65,12 @@
                 {% if page.extra.see_also %}
                 <section class="wiki__see-also" role="complementary" aria-label="Related topics">
                     <h2 class="wiki__section-title" id="see-also-heading">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
-                    {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang) }}
+                    {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang, page_path=page.path) }}
                     <ul class="wiki__link-list">
                         {% for item in page.extra.see_also %}
                         <li class="wiki__link-item">
                             {% if item.url %}
-                            <a href="{{ item.url }}" class="wiki__link">{{ item.title }}</a>
+                            <a href="{{ item.url | escape_xml | safe }}" class="wiki__link">{{ item.title }}</a>
                             {% else %}
                             <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="wiki__link">{{ item.title }}</a>
                             {% endif %}
@@ -90,7 +90,7 @@
                     <ul class="wiki__link-list">
                         {% for link in page.extra.external_links %}
                         <li class="wiki__link-item">
-                            <a href="{{ link.url }}" class="wiki__link wiki__link--external" target="_blank" rel="noopener noreferrer">
+                            <a href="{{ link.url | escape_xml | safe }}" class="wiki__link wiki__link--external" target="_blank" rel="noopener noreferrer">
                                 {{ link.title }}
                                 <svg class="wiki__external-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
@@ -153,7 +153,7 @@
                             <span class="wiki__reference-title">{{ ref.id }}</span>
                             {% endif %}
                             {% elif ref.url %}
-                            <a href="{{ ref.url }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                            <a href="{{ ref.url | escape_xml | safe }}" class="wiki__reference-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                             {% else %}
                             <span class="wiki__reference-title">{{ ref.title }}</span>
                             {% endif %}
@@ -330,7 +330,7 @@
                     <div class="wiki__meta-row">
                         <span class="wiki__meta-label">{{ trans(key="pagePartOfSeries", lang=detected_lang) }}</span>
                         <span class="wiki__meta-value">
-                            <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify }}"
+                            <a href="{{ get_url(path='wiki', lang=detected_lang) }}#category-{{ page.extra.category | slugify | escape_xml | safe }}"
                                class="wiki__category"
                                title="{{ trans(key='wikiBrowseCategory', lang=detected_lang) }}">{{ page.extra.category }}</a>
                         </span>

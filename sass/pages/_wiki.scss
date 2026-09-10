@@ -867,7 +867,9 @@
     // Section Titles
     &__section-title {
         font-family: var(--font-family-lead);
-        font-size: 1.5rem;
+        // Matches .wiki__content h2 — these titles sit at the same rank as the
+        // article's own subheadings and looked demoted next to them.
+        font-size: 1.875rem;
         font-weight: 700;
         color: var(--color-text);
         margin: 0 0 1.5rem 0;
@@ -880,7 +882,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 1px;
+            height: 2px;
             background: var(--color-hairline);
         }
 
@@ -890,7 +892,7 @@
             bottom: 0;
             left: 0;
             width: 60px;
-            height: 1px;
+            height: 2px;
             background: linear-gradient(
                 90deg,
                 var(--color-accent-primary),
@@ -906,14 +908,12 @@
     &__see-also {
         padding: 2rem;
         background: var(--color-background);
-        border-top: 1px solid var(--color-hairline);
     }
 
     // External Links Section
     &__external-links {
         padding: 2rem;
         background: var(--color-background);
-        border-top: 1px solid var(--color-hairline);
     }
 
     // References Section — bibliographic entries, layer 3 (citation

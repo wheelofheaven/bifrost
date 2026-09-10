@@ -93,12 +93,12 @@
             {% if page.extra.see_also %}
             <section class="article__see-also" role="complementary" aria-label="Related articles">
                 <h2 class="article__section-title">{{ trans(key="sectionSeeAlso", lang=detected_lang) }}</h2>
-                {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang) }}
+                {{ relatedness_graph::neighborhood(title=page.title, see_also=page.extra.see_also, lang=detected_lang, page_path=page.path) }}
                 <ul class="article__link-list">
                     {% for item in page.extra.see_also %}
                     <li class="article__link-item">
                         {% if item.url %}
-                        <a href="{{ item.url }}" class="article__link">{{ item.title }}</a>
+                        <a href="{{ item.url | escape_xml | safe }}" class="article__link">{{ item.title }}</a>
                         {% else %}
                         <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="article__link">{{ item.title }}</a>
                         {% endif %}
@@ -117,7 +117,7 @@
                 <ul class="article__link-list">
                     {% for link in page.extra.external_links %}
                     <li class="article__link-item">
-                        <a href="{{ link.url }}" class="article__link" target="_blank" rel="noopener noreferrer">{{ link.title }}</a>
+                        <a href="{{ link.url | escape_xml | safe }}" class="article__link" target="_blank" rel="noopener noreferrer">{{ link.title }}</a>
                         {% if link.description %}
                         <span class="article__link-description">— {{ link.description }}</span>
                         {% endif %}
@@ -173,7 +173,7 @@
                         <span>{{ ref.id }}</span>
                         {% endif %}
                         {% elif ref.url %}
-                        <a href="{{ ref.url }}" class="article__source-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
+                        <a href="{{ ref.url | escape_xml | safe }}" class="article__source-link" target="_blank" rel="noopener noreferrer">{{ ref.title }}</a>
                         {% else %}
                         <span>{{ ref.title }}</span>
                         {% endif %}
