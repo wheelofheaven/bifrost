@@ -1,7 +1,7 @@
 // Interactive map page.
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
-@use "../components/glass-cloud-button" as gcc-btn;
+@use "../abstracts/mixins" as m;
 
 main:has(.map-page) {
     max-width: none;
@@ -38,6 +38,10 @@ body:has(.map-page) .to-top {
     --map-top-gap: calc(var(--navbar-h, 4rem) + var(--map-frame));
     --map-zoom: 1;
     --map-bg: var(--map-surface-bg);
+    // Align floating chrome to the navbar's content edge. The navbar is
+    // width:90% capped at max-width:80rem and centred, so its gutter is
+    // whichever of those two is wider at the current viewport.
+    --map-chrome-gutter: max(5vw, calc((100vw - 80rem) / 2));
     --map-line: color-mix(in srgb, var(--color-text) 44%, transparent);
     --map-line-soft: color-mix(in srgb, var(--color-text) 22%, transparent);
     --map-text: var(--color-text);
@@ -140,7 +144,13 @@ body:has(.map-page) .to-top {
     width: 100%;
     height: calc(100% - var(--map-top-clearance));
     min-width: 0;
-    transform: translateY(var(--map-top-clearance));
+    // Offset with `top`, not `translateY`. Every floating overlay on the
+    // graph view (legend, node card, footer, zoom controls) is a child of
+    // this element, and WebKit silently refuses to paint `backdrop-filter`
+    // anywhere under a transformed ancestor — so a transform here disables
+    // the glass on all of them in Safari. Same invariant as the navbar; see
+    // layout/_navbar.scss.
+    top: var(--map-top-clearance);
 }
 
 .map-stage {
@@ -220,19 +230,42 @@ body:has(.map-page) .to-top {
 .map-zoom-controls {
     position: absolute;
     top: calc(var(--navbar-h, 4rem) + 1.25rem);
-    right: calc(var(--map-frame) + 0.25rem);
+    right: var(--map-chrome-gutter);
     z-index: 4;
     display: flex;
     gap: 0.45rem;
 
+    // Every floating surface on this page shares the navbar's glass — same
+    // token, same blur, same border, no drop shadow — so the page reads as
+    // one piece of chrome. Radius is the one deliberate difference: 0.5rem
+    // matches the navbar's own icon buttons (layout/_navbar.scss), where the
+    // panels take its 1rem panel radius.
+    //
+    // These previously used glass-cloud, which is the language for premium
+    // CTAs on the landing page; here it put two tinted radial gradients
+    // behind the icons and made the controls the loudest thing on a page
+    // whose subject is the map.
     &__button {
-        @include gcc-btn.glass-cloud-button;
+        // chrome-glass deliberately does not set `position` (it would override
+        // a call site's `absolute`), and these buttons no longer inherit one
+        // from glass-cloud-card — without it the glass ::before would size
+        // itself against .map-zoom-controls and cover the whole group.
+        position: relative;
+        @include m.chrome-glass(v.$border-radius-md);
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
         width: 2.7rem;
         height: 2.7rem;
-        justify-content: center;
         padding: 0;
-        --cloud-a: #{c.$cyan-300};
-        --cloud-b: #{c.$mauve-300};
+        cursor: pointer;
+        color: var(--color-text);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+            border-color: var(--color-text-muted);
+        }
 
         &:disabled {
             cursor: default;
@@ -1015,3 +1048,7 @@ body:has(.map-page) .to-top {
         display: none !important;
     }
 }
+
+
+
+

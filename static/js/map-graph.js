@@ -121,15 +121,96 @@
         });
 
         const pairList = Array.from(pairs.values());
-        const positions = computeLayout(nodes, pairList);
+        const communities = detectCommunities(nodes, adjacency);
+        const positions = computeLayout(nodes, pairList, communities);
 
-        state = { nodes, index, adjacency, pairs: pairList, positions };
+        state = { nodes, index, adjacency, pairs: pairList, positions, communities };
         render();
+    }
+
+    // --- community detection ---------------------------------------------
+
+    // One local-moving pass of Louvain modularity, used to give the layout
+    // something to cluster *by*. Without it the simulation is repulsion plus
+    // springs plus centering, which relaxes 193 nodes at mean degree ~15 into
+    // an even hairball where position carries no meaning.
+    //
+    // Label propagation was tried first and collapses on this graph:
+    // wiki/elohim alone touches 102 of the 193 nodes, so one label floods the
+    // corpus (190/193 in a single community). Modularity resists that,
+    // because joining an already-large community is penalised by that
+    // community's total degree.
+    //
+    // Communities drive position only. Node colour still encodes section, so
+    // the legend and its filters keep working unchanged.
+    function detectCommunities(nodes, adjacency) {
+        const ids = nodes.map((n) => n.id);
+        const slot = new Map(ids.map((id, i) => [id, i]));
+        const degree = ids.map((id) => adjacency.get(id).size);
+        const twoM = degree.reduce((a, b) => a + b, 0) || 1;
+
+        // Higher resolution favours more, smaller communities. 1.4 was picked
+        // against the live corpus: it yields ~20 groups whose largest is ~30
+        // nodes, where 1.0 leaves a 40-node catch-all and 2.0 starts shredding
+        // coherent topics into pairs.
+        const RESOLUTION = 1.4;
+
+        const community = ids.map((_, i) => i);
+        const totalDegree = degree.slice();
+
+        for (let pass = 0; pass < 20; pass++) {
+            let moved = 0;
+            for (let i = 0; i < ids.length; i++) {
+                const own = community[i];
+                const ki = degree[i];
+                totalDegree[own] -= ki;
+
+                // Edge count from this node into each candidate community.
+                const links = new Map();
+                adjacency.get(ids[i]).forEach((neighbourId) => {
+                    const c = community[slot.get(neighbourId)];
+                    links.set(c, (links.get(c) || 0) + 1);
+                });
+
+                let best = own;
+                let bestGain = (links.get(own) || 0) - (RESOLUTION * totalDegree[own] * ki) / twoM;
+                links.forEach((weight, c) => {
+                    const gain = weight - (RESOLUTION * totalDegree[c] * ki) / twoM;
+                    // Ties break on the lower community index so the result is
+                    // identical on every load.
+                    if (gain > bestGain || (gain === bestGain && c < best)) {
+                        best = c;
+                        bestGain = gain;
+                    }
+                });
+
+                totalDegree[best] += ki;
+                if (best !== own) {
+                    community[i] = best;
+                    moved++;
+                }
+            }
+            if (!moved) break;
+        }
+
+        // Renumber to a dense 0..n-1 range, ordered by descending size so the
+        // seeding ring below is stable.
+        const size = new Map();
+        community.forEach((c) => size.set(c, (size.get(c) || 0) + 1));
+        const ranked = Array.from(size.keys()).sort((a, b) => {
+            const d = size.get(b) - size.get(a);
+            return d !== 0 ? d : a - b;
+        });
+        const rank = new Map(ranked.map((c, i) => [c, i]));
+
+        const result = new Map();
+        ids.forEach((id, i) => result.set(id, rank.get(community[i])));
+        return { of: result, count: ranked.length };
     }
 
     // --- deterministic force layout --------------------------------------
 
-    function computeLayout(nodes, pairs) {
+    function computeLayout(nodes, pairs, communities) {
         const count = nodes.length;
         const xs = new Float64Array(count);
         const ys = new Float64Array(count);
@@ -137,19 +218,49 @@
         const dys = new Float64Array(count);
         const slot = new Map();
 
+        // Seed each node near its community's slot on a ring rather than at a
+        // random point. The simulation converges to separated lobes either
+        // way, but seeding by community stops it having to first tear apart a
+        // configuration where communities are interleaved.
+        const groupCount = Math.max(1, communities.count);
+        const groupAngle = (Math.PI * 2) / groupCount;
         nodes.forEach((node, i) => {
             slot.set(node.id, i);
             const rand = mulberry32(fnv1a(node.id));
+            const group = communities.of.get(node.id) || 0;
+            const gx = Math.cos(group * groupAngle) * 520;
+            const gy = Math.sin(group * groupAngle) * 520;
             const angle = rand() * Math.PI * 2;
-            const radius = 120 + rand() * 680;
-            xs[i] = Math.cos(angle) * radius;
-            ys[i] = Math.sin(angle) * radius;
+            const radius = rand() * 160;
+            xs[i] = gx + Math.cos(angle) * radius;
+            ys[i] = gy + Math.sin(angle) * radius;
         });
+
+        const groupOf = new Int32Array(count);
+        nodes.forEach((node, i) => { groupOf[i] = communities.of.get(node.id) || 0; });
+        const groupX = new Float64Array(groupCount);
+        const groupY = new Float64Array(groupCount);
+        const groupN = new Float64Array(groupCount);
+        const groupDX = new Float64Array(groupCount);
+        const groupDY = new Float64Array(groupCount);
 
         const REPULSION = 30000;
         const SPRING = 0.02;
         const CENTERING = 0.0045;
         const ITERATIONS = 300;
+
+        // Three forces separate the communities, and all three are needed.
+        // Cohesion alone cannot open gaps, because plain repulsion is
+        // identical within and across communities — raising it just tightens
+        // one blob (measured: inter/intra distance ratio 2.1 -> 3.3 with no
+        // visible lobes). What creates gaps is making the *edges* know about
+        // communities and pushing the centroids apart directly.
+        const COHESION = 0.08;              // node -> its own centroid
+        const CENTROID_REPULSION = 120000;  // centroid <-> other centroids
+        // Rest lengths: an edge that leaves its community wants to be long.
+        const REST_SEE_ALSO = 100;
+        const REST_IN_BODY = 140;
+        const REST_CROSS = 700;
 
         for (let iter = 0; iter < ITERATIONS; iter++) {
             const temp = 1 - iter / ITERATIONS;
@@ -185,7 +296,9 @@
                 const dx = xs[j] - xs[i];
                 const dy = ys[j] - ys[i];
                 const dist = Math.sqrt(dx * dx + dy * dy) || 1;
-                const rest = pair.type === "see_also" ? 140 : 190;
+                const rest = groupOf[i] !== groupOf[j]
+                    ? REST_CROSS
+                    : (pair.type === "see_also" ? REST_SEE_ALSO : REST_IN_BODY);
                 const force = (dist - rest) * SPRING;
                 const fx = (dx / dist) * force;
                 const fy = (dy / dist) * force;
@@ -195,7 +308,57 @@
                 dys[j] -= fy;
             });
 
+            // Community centroids, recomputed each step so the lobes can drift.
+            groupX.fill(0);
+            groupY.fill(0);
+            groupN.fill(0);
             for (let i = 0; i < count; i++) {
+                const g = groupOf[i];
+                groupX[g] += xs[i];
+                groupY[g] += ys[i];
+                groupN[g] += 1;
+            }
+            for (let g = 0; g < groupCount; g++) {
+                if (groupN[g] > 0) {
+                    groupX[g] /= groupN[g];
+                    groupY[g] /= groupN[g];
+                }
+            }
+
+            // Centroid-level repulsion, accumulated per community and then
+            // applied to every one of its members below.
+            groupDX.fill(0);
+            groupDY.fill(0);
+            for (let a = 0; a < groupCount; a++) {
+                if (groupN[a] === 0) continue;
+                for (let b = a + 1; b < groupCount; b++) {
+                    if (groupN[b] === 0) continue;
+                    let dx = groupX[a] - groupX[b];
+                    let dy = groupY[a] - groupY[b];
+                    let d2 = dx * dx + dy * dy;
+                    if (d2 < 1) {
+                        dx = ((a * 31 + b * 17) % 13) - 6;
+                        dy = ((a * 17 + b * 31) % 13) - 6;
+                        d2 = dx * dx + dy * dy + 1;
+                    }
+                    const force = CENTROID_REPULSION / d2;
+                    const dist = Math.sqrt(d2);
+                    const fx = (dx / dist) * force;
+                    const fy = (dy / dist) * force;
+                    groupDX[a] += fx;
+                    groupDY[a] += fy;
+                    groupDX[b] -= fx;
+                    groupDY[b] -= fy;
+                }
+            }
+
+            for (let i = 0; i < count; i++) {
+                const g = groupOf[i];
+                dxs[i] += (groupX[g] - xs[i]) * COHESION;
+                dys[i] += (groupY[g] - ys[i]) * COHESION;
+                dxs[i] += groupDX[g];
+                dys[i] += groupDY[g];
+
                 dxs[i] -= xs[i] * CENTERING;
                 dys[i] -= ys[i] * CENTERING;
 

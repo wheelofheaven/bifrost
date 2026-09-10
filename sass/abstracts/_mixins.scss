@@ -63,3 +63,46 @@
         }
     }
 }
+
+
+// Chrome glass — the navbar's exact recipe, for floating chrome that should
+// read as the same surface (see layout/_navbar.scss).
+//
+// Three details make a surface match rather than merely resemble:
+//
+//   * `--color-navbar-bg` (~10% alpha), NOT `--color-card-bg`, which is
+//     opaque and hides the blur entirely. A panel can declare
+//     backdrop-filter and still look like a flat card for exactly this
+//     reason.
+//   * blur(12px), no saturate().
+//   * painted on a ::before, so children keep their own stacking context and
+//     the token picks up the reduced-transparency and no-backdrop-filter
+//     fallbacks defined in themes/_init.scss.
+//
+// Requires a transform-free ancestor chain: WebKit silently refuses to paint
+// backdrop-filter anywhere below a transformed element.
+// The caller must establish a positioned, stacking context of its own (these
+// surfaces are all `position: absolute` already). The mixin deliberately does
+// NOT set `position`: Sass emits included declarations after the ones written
+// above the @include, so a `position: relative` here silently overrode the
+// call site's `position: absolute`.
+@mixin chrome-glass($radius: 0.5rem, $surface: var(--color-navbar-bg)) {
+    border-radius: $radius;
+    border: 1px solid var(--color-border);
+    background: none;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background-color: $surface;
+        // A shorthand would be tidier, but background-image has to be cleared
+        // explicitly: this mixin sometimes overrides a rule that painted a
+        // gradient on the same pseudo-element.
+        background-image: none;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        z-index: -1;
+    }
+}
