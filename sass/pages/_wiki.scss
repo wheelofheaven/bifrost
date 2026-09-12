@@ -9,6 +9,10 @@
 @use "../components/glass-cloud-button" as gcc-btn;
 
 .wiki {
+    // Every section of the entry insets to this one value — see the
+    // doc-gutter mixin in abstracts/_mixins.scss.
+    @include mix.doc-gutter;
+
     min-height: 100vh;
     background: var(--color-background);
     padding: 0;
@@ -42,8 +46,16 @@
         }
     }
 
-    // Right sidebar: header (always visible at top) + sticky TOC below
+    > .breadcrumbs {
+        padding-left: var(--doc-gutter);
+        padding-right: var(--doc-gutter);
+    }
+
+    // Right sidebar: header (always visible at top) + sticky TOC below.
+    // The panel supplies its own padding, so shared blocks nested inside it
+    // (Cite this page, Read Next) must not inset a second time.
     &__sidebar {
+        --doc-gutter: 0;
         grid-area: sidebar;
         background: var(--color-background);
         display: flex;
@@ -180,14 +192,14 @@
 
     // Page header lives in the main column, above the article body.
     &__page-header {
-        padding: 0.5rem 2rem 1.25rem;
+        padding: 0.5rem var(--doc-gutter) 1.25rem;
         display: flex;
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
 
         @media (max-width: 900px) {
-            padding: 0.5rem 1.25rem 1rem;
+            padding-bottom: 1rem;
         }
     }
 
@@ -597,7 +609,7 @@
     // ---- Edit this page footer ----
     // History link on the left, "Edit this page" CTA on the right.
     &__edit-footer {
-        margin: 3rem 2rem 2rem;
+        margin: 3rem var(--doc-gutter) 2rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -605,7 +617,8 @@
         flex-wrap: wrap;
 
         @media (max-width: 768px) {
-            margin: 2.5rem 1.5rem 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
         }
     }
 
@@ -673,13 +686,14 @@
 
     // Main Content
     &__content {
-        padding: 2rem;
+        padding: 2rem var(--doc-gutter);
         font-family: var(--font-family-body);
         line-height: 1.7;
         color: var(--color-text);
 
         @media (max-width: 768px) {
-            padding: 1.5rem;
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
         }
 
         // Typography within content
@@ -906,13 +920,13 @@
 
     // See Also Section
     &__see-also {
-        padding: 2rem;
+        padding: 2rem var(--doc-gutter);
         background: var(--color-background);
     }
 
     // External Links Section
     &__external-links {
-        padding: 2rem;
+        padding: 2rem var(--doc-gutter);
         background: var(--color-background);
     }
 
@@ -928,6 +942,7 @@
     &__references,
     &__footnotes {
         margin: 2.5rem 0 2rem;
+        padding: 0 var(--doc-gutter);
 
         > h2 {
             padding-bottom: 0.625rem;
@@ -1273,6 +1288,8 @@
 
         &__toc {
             background: var(--color-background);
+            // The sidebar resets --doc-gutter to 0, so the stacked panel
+            // repeats the mobile step of the ramp literally.
             padding: 1.5rem 1rem;
             border-right: none;
             height: auto;
@@ -1290,10 +1307,9 @@
 
         &__content,
         &__see-also,
-        &__external-links,
-        &__references,
-        &__footnotes {
-            padding: 1.5rem 1rem;
+        &__external-links {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
         }
 
         // (Legacy mobile padding + ::before pseudo-decimal counter for
@@ -1518,12 +1534,12 @@
 
 // Wiki Breadcrumbs Component
 .wiki__breadcrumbs {
-    padding: 1rem 2rem 0;
+    padding: 1rem var(--doc-gutter, 2rem) 0;
     border-bottom: 1px solid var(--color-hairline-subtle);
     margin-bottom: 0;
 
     @media (max-width: 768px) {
-        padding: 0.75rem 1rem 0;
+        padding-top: 0.75rem;
     }
 }
 
@@ -1650,13 +1666,13 @@
 // paragraph's left edge in the article's padding area.
 .wiki__lede {
     position: relative;
-    // Horizontal padding matches .wiki__content (2rem / 1.5rem) so the summary
-    // text is exactly as wide as the body text below it.
-    padding: 1.25rem 2rem 1.5rem;
+    // Horizontal padding is the shared document gutter, so the summary text
+    // is exactly as wide as the body text below it.
+    padding: 1.25rem var(--doc-gutter) 1.5rem;
     min-height: 4.5rem;
 
     @media (max-width: 768px) {
-        padding: 1rem 1.5rem 1.5rem;
+        padding-top: 1rem;
     }
 
     p {

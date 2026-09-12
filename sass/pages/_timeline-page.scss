@@ -6,11 +6,16 @@
 // elements: age badge, Genesis verse, prev/next navigation, related ages.
 
 @use "../abstracts/variables" as vars;
+@use "../abstracts/mixins" as mix;
 @use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 @use "../components/glass-cloud-button" as gcc-btn;
 
 .timeline-page {
+    // Every section of the chapter insets to this one value — see the
+    // doc-gutter mixin in abstracts/_mixins.scss.
+    @include mix.doc-gutter($desktop: 2rem, $tablet: 1.25rem, $mobile: 1.25rem);
+
     min-height: 100vh;
     background: var(--color-background);
     padding: 0;
@@ -38,8 +43,16 @@
         }
     }
 
-    // Right sidebar: header (always visible at top) + sticky TOC below
+    > .breadcrumbs {
+        padding-left: var(--doc-gutter);
+        padding-right: var(--doc-gutter);
+    }
+
+    // Right sidebar: header (always visible at top) + sticky TOC below.
+    // The panel supplies its own padding, so shared blocks nested inside it
+    // (Cite this page) must not inset a second time.
     &__sidebar {
+        --doc-gutter: 0;
         grid-area: sidebar;
         background: var(--color-background);
         display: flex;
@@ -135,14 +148,14 @@
 
     // Page header lives in the main column, above the article body
     &__page-header {
-        padding: 0.5rem 2rem 1.25rem;
+        padding: 0.5rem var(--doc-gutter) 1.25rem;
         display: flex;
         flex-direction: column;
         gap: 0.75rem;
         align-items: flex-start;
 
         @media (max-width: 900px) {
-            padding: 0.5rem 1.25rem 1rem;
+            padding-bottom: 1rem;
         }
     }
 
@@ -447,7 +460,7 @@
     // When JS lifts the TOC into the main column on mobile, give it a hairline
     // separator so it reads as its own block within the article.
     &__toc--inline {
-        margin: 0.5rem 1.25rem 1.5rem;
+        margin: 0.5rem var(--doc-gutter) 1.5rem;
         padding: 1rem 1.25rem;
         border: 1px solid var(--color-hairline);
         border-radius: vars.$border-radius-md;
@@ -519,15 +532,13 @@
 
     // Chapter Content
     &__content {
-        padding: 0 2rem;
+        padding: 0 var(--doc-gutter);
         font-family: typo.$font-family-body;
         font-size: 1.0625rem;
         line-height: 1.8;
         color: var(--color-text);
 
         @media (max-width: 900px) {
-            padding: 0 1.25rem;
-
             // Chapter illustrations break out of the content gutter and
             // span the full viewport — they're the visual anchor of each
             // chapter, and the side padding only makes sense alongside the
@@ -611,12 +622,12 @@
 
     // Chapter Navigation
     &__navigation {
-        margin: 3rem 2rem 0;
+        margin: 3rem var(--doc-gutter) 0;
         padding-top: 2rem;
         border-top: 1px solid var(--color-hairline);
 
         @media (max-width: 900px) {
-            margin: 2.5rem 1.25rem 0;
+            margin-top: 2.5rem;
         }
     }
 
@@ -731,7 +742,7 @@
 
     // ---- Edit this page footer ----
     &__edit-footer {
-        margin: 3rem 2rem 2rem;
+        margin: 3rem var(--doc-gutter) 2rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -739,7 +750,8 @@
         flex-wrap: wrap;
 
         @media (max-width: 900px) {
-            margin: 2.5rem 1.25rem 1.5rem;
+            margin-top: 2.5rem;
+            margin-bottom: 1.5rem;
         }
     }
 

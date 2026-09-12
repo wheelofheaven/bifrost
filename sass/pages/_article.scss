@@ -17,6 +17,12 @@
 // ---- Page: .article ----
 
 .article {
+    // A centred fixed-width column: the gutter lives on __container's
+    // padding, so the sections inside are flush. Shared blocks that inset
+    // themselves on full-width pages (.related-content, .cite) read this and
+    // stay flush here too — see the doc-gutter mixin in abstracts/_mixins.scss.
+    --doc-gutter: 0;
+
     padding: v.$spacing-md 0 v.$spacing-2xl;
 
     &__container {

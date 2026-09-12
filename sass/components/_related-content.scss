@@ -4,13 +4,16 @@
 @use "../base/typography" as typo;
 
 .related-content {
-    // Render as just another article section — same horizontal padding as the
-    // article body / see-also / references blocks so the left edge aligns.
+    // Render as just another document section: the host page owns the
+    // horizontal inset via --doc-gutter (see abstracts/_mixins.scss), so the
+    // left edge lines up with the body, See also and References above it.
+    // The fallback is 0 for centred fixed-width pages (articles, dispatches),
+    // whose sections are flush inside the container's own padding.
     margin-top: 2.5rem;
-    padding: 0 2rem 2rem;
+    padding: 0 var(--doc-gutter, 0) 2rem;
 
     @media (max-width: 768px) {
-        padding: 0 1.5rem 1.5rem;
+        padding-bottom: 1.5rem;
     }
 
     &__title {

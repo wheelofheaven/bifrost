@@ -310,7 +310,9 @@
 // ---- Inline TOC variant: when JS lifts the TOC into the article body on
 //      mobile, it gets the modifier .wiki__toc--inline. ----
 .wiki__toc--inline {
-    margin: 1.5rem 0 2rem;
+    // Lifted out of the sidebar into the article body, so it takes the
+    // article's section inset rather than the sidebar's own padding.
+    margin: 1.5rem var(--doc-gutter, 0) 2rem;
     padding: 1rem 1.25rem 1.25rem;
     background: var(--color-background-tertiary);
     border-radius: v.$border-radius-md;

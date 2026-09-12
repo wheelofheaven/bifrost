@@ -6,12 +6,23 @@
 @use "../base/typography" as typo;
 
 .breadcrumbs {
+    // Page-level chrome, so the inset follows the page frame rather than the
+    // reading column: the steps below match the centred containers'
+    // $spacing-lg / $spacing-sm ramp, so on narrow screens — where the column
+    // fills the frame — the trail shares an edge with the title under it.
+    // Full-width column pages (wiki, timeline) override these with their own
+    // --doc-gutter; see the doc-gutter mixin in abstracts/_mixins.scss.
     padding: 1rem 2rem;
     margin-bottom: 1rem;
 
     @media (max-width: 999px) {
-        padding: 0.75rem 1rem;
+        padding: 0.75rem 1.5rem;
         margin-bottom: 0.75rem;
+    }
+
+    @media (max-width: 768px) {
+        padding-left: 0.75rem;
+        padding-right: 0.75rem;
     }
 
     &__list {

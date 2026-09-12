@@ -465,12 +465,23 @@
 // ---- Page: .dispatch ----
 
 .dispatch {
+    // Centred fixed-width column — same arrangement as .article: the gutter
+    // is the container's padding, sections inside are flush.
+    --doc-gutter: 0;
+
     padding: v.$spacing-md 0 v.$spacing-2xl;
 
     &__container {
         max-width: 44rem;
         margin: 0 auto;
         padding: 0 v.$spacing-lg;
+
+        // Tighter side gutter on phones, consistent with .article__container
+        // and the section landing pages.
+        @media (max-width: 768px) {
+            padding-left: v.$spacing-sm;
+            padding-right: v.$spacing-sm;
+        }
     }
 
     &__article {

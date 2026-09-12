@@ -51,6 +51,40 @@
     }
 }
 
+// ---- Document gutter -------------------------------------------------
+//
+// `--doc-gutter` is the horizontal inset shared by every section of a
+// document page: the page header, the lede, the body, See also, External
+// links, References, Notes, Read Next, Cite this page and the edit footer.
+// Each of those pads (or margins) to this one value, so their left and
+// right edges line up no matter which template renders them and no matter
+// which breakpoint is active.
+//
+// Two layout families use it:
+//
+//   * Full-width column pages (wiki, timeline) inset their sections from
+//     the column edge — they @include doc-gutter and get the ramp below.
+//   * Centred fixed-width pages (articles, dispatches) get their gutter
+//     from the container's max-width padding instead, so their sections
+//     are flush and they declare `--doc-gutter: 0`.
+//
+// Shared blocks that can land in either family (.related-content, .cite)
+// read `var(--doc-gutter, 0)` and are correct in both. A region that
+// supplies its own padding — a sidebar panel, a card — resets the token to
+// 0 so nested shared blocks don't inset twice.
+@mixin doc-gutter($desktop: 2rem, $tablet: 1.25rem, $mobile: 1rem,
+                  $tablet-at: 900px, $mobile-at: 768px) {
+    --doc-gutter: #{$desktop};
+
+    @media (max-width: $tablet-at) {
+        --doc-gutter: #{$tablet};
+    }
+
+    @media (max-width: $mobile-at) {
+        --doc-gutter: #{$mobile};
+    }
+}
+
 // Media query shortcut (unused)
 @mixin respond($breakpoint) {
     @if $breakpoint == sm {

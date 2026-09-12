@@ -1,5 +1,6 @@
 // Library Section Styles
 @use "../abstracts/variables" as vars;
+@use "../abstracts/mixins" as mix;
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
@@ -789,13 +790,19 @@
         padding: 0;
     }
 
-    // Breadcrumbs
+    // Breadcrumbs — same inset as the book body below (the reader's own
+    // ramp steps at 900px / 600px, not the shared component's 999px).
+    > .breadcrumbs {
+        padding-left: var(--doc-gutter);
+        padding-right: var(--doc-gutter);
+    }
+
     &__breadcrumbs {
-        padding: 1rem 2rem 0;
+        padding: 1rem var(--doc-gutter, 2rem) 0;
         margin-bottom: 0;
 
         @media (max-width: 768px) {
-            padding: 0.75rem 1rem 0;
+            padding-top: 0.75rem;
         }
     }
 
@@ -3493,6 +3500,10 @@
 // =====================================================================
 
 .library-book {
+    // The reader drops to a narrower gutter one breakpoint later than the
+    // wiki does, so the numeral column keeps its measure on phones.
+    @include mix.doc-gutter($mobile: 0.75rem, $mobile-at: 600px);
+
     min-height: 100vh;
     background: var(--color-background);
     padding: 0;
@@ -3535,17 +3546,14 @@
         min-height: 100vh;
         margin: 0;
         max-width: 64rem;
-        padding: 0 2rem 3rem;
+        padding: 0 var(--doc-gutter) 3rem;
 
+        // Phone — give the prose almost the full viewport width; the
+        // numeral column on the left is the only thing taking measure off
+        // the reader's column. (The gutter itself steps in the ramp on
+        // .library-book.)
         @media (max-width: 900px) {
-            padding: 0 1.25rem 2rem;
-        }
-
-        // Phone — give the prose almost the full viewport width;
-        // numeral column on the left is the only thing taking measure
-        // off the reader's column.
-        @media (max-width: 600px) {
-            padding: 0 0.75rem 2rem;
+            padding-bottom: 2rem;
         }
     }
 

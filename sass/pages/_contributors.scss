@@ -6,6 +6,13 @@
     margin: 0 auto;
     padding: v.$spacing-xl v.$spacing-lg;
 
+    // The block already supplies the page gutter, so the trail lines up with
+    // the header and the card grid instead of insetting a second time.
+    > .breadcrumbs {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
     &__header {
         margin-bottom: v.$spacing-2xl;
         text-align: center;
@@ -96,11 +103,26 @@
     margin: 0 auto;
     padding: v.$spacing-xl v.$spacing-lg;
 
+    @media (max-width: 768px) {
+        padding: v.$spacing-lg v.$spacing-sm;
+    }
+
+    // The page is a single card, so the trail above it lines up with the
+    // card's outer edge rather than adding an inset of its own.
+    > .breadcrumbs {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
     &__article {
         background: var(--color-surface);
         border-radius: v.$border-radius-lg;
         padding: v.$spacing-2xl;
         border: 1px solid var(--color-border);
+
+        @media (max-width: 768px) {
+            padding: v.$spacing-lg;
+        }
     }
 
     &__header {
