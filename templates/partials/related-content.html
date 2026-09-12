@@ -1,47 +1,17 @@
 <!-- Related Content Suggestions -->
-{% if page and page.ancestors %}
-{% set section_path = page.ancestors | last %}
-{% if section_path %}
-{% set current_section = get_section(path=section_path) %}
-{% if current_section.pages and current_section.pages | length > 1 %}
-
+{# The cards come from data/related/<lang>.json, precomputed by
+   scripts/build_related.py (`mise run related`), keyed by page path.
+   This partial used to call get_section() and scan every sibling twice for
+   every page; Zola serialises the whole section, every page with its rendered
+   HTML, on each call, which made this partial half of the build's CPU time.
+   The selection rule is unchanged: same category first, then section order. #}
+{% if page and page.path %}
+{% set rc_key = page.path | trim_start_matches(pat="/") | trim_end_matches(pat="/") %}
+{% set rc_all = load_data(path="data/related/" ~ detected_lang ~ ".json", required=false) %}
 {% set related_pages = [] %}
-{% set max_items = 4 %}
-
-{# Find related pages from the same section #}
-{% for sibling in current_section.pages %}
-    {% if sibling.permalink != page.permalink and related_pages | length < max_items %}
-        {# Prioritize pages with matching category or topics #}
-        {% set dominated = false %}
-        {% if page.extra.category and sibling.extra.category and page.extra.category == sibling.extra.category %}
-            {% set_global related_pages = related_pages | concat(with=[sibling]) %}
-        {% elif page.extra.topics and sibling.extra.topics %}
-            {% for topic in page.extra.topics %}
-                {% if topic in sibling.extra.topics and related_pages | length < max_items %}
-                    {% set match_found = true %}
-                {% endif %}
-            {% endfor %}
-            {% if match_found is defined and match_found %}
-                {% set_global related_pages = related_pages | concat(with=[sibling]) %}
-            {% endif %}
-        {% endif %}
-    {% endif %}
-{% endfor %}
-
-{# Fill remaining slots with other siblings #}
-{% for sibling in current_section.pages %}
-    {% if sibling.permalink != page.permalink and related_pages | length < max_items %}
-        {% set already_added = false %}
-        {% for existing in related_pages %}
-            {% if existing.permalink == sibling.permalink %}
-                {% set_global already_added = true %}
-            {% endif %}
-        {% endfor %}
-        {% if not already_added %}
-            {% set_global related_pages = related_pages | concat(with=[sibling]) %}
-        {% endif %}
-    {% endif %}
-{% endfor %}
+{% if rc_all and rc_all.pages and rc_key in rc_all.pages %}
+    {% set related_pages = rc_all.pages[rc_key] %}
+{% endif %}
 
 {# Render the related content section if we have items #}
 {% if related_pages | length > 0 %}
@@ -51,9 +21,9 @@
     </h2>
     <div class="related-content__grid">
         {% for related in related_pages %}
-        <a href="{{ related.permalink | escape_xml | safe }}" class="related-content__card">
-            {% if related.extra.category %}
-            <span class="related-content__card-category">{{ related.extra.category }}</span>
+        <a href="{{ get_url(path=related.path, trailing_slash=true) | escape_xml | safe }}" class="related-content__card">
+            {% if related.category %}
+            <span class="related-content__card-category">{{ related.category }}</span>
             {% endif %}
             <h3 class="related-content__card-title">{{ related.title }}</h3>
             {% if related.description %}
@@ -72,6 +42,4 @@
 </aside>
 {% endif %}
 
-{% endif %}
-{% endif %}
 {% endif %}

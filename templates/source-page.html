@@ -2,25 +2,40 @@
 {% import "macros/section-icons.html" as section_icons %}
 
 {% block content %}
-{% set sources_manifest = load_data(path="data/sources.json", required=false) %}
-{% set cited_by_manifest = load_data(path="data/sources/cited-by.json", required=false) %}
 {% set source_id = page.extra.source_id | default(value=page.slug) %}
 
-{% set_global source = false %}
-{% if sources_manifest and sources_manifest.sources %}
-    {% set source_matches = sources_manifest.sources | filter(attribute="id", value=source_id) %}
-    {% if source_matches | length > 0 %}
-        {% set_global source = source_matches | first %}
-    {% endif %}
-{% endif %}
+{# One small file per source, data/sources/records/<id>.json, written by
+   scripts/build_sources.py. Loading the 900 KB manifest plus the cited-by
+   index and filtering them for every one of the 8,000 source pages cloned
+   over 1 MB of JSON per page and was the largest cost of the full build.
+   The manifests stay as the fallback for an id the record files do not
+   know yet. #}
+{% set source_record = load_data(path="data/sources/records/" ~ source_id ~ ".json", required=false) %}
 
+{% set_global source = false %}
 {% set_global backlinks = [] %}
-{% if cited_by_manifest and cited_by_manifest.sources %}
-    {% set backlink_matches = cited_by_manifest.sources | filter(attribute="id", value=source_id) %}
-    {% if backlink_matches | length > 0 %}
-        {% set backlink_record = backlink_matches | first %}
-        {% if backlink_record.cited_by %}
-            {% set_global backlinks = backlink_record.cited_by %}
+{% if source_record and source_record.id %}
+    {% set_global source = source_record %}
+    {% if source_record.cited_by %}
+        {% set_global backlinks = source_record.cited_by %}
+    {% endif %}
+{% else %}
+    {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+    {% if sources_manifest and sources_manifest.sources %}
+        {% set source_matches = sources_manifest.sources | filter(attribute="id", value=source_id) %}
+        {% if source_matches | length > 0 %}
+            {% set_global source = source_matches | first %}
+        {% endif %}
+    {% endif %}
+
+    {% set cited_by_manifest = load_data(path="data/sources/cited-by.json", required=false) %}
+    {% if cited_by_manifest and cited_by_manifest.sources %}
+        {% set backlink_matches = cited_by_manifest.sources | filter(attribute="id", value=source_id) %}
+        {% if backlink_matches | length > 0 %}
+            {% set backlink_record = backlink_matches | first %}
+            {% if backlink_record.cited_by %}
+                {% set_global backlinks = backlink_record.cited_by %}
+            {% endif %}
         {% endif %}
     {% endif %}
 {% endif %}

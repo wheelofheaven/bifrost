@@ -126,7 +126,7 @@
                 {% endif %}
 
                 {% if page.extra.references %}
-                {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+                {% set sources_by_id = load_data(path="data/sources/by-id.json", required=false) %}
                 <section class="wiki__references" role="doc-endnotes" aria-label="References and citations" data-ai-cite="true">
                     <h2 id="references">{{ trans(key="sectionReferences", lang=detected_lang) }}</h2>
                     <ol class="wiki__reference-list" itemscope itemtype="https://schema.org/ItemList">
@@ -138,14 +138,11 @@
                         <li class="wiki__reference-item" id="ref-{{ ref_anchor }}">
                             <a href="#citeref-{{ ref_anchor }}" class="wiki__reference-backlink" aria-label="Jump back to citation {{ loop.index }} in the text" title="Jump back to citation">[{{ loop.index }}]</a>
                             {% if ref.id and not ref.title %}
-                            {# Source-ID lookup via filter() so a missing match falls through to the {% else %}
-                               branch (renders the bare ref.id rather than a gap). #}
-                            {% set source_matches = [] %}
-                            {% if sources_manifest and sources_manifest.sources %}
-                            {% set source_matches = sources_manifest.sources | filter(attribute="id", value=ref.id) %}
-                            {% endif %}
-                            {% if source_matches | length > 0 %}
-                            {% set source = source_matches[0] %}
+                            {# Source-ID lookup in data/sources/by-id.json (title, authors, date only;
+                               the full manifest is 900 KB and was cloned for every page). A missing id
+                               falls through to the {% else %} branch and renders the bare ref.id. #}
+                            {% if sources_by_id and sources_by_id.sources and ref.id in sources_by_id.sources %}
+                            {% set source = sources_by_id.sources[ref.id] %}
                             <a href="{{ get_url(path='sources/' ~ source.id, lang=detected_lang) }}" class="wiki__reference-link">{{ source.title }}</a>
                             {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
                             {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}

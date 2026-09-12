@@ -52,14 +52,14 @@
             <aside class="tradition-hub__aside" role="complementary" aria-label="Related metadata">
 
                 {# --- Cited sources (six-source rule). Titles resolved
-                       via the flat data/sources.json artifact; links go
+                       via the data/sources/by-id.json lookup; links go
                        to each source's external follow_url since the
                        per-source detail pages were dropped in V1. The
                        `source_family` filter that powered the older
                        "All sources in this family" aside is gone with
                        the editorial taxonomy. #}
                 {% if page.extra.cited_sources %}
-                {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+                {% set sources_by_id = load_data(path="data/sources/by-id.json", required=false) %}
                 <section class="tradition-hub__aside-block">
                     <h2 class="tradition-hub__aside-title">Cited sources</h2>
                     <p class="tradition-hub__aside-note">
@@ -71,12 +71,8 @@
                     <ul class="tradition-hub__source-list">
                     {% for source_slug in page.extra.cited_sources %}
                         {% set_global src_record = false %}
-                        {% if sources_manifest and sources_manifest.sources %}
-                            {% set matches = sources_manifest.sources | filter(attribute="id", value=source_slug) %}
-                            {% if matches | length > 0 %}
-                                {% set first_match = matches | first %}
-                                {% set_global src_record = first_match %}
-                            {% endif %}
+                        {% if sources_by_id and sources_by_id.sources and source_slug in sources_by_id.sources %}
+                            {% set_global src_record = sources_by_id.sources[source_slug] %}
                         {% endif %}
                         <li class="tradition-hub__source-item">
                             {% if src_record %}

@@ -444,14 +444,11 @@
                        link goes to /sources/ (the index page handles
                        deep-linking via search). #}
                     {% if current_book_entry and current_book_entry.source_id %}
-                    {% set sources_manifest = load_data(path="data/sources.json", required=false) %}
+                    {% set sources_by_id = load_data(path="data/sources/by-id.json", required=false) %}
                     {% set_global src_title = current_book_entry.source_id %}
-                    {% if sources_manifest and sources_manifest.sources %}
-                        {% set matches = sources_manifest.sources | filter(attribute="id", value=current_book_entry.source_id) %}
-                        {% if matches | length > 0 %}
-                            {% set first_match = matches | first %}
-                            {% set_global src_title = first_match.title %}
-                        {% endif %}
+                    {% if sources_by_id and sources_by_id.sources and current_book_entry.source_id in sources_by_id.sources %}
+                        {% set src_record = sources_by_id.sources[current_book_entry.source_id] %}
+                        {% set_global src_title = src_record.title %}
                     {% endif %}
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">Source:</span>

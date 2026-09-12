@@ -380,7 +380,7 @@
       "item": {{ home_url | json_encode | safe }}
     }
     {% for ancestor in page.ancestors %}
-      {% set ancestor_section = get_section(path=ancestor) %}
+      {% set ancestor_section = get_section(path=ancestor, metadata_only=true) %}{# metadata_only: the breadcrumb needs title + permalink, not every page of the section #}
       {% set ancestor_name = ancestor_section.title | default(value=config.title) %}
       {% if ancestor_name %}
       ,{
@@ -414,7 +414,7 @@
       "item": {{ home_url | json_encode | safe }}
     }
     {% for ancestor in section.ancestors %}
-      {% set ancestor_section = get_section(path=ancestor) %}
+      {% set ancestor_section = get_section(path=ancestor, metadata_only=true) %}
       {% set ancestor_name = ancestor_section.title | default(value=config.title) %}
       {% if ancestor_name %}
       ,{
