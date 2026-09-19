@@ -820,3 +820,43 @@ document.addEventListener("keydown", e => {
         }
     }
 });
+
+// Programmatic API for other modules — webmcp.js exposes it to in-browser
+// agents as the `search_site` tool. Same index and Fuse options as the
+// modal, so an agent and a reader get identical rankings. `ready()`
+// resolves once the index is loaded; `query()` is synchronous after that.
+window.wohSearch = {
+    ready: initSearch,
+    query: function (query, opts) {
+        opts = opts || {};
+        if (!fuse || !query || !query.trim()) return [];
+        const limit = Math.max(1, Math.min(opts.limit || 8, 25));
+        const wantLang = opts.lang === "all" ? null : (opts.lang || currentLanguage);
+        const wantSection = opts.section ? String(opts.section).toLowerCase() : null;
+        const out = [];
+        for (const result of fuse.search(query.trim())) {
+            const item = result.item;
+            const uri = extractUri(item.url);
+            const langMatch = uri.match(/^\/(de|fr|es|he|ru|ja|zh-Hant|zh|ko)(?=\/|$)/);
+            const lang = langMatch ? langMatch[1] : "en";
+            if (wantLang && lang !== wantLang) continue;
+            const pathNoLang = uri.replace(/^\/(?:de|fr|es|he|ru|ja|zh-Hant|zh|ko)\//, "/");
+            const sectionKey = pathNoLang.split("/").filter(Boolean)[0] || "home";
+            if (wantSection && sectionKey !== wantSection) continue;
+            let body = item.body || "";
+            if (item.title && body.indexOf(item.title) === 0) body = body.slice(item.title.length);
+            body = body.replace(/\s+/g, " ").trim();
+            out.push({
+                title: item.title,
+                url: item.url,
+                path: uri,
+                section: extractSection(item.url),
+                lang: lang,
+                snippet: body.length > 240 ? body.slice(0, 240) + "…" : body,
+                score: typeof result.score === "number" ? Math.round((1 - result.score) * 1000) / 1000 : null
+            });
+            if (out.length >= limit) break;
+        }
+        return out;
+    }
+};

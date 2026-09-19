@@ -53,11 +53,18 @@ const bundles = {
     'category-rail.js',
     'cite-copy.js',
     'claim-badge.js',
+    // Tiny stub: injects webmcp.bundle.js only when a model context exists.
+    'webmcp-loader.js',
   ],
   // Lazy-loaded by search-loader.js on first focus/click/⌘+/ chord.
   'search.bundle.js': [
     'vendor/fuse.min.js',
     'search.js',
+  ],
+  // Loaded by webmcp-loader.js only in agentic browsers (and readiness
+  // scanners) — registers the site's tools with document.modelContext.
+  'webmcp.bundle.js': [
+    'webmcp.js',
   ],
   'library.bundle.js': [
     'library-storage.js',

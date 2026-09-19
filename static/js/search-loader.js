@@ -4,25 +4,36 @@
 // linger on a page. The full bundle is ~30 KB minified; this stub is
 // tiny and runs synchronously on every page.
 (function () {
-    let scriptInjected = false;
+    let loadPromise = null;
 
+    // Returns a promise that settles when the bundle has run, so callers
+    // other than the UI (webmcp.js) can wait for window.wohSearch.
     function loadSearchBundle() {
-        if (scriptInjected) return;
-        scriptInjected = true;
-        const s = document.createElement("script");
-        s.src = "/js/dist/search.bundle.js?v=5";
-        s.async = true;
-        // When the bundle finishes loading, re-fire focus on the input
-        // if the user is already there, so the modal opens without a
-        // second click.
-        s.onload = function () {
-            const input = document.querySelector(".navbar__search-input");
-            if (input && document.activeElement === input) {
-                input.dispatchEvent(new Event("focus"));
-            }
-        };
-        document.head.appendChild(s);
+        if (loadPromise) return loadPromise;
+        loadPromise = new Promise(function (resolve, reject) {
+            const s = document.createElement("script");
+            s.src = "/js/dist/search.bundle.js?v=6";
+            s.async = true;
+            // When the bundle finishes loading, re-fire focus on the input
+            // if the user is already there, so the modal opens without a
+            // second click.
+            s.onload = function () {
+                const input = document.querySelector(".navbar__search-input");
+                if (input && document.activeElement === input) {
+                    input.dispatchEvent(new Event("focus"));
+                }
+                resolve();
+            };
+            s.onerror = function () {
+                loadPromise = null;
+                reject(new Error("search bundle failed to load"));
+            };
+            document.head.appendChild(s);
+        });
+        return loadPromise;
     }
+
+    window.wohLoadSearchBundle = loadSearchBundle;
 
     const input = document.querySelector(".navbar__search-input");
     if (input) {
