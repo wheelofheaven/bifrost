@@ -93,7 +93,7 @@
                                    missing id falls through to the {% else %} branch and renders the bare ref.id. #}
                                 {% if sources_by_id and sources_by_id.sources and ref.id in sources_by_id.sources %}
                                 {% set source = sources_by_id.sources[ref.id] %}
-                                <a href="{{ get_url(path='sources/' ~ source.id, lang=detected_lang) }}" class="wiki__reference-link">{{ source.title }}</a>
+                                <a href="{{ get_url(path='sources/' ~ source.id, lang=detected_lang, trailing_slash=true) }}" class="wiki__reference-link">{{ source.title }}</a>
                                 {% if source.authored_by %}<span class="wiki__reference-author">{{ trans(key="referenceBy", lang=detected_lang) }} {{ source.authored_by | join(sep=", ") }}</span>{% endif %}
                                 {% if source.publish_date %}<span class="wiki__reference-date">({{ source.publish_date }})</span>{% endif %}
                                 {% else %}
@@ -106,7 +106,7 @@
                                    the leading slash and route via get_url so internal reference links land in the
                                    current language. #}
                                 {% set ref_path = ref.path | trim_start_matches(pat="/") %}
-                                <a href="{{ get_url(path=ref_path, lang=detected_lang) }}" class="wiki__reference-link">{{ ref.title }}</a>
+                                <a href="{{ get_url(path=ref_path, lang=detected_lang, trailing_slash=true) }}" class="wiki__reference-link">{{ ref.title }}</a>
                                 {% else %}
                                 <span class="wiki__reference-title">{{ ref.title }}</span>
                                 {% endif %}
@@ -133,7 +133,7 @@
                            in the current language. #}
                         {% set prev_slug = page.extra.prev_age[0].link | split(pat="/") | nth(n=2) %}
                         {% set prev_zodiac = prev_slug | replace(from="age-of-", to="") %}
-                        <a href="{{ get_url(path='timeline/' ~ prev_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
+                        <a href="{{ get_url(path='timeline/' ~ prev_slug, lang=detected_lang, trailing_slash=true) }}" class="timeline-page__nav-btn timeline-page__nav-btn--prev" aria-label="Previous: {{ page.extra.prev_age[0].name }}">
                             <svg class="timeline-page__nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <polyline points="15,18 9,12 15,6"></polyline>
                             </svg>
@@ -150,7 +150,7 @@
                         {% if page.extra.next_age %}
                         {% set next_slug = page.extra.next_age[0].link | split(pat="/") | nth(n=2) %}
                         {% set next_zodiac = next_slug | replace(from="age-of-", to="") %}
-                        <a href="{{ get_url(path='timeline/' ~ next_slug, lang=detected_lang) }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
+                        <a href="{{ get_url(path='timeline/' ~ next_slug, lang=detected_lang, trailing_slash=true) }}" class="timeline-page__nav-btn timeline-page__nav-btn--next" aria-label="Next: {{ page.extra.next_age[0].name }}">
                             <div class="timeline-page__nav-content">
                                 <span class="timeline-page__nav-label">{{ trans(key="timelineNext", lang=detected_lang) }}</span>
                                 <span class="timeline-page__nav-title">
@@ -167,7 +167,7 @@
 
                     <!-- Back to Timeline -->
                     <div class="timeline-page__hub-link">
-                        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="timeline-page__hub-btn">
+                        <a href="{{ get_url(path='timeline/', lang=detected_lang, trailing_slash=true) }}" class="timeline-page__hub-btn">
                             <svg class="timeline-page__hub-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <circle cx="12" cy="12" r="10"></circle>
                                 <polyline points="12 8 12 12 14 14"></polyline>
@@ -208,7 +208,7 @@
                            page object is fetched without a lang prefix above).
                            Rebuild the href so it lands on the same-language
                            chapter when one exists. #}
-                        {% set rel_href = get_url(path='timeline/' ~ related.slug, lang=detected_lang) %}
+                        {% set rel_href = get_url(path='timeline/' ~ related.slug, lang=detected_lang, trailing_slash=true) %}
                         <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
@@ -273,7 +273,7 @@
                            stays in the current language; related.components
                            gives us ["wiki", "<slug>"]. #}
                         {% set rel_section = related.components | first %}
-                        {% set rel_href = get_url(path=rel_section ~ '/' ~ related.slug, lang=detected_lang) %}
+                        {% set rel_href = get_url(path=rel_section ~ '/' ~ related.slug, lang=detected_lang, trailing_slash=true) %}
                         <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
@@ -341,7 +341,7 @@
             <header class="timeline-page__header">
                 {% if age_matches | length > 0 %}
                 {% set age_data = age_matches[0] %}
-                <a class="timeline-page__earth-link" href="{{ get_url(path='timeline/chronology', lang='en') }}" aria-label="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">
+                <a class="timeline-page__earth-link" href="{{ get_url(path='timeline/chronology', lang='en', trailing_slash=true) }}" aria-label="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">
                     <figure class="timeline-page__earth-figure">
                         <img class="timeline-page__earth-image"
                              src="{{ age_data.earth_texture | escape_xml | safe }}"
@@ -393,7 +393,7 @@
                     <div class="timeline-page__meta-row">
                         <span class="timeline-page__meta-label">{{ trans(key="pagePartOfSeries", lang=detected_lang) }}</span>
                         <span class="timeline-page__meta-value">
-                            <a href="{{ get_url(path='timeline', lang=detected_lang) }}"
+                            <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}"
                                class="timeline-page__category"
                                title="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</a>
                         </span>

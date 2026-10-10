@@ -17,14 +17,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/wiki/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='wiki/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "wiki" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarWiki", lang=lang) }}</span>
             </a>
@@ -32,7 +32,7 @@
         </li>
         {% if page.extra.category %}
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/wiki/', lang=lang) }}#category-{{ page.extra.category | slugify | escape_xml | safe }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='wiki/', lang=lang, trailing_slash=true) }}#category-{{ page.extra.category | slugify | escape_xml | safe }}" class="breadcrumbs__link" itemprop="item">
                 <span itemprop="name">{{ page.extra.category }}</span>
             </a>
             <meta itemprop="position" content="3" />
@@ -56,14 +56,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/articles/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='articles/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "articles" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarArticles", lang=lang) }}</span>
             </a>
@@ -71,7 +71,7 @@
         </li>
         {% if page.extra.category %}
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/articles/', lang=lang) }}?category={{ page.extra.category | urlencode | escape_xml | safe }}" class="breadcrumbs__link" itemprop="item"><span itemprop="name">{{ page.extra.category }}</span></a>
+            <a href="{{ get_url(path='articles/', lang=lang, trailing_slash=true) }}?category={{ page.extra.category | urlencode | escape_xml | safe }}" class="breadcrumbs__link" itemprop="item"><span itemprop="name">{{ page.extra.category }}</span></a>
             <meta itemprop="position" content="3" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
@@ -93,14 +93,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/news/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='news/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "news" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarNews", lang=lang) }}</span>
             </a>
@@ -120,14 +120,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/library/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='library/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "library" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarLibrary", lang=lang) }}</span>
             </a>
@@ -146,14 +146,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/sources/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='sources/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "sources" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">Sources</span>
             </a>
@@ -172,7 +172,7 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
@@ -192,14 +192,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/timeline/', lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path='timeline/', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span class="breadcrumbs__section-icon" aria-hidden="true">{% set slug = "timeline" %}{% include "partials/section-icon.html" %}</span>
                 <span itemprop="name">{{ trans(key="navbarTimeline", lang=lang) }}</span>
             </a>
@@ -218,7 +218,7 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
@@ -237,14 +237,14 @@
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path='/', lang=lang) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
+            <a href="{{ get_url(path='', lang=lang, trailing_slash=true) }}" class="breadcrumbs__link breadcrumbs__link--home" itemprop="item">
                 {% include "partials/brand/logomark.html" %}
                 <span class="visually-hidden" itemprop="name">{{ trans(key="footerHome", lang=lang) }}</span>
             </a>
             <meta itemprop="position" content="1" />
         </li>
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <a href="{{ get_url(path=parent_path, lang=lang) }}" class="breadcrumbs__link" itemprop="item">
+            <a href="{{ get_url(path=parent_path, lang=lang, trailing_slash=true) }}" class="breadcrumbs__link" itemprop="item">
                 <span itemprop="name">{{ parent_title }}</span>
             </a>
             <meta itemprop="position" content="2" />

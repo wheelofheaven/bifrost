@@ -39,5 +39,5 @@
 {%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
 {%- endif -%}
 
-{%- set _href = get_url(path="wiki/" ~ _slug, lang=_detected) -%}
+{%- set _href = get_url(path="wiki/" ~ _slug, lang=_detected, trailing_slash=true) -%}
 <a class="wikilink" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

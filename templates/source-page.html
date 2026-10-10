@@ -96,7 +96,7 @@
                         {% for cite in backlinks %}
                         <li class="source-page__source-item">
                             {% set cite_path = cite.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=cite_path, lang=detected_lang) }}" class="source-page__source-link">
+                            <a href="{{ get_url(path=cite_path, lang=detected_lang, trailing_slash=true) }}" class="source-page__source-link">
                                 <span class="source-page__source-title">{{ cite.title }}</span>
                                 <span class="source-page__source-family">{{ cite.section }}</span>
                             </a>

@@ -76,7 +76,7 @@
                         {% endif %}
                         <li class="tradition-hub__source-item">
                             {% if src_record %}
-                            <a href="{{ get_url(path='sources/' ~ src_record.id, lang=detected_lang) }}" class="tradition-hub__source-link">
+                            <a href="{{ get_url(path='sources/' ~ src_record.id, lang=detected_lang, trailing_slash=true) }}" class="tradition-hub__source-link">
                                 <span class="tradition-hub__source-title">{{ src_record.title }}</span>
                             </a>
                             {% else %}
@@ -107,7 +107,7 @@
                     <ul class="tradition-hub__related-list">
                     {% for concept_slug in page.extra.related_concepts %}
                         <li class="tradition-hub__related-item">
-                            <a href="{{ get_url(path='wiki/' ~ concept_slug, lang=detected_lang) }}" class="tradition-hub__related-link">
+                            <a href="{{ get_url(path='wiki/' ~ concept_slug, lang=detected_lang, trailing_slash=true) }}" class="tradition-hub__related-link">
                                 {{ concept_slug | replace(from="-", to=" ") | title }}
                             </a>
                         </li>

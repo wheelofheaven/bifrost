@@ -58,37 +58,37 @@
     {
       "@type": "WebPage",
       "name": "Wiki",
-      "url": {{ get_url(path='wiki/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='wiki/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Encyclopedia of concepts and terms"
     },
     {
       "@type": "WebPage",
       "name": "Articles",
-      "url": {{ get_url(path='articles/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='articles/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Evergreen Explainers — long-form, thesis-driven analyses of the hypothesis"
     },
     {
       "@type": "WebPage",
       "name": "Library",
-      "url": {{ get_url(path='library/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='library/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Collection of sacred texts and interpretations"
     },
     {
       "@type": "WebPage",
       "name": "Resources",
-      "url": {{ get_url(path='resources/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='resources/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Curated external books, films, and references"
     },
     {
       "@type": "WebPage",
       "name": "Timeline",
-      "url": {{ get_url(path='timeline/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='timeline/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Chronological history of world ages"
     },
     {
       "@type": "WebPage",
       "name": "Newsroom",
-      "url": {{ get_url(path='news/', lang=detected_lang) | json_encode | safe }},
+      "url": {{ get_url(path='news/', lang=detected_lang, trailing_slash=true) | json_encode | safe }},
       "description": "Time-anchored dispatches reading current events through the canon"
     }
   ],

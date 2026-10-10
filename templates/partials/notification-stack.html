@@ -116,7 +116,7 @@
             </p>
             <div class="notification-card__actions">
                 <a class="notification-card__link"
-                   href="{{ get_url(path='', lang='en') }}"
+                   href="{{ get_url(path='', lang='en', trailing_slash=true) }}"
                    hreflang="en"
                    lang="en">{{ trans(key="translationNoticeReadEnglish", lang=detected_lang) }}</a>
                 <button type="button"

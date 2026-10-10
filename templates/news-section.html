@@ -134,7 +134,7 @@
                                frontmatter (e.g. "/wiki/elohim/"); strip the
                                leading slash and route via get_url for i18n. #}
                             {% set item_path = item.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=item_path, lang=detected_lang) }}" class="newsroom__canon-list-link">{{ item.title }}</a>
+                            <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="newsroom__canon-list-link">{{ item.title }}</a>
                         </li>
                         {% endfor %}
                     </ul>
@@ -148,7 +148,7 @@
 
         <footer class="newsroom__footer">
             <p class="newsroom__cross-link">
-                {{ trans(key="newsroomCrossLinkBefore", lang=detected_lang) }} <a href="{{ get_url(path='articles', lang=detected_lang) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>.
+                {{ trans(key="newsroomCrossLinkBefore", lang=detected_lang) }} <a href="{{ get_url(path='articles', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a>.
             </p>
         </footer>
     </div>

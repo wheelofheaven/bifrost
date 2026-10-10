@@ -96,7 +96,7 @@
                 </div>
             </div>
             <div class="chronology__hud-title" aria-hidden="true">
-                <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="chronology__back">
+                <a href="{{ get_url(path='timeline/', lang=detected_lang, trailing_slash=true) }}" class="chronology__back">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
                     </svg>
@@ -151,7 +151,7 @@
                                 data-end-year="{{ e_signed }}"
                                 data-const="{{ const_ids | nth(n=loop.index0) }}"
                                 data-vignette="{{ age.vignette | default(value='') }}"
-                                data-href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
+                                data-href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang, trailing_slash=true) }}"
                                 {% if loop.index0 == today_index %}data-today="true"{% endif %}
                                 aria-label="{{ age_name }} · {{ start_label }} — {{ end_label }}"
                                 title="{{ age_name }}">
@@ -198,7 +198,7 @@
                 {{ trans(key="chronologyYouAreHere", lang=detected_lang) }}
             </span>
             <p class="chronology__readout-event" data-readout-event>{{ today_event }}</p>
-            <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang) }}">
+            <a class="chronology__readout-cta" data-readout-cta href="{{ get_url(path='timeline/' ~ today_slug, lang=detected_lang, trailing_slash=true) }}">
                 <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
@@ -226,7 +226,7 @@
         {% set start_label = sy ~ " BC" %}{% if not (age.start is starting_with("−")) %}{% set start_label = sy ~ " AD" %}{% endif %}
         {% set end_label = ey ~ " BC" %}{% if not (age.end is starting_with("−")) %}{% set end_label = ey ~ " AD" %}{% endif %}
         <li class="chronology__fallback-item">
-            <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}">
+            <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang, trailing_slash=true) }}">
                 <strong>{{ age_name }}</strong>
                 <span>{{ start_label }} — {{ end_label }}</span>
                 <span>{{ age_event }}</span>

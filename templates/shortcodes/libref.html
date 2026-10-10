@@ -50,5 +50,5 @@
 {%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
 {%- endif -%}
 
-{%- set _href = get_url(path="library/" ~ _book, lang=_detected) ~ _anchor -%}
+{%- set _href = get_url(path="library/" ~ _book, lang=_detected, trailing_slash=true) ~ _anchor -%}
 <a class="libref" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

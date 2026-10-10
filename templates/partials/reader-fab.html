@@ -158,7 +158,7 @@
         {% if _show_back %}
         <div class="reader-fab__section reader-fab__section--back">
             <a class="reader-fab__option reader-fab__option--back"
-               href="{{ get_url(path=_back_path, lang=detected_lang) }}"
+               href="{{ get_url(path=_back_path, lang=detected_lang, trailing_slash=true) }}"
                role="menuitem">
                 <span class="reader-fab__option-icon" aria-hidden="true">
                     {% include "partials/icons/arrow-left.html" %}

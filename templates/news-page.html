@@ -52,7 +52,7 @@
                         {% if item.url %}
                         <a href="{{ item.url | escape_xml | safe }}" class="dispatch__link">{{ item.title }}</a>
                         {% else %}
-                        <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="dispatch__link">{{ item.title }}</a>
+                        <a href="{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) }}" class="dispatch__link">{{ item.title }}</a>
                         {% endif %}
                         {% if item.description %}
                         <span class="dispatch__link-description">— {{ item.description }}</span>
@@ -155,7 +155,7 @@
             </div>
 
             <footer class="dispatch__footer">
-                <a href="{{ get_url(path='news', lang=detected_lang) }}" class="dispatch__back-card">
+                <a href="{{ get_url(path='news', lang=detected_lang, trailing_slash=true) }}" class="dispatch__back-card">
                     <svg class="dispatch__back-card-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>

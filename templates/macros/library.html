@@ -444,7 +444,7 @@
                         {{ chapter.n }}
                     </a>
                 {% else %}
-                    <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}#chapter-{{ chapter.n | escape_xml | safe }}"
+                    <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang, trailing_slash=true) }}#chapter-{{ chapter.n | escape_xml | safe }}"
                        class="chapter-navigation__button"
                        style="--chapter-index: {{ chapter.n }}">
                         {{ chapter.n }}
@@ -482,7 +482,7 @@
     <article class="book-card">
         <div class="book-header">
             <h3>
-                <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang) }}">
+                <a href="{{ get_url(path='library/' ~ book_data.slug, lang=detected_lang, trailing_slash=true) }}">
                     {{ self::get_book_title(book_data=book_data, lang=detected_lang) }}
                 </a>
             </h3>

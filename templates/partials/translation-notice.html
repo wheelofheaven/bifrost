@@ -6,7 +6,7 @@
     <div class="translation-notice__inner">
         <p class="translation-notice__text">{{ trans(key="translationNotice", lang=detected_lang) | safe }}</p>
         <a class="translation-notice__link"
-           href="{{ get_url(path='', lang='en') }}"
+           href="{{ get_url(path='', lang='en', trailing_slash=true) }}"
            hreflang="en"
            lang="en">{{ trans(key="translationNoticeReadEnglish", lang=detected_lang) }}</a>
     </div>

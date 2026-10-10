@@ -45,7 +45,7 @@
            Sits under the header, above the grid (page-level, full width). #}
         <div class="articles-feed__active-filter" data-filter-banner hidden>
             <span class="articles-feed__active-filter-name" data-filter-name></span>
-            <a class="articles-feed__active-filter-clear" href="{{ get_url(path='/articles/', lang=detected_lang) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
+            <a class="articles-feed__active-filter-clear" href="{{ get_url(path='articles/', lang=detected_lang, trailing_slash=true) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
         </div>
 
         {% if entries %}
@@ -92,12 +92,12 @@
                         {% for cat in cats %}
                         {% set matches = all_pages | filter(attribute="extra.category", value=cat) %}
                         <li class="articles-feed__filter-item" data-cat="{{ cat | lower }}">
-                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}?category={{ cat | urlencode | escape_xml | safe }}">{{ cat }}</a>
+                            <a class="articles-feed__filter-label" href="{{ get_url(path='articles/', lang=detected_lang, trailing_slash=true) }}?category={{ cat | urlencode | escape_xml | safe }}">{{ cat }}</a>
                             <span class="articles-feed__filter-count">{{ matches | length }}</span>
                         </li>
                         {% endfor %}
                         <li class="articles-feed__filter-item articles-feed__filter-item--total" data-cat="">
-                            <a class="articles-feed__filter-label" href="{{ get_url(path='/articles/', lang=detected_lang) }}">{{ trans(key="articlesAllArticles", lang=detected_lang) }}</a>
+                            <a class="articles-feed__filter-label" href="{{ get_url(path='articles/', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="articlesAllArticles", lang=detected_lang) }}</a>
                             <span class="articles-feed__filter-count">{{ total }}</span>
                         </li>
                     </ul>
@@ -153,7 +153,7 @@
 
         <footer class="articles-feed__footer">
             <p class="articles-feed__cross-link">
-                {{ trans(key="articlesCrossLinkBefore", lang=detected_lang) }} <a href="{{ get_url(path='news', lang=detected_lang) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a>.
+                {{ trans(key="articlesCrossLinkBefore", lang=detected_lang) }} <a href="{{ get_url(path='news', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a>.
             </p>
         </footer>
     </div>

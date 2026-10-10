@@ -32,7 +32,7 @@
     {
       "@type": "CreativeWork",
       "name": {{ age_name | json_encode | safe }},
-      "url": {{ get_url(path='timeline/age-of-' ~ age, lang=detected_lang) | json_encode | safe }}
+      "url": {{ get_url(path='timeline/age-of-' ~ age, lang=detected_lang, trailing_slash=true) | json_encode | safe }}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
@@ -40,7 +40,7 @@
   {% if page.extra.see_also %}
   "relatedLink": [
     {% for item in page.extra.see_also %}
-    {% if item.url %}{{ item.url | json_encode | safe }}{% else %}{{ get_url(path=item.path, lang=detected_lang) | json_encode | safe }}{% endif %}{% if not loop.last %},{% endif %}
+    {% if item.url %}{{ item.url | json_encode | safe }}{% else %}{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) | json_encode | safe }}{% endif %}{% if not loop.last %},{% endif %}
     {% endfor %}
   ],
   {% endif %}

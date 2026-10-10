@@ -59,7 +59,7 @@
            (e.g. "/wiki/elohim/"); strip the leading slash and route via
            get_url so the pill links to the same-language entry. #}
         {% set item_path = item.path | trim_start_matches(pat="/") %}
-        <a class="dispatch-card__canon-pill" href="{{ get_url(path=item_path, lang=lang) }}">{{ item.title }}</a>
+        <a class="dispatch-card__canon-pill" href="{{ get_url(path=item_path, lang=lang, trailing_slash=true) }}">{{ item.title }}</a>
         {% endfor %}
         {% if canon | length > 4 %}
         <span class="dispatch-card__attribution-overflow">+{{ canon | length - 4 }} {{ trans(key="wikiCardMore", lang=lang) }}</span>

@@ -56,7 +56,7 @@
 
                     <rect class="map-canvas__bg" x="0" y="0" width="1668" height="2388" />
                     <rect class="map-canvas__frame" x="134.4" y="213.4" width="1399.2" height="1961.2" />
-                    <a class="map-brand-link" href="{{ get_url(path='wiki/wheel-of-heaven/', lang=detected_lang) }}" data-map-title="Wheel of Heaven">
+                    <a class="map-brand-link" href="{{ get_url(path='wiki/wheel-of-heaven/', lang=detected_lang, trailing_slash=true) }}" data-map-title="Wheel of Heaven">
                         <title>Wheel of Heaven</title>
                         {% include "partials/brand/map-title.html" %}
                     </a>
@@ -130,7 +130,7 @@
                             <text class="map-rim-label map-rim-label--script" x="603" y="1480" text-anchor="middle">天 𒀭</text>
                             <text class="map-rim-label map-rim-label--lead" x="603" y="1506" text-anchor="middle">{{ map_copy.skyLabel }}</text>
                         </g>
-                        <a class="map-rim-block map-rim-block--link" href="{{ get_url(path='wiki/living-earth/', lang=detected_lang) }}"
+                        <a class="map-rim-block map-rim-block--link" href="{{ get_url(path='wiki/living-earth/', lang=detected_lang, trailing_slash=true) }}"
                            data-map-title="{{ map_copy.earthWord }}">
                             <title>{{ map_copy.earthWord }}</title>
                             <text class="map-rim-label map-rim-label--lead" x="1045" y="1521" text-anchor="middle">{{ map_copy.earthWord }}</text>
@@ -147,7 +147,7 @@
                             {% set node_label = map_copy.earthNodes[node.id] %}
                             <a
                                 class="map-earth-node map-earth-node--{{ cluster.color }} map-earth-node--{{ node.emphasis | default(value='normal') }}"
-                                href="{{ get_url(path=node.href, lang=detected_lang) }}"
+                                href="{{ get_url(path=node.href, lang=detected_lang, trailing_slash=true) }}"
                                 data-earth-node-id="{{ node.id }}"
                                 data-earth-node-ages="{{ node.ages | join(sep=',') }}"
                                 data-earth-node-x="{{ node.x }}"
@@ -182,7 +182,7 @@
                         {% for age in map_ages %}
                         <a
                             class="map-age map-age--{{ age.color }}{% if age.id == 'age-of-aquarius' %} is-active{% endif %}"
-                            href="{{ get_url(path=age.href, lang=detected_lang) }}"
+                            href="{{ get_url(path=age.href, lang=detected_lang, trailing_slash=true) }}"
                             data-map-age="{{ age.id }}"
                             data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
@@ -195,7 +195,7 @@
                         </a>
                         <a
                             class="map-age-label"
-                            href="{{ get_url(path=age.href, lang=detected_lang) }}"
+                            href="{{ get_url(path=age.href, lang=detected_lang, trailing_slash=true) }}"
                             data-map-age="{{ age.id }}"
                             data-map-title="{{ map_copy.ages[age.id] }}"
                             data-map-summary="{{ age.summary }}"
@@ -221,7 +221,7 @@
                         </g>
                         {% endif %}
                         {% endfor %}
-                        <a class="map-genesis-box" href="{{ get_url(path='wiki/genesis/', lang=detected_lang) }}" data-map-title="{{ map_copy.genesisTitle }}">
+                        <a class="map-genesis-box" href="{{ get_url(path='wiki/genesis/', lang=detected_lang, trailing_slash=true) }}" data-map-title="{{ map_copy.genesisTitle }}">
                             <title>{{ map_copy.genesisTitle }}</title>
                             <rect class="map-genesis-box__frame" x="1104.6" y="951.7" width="114" height="48.1" rx="2" />
                             <text class="map-genesis-box__kicker" x="1161.6" y="966" text-anchor="middle">{{ map_copy.genesisKicker }}</text>
@@ -240,7 +240,7 @@
                         </text>
                     </g>
 
-                    <a class="map-golden" href="{{ get_url(path='wiki/golden-age/', lang=detected_lang) }}" data-map-title="{{ map_copy.goldenAge }}">
+                    <a class="map-golden" href="{{ get_url(path='wiki/golden-age/', lang=detected_lang, trailing_slash=true) }}" data-map-title="{{ map_copy.goldenAge }}">
                         <title>{{ map_copy.goldenAge }}</title>
                         <path class="map-golden__guide" d="m 1022.75 1170.71 c 6.81 -5.42 13.56 -10.95 20.23 -16.58 2.8 -2.36 5.58 -4.74 8.36 -7.14 13.47 -11.66 26.63 -23.74 39.43 -36.22" aria-hidden="true" />
                         <text class="map-golden__label">
@@ -248,7 +248,7 @@
                         </text>
                     </a>
 
-                    <a class="map-core" href="{{ get_url(path='wiki/precession/', lang=detected_lang) }}" data-map-title="{{ map_copy.coreKicker }} {{ map_copy.coreLine1 }} {{ map_copy.coreLine2 }}">
+                    <a class="map-core" href="{{ get_url(path='wiki/precession/', lang=detected_lang, trailing_slash=true) }}" data-map-title="{{ map_copy.coreKicker }} {{ map_copy.coreLine1 }} {{ map_copy.coreLine2 }}">
                         <title>{{ map_copy.coreKicker }} {{ map_copy.coreLine1 }} {{ map_copy.coreLine2 }}</title>
                         <ellipse class="map-core__ring" cx="834" cy="869.3" rx="62.9" ry="38.8" transform="rotate(140.39 834 869.3)" />
                         <text class="map-core__title" x="834" y="856" text-anchor="middle">{{ map_copy.coreKicker }}</text>
@@ -289,7 +289,7 @@
                         {% endif %}
                         <a
                             class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
-                            href="{{ get_url(path=node.href, lang=detected_lang) }}"
+                            href="{{ get_url(path=node.href, lang=detected_lang, trailing_slash=true) }}"
                             data-node-id="{{ node.id }}"
                             data-node-age="{{ node.age }}"
                             data-node-type="{{ node.type }}"
@@ -313,7 +313,7 @@
                             <ellipse cx="1374.5" cy="1221.6" rx="6.7" ry="6.7" class="map-elohim-vignette__planet map-elohim-vignette__planet--filled" />
                             <ellipse cx="1399" cy="1188.4" rx="9.8" ry="9.8" class="map-elohim-vignette__planet map-elohim-vignette__planet--filled" />
                         </g>
-                        <a class="map-elohim-vignette__link" href="{{ get_url(path='wiki/elohim/', lang=detected_lang) }}" data-map-title="Elohim" data-node-age="core">
+                        <a class="map-elohim-vignette__link" href="{{ get_url(path='wiki/elohim/', lang=detected_lang, trailing_slash=true) }}" data-map-title="Elohim" data-node-age="core">
                             <title>Elohim</title>
                             <text class="map-elohim-vignette__script" x="1455" y="1243" text-anchor="middle">𒀭</text>
                             <text class="map-elohim-vignette__translit" x="1455" y="1257" text-anchor="middle">i-lum</text>
@@ -415,7 +415,7 @@
                 <span class="map-graph-footer__sep" aria-hidden="true">·</span>
                 <a class="map-graph-footer__link" href="https://api.wheelofheaven.world/v1/graph/content-graph.graphml" download>GraphML</a>
                 <span class="map-graph-footer__sep" aria-hidden="true">·</span>
-                <a class="map-graph-footer__link" href="{{ get_url(path='datasets/content-graph/') }}">{{ map_copy.graphAbout }}</a>
+                <a class="map-graph-footer__link" href="{{ get_url(path='datasets/content-graph/', trailing_slash=true) }}">{{ map_copy.graphAbout }}</a>
             </footer>
 
         </div>

@@ -38,7 +38,7 @@
 {% set rg = rg_all[rg_key] | default(value=false) %}
 
 {% if rg %}
-{% set rg_map_url = get_url(path='map/', lang=lang) ~ '?view=graph' %}
+{% set rg_map_url = get_url(path='map/', lang=lang, trailing_slash=true) ~ '?view=graph' %}
 <div class="relatedness-graph">
 <figure class="relatedness-graph__figure" aria-hidden="true">
   <svg class="relatedness-graph__svg" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
@@ -60,7 +60,7 @@
       {% if nparts | length > 1 and nparts[0] in RG_LOCALES %}{% set nkey = nparts | slice(start=1) | join(sep="/") %}{% endif %}
       {% set pos = rg.n[nkey] | default(value=false) %}
       {% if pos %}
-      {% if item.url %}{% set href = item.url %}{% else %}{% set href = get_url(path=item.path, lang=lang) %}{% endif %}
+      {% if item.url %}{% set href = item.url %}{% else %}{% set href = get_url(path=item.path, lang=lang, trailing_slash=true) %}{% endif %}
       <a class="relatedness-graph__node" href="{{ href | escape_xml | safe }}" tabindex="-1">
         <title>{{ item.title }}</title>
         <circle class="relatedness-graph__dot" cx="{{ pos[0] }}" cy="{{ pos[1] }}" r="6"></circle>

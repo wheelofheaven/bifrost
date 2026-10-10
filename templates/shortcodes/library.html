@@ -56,7 +56,7 @@
     {%- elif _chapter -%}
         {%- set _anchor = "#chapter-" ~ _chapter -%}
     {%- endif -%}
-    {%- set _resolved_path = get_url(path=_book_path, lang=_detected) ~ _anchor -%}
+    {%- set _resolved_path = get_url(path=_book_path, lang=_detected, trailing_slash=true) ~ _anchor -%}
 {%- endif -%}
 
 {# Manual `path` and `title` win over resolved values. #}

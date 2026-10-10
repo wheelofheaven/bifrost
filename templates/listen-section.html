@@ -55,7 +55,7 @@
         {% endif %}
 
         <article class="listen__card" data-slug="{{ ab.slug }}" data-langs="{{ langs | join(sep=',') }}">
-            <a class="listen__card-main" href="{{ get_url(path='library/' ~ ab.slug, lang=target_lang) }}">
+            <a class="listen__card-main" href="{{ get_url(path='library/' ~ ab.slug, lang=target_lang, trailing_slash=true) }}">
                 <span class="listen__card-icon" aria-hidden="true">
                     <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>

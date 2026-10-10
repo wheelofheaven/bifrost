@@ -33,7 +33,7 @@
     {
       "@type": "Thing",
       "name": "Elohim",
-      "url": {{ get_url(path='wiki/elohim', lang=detected_lang) | json_encode | safe }}
+      "url": {{ get_url(path='wiki/elohim', lang=detected_lang, trailing_slash=true) | json_encode | safe }}
     },
     {
       "@type": "Thing",

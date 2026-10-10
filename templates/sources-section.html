@@ -74,7 +74,7 @@
 
         <ul class="sources__list" id="sources-list">
             {% for src in data.sources %}
-            {% set source_url = get_url(path="sources/" ~ src.id, lang=detected_lang) %}
+            {% set source_url = get_url(path="sources/" ~ src.id, lang=detected_lang, trailing_slash=true) %}
             <li class="source-card"
                 data-title="{{ src.title | lower }}"
                 data-author="{{ src.authored_by | join(sep=' ') | lower }}"
@@ -133,7 +133,7 @@
                                        route via get_url so cited-by links
                                        land in the current language. #}
                                     {% set cite_path = cite.path | trim_start_matches(pat="/") %}
-                                    <a href="{{ get_url(path=cite_path, lang=detected_lang) }}">{{ cite.title }}</a>
+                                    <a href="{{ get_url(path=cite_path, lang=detected_lang, trailing_slash=true) }}">{{ cite.title }}</a>
                                     <span class="source-card__cite-section">{{ cite.section }}</span>
                                 </li>
                                 {% endfor %}

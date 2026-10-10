@@ -149,7 +149,7 @@
             <span class="landing-section__eyebrow">{{ preamble_page.title }}</span>
             <h2 class="landing-section__heading">{{ preamble_page.title }}</h2>
             <p class="landing-section__body">{{ preamble_page.description | truncate(length=200) }}</p>
-            <a href="{{ get_url(path='timeline/preamble', lang=detected_lang) }}" class="landing-section__cta">
+            <a href="{{ get_url(path='timeline/preamble', lang=detected_lang, trailing_slash=true) }}" class="landing-section__cta">
                 <span>{{ trans(key="readMore", lang=detected_lang) }}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -246,7 +246,7 @@
                (e.g. "/timeline/age-of-leo") — rebuild it via get_url so the
                translated landing page links to the same-language chapter. #}
             {% set age_slug = age.link | split(pat="/") | nth(n=2) %}
-            <a href="{{ get_url(path='timeline/' ~ age_slug, lang=detected_lang) }}" class="landing-section__cta">
+            <a href="{{ get_url(path='timeline/' ~ age_slug, lang=detected_lang, trailing_slash=true) }}" class="landing-section__cta">
                 <span>{{ trans(key="timelineReadAge", lang=detected_lang) }}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -295,7 +295,7 @@
             <span class="landing-section__eyebrow">{{ wheel_page.title }}</span>
             <h2 class="landing-section__heading">{{ wheel_page.title }}</h2>
             <p class="landing-section__body">{{ wheel_page.description | truncate(length=200) }}</p>
-            <a href="{{ get_url(path='timeline/the-wheel-keeps-turning', lang=detected_lang) }}" class="landing-section__cta">
+            <a href="{{ get_url(path='timeline/the-wheel-keeps-turning', lang=detected_lang, trailing_slash=true) }}" class="landing-section__cta">
                 <span>{{ trans(key="readMore", lang=detected_lang) }}</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <line x1="5" y1="12" x2="19" y2="12"/>
@@ -303,7 +303,7 @@
                 </svg>
             </a>
         </div>
-        <a href="{{ get_url(path='timeline/', lang=detected_lang) }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
+        <a href="{{ get_url(path='timeline/', lang=detected_lang, trailing_slash=true) }}" class="landing-section__hint" aria-label="{{ trans(key='landingHintReadOn', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintReadOn", lang=detected_lang) }}</span>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M12 5v14M5 12l7 7 7-7"/>

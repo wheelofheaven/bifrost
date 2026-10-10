@@ -249,7 +249,7 @@
                             {% set related_title = related.slug | replace(from="-", to=" ") | title %}
                         {% endif %}
                         <li class="library-book__link-item">
-                            <a href="{{ get_url(path='library/' ~ related.slug, lang=detected_lang) }}" class="library-book__link">{{ related_title }}</a>
+                            <a href="{{ get_url(path='library/' ~ related.slug, lang=detected_lang, trailing_slash=true) }}" class="library-book__link">{{ related_title }}</a>
                             <span class="library-book__link-meta">
                                 {% if related.code %}{{ related.code }}{% endif %}
                                 {% if related.chapters %} · {{ related.chapters }} ch{% endif %}
@@ -453,7 +453,7 @@
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">Source:</span>
                         <span class="library-book__meta-value">
-                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang=detected_lang) }}">{{ src_title }}</a>
+                            <a href="{{ get_url(path='sources/' ~ current_book_entry.source_id, lang=detected_lang, trailing_slash=true) }}">{{ src_title }}</a>
                         </span>
                     </div>
                     {% endif %}
@@ -557,7 +557,7 @@
                             <dt class="library-book__provenance-term">Source record</dt>
                             <dd class="library-book__provenance-description">
                                 {% if source_record_matches | length > 0 %}
-                                <a href="{{ get_url(path='library/' ~ version_provenance.sourceRecordId, lang=detected_lang) }}"><code>{{ version_provenance.sourceRecordId }}</code></a>
+                                <a href="{{ get_url(path='library/' ~ version_provenance.sourceRecordId, lang=detected_lang, trailing_slash=true) }}"><code>{{ version_provenance.sourceRecordId }}</code></a>
                                 {% else %}
                                 <code>{{ version_provenance.sourceRecordId }}</code>
                                 {% endif %}
@@ -876,7 +876,7 @@
     <div class="library-book__not-found">
         <h1>Book not found</h1>
         <p>The requested book could not be found or failed to load.</p>
-        <a href="{{ get_url(path='library', lang=detected_lang) }}" class="library-book__back-link">Return to Library</a>
+        <a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}" class="library-book__back-link">Return to Library</a>
     </div>
 </div>
 {% endif %}

@@ -38,7 +38,7 @@
        shown below the cards; the link goes to the section landing. #}
     <nav class="read__paths" aria-label="Reading paths">
         <article class="read__path read__path--featured" data-section="timeline">
-            <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang) }}">
+            <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}">
                 <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
                 <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
                 <h2 class="read__path-title">Wheel of Heaven</h2>
@@ -51,7 +51,7 @@
             </button>
         </article>
         <article class="read__path" data-section="wiki">
-            <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang) }}">
+            <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}">
                 <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
                 <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
                 <h2 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h2>
@@ -64,7 +64,7 @@
             </button>
         </article>
         <article class="read__path" data-section="library">
-            <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang) }}">
+            <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}">
                 <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
                 <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
                 <h2 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h2>
@@ -80,7 +80,7 @@
            own page); the --solo modifier rounds all four corners of the
            main link since there's no discover bar underneath. #}
         <article class="read__path read__path--solo" data-section="listen">
-            <a class="read__path-main" href="{{ get_url(path='listen', lang=detected_lang) }}">
+            <a class="read__path-main" href="{{ get_url(path='listen', lang=detected_lang, trailing_slash=true) }}">
                 <span class="read__path-icon" aria-hidden="true">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
@@ -119,7 +119,7 @@
                     {% set age_page = get_page(path="timeline/age-of-" ~ slug ~ ".md") %}
                     {% if age_page %}
                     <a class="category-rail__tile" data-zodiac="{{ slug }}"
-                       href="{{ get_url(path='timeline/age-of-' ~ slug, lang=detected_lang) }}">
+                       href="{{ get_url(path='timeline/age-of-' ~ slug, lang=detected_lang, trailing_slash=true) }}">
                         <span class="category-rail__tile-icon" aria-hidden="true">{{ zodiac::icon(name=slug, size=72) }}</span>
                         <h3 class="category-rail__tile-title">{{ age_page.title }}</h3>
                         {% if age_page.extra.start_year and age_page.extra.end_year %}
@@ -193,7 +193,7 @@
                     {% set t_peek = t_complete | concat(with=t_all | filter(attribute="status", value="partial")) %}
                     <a class="category-rail__tile"
                        data-tradition="{{ tradition.id }}"
-                       href="{{ get_url(path='library', lang=detected_lang) }}#tradition-{{ tradition.id | escape_xml | safe }}">
+                       href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}#tradition-{{ tradition.id | escape_xml | safe }}">
                         <span class="category-rail__tile-icon" aria-hidden="true">{{ section_icons::tradition(slug=tradition.id) }}</span>
                         <h3 class="category-rail__tile-title">{{ tradition.name[detected_lang] | default(value=tradition.name.en) }}</h3>
                         <span class="category-rail__tile-count">{{ t_count }} {{ trans(key="libraryCountSuffix", lang=detected_lang) }}</span>

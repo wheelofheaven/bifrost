@@ -10,40 +10,40 @@
       <div class="footer__col">
         <h4 class="footer__col-title">{{ trans(key="footerGetStarted", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='about', lang=detected_lang) }}">{{ trans(key="footerAbout", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='method', lang=detected_lang) }}">{{ trans(key="navbarMethod", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='read', lang=detected_lang) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='map', lang=detected_lang) }}">{{ trans(key="footerMap", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='faq', lang=detected_lang) }}">{{ trans(key="footerFAQ", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='about', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerAbout", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarMethod", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='read', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerMap", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='faq', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerFAQ", lang=detected_lang) }}</a></li>
         </ul>
 
         <h4 class="footer__col-title">{{ trans(key="footerJumpRightIn", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='wiki/elohim', lang=detected_lang) }}">{{ trans(key="footerHypothesis", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='wiki/precession', lang=detected_lang) }}">{{ trans(key="footerPrecession", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='timeline/preamble', lang=detected_lang) }}">{{ trans(key="footerPreamble", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='wiki/elohim', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerHypothesis", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='wiki/precession', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerPrecession", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='timeline/preamble', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerPreamble", lang=detected_lang) }}</a></li>
         </ul>
       </div>
 
       <div class="footer__col">
         <h4 class="footer__col-title">{{ trans(key="footerSections", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='/', lang=detected_lang) }}">{{ trans(key="footerHome", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='read', lang=detected_lang) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='timeline', lang=detected_lang) }}">{{ trans(key="navbarTimeline", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='wiki', lang=detected_lang) }}">{{ trans(key="footerWiki", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='library', lang=detected_lang) }}">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='listen', lang=detected_lang) }}">{{ trans(key="navbarListen", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='sources', lang=detected_lang) }}">{{ trans(key="navbarSources", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='datasets', lang='en') }}">{{ trans(key="navbarDatasets", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='articles', lang=detected_lang) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='news', lang=detected_lang) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='gallery', lang='en') }}">{{ trans(key="footerGallery", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerHome", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='read', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarTimeline", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerWiki", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='listen', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarListen", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='sources', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarSources", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='datasets', lang='en', trailing_slash=true) }}">{{ trans(key="navbarDatasets", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='articles', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarArticles", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='news', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarNews", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='gallery', lang='en', trailing_slash=true) }}">{{ trans(key="footerGallery", lang=detected_lang) }}</a></li>
         </ul>
 
         <h4 class="footer__col-title">{{ trans(key="footerPress", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='press', lang=detected_lang) }}">{{ trans(key="footerPressKit", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='press', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerPressKit", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='press/wheel-of-heaven-brand.zip') }}" download>{{ trans(key="footerBrandAssets", lang=detected_lang) }}</a></li>
         </ul>
       </div>
@@ -51,9 +51,9 @@
       <div class="footer__col">
         <h4 class="footer__col-title">{{ trans(key="footerCommunity", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='forums', lang=detected_lang) }}">{{ trans(key="navbarForums", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='contributing', lang=detected_lang) }}">{{ trans(key="footerContributing", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='code-of-conduct', lang=detected_lang) }}">{{ trans(key="footerCodeOfConduct", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='forums', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarForums", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='contributing', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerContributing", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='code-of-conduct', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerCodeOfConduct", lang=detected_lang) }}</a></li>
           <li>{{ link_macros::smart_link(url="https://github.com/orgs/wheelofheaven/discussions", text=trans(key="footerGithubDiscussion", lang=detected_lang)) }}</li>
           <li>{{ link_macros::smart_link(url="https://opencollective.com/wheelofheaven", text="Open Collective") }}</li>
         </ul>
@@ -80,9 +80,9 @@
 
         <h4 class="footer__col-title">{{ trans(key="footerPrivacyTerms", lang=detected_lang) }}</h4>
         <ul>
-          <li><a href="{{ get_url(path='privacy-policy', lang=detected_lang) }}">{{ trans(key="footerPrivacyPolicy", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='cookie-policy', lang=detected_lang) }}">{{ trans(key="footerCookiePolicy", lang=detected_lang) }}</a></li>
-          <li><a href="{{ get_url(path='contact', lang=detected_lang) }}">{{ trans(key="footerContact", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='privacy-policy', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerPrivacyPolicy", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='cookie-policy', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerCookiePolicy", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='contact', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerContact", lang=detected_lang) }}</a></li>
         </ul>
       </div>
     </div>

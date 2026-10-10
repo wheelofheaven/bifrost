@@ -216,7 +216,7 @@
                     {% set is_current = slug == 'age-of-aquarius' %}
                     {% set is_opposite = slug == 'age-of-leo' %}
                     <li class="landing-dial__sign landing-dial__sign--{{ loop.index }}{% if is_current %} landing-dial__sign--current{% endif %}{% if is_opposite %} landing-dial__sign--opposite{% endif %}">
-                        <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang) }}"
+                        <a href="{{ get_url(path='timeline/' ~ slug, lang=detected_lang, trailing_slash=true) }}"
                            title="{{ zodiac_names[i] }}"
                            aria-label="{{ zodiac_names[i] }}">
                             <span class="landing-dial__symbol">{{ zodiac::icon(name=icon_name) }}</span>
@@ -303,7 +303,7 @@
                 {{ trans(key="landingS6Body", lang=detected_lang) | safe }}
             </p>
             {{ claim_badge::render(legend=true, lang=detected_lang) }}
-            <a class="landing-section__link" href="{{ get_url(path='method', lang=detected_lang) }}">
+            <a class="landing-section__link" href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}">
                 <span>{{ trans(key="landingS6Link", lang=detected_lang) }}</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -327,7 +327,7 @@
             </h2>
             <nav class="read__paths" aria-label="{{ trans(key='landingS7Heading', lang=detected_lang) }}">
                 <article class="read__path read__path--solo read__path--featured">
-                    <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang) }}">
+                    <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
                         <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
                         <h3 class="read__path-title">Wheel of Heaven</h3>
@@ -336,7 +336,7 @@
                     </a>
                 </article>
                 <article class="read__path read__path--solo">
-                    <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang) }}">
+                    <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
                         <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
                         <h3 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h3>
@@ -345,7 +345,7 @@
                     </a>
                 </article>
                 <article class="read__path read__path--solo">
-                    <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang) }}">
+                    <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
                         <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
                         <h3 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h3>
@@ -385,7 +385,7 @@
                 </article>
                 {% endfor %}
             </nav>
-            <a class="landing-featured__all" href="{{ get_url(path='articles', lang=detected_lang) }}">
+            <a class="landing-featured__all" href="{{ get_url(path='articles', lang=detected_lang, trailing_slash=true) }}">
                 <span>{{ trans(key="landingArticlesAll", lang=detected_lang) }}</span>
                 {% include "partials/icons/arrow-right.html" %}
             </a>
@@ -417,7 +417,7 @@
                     </svg>
                     {{ trans(key="landingCodaGitHub", lang=detected_lang) }}
                 </a>
-                <a href="{{ get_url(path='about', lang=detected_lang) }}" class="landing-coda__link">
+                <a href="{{ get_url(path='about', lang=detected_lang, trailing_slash=true) }}" class="landing-coda__link">
                     {{ trans(key="landingCodaAbout", lang=detected_lang) }}
                 </a>
             </div>

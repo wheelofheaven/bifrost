@@ -34,7 +34,7 @@
                 {% set byline_slug = page.extra.author_slug | default(value="zara-zinsfuss") %}
                 <p class="article__byline">
                     <span class="article__byline-label">{{ trans(key="referenceBy", lang=detected_lang) }}</span>
-                    {% if byline_slug %}<a class="article__byline-link" href="{{ get_url(path='author/' ~ byline_slug) }}" rel="author">{{ byline_name }}</a>{% else %}<span class="article__byline-name">{{ byline_name }}</span>{% endif %}
+                    {% if byline_slug %}<a class="article__byline-link" href="{{ get_url(path='author/' ~ byline_slug, trailing_slash=true) }}" rel="author">{{ byline_name }}</a>{% else %}<span class="article__byline-name">{{ byline_name }}</span>{% endif %}
                     {% if page.date %}<span class="article__byline-sep" aria-hidden="true">·</span><time class="article__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% endif %}
                     {% if page.reading_time %}<span class="article__byline-sep" aria-hidden="true">·</span><span class="article__byline-readtime">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>{% endif %}
                 </p>
@@ -100,7 +100,7 @@
                         {% if item.url %}
                         <a href="{{ item.url | escape_xml | safe }}" class="article__link">{{ item.title }}</a>
                         {% else %}
-                        <a href="{{ get_url(path=item.path, lang=detected_lang) }}" class="article__link">{{ item.title }}</a>
+                        <a href="{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) }}" class="article__link">{{ item.title }}</a>
                         {% endif %}
                         {% if item.description %}
                         <span class="article__link-description">— {{ item.description }}</span>
@@ -158,7 +158,7 @@
                            missing id falls through to the {% else %} branch and renders the bare ref.id. #}
                         {% if sources_by_id and sources_by_id.sources and ref.id in sources_by_id.sources %}
                         {% set source = sources_by_id.sources[ref.id] %}
-                        <a href="{{ get_url(path='sources/' ~ source.id, lang=detected_lang) }}" class="article__source-link">{{ source.title }}</a>
+                        <a href="{{ get_url(path='sources/' ~ source.id, lang=detected_lang, trailing_slash=true) }}" class="article__source-link">{{ source.title }}</a>
                         {% if source.authored_by %}
                         <span class="article__source-outlet">{{ source.authored_by | join(sep=", ") }}</span>
                         {% endif %}
@@ -268,7 +268,7 @@
             </div>
 
             <footer class="article__footer">
-                <a href="{{ get_url(path='articles', lang=detected_lang) }}" class="article__back-card">
+                <a href="{{ get_url(path='articles', lang=detected_lang, trailing_slash=true) }}" class="article__back-card">
                     <svg class="article__back-card-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
