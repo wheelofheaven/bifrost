@@ -41,6 +41,76 @@
         background: var(--color-background);
     }
 
+    // ---- Compact header on phones ----
+    //
+    // The title should arrive within the first screen. On phones the
+    // breadcrumb drops its last crumb (the page title, repeated right below
+    // as the h1) so it fits one line, and the classification row keeps the
+    // type chip + claim stack on one line; the category is already the
+    // breadcrumb's third crumb, so its duplicate in the meta row is hidden.
+    // Structured data (BreadcrumbList microdata, JSON-LD) is unaffected.
+    @media (max-width: 768px) {
+        padding-top: 0;
+
+        > .breadcrumbs {
+            padding-top: 0.5rem;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.25rem;
+
+            .breadcrumbs__item:last-child {
+                display: none;
+            }
+
+            .breadcrumbs__item:nth-last-child(2)::after {
+                content: none;
+            }
+        }
+
+        &__header {
+            margin-bottom: v.$spacing-lg;
+        }
+
+        &__meta {
+            gap: 0.5rem;
+            margin-bottom: 0.625rem;
+        }
+
+        &__meta &__category {
+            display: none;
+        }
+
+        // Claim letters slim down a little so chip + badge stack share a
+        // row on a 360–390px screen; the active badge keeps its full label.
+        &__meta .claim-badge {
+            padding: 0.15rem 0.5rem;
+        }
+
+        // Fanned-out on a phone: tighter spacing so the open cluster (even
+        // with a letter expanded) stays on the chip's line instead of
+        // wrapping below it.
+        &__meta .claim-badges.claim-badges--open .claim-badge + .claim-badge {
+            margin-left: 0.25rem;
+        }
+    }
+
+    // Narrowest phones (≤380px): drop the chip's decorative icon and trim
+    // padding so the row still holds on one line at 360px.
+    @media (max-width: 380px) {
+        &__meta .article-chip {
+            padding-left: 0.4rem;
+            padding-right: 0.4rem;
+        }
+
+        &__meta .article-chip__icon {
+            display: none;
+        }
+
+        &__meta .claim-badge {
+            padding-left: 0.4rem;
+            padding-right: 0.4rem;
+        }
+    }
+
     &__header {
         margin-bottom: v.$spacing-xl;
         padding-bottom: v.$spacing-lg;
@@ -728,26 +798,61 @@
 // meta row (parallel to .dispatch-chip on dispatches).
 
 .article-chip {
+    // Same pill metrics as .claim-badge and .dispatch-chip (padding, radius,
+    // size, weight, tracking, line-height) so the type chip and the claim
+    // stack beside it read as one family; mint glass like the dispatch chip.
     display: inline-flex;
     align-items: center;
-    gap: v.$spacing-2xs;
-    padding: 0.125rem 0.5rem;
-    border: 1px solid c.$mint-500;
+    gap: 0.3rem;
+    padding: 0.25rem 0.625rem;
+    border: 1px solid rgba(c.$mint-400, 0.7);
     border-radius: v.$border-radius-full;
-    background: var(--color-background-secondary);
-    color: c.$mint-700;
-    font-family: typo.$font-family-tech;
+    background: rgba(c.$mint-200, 0.55);
+    color: c.$mint-800;
     font-size: v.$font-size-xs;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
-    line-height: 1;
+    letter-spacing: 0.04em;
+    line-height: 1.2;
+    white-space: nowrap;
+    vertical-align: middle;
+    user-select: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+
+    // It links to the Articles hub filtered to this type.
+    &:hover,
+    &:focus-visible {
+        text-decoration: none;
+        border-color: c.$mint-500;
+        background: rgba(c.$mint-200, 0.85);
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: 2px;
+    }
 
     &__icon {
         flex-shrink: 0;
+        opacity: 0.85;
     }
 
     &__label {
         white-space: nowrap;
+    }
+}
+
+[data-theme="dark"] .article-chip {
+    color: c.$mint-200;
+    background: rgba(c.$mint-600, 0.15);
+    border-color: rgba(c.$mint-500, 0.35);
+
+    &:hover,
+    &:focus-visible {
+        color: c.$mint-100;
+        background: rgba(c.$mint-600, 0.3);
+        border-color: rgba(c.$mint-400, 0.6);
     }
 }

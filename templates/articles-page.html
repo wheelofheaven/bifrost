@@ -18,7 +18,7 @@
                    category). The author/date/reading-time provenance moves to
                    the byline under the headline (editorial best practice). #}
                 <div class="article__meta" aria-label="Article classification">
-                    {{ article::chip(lang=detected_lang) }}
+                    {{ article::chip(type=page.extra.article_type | default(value="explainer"), lang=detected_lang) }}
                     {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.category %}
                     <span class="article__category">{{ page.extra.category }}</span>

@@ -43,7 +43,9 @@
 
         {# Active category filter — shown by JS when ?category= is present.
            Sits under the header, above the grid (page-level, full width). #}
-        <div class="articles-feed__active-filter" data-filter-banner hidden>
+        <div class="articles-feed__active-filter" data-filter-banner hidden
+             data-type-label-explainer="{{ trans(key='articleChipLabel', lang=detected_lang) }}"
+             data-type-label-comparison="{{ trans(key='articleChipComparison', lang=detected_lang) }}">
             <span class="articles-feed__active-filter-name" data-filter-name></span>
             <a class="articles-feed__active-filter-clear" href="{{ get_url(path='articles/', lang=detected_lang, trailing_slash=true) }}" aria-label="{{ trans(key='articlesAllArticles', lang=detected_lang) }}">&times;</a>
         </div>
@@ -159,25 +161,34 @@
     </div>
 </div>
 
-{# Category filter — reads ?category= and filters the article cards by their
-   data-category attribute (client-side; current page only). #}
+{# Hub filter — reads ?category= (from the category rail and breadcrumbs) or
+   ?type= (from the article-type chip on article pages) and filters the cards
+   by their data-category / data-type attribute (client-side; current page
+   only). One active filter at a time; category wins if both are present. #}
 <script>
 (function () {
-    var cat = (new URLSearchParams(window.location.search).get("category") || "").trim().toLowerCase();
-    if (!cat) return;
+    var params = new URLSearchParams(window.location.search);
+    var cat = (params.get("category") || "").trim().toLowerCase();
+    var type = cat ? "" : (params.get("type") || "").trim().toLowerCase();
+    if (!cat && !type) return;
+    var banner = document.querySelector("[data-filter-banner]");
     var label = "";
+    if (type && banner) {
+        label = banner.getAttribute("data-type-label-" + type) || "";
+    }
     document.querySelectorAll(".article-card").forEach(function (card) {
-        var match = (card.getAttribute("data-category") || "").toLowerCase() === cat;
+        var match = cat
+            ? (card.getAttribute("data-category") || "").toLowerCase() === cat
+            : (card.getAttribute("data-type") || "explainer").toLowerCase() === type;
         card.hidden = !match;
-        if (match && !label) {
+        if (cat && match && !label) {
             var c = card.querySelector(".article-card__category");
             label = c ? c.textContent.trim() : cat;
         }
     });
-    var banner = document.querySelector("[data-filter-banner]");
     if (banner) {
         var name = banner.querySelector("[data-filter-name]");
-        if (name) { name.textContent = label || cat; }
+        if (name) { name.textContent = label || cat || type; }
         banner.hidden = false;
 
         // Clearing the filter (×) hides the chip and restores all cards
@@ -195,9 +206,11 @@
             });
         }
     }
-    document.querySelectorAll(".articles-feed__filter-item").forEach(function (li) {
-        if ((li.getAttribute("data-cat") || "") === cat) { li.classList.add("is-active"); }
-    });
+    if (cat) {
+        document.querySelectorAll(".articles-feed__filter-item").forEach(function (li) {
+            if ((li.getAttribute("data-cat") || "") === cat) { li.classList.add("is-active"); }
+        });
+    }
 }());
 </script>
 {% endblock content %}

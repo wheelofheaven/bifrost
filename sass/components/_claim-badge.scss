@@ -14,7 +14,7 @@
 // State machine driven by JS (in wiki-page.html):
 //   .claim-badge--expanded     pinned-open by click
 //   .claim-badge--tooltip-open glassmorphic tooltip visible
-//   :hover / :focus-within     temporary expansion (CSS only)
+//   :hover (real-hover devices) / :focus-visible   temporary expansion (CSS only)
 //
 // `:has()` rule below ensures the active badge collapses while any sibling
 // inactive is being hovered or has --expanded set. Modern browsers only
@@ -60,13 +60,23 @@
     &:not(.claim-badge--active) {
         opacity: 0.6;
 
-        &:hover,
         &:focus-visible,
-        &:focus-within,
         &.claim-badge--expanded {
             opacity: 1;
             color: var(--color-text);
             border-color: var(--color-border-strong, var(--color-text-muted));
+        }
+
+        // Hover effects only where hover is real (mouse/trackpad). Touch
+        // browsers keep an emulated, sticky :hover after a tap; letting it
+        // drive layout made the cluster reflow away from the finger and
+        // flicker in a loop. Touch uses the JS tap states instead.
+        @media (hover: hover) {
+            &:hover {
+                opacity: 1;
+                color: var(--color-text);
+                border-color: var(--color-border-strong, var(--color-text-muted));
+            }
         }
     }
 
@@ -81,12 +91,14 @@
         &.claim-badge--direct {
             color: c.$cyan-800;
             background: rgba(c.$cyan-200, 0.55);
+            --badge-tint: rgba(c.$cyan-200, 0.55);
             border-color: rgba(c.$cyan-400, 0.7);
         }
 
         &.claim-badge--framework {
             color: c.$mauve-800;
             background: rgba(c.$mauve-200, 0.55);
+            --badge-tint: rgba(c.$mauve-200, 0.55);
             border-color: rgba(c.$mauve-400, 0.7);
         }
 
@@ -96,12 +108,14 @@
             // other accent palettes, so we drop to 900 for AA on this pill.
             color: c.$yellow-900;
             background: rgba(c.$yellow-200, 0.6);
+            --badge-tint: rgba(c.$yellow-200, 0.6);
             border-color: rgba(c.$yellow-400, 0.7);
         }
 
         &.claim-badge--speculative {
             color: c.$lavender-800;
             background: rgba(c.$lavender-200, 0.55);
+            --badge-tint: rgba(c.$lavender-200, 0.55);
             border-color: rgba(c.$lavender-400, 0.7);
         }
     }
@@ -143,12 +157,17 @@
 
     // Default expansion: active or any badge being directly interacted with.
     &--active &__rest,
-    &:hover &__rest,
     &:focus-visible &__rest,
-    &:focus-within &__rest,
     &--expanded &__rest {
         max-width: 8rem;
         opacity: 1;
+    }
+
+    @media (hover: hover) {
+        &:hover &__rest {
+            max-width: 8rem;
+            opacity: 1;
+        }
     }
 
     // ---- Glassmorphic explainer tooltip ----
@@ -158,7 +177,10 @@
         left: 0;
         z-index: 100;
         width: max-content;
-        max-width: 16rem;
+        // Never wider than the screen minus a margin (JS clamps the x offset).
+        max-width: min(16rem, calc(100vw - 1rem));
+        // The pill sets white-space: nowrap; the explainer text must wrap.
+        white-space: normal;
         padding: 0.75rem 0.875rem;
         border-radius: v.$border-radius-md;
         background: var(--color-card-bg);
@@ -201,13 +223,21 @@
     //    aria-describedby target, so assistive tech reads the text
     //    regardless of visual state.
     //  - any badge with .--tooltip-open (set by JS click)
-    &--active:hover &__tooltip,
     &:focus-visible &__tooltip,
     &--tooltip-open &__tooltip {
         opacity: 1;
         visibility: visible;
         transform: translateY(0);
         pointer-events: auto;
+    }
+
+    @media (hover: hover) {
+        &--active:hover &__tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
     }
 
     &:focus-visible {
@@ -217,12 +247,13 @@
 }
 
 // ---- :has() override ----
-// When any non-active sibling is being hovered, focused, or has --expanded
-// pinned, the active badge collapses its __rest so only one pill is open
-// at any time. Active stays interactive — if the user moves to it directly,
-// the standard :hover / :focus rules above re-expand it.
-.claim-badges:has(.claim-badge:not(.claim-badge--active):is(:hover, :focus-within, .claim-badge--expanded))
-    .claim-badge--active:not(:hover):not(:focus-within) .claim-badge__rest {
+// When a non-active sibling is focused or pinned open (--expanded, set by a
+// click or tap), the active badge collapses its __rest so only one pill is
+// open at any time. Hover deliberately does NOT trigger this: collapsing the
+// active pill shifts the siblings to its right, which slid a hovered letter
+// out from under the pointer, ended the hover, and re-expanded — a loop.
+.claim-badges:has(.claim-badge:not(.claim-badge--active):is(:focus-visible, .claim-badge--expanded))
+    .claim-badge--active:not(:focus-visible) .claim-badge__rest {
     max-width: 0;
     opacity: 0;
 }
@@ -234,24 +265,28 @@
     &--active.claim-badge--direct {
         color: c.$cyan-200;
         background: rgba(c.$cyan-600, 0.25);
+        --badge-tint: rgba(c.$cyan-600, 0.25);
         border-color: rgba(c.$cyan-500, 0.5);
     }
 
     &--active.claim-badge--framework {
         color: c.$mauve-200;
         background: rgba(c.$mauve-600, 0.25);
+        --badge-tint: rgba(c.$mauve-600, 0.25);
         border-color: rgba(c.$mauve-500, 0.5);
     }
 
     &--active.claim-badge--inferred {
         color: c.$yellow-200;
         background: rgba(c.$yellow-600, 0.25);
+        --badge-tint: rgba(c.$yellow-600, 0.25);
         border-color: rgba(c.$yellow-500, 0.5);
     }
 
     &--active.claim-badge--speculative {
         color: c.$lavender-200;
         background: rgba(c.$lavender-600, 0.25);
+        --badge-tint: rgba(c.$lavender-600, 0.25);
         border-color: rgba(c.$lavender-500, 0.5);
     }
 
@@ -319,4 +354,87 @@
     max-height: none;
     position: static;
     top: auto;
+}
+
+// ---- Stacked cluster ----
+//
+// The interactive cluster reads as ONE element: the active badge sits on top
+// with its full label, the three inactive letters tuck half behind it (left
+// and right, in fixed D·F·I·S order). Hover or keyboard focus on the cluster —
+// or a first tap on touch screens (.claim-badges--open, set in
+// static/js/claim-badge.js) — fans the pills out to their normal spacing,
+// after which the per-badge expand / tooltip behaviour applies unchanged.
+// The legend variant (landing "The Method") is not stacked.
+.claim-badges:not(.claim-badges--legend) {
+    gap: 0;
+
+    .claim-badge {
+        transition:
+            margin-left 0.3s cubic-bezier(0.65, 0, 0.35, 1),
+            background-color 0.25s ease,
+            color 0.25s ease,
+            border-color 0.25s ease,
+            opacity 0.25s ease;
+    }
+
+    .claim-badge + .claim-badge {
+        margin-left: -0.5rem;
+    }
+
+    // Inactive letters are opaque discs while stacked so the overlap reads
+    // cleanly; they keep their muted text colour.
+    .claim-badge:not(.claim-badge--active) {
+        z-index: 1;
+        opacity: 1;
+        background: var(--color-background-secondary);
+        color: var(--color-text-subtle);
+    }
+
+    // Active badge on top, painted on an opaque base so the tucked letters
+    // never show through its translucent tint or backdrop blur.
+    .claim-badge.claim-badge--active {
+        z-index: 3;
+        background-color: var(--color-background);
+        background-image: linear-gradient(var(--badge-tint), var(--badge-tint));
+    }
+
+    // The badge being looked at rises above the stack.
+    .claim-badge:is(:hover, :focus-visible, :focus-within, .claim-badge--expanded) {
+        z-index: 4;
+    }
+
+    .claim-badge:not(.claim-badge--active):is(:hover, :focus-visible, :focus-within, .claim-badge--expanded) {
+        color: var(--color-text);
+    }
+
+    &:has(.claim-badge:focus-visible),
+    &.claim-badges--open {
+        .claim-badge + .claim-badge {
+            margin-left: 0.375rem;
+        }
+
+        .claim-badge:not(.claim-badge--active):not(:hover):not(:focus-within):not(.claim-badge--expanded) {
+            color: var(--color-text-muted);
+        }
+    }
+
+    // Mouse fan-out. The cluster only grows to the right from a fixed left
+    // edge, so the pointer stays inside it and the hover is stable.
+    @media (hover: hover) {
+        &:hover {
+            .claim-badge + .claim-badge {
+                margin-left: 0.375rem;
+            }
+
+            .claim-badge:not(.claim-badge--active):not(:hover):not(:focus-within):not(.claim-badge--expanded) {
+                color: var(--color-text-muted);
+            }
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .claim-badge {
+            transition: none;
+        }
+    }
 }
