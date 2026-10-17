@@ -28,6 +28,7 @@
     // Component-specific colors
     --color-landing-backdrop: #0a0a0a;
     --color-navbar-bg: rgba(27, 31, 34, 0.1);
+    --color-menu-bg: rgba(27, 31, 34, 0.94);
     --color-badge-bg: #{colors.$mint-300};
     --color-badge-text: #{colors.$mint-900};
     --color-footer-bg: #{colors.$gray-950};
@@ -63,5 +64,6 @@
 @media (prefers-reduced-transparency: reduce) {
     [data-theme="dark"] {
         --color-navbar-bg: #{colors.$gray-900};
+        --color-menu-bg: #{colors.$gray-900};
     }
 }

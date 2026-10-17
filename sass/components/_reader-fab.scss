@@ -123,6 +123,33 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         }
     }
 
+    // Direct access to the existing Contents sheet; hidden while the
+    // options panel occupies this space. Long translations stay in view.
+    &__contents {
+        height: 3rem;
+        max-width: calc(100vw - 7rem);
+        padding: 0 vars.$spacing-md;
+        border: 1px solid var(--color-border);
+        border-radius: vars.$border-radius-lg;
+        background: var(--color-menu-bg);
+        color: var(--color-text);
+        font: inherit;
+        font-size: vars.$font-size-sm;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+
+        &:focus-visible {
+            outline: 2px solid var(--color-accent-primary);
+            outline-offset: 3px;
+        }
+
+        .reader-fab[data-state="expanded"] & {
+            visibility: hidden;
+        }
+    }
+
     // Panel — glass surface containing the reader-options column.
     // Anchored at its right edge to the toggle, scales out from there
     // for an organic "blooming from the FAB" feel. Stays absolutely
@@ -157,7 +184,7 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             inset: 0;
             z-index: -1;
             border-radius: inherit;
-            background-color: var(--color-navbar-bg);
+            background-color: var(--color-menu-bg);
             backdrop-filter: blur(16px) saturate(140%);
             -webkit-backdrop-filter: blur(16px) saturate(140%);
         }
@@ -193,6 +220,10 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     // Single full-width option row: icon + label + optional meta.
     &__option {
+        &[hidden] {
+            display: none;
+        }
+
         display: flex;
         align-items: center;
         gap: 0.625rem;
@@ -386,7 +417,7 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             inset: 0;
             z-index: -1;
             border-radius: inherit;
-            background-color: var(--color-navbar-bg);
+            background-color: var(--color-menu-bg);
             backdrop-filter: blur(20px) saturate(140%);
             -webkit-backdrop-filter: blur(20px) saturate(140%);
         }

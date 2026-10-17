@@ -50,7 +50,7 @@
          id="readerFabPanel"
          role="menu"
          aria-labelledby="readerFabToggle"
-         aria-hidden="true">
+         aria-hidden="true" inert>
 
         <div class="reader-fab__section reader-fab__section--context">
             <div class="reader-fab__pair" data-fab-book-only role="group" aria-label="Font size">
@@ -192,12 +192,19 @@
         </span>
         <span class="reader-fab__toggle-icon" data-icon="close" aria-hidden="true">{% include "partials/icons/feather-x.html" %}</span>
     </button>
+    <button type="button"
+            class="reader-fab__contents"
+            id="readerFabContents"
+            aria-haspopup="dialog"
+            aria-controls="readerFabToc"
+            aria-expanded="false"
+            hidden>{{ trans(key="tocContents", lang=detected_lang) }}</button>
 </div>
 
 {# Secondary TOC sheet — markup left empty; populated by JS on first open
    by cloning the chapter list (library) or heading list (wiki) from the
    sidebar. Sheet slides up from the bottom on tap. #}
-<div class="reader-fab-toc" id="readerFabToc" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="readerFabTocTitle">
+<div class="reader-fab-toc" id="readerFabToc" aria-hidden="true" inert role="dialog" aria-modal="true" aria-labelledby="readerFabTocTitle">
     <div class="reader-fab-toc__backdrop" data-reader-fab-toc-close></div>
     <div class="reader-fab-toc__sheet">
         <header class="reader-fab-toc__header">

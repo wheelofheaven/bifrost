@@ -46,6 +46,7 @@
     // the one their `::before` paints — see below. That second layer is
     // gone, so this value is now what actually reaches the screen.)
     --color-navbar-bg: rgba(255, 255, 255, 0.65);
+    --color-menu-bg: rgba(255, 255, 255, 0.96);
     --color-badge-bg: #{colors.$mauve-700};
     --color-badge-text: #{colors.$white};
     --color-footer-bg: #{colors.$gray-100};
@@ -99,5 +100,6 @@
 @media (prefers-reduced-transparency: reduce) {
     [data-theme="light"] {
         --color-navbar-bg: #{colors.$gray-100};
+        --color-menu-bg: #{colors.$gray-100};
     }
 }

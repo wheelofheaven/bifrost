@@ -39,6 +39,7 @@
     // light mode gets a black band under every hero.
     --color-landing-backdrop: #0a0a0a;
     --color-navbar-bg: rgba(27, 31, 34, 0.1);
+    --color-menu-bg: rgba(27, 31, 34, 0.94);
     --color-badge-bg: #{colors.$mint-300};
     --color-badge-text: #{colors.$mint-900};
     --color-footer-bg: #{colors.$gray-950};
@@ -100,6 +101,7 @@
         // Component-specific colors
         --color-landing-backdrop: #{colors.$white};
         --color-navbar-bg: rgba(255, 255, 255, 0.1);
+        --color-menu-bg: rgba(255, 255, 255, 0.96);
         --color-badge-bg: #{colors.$mauve-700};
         --color-badge-text: #{colors.$white};
         --color-footer-bg: #{colors.$gray-100};
@@ -144,10 +146,12 @@
 @media (prefers-reduced-transparency: reduce) {
     :root {
         --color-navbar-bg: #{colors.$gray-900};
+        --color-menu-bg: #{colors.$gray-900};
     }
     :root:not([data-theme]) {
         @media (prefers-color-scheme: light) {
             --color-navbar-bg: #{colors.$gray-100};
+            --color-menu-bg: #{colors.$gray-100};
         }
     }
 }
@@ -167,6 +171,7 @@
     :root:not([data-theme]),
     :root[data-theme] {
         --color-navbar-bg: var(--color-glass-bg);
+        --color-menu-bg: var(--color-card-bg);
     }
 }
 

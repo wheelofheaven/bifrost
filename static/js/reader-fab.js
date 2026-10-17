@@ -23,6 +23,7 @@
 
         const tocSheet = document.getElementById("readerFabToc");
         const tocList = document.getElementById("readerFabTocList");
+        const contentsBtn = document.getElementById("readerFabContents");
         const progressEl = fab.querySelector("[data-reader-fab-progress]");
 
         const bookEl = document.querySelector(".library-book");
@@ -41,9 +42,13 @@
 
         // ── Open / close ────────────────────────────────────────────
         function setExpanded(open) {
+            if (!open && panel.contains(document.activeElement)) {
+                toggle.focus({ preventScroll: true });
+            }
             fab.setAttribute("data-state", open ? "expanded" : "collapsed");
             toggle.setAttribute("aria-expanded", String(open));
             panel.setAttribute("aria-hidden", String(!open));
+            panel.inert = !open;
         }
 
         toggle.addEventListener("click", function (e) {
@@ -253,6 +258,12 @@
         // both book pages (.library-book__toc-list) and wiki pages
         // (.wiki__toc-list — flat list of section headings).
         let tocBuilt = false;
+        let tocOpener = null;
+
+        const hasContents = !!document.querySelector(
+            ".library-book__toc-list .library-book__toc-link, .wiki__toc-link"
+        );
+        if (contentsBtn) contentsBtn.hidden = !hasContents;
 
         function buildToc() {
             if (tocBuilt || !tocList) return;
@@ -323,7 +334,7 @@
                 closeToc();
                 if (opts.onActivate && opts.onActivate(a.dataset.chapter)) return;
                 if (a.hash) {
-                    const target = document.querySelector(a.hash);
+                    const target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
                     if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
                 }
             });
@@ -332,18 +343,26 @@
             return li;
         }
 
-        function openToc() {
+        function openToc(opener) {
             if (!tocSheet) return;
             buildToc();
+            if (!tocList || !tocList.children.length) return;
+            tocOpener = opener;
+            tocSheet.inert = false;
             tocSheet.classList.add("reader-fab-toc--open");
             tocSheet.setAttribute("aria-hidden", "false");
+            if (contentsBtn) contentsBtn.setAttribute("aria-expanded", "true");
             highlightActiveTocItem();
+            tocSheet.querySelector("button[data-reader-fab-toc-close]").focus({ preventScroll: true });
         }
 
         function closeToc() {
             if (!tocSheet) return;
+            if (tocOpener) tocOpener.focus({ preventScroll: true });
+            tocSheet.inert = true;
             tocSheet.classList.remove("reader-fab-toc--open");
             tocSheet.setAttribute("aria-hidden", "true");
+            if (contentsBtn) contentsBtn.setAttribute("aria-expanded", "false");
         }
 
         function highlightActiveTocItem() {
@@ -359,13 +378,34 @@
 
         const tocBtn = panel.querySelector('[data-action="toc"]');
         if (tocBtn) {
+            tocBtn.hidden = !hasContents;
             tocBtn.addEventListener("click", function () {
                 setExpanded(false);
-                openToc();
+                openToc(toggle);
+            });
+        }
+
+        if (contentsBtn) {
+            contentsBtn.addEventListener("click", function () {
+                setExpanded(false);
+                openToc(contentsBtn);
             });
         }
 
         if (tocSheet) {
+            tocSheet.addEventListener("keydown", function (e) {
+                if (e.key !== "Tab") return;
+                const controls = tocSheet.querySelectorAll("button, a[href]");
+                const first = controls[0];
+                const last = controls[controls.length - 1];
+                if (e.shiftKey && document.activeElement === first) {
+                    e.preventDefault();
+                    last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                    e.preventDefault();
+                    first.focus();
+                }
+            });
             tocSheet.querySelectorAll("[data-reader-fab-toc-close]").forEach(function (el) {
                 el.addEventListener("click", closeToc);
             });

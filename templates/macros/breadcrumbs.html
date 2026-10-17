@@ -30,7 +30,7 @@
             </a>
             <meta itemprop="position" content="2" />
         </li>
-        {% if page.extra.category %}
+        {% if page.extra.category and page.extra.category | lower | trim != page.title | lower | trim %}
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <a href="{{ get_url(path='wiki/', lang=lang, trailing_slash=true) }}#category-{{ page.extra.category | slugify | escape_xml | safe }}" class="breadcrumbs__link" itemprop="item">
                 <span itemprop="name">{{ page.extra.category }}</span>

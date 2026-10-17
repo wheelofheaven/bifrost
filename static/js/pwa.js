@@ -73,9 +73,23 @@
         }
     }
 
-    // Setup install prompt — captures the deferred prompt and asks
-    // the notification stack to surface the install card.
+    // Offer installation on a later page, after a minute in this tab.
+    // Decide at page load: no timer inserts a banner during reading.
     function setupInstallPrompt() {
+        let installEligible = false;
+        try {
+            const key = 'woh-install-session-start';
+            const started = Number(sessionStorage.getItem(key));
+            const now = Date.now();
+            if (started > 0 && started <= now) {
+                installEligible = now - started >= 60000;
+            } else {
+                sessionStorage.setItem(key, String(now));
+            }
+        } catch (e) {
+            // Without session storage, leave installation to browser UI.
+        }
+
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -83,7 +97,7 @@
             // so a user who clicked × on the install card won't be
             // re-prompted until they explicitly reset.
             const s = stack();
-            if (s) s.show('install');
+            if (s && installEligible) s.show('install');
         });
 
         // Track successful installs — hide the card without persisting
