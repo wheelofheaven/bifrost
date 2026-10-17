@@ -13,11 +13,13 @@
    AND remove the _is_translation guard here (sitemap). #}
 {% for sitemap_entry in entries %}
 {%- set _is_translation = sitemap_entry.permalink is containing('/de/') or sitemap_entry.permalink is containing('/fr/') or sitemap_entry.permalink is containing('/es/') or sitemap_entry.permalink is containing('/ru/') or sitemap_entry.permalink is containing('/ja/') or sitemap_entry.permalink is containing('/ko/') or sitemap_entry.permalink is containing('/zh/') or sitemap_entry.permalink is containing('/zh-Hant/') or sitemap_entry.permalink is containing('/he/') -%}
-{% if not sitemap_entry.extra.noindex and not sitemap_entry.extra.source_id and not _is_translation %}
+{# Zola's first pagination URL is an HTML redirect to the section root. #}
+{%- set _is_pagination_redirect = sitemap_entry.permalink is ending_with('/page/1/') -%}
+{% if not sitemap_entry.extra.noindex and not sitemap_entry.extra.source_id and not _is_translation and not _is_pagination_redirect %}
     <url>
         <loc>{{ sitemap_entry.permalink | safe }}</loc>
-        {% if sitemap_entry.date %}
-        <lastmod>{{ sitemap_entry.date | date(format="%Y-%m-%d") }}</lastmod>
+        {% if sitemap_entry.updated %}
+        <lastmod>{{ sitemap_entry.updated | date(format="%Y-%m-%d") }}</lastmod>
         {% endif %}
         <changefreq>{% if sitemap_entry.permalink is containing('/wiki/') %}monthly{% elif sitemap_entry.permalink is containing('/timeline/') %}monthly{% elif sitemap_entry.permalink is containing('/articles/') %}weekly{% elif sitemap_entry.permalink is containing('/read/') %}monthly{% else %}weekly{% endif %}</changefreq>
         <priority>{% if sitemap_entry.permalink is matching("^https?://[^/]+/?$") %}1.0{% elif sitemap_entry.permalink is containing('/read/') %}0.9{% elif sitemap_entry.permalink is containing('/wiki/') %}0.7{% elif sitemap_entry.permalink is containing('/timeline/') %}0.7{% elif sitemap_entry.permalink is containing('/library/') %}0.7{% elif sitemap_entry.permalink is containing('/articles/') %}0.6{% else %}0.5{% endif %}</priority>
