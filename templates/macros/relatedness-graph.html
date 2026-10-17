@@ -60,7 +60,7 @@
       {% if nparts | length > 1 and nparts[0] in RG_LOCALES %}{% set nkey = nparts | slice(start=1) | join(sep="/") %}{% endif %}
       {% set pos = rg.n[nkey] | default(value=false) %}
       {% if pos %}
-      {% if item.url %}{% set href = item.url %}{% else %}{% set href = get_url(path=item.path, lang=lang, trailing_slash=true) %}{% endif %}
+      {% if item.url %}{% set href = item.url %}{% else %}{% set item_path = item.path | trim_start_matches(pat="/") %}{% set href = get_url(path=item_path, lang=lang, trailing_slash=true) %}{% endif %}
       <a class="relatedness-graph__node" href="{{ href | escape_xml | safe }}" tabindex="-1">
         <title>{{ item.title }}</title>
         <circle class="relatedness-graph__dot" cx="{{ pos[0] }}" cy="{{ pos[1] }}" r="6"></circle>

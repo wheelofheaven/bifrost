@@ -52,7 +52,8 @@
                         {% if item.url %}
                         <a href="{{ item.url | escape_xml | safe }}" class="dispatch__link">{{ item.title }}</a>
                         {% else %}
-                        <a href="{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) }}" class="dispatch__link">{{ item.title }}</a>
+                        {% set item_path = item.path | trim_start_matches(pat="/") %}
+                        <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="dispatch__link">{{ item.title }}</a>
                         {% endif %}
                         {% if item.description %}
                         <span class="dispatch__link-description">— {{ item.description }}</span>

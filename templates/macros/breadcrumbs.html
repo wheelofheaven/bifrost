@@ -234,6 +234,7 @@
 
 {# Generic page macro for custom parent/child breadcrumbs #}
 {% macro generic_page(title, parent_title, parent_path, lang="en") %}
+{% set parent_path = parent_path | trim_start_matches(pat="/") %}
 <nav class="breadcrumbs" aria-label="Breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
     <ol class="breadcrumbs__list">
         <li class="breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">

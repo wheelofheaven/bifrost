@@ -49,7 +49,8 @@
         {% if item.url %}
             <a href="{{ item.url | escape_xml | safe }}" class="wiki__link">{{ item.title }}</a>
         {% else %}
-            <a href="{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) }}" class="wiki__link">{{ item.title }}</a>
+            {% set item_path = item.path | trim_start_matches(pat="/") %}
+            <a href="{{ get_url(path=item_path, lang=lang, trailing_slash=true) }}" class="wiki__link">{{ item.title }}</a>
         {% endif %}
         {% if item.description %}
             <span class="wiki__link-description">{{ item.description }}</span>

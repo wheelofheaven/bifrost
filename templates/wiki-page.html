@@ -34,7 +34,7 @@
                 <aside class="wiki__redirect" role="note" aria-label="This entry redirects to another page">
                     <span class="wiki__redirect-label">{{ trans(key="wikiRedirectsTo", lang=detected_lang) }}</span>
                     <a class="wiki__redirect-link"
-                       href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url | escape_xml | safe }}{% else %}{{ get_url(path=page.extra.redirect_to.path, lang=detected_lang, trailing_slash=true) }}{% endif %}">
+                       href="{% if page.extra.redirect_to.url %}{{ page.extra.redirect_to.url | escape_xml | safe }}{% else %}{% set redirect_path = page.extra.redirect_to.path | trim_start_matches(pat="/") %}{{ get_url(path=redirect_path, lang=detected_lang, trailing_slash=true) }}{% endif %}">
                         {{ page.extra.redirect_to.title }}
                         <svg class="wiki__redirect-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -72,7 +72,8 @@
                             {% if item.url %}
                             <a href="{{ item.url | escape_xml | safe }}" class="wiki__link">{{ item.title }}</a>
                             {% else %}
-                            <a href="{{ get_url(path=item.path, lang=detected_lang, trailing_slash=true) }}" class="wiki__link">{{ item.title }}</a>
+                            {% set item_path = item.path | trim_start_matches(pat="/") %}
+                            <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="wiki__link">{{ item.title }}</a>
                             {% endif %}
                             {% if item.description %}
                             <span class="wiki__link-description">{{ item.description }}</span>
