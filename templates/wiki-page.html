@@ -24,6 +24,7 @@
                 <!-- Page Title (between breadcrumbs and the first chapter heading) -->
                 <header class="wiki__page-header">
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
+                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </header>
 
                 {# Soft-redirect banner — when an entry has been superseded by a renamed
@@ -224,6 +225,49 @@
              a small JS helper lifts the TOC out of the sidebar and inserts it
              into the article body after the first paragraph (Wikipedia pattern). -->
         <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
+            <!-- Sticky Table of Contents -->
+            {% if page.toc %}
+            <div class="wiki__toc">
+                <div class="wiki__toc-header">
+                    <h2 class="wiki__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
+                </div>
+                <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
+                    <ul class="wiki__toc-list">
+                        {% for h1 in page.toc %}
+                        <li class="wiki__toc-item wiki__toc-item--level-1">
+                            <a href="#{{ h1.id }}" class="wiki__toc-link">{{ h1.title }}</a>
+                            {% if h1.children %}
+                            <ul class="wiki__toc-sublist">
+                                {% for h2 in h1.children %}
+                                <li class="wiki__toc-item wiki__toc-item--level-2">
+                                    <a href="#{{ h2.id }}" class="wiki__toc-link">{{ h2.title }}</a>
+                                    {% if h2.children %}
+                                    <ul class="wiki__toc-sublist">
+                                        {% for h3 in h2.children %}
+                                        <li class="wiki__toc-item wiki__toc-item--level-3">
+                                            <a href="#{{ h3.id }}" class="wiki__toc-link">{{ h3.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+
+                        {# Read Next is rendered as the article's final section
+                           by partials/related-content.html with id="related-content-title".
+                           Mirror it here so the TOC reflects the full reading flow. #}
+                        <li class="wiki__toc-item wiki__toc-item--level-1 wiki__toc-item--read-next">
+                            <a href="#related-content-title" class="wiki__toc-link">{{ trans(key="readNext", lang=detected_lang) }}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
             <header class="wiki__header">
                 {% if page.extra.image %}
                 {% set wiki_portrait_src = page.extra.image %}
@@ -272,12 +316,6 @@
                     </dl>
                 </details>
                 {% endif %}
-
-                <!-- Reading-status / claim-type cluster -->
-                <div class="wiki__claim-section">
-                    <div class="wiki__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
-                </div>
 
                 {# Translation-status pill — non-English pages only. #}
                 {% if detected_lang != "en" and page.extra.translation_status %}
@@ -373,48 +411,6 @@
                 </div>
             </header>
 
-            <!-- Sticky Table of Contents -->
-            {% if page.toc %}
-            <div class="wiki__toc">
-                <div class="wiki__toc-header">
-                    <h2 class="wiki__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
-                </div>
-                <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
-                    <ul class="wiki__toc-list">
-                        {% for h1 in page.toc %}
-                        <li class="wiki__toc-item wiki__toc-item--level-1">
-                            <a href="#{{ h1.id }}" class="wiki__toc-link">{{ h1.title }}</a>
-                            {% if h1.children %}
-                            <ul class="wiki__toc-sublist">
-                                {% for h2 in h1.children %}
-                                <li class="wiki__toc-item wiki__toc-item--level-2">
-                                    <a href="#{{ h2.id }}" class="wiki__toc-link">{{ h2.title }}</a>
-                                    {% if h2.children %}
-                                    <ul class="wiki__toc-sublist">
-                                        {% for h3 in h2.children %}
-                                        <li class="wiki__toc-item wiki__toc-item--level-3">
-                                            <a href="#{{ h3.id }}" class="wiki__toc-link">{{ h3.title }}</a>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-
-                        {# Read Next is rendered as the article's final section
-                           by partials/related-content.html with id="related-content-title".
-                           Mirror it here so the TOC reflects the full reading flow. #}
-                        <li class="wiki__toc-item wiki__toc-item--level-1 wiki__toc-item--read-next">
-                            <a href="#related-content-title" class="wiki__toc-link">{{ trans(key="readNext", lang=detected_lang) }}</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            {% endif %}
         </aside>
     </div>
 </div>
@@ -440,9 +436,9 @@
             else content.prepend(toc);
             toc.classList.add('wiki__toc--inline');
         } else {
-            // On desktop: TOC returns to the sidebar (after the <header>).
+            // On desktop: Contents comes before metadata and the portrait.
             const header = sidebar.querySelector('.wiki__header');
-            if (header) header.after(toc);
+            if (header) header.before(toc);
             else sidebar.appendChild(toc);
             toc.classList.remove('wiki__toc--inline');
         }

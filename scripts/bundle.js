@@ -52,7 +52,6 @@ const bundles = {
     'listen-button.js',
     'category-rail.js',
     'cite-copy.js',
-    'claim-badge.js',
     // Tiny stub: injects webmcp.bundle.js only when a model context exists.
     'webmcp-loader.js',
   ],

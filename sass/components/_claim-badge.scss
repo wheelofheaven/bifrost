@@ -1,329 +1,113 @@
-// Claim type badges — Strategy 3 / Phase 2 / Decision #11
-//
-// All four claim types render in fixed order: direct → framework → inferred
-// → speculative, on a single row that never wraps. The page's claim_type is
-// marked .claim-badge--active and shown uncollapsed in its accent color.
-// All other badges, including the active when a sibling inactive is being
-// interacted with, collapse to a single character.
-//
-// Structure:
-//   .claim-badge__label
-//     .claim-badge__char   ← always visible (one letter)
-//     .claim-badge__rest   ← animated max-width controls expansion
-//
-// State machine driven by JS (in wiki-page.html):
-//   .claim-badge--expanded     pinned-open by click
-//   .claim-badge--tooltip-open glassmorphic tooltip visible
-//   :hover (real-hover devices) / :focus-visible   temporary expansion (CSS only)
-//
-// `:has()` rule below ensures the active badge collapses while any sibling
-// inactive is being hovered or has --expanded set. Modern browsers only
-// (Chrome 105+, Safari 15.4+, Firefox 121+) — fallback degrades gracefully
-// (active simply stays expanded next to the hovered one).
-
 @use "../abstracts/variables" as v;
 @use "../abstracts/colors" as c;
 
-.claim-badges {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: nowrap;             // always one row
-    gap: 0.375rem;
-    max-width: 100%;
-}
-
+// A classification is information, not a choice between four buttons.
 .claim-badge {
-    position: relative;
-    flex-shrink: 0;                // never shrink the inactive pills
     display: inline-flex;
     align-items: center;
-    padding: 0.25rem 0.625rem;
+    padding: v.$spacing-2xs v.$spacing-sm;
+    border: 1px solid var(--claim-border);
     border-radius: v.$border-radius-full;
+    background: var(--claim-bg);
+    color: var(--claim-text);
     font-size: v.$font-size-xs;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    line-height: 1.2;
-    white-space: nowrap;
-    border: 1px solid var(--color-hairline);
-    background: transparent;
-    color: var(--color-text-muted);
+    line-height: 1.4;
+    white-space: normal;
+}
+
+$types: (
+    "direct": (c.$cyan-100, c.$cyan-800, c.$cyan-300, c.$cyan-200, c.$cyan-600),
+    "framework": (c.$mauve-100, c.$mauve-800, c.$mauve-300, c.$mauve-200, c.$mauve-600),
+    "inferred": (c.$yellow-100, c.$yellow-900, c.$yellow-300, c.$yellow-200, c.$yellow-600),
+    "speculative": (c.$lavender-100, c.$lavender-800, c.$lavender-300, c.$lavender-200, c.$lavender-600)
+);
+
+@each $type, $palette in $types {
+    .claim-badge--#{$type} {
+        --claim-bg: #{nth($palette, 1)};
+        --claim-text: #{nth($palette, 2)};
+        --claim-border: #{nth($palette, 3)};
+    }
+    [data-theme="dark"] .claim-badge--#{$type} {
+        --claim-bg: #{rgba(nth($palette, 5), 0.25)};
+        --claim-text: #{nth($palette, 4)};
+        --claim-border: #{rgba(nth($palette, 5), 0.5)};
+    }
+}
+
+.claim-badges--disclosure {
+    max-width: 100%;
+    text-align: start;
+
+    &[open] {
+        flex-basis: 100%;
+    }
+}
+
+.claim-badges__summary {
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    width: fit-content;
+    min-height: 2.75rem;
+    max-width: 100%;
     cursor: pointer;
-    vertical-align: middle;
-    transition:
-        background-color 0.25s ease,
-        color 0.25s ease,
-        border-color 0.25s ease,
-        opacity 0.25s ease;
+    list-style: none;
+    border-radius: v.$border-radius-sm;
 
-    // Inactive pills sit muted by default; lift on hover/focus/expand
-    &:not(.claim-badge--active) {
-        opacity: 0.6;
-
-        &:focus-visible,
-        &.claim-badge--expanded {
-            opacity: 1;
-            color: var(--color-text);
-            border-color: var(--color-border-strong, var(--color-text-muted));
-        }
-
-        // Hover effects only where hover is real (mouse/trackpad). Touch
-        // browsers keep an emulated, sticky :hover after a tap; letting it
-        // drive layout made the cluster reflow away from the finger and
-        // flicker in a loop. Touch uses the JS tap states instead.
-        @media (hover: hover) {
-            &:hover {
-                opacity: 1;
-                color: var(--color-text);
-                border-color: var(--color-border-strong, var(--color-text-muted));
-            }
-        }
-    }
-
-    // Active variant — colored, expanded by default.
-    // Backgrounds use rgba + backdrop-filter so the pill reads as a tinted
-    // glass plate over photographic / video backdrops (e.g. landing §6).
-    &--active {
-        cursor: help;
-        backdrop-filter: blur(12px) saturate(160%);
-        -webkit-backdrop-filter: blur(12px) saturate(160%);
-
-        &.claim-badge--direct {
-            color: c.$cyan-800;
-            background: rgba(c.$cyan-200, 0.55);
-            --badge-tint: rgba(c.$cyan-200, 0.55);
-            border-color: rgba(c.$cyan-400, 0.7);
-        }
-
-        &.claim-badge--framework {
-            color: c.$mauve-800;
-            background: rgba(c.$mauve-200, 0.55);
-            --badge-tint: rgba(c.$mauve-200, 0.55);
-            border-color: rgba(c.$mauve-400, 0.7);
-        }
-
-        &.claim-badge--inferred {
-            // $yellow-800 (#8e8337) on $yellow-100 only hits ~3.7:1 — the
-            // yellow ramp is uniquely light at the 800 step compared to the
-            // other accent palettes, so we drop to 900 for AA on this pill.
-            color: c.$yellow-900;
-            background: rgba(c.$yellow-200, 0.6);
-            --badge-tint: rgba(c.$yellow-200, 0.6);
-            border-color: rgba(c.$yellow-400, 0.7);
-        }
-
-        &.claim-badge--speculative {
-            color: c.$lavender-800;
-            background: rgba(c.$lavender-200, 0.55);
-            --badge-tint: rgba(c.$lavender-200, 0.55);
-            border-color: rgba(c.$lavender-400, 0.7);
-        }
-    }
-
-    // ---- Label structure ----
-    // Label is plain inline so `__char` ("D") and `__rest` ("IRECT") read
-    // as a single word for double-click selection / copy. Using inline-flex
-    // here would turn each child into a flex item and browsers insert a
-    // word boundary between flex items, breaking copy of "DIRECT".
-    &__label {
-        display: inline;
-        white-space: nowrap;
-        user-select: text;
-    }
-
-    &__char {
-        // No layout role — just inherits inline flow next to __rest.
-    }
-
-    // The "rest" of the word: hidden when collapsed; expands smoothly when
-    // the badge is interactively (or actively) expanded.
-    //
-    // `vertical-align: bottom` compensates for the inline-block baseline
-    // quirk — per spec, an inline-block whose overflow is non-visible has
-    // its baseline set to the bottom margin edge, which leaves __rest's
-    // text rendering ~0.3em above __char's baseline. Aligning __rest's
-    // bottom edge to the line bottom restores the visual baseline match.
-    &__rest {
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;
-        max-width: 0;
-        opacity: 0;
-        vertical-align: bottom;
-        transition:
-            max-width 0.45s cubic-bezier(0.65, 0, 0.35, 1),
-            opacity 0.3s ease 0.05s;
-    }
-
-    // Default expansion: active or any badge being directly interacted with.
-    &--active &__rest,
-    &:focus-visible &__rest,
-    &--expanded &__rest {
-        max-width: 8rem;
-        opacity: 1;
-    }
-
-    @media (hover: hover) {
-        &:hover &__rest {
-            max-width: 8rem;
-            opacity: 1;
-        }
-    }
-
-    // ---- Glassmorphic explainer tooltip ----
-    &__tooltip {
-        position: absolute;
-        top: calc(100% + 0.5rem);
-        left: 0;
-        z-index: 100;
-        width: max-content;
-        // Never wider than the screen minus a margin (JS clamps the x offset).
-        max-width: min(16rem, calc(100vw - 1rem));
-        // The pill sets white-space: nowrap; the explainer text must wrap.
-        white-space: normal;
-        padding: 0.75rem 0.875rem;
-        border-radius: v.$border-radius-md;
-        background: var(--color-card-bg);
-        border: 1px solid var(--color-hairline);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
-        backdrop-filter: blur(16px) saturate(180%);
-        -webkit-backdrop-filter: blur(16px) saturate(180%);
-        color: var(--color-text);
-        font-weight: 400;
-        text-transform: none;
-        letter-spacing: 0;
-        font-size: 0.8125rem;
-        line-height: 1.45;
-        cursor: default;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-4px);
-        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s ease;
-        pointer-events: none;
-    }
-
-    &__tooltip-title {
-        display: block;
-        font-weight: 600;
-        font-size: 0.8125rem;
-        margin-bottom: 0.25rem;
-        color: var(--color-accent-primary);
-    }
-
-    &__tooltip-body {
-        display: block;
-        color: var(--color-text-muted);
-    }
-
-    // Tooltip visibility:
-    //  - active badge on hover
-    //  - ANY badge on keyboard focus (so Tab reveals the explanation on
-    //    every template, independent of the click JS which only some
-    //    templates wire up). The tooltip body is also the
-    //    aria-describedby target, so assistive tech reads the text
-    //    regardless of visual state.
-    //  - any badge with .--tooltip-open (set by JS click)
-    &:focus-visible &__tooltip,
-    &--tooltip-open &__tooltip {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-        pointer-events: auto;
-    }
-
-    @media (hover: hover) {
-        &--active:hover &__tooltip {
-            opacity: 1;
-            visibility: visible;
-            transform: translateY(0);
-            pointer-events: auto;
-        }
-    }
-
+    &::-webkit-details-marker { display: none; }
+    &::marker { content: ""; }
     &:focus-visible {
-        outline: 2px solid var(--color-accent-primary);
-        outline-offset: 2px;
+        outline: 2px solid var(--color-focus);
+        outline-offset: 3px;
     }
 }
 
-// ---- :has() override ----
-// When a non-active sibling is focused or pinned open (--expanded, set by a
-// click or tap), the active badge collapses its __rest so only one pill is
-// open at any time. Hover deliberately does NOT trigger this: collapsing the
-// active pill shifts the siblings to its right, which slid a hovered letter
-// out from under the pointer, ended the hover, and re-expanded — a loop.
-.claim-badges:has(.claim-badge:not(.claim-badge--active):is(:focus-visible, .claim-badge--expanded))
-    .claim-badge--active:not(:focus-visible) .claim-badge__rest {
-    max-width: 0;
-    opacity: 0;
+.claim-badges__info {
+    flex: 0 0 auto;
+    color: var(--color-text-muted);
 }
 
-// Dark theme — lighter text on subtle tinted glass for active variants.
-// Backdrop-filter from the base .claim-badge--active rule still applies;
-// these only retint the background and border to suit the dark surface.
-[data-theme="dark"] .claim-badge {
-    &--active.claim-badge--direct {
-        color: c.$cyan-200;
-        background: rgba(c.$cyan-600, 0.25);
-        --badge-tint: rgba(c.$cyan-600, 0.25);
-        border-color: rgba(c.$cyan-500, 0.5);
-    }
+.claim-badges__explanation {
+    max-width: 40ch;
+    padding: v.$spacing-sm v.$spacing-md;
+    margin-block: v.$spacing-xs;
+    border-inline-start: 2px solid var(--color-hairline);
+    background: var(--color-background-secondary);
+    border-radius: v.$border-radius-sm;
+    color: var(--color-text);
+    font-size: v.$font-size-sm;
+    font-weight: 400;
+    line-height: 1.6;
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: normal;
 
-    &--active.claim-badge--framework {
-        color: c.$mauve-200;
-        background: rgba(c.$mauve-600, 0.25);
-        --badge-tint: rgba(c.$mauve-600, 0.25);
-        border-color: rgba(c.$mauve-500, 0.5);
-    }
-
-    &--active.claim-badge--inferred {
-        color: c.$yellow-200;
-        background: rgba(c.$yellow-600, 0.25);
-        --badge-tint: rgba(c.$yellow-600, 0.25);
-        border-color: rgba(c.$yellow-500, 0.5);
-    }
-
-    &--active.claim-badge--speculative {
-        color: c.$lavender-200;
-        background: rgba(c.$lavender-600, 0.25);
-        --badge-tint: rgba(c.$lavender-600, 0.25);
-        border-color: rgba(c.$lavender-500, 0.5);
-    }
-
-    .claim-badge__tooltip {
-        background: rgba(27, 31, 34, 0.92);
-        border-color: rgba(255, 255, 255, 0.12);
-        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
-    }
+    p { margin: 0 0 v.$spacing-xs; }
+    a { color: var(--color-link); text-decoration: underline; }
 }
 
-// ---- Legend variant ----
-// `.claim-badges--legend` renders the full set as a static educational
-// key (used in landing §6 "The Method"). Each row is a colored,
-// always-expanded pill paired with its meaning inline — no tooltip, no
-// interactive state. The canonical .claim-badge styles still apply for
-// pill colors and shape; this block only adds the row layout, the
-// description text styling, and a few overrides that mute the
-// interactive behavior.
 .claim-badges--legend {
     list-style: none;
     padding: 0;
-    margin: 1.75rem auto 0;
+    margin: v.$spacing-xl auto 0;
     max-width: 44rem;
     display: flex;
     flex-direction: column;
-    gap: 0.625rem;
+    gap: v.$spacing-sm;
 }
 
 .claim-badges__legend-item {
     display: flex;
     align-items: baseline;
-    gap: 0.875rem;
+    gap: v.$spacing-md;
+    .claim-badge { flex-shrink: 0; }
 
     @media (max-width: 600px) {
         flex-direction: column;
         align-items: flex-start;
-        gap: 0.25rem;
+        gap: v.$spacing-2xs;
     }
 }
 
@@ -332,21 +116,11 @@
     font-size: v.$font-size-sm;
     line-height: 1.55;
     color: var(--color-text-muted);
-    text-align: left;
+    text-align: start;
 }
 
-// Pill is no longer a control in legend mode — drop the cursor and
-// hover/focus state changes the canonical badge applies.
-.claim-badges--legend .claim-badge {
-    flex-shrink: 0;
-    cursor: default;
-}
-
-// ---- Inline TOC variant: when JS lifts the TOC into the article body on
-//      mobile, it gets the modifier .wiki__toc--inline. ----
+// Mobile Contents is moved into the article by wiki-page.html.
 .wiki__toc--inline {
-    // Lifted out of the sidebar into the article body, so it takes the
-    // article's section inset rather than the sidebar's own padding.
     margin: 1.5rem var(--doc-gutter, 0) 2rem;
     padding: 1rem 1.25rem 1.25rem;
     background: var(--color-background-tertiary);
@@ -354,87 +128,4 @@
     max-height: none;
     position: static;
     top: auto;
-}
-
-// ---- Stacked cluster ----
-//
-// The interactive cluster reads as ONE element: the active badge sits on top
-// with its full label, the three inactive letters tuck half behind it (left
-// and right, in fixed D·F·I·S order). Hover or keyboard focus on the cluster —
-// or a first tap on touch screens (.claim-badges--open, set in
-// static/js/claim-badge.js) — fans the pills out to their normal spacing,
-// after which the per-badge expand / tooltip behaviour applies unchanged.
-// The legend variant (landing "The Method") is not stacked.
-.claim-badges:not(.claim-badges--legend) {
-    gap: 0;
-
-    .claim-badge {
-        transition:
-            margin-left 0.3s cubic-bezier(0.65, 0, 0.35, 1),
-            background-color 0.25s ease,
-            color 0.25s ease,
-            border-color 0.25s ease,
-            opacity 0.25s ease;
-    }
-
-    .claim-badge + .claim-badge {
-        margin-left: -0.5rem;
-    }
-
-    // Inactive letters are opaque discs while stacked so the overlap reads
-    // cleanly; they keep their muted text colour.
-    .claim-badge:not(.claim-badge--active) {
-        z-index: 1;
-        opacity: 1;
-        background: var(--color-background-secondary);
-        color: var(--color-text-subtle);
-    }
-
-    // Active badge on top, painted on an opaque base so the tucked letters
-    // never show through its translucent tint or backdrop blur.
-    .claim-badge.claim-badge--active {
-        z-index: 3;
-        background-color: var(--color-background);
-        background-image: linear-gradient(var(--badge-tint), var(--badge-tint));
-    }
-
-    // The badge being looked at rises above the stack.
-    .claim-badge:is(:hover, :focus-visible, :focus-within, .claim-badge--expanded) {
-        z-index: 4;
-    }
-
-    .claim-badge:not(.claim-badge--active):is(:hover, :focus-visible, :focus-within, .claim-badge--expanded) {
-        color: var(--color-text);
-    }
-
-    &:has(.claim-badge:focus-visible),
-    &.claim-badges--open {
-        .claim-badge + .claim-badge {
-            margin-left: 0.375rem;
-        }
-
-        .claim-badge:not(.claim-badge--active):not(:hover):not(:focus-within):not(.claim-badge--expanded) {
-            color: var(--color-text-muted);
-        }
-    }
-
-    // Mouse fan-out. The cluster only grows to the right from a fixed left
-    // edge, so the pointer stays inside it and the hover is stable.
-    @media (hover: hover) {
-        &:hover {
-            .claim-badge + .claim-badge {
-                margin-left: 0.375rem;
-            }
-
-            .claim-badge:not(.claim-badge--active):not(:hover):not(:focus-within):not(.claim-badge--expanded) {
-                color: var(--color-text-muted);
-            }
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .claim-badge {
-            transition: none;
-        }
-    }
 }

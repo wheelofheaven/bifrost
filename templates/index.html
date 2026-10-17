@@ -329,8 +329,8 @@
                 <article class="read__path read__path--solo read__path--featured">
                     <a class="read__path-main" href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>
-                        <span class="read__path-eyebrow">{{ trans(key="readWoHEyebrow", lang=detected_lang) }}</span>
-                        <h3 class="read__path-title">Wheel of Heaven</h3>
+
+                        <h3 class="read__path-title">{{ trans(key="navbarTimeline", lang=detected_lang) }}</h3>
                         <p class="read__path-desc">{{ trans(key="readWoHDesc", lang=detected_lang) }}</p>
                         <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
                     </a>
@@ -338,7 +338,7 @@
                 <article class="read__path read__path--solo">
                     <a class="read__path-main" href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>
-                        <span class="read__path-eyebrow">{{ trans(key="readWikiEyebrow", lang=detected_lang) }}</span>
+
                         <h3 class="read__path-title">{{ trans(key="navbarWiki", lang=detected_lang) }}</h3>
                         <p class="read__path-desc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</p>
                         <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
@@ -347,7 +347,7 @@
                 <article class="read__path read__path--solo">
                     <a class="read__path-main" href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}">
                         <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>
-                        <span class="read__path-eyebrow">{{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+
                         <h3 class="read__path-title">{{ trans(key="navbarLibrary", lang=detected_lang) }}</h3>
                         <p class="read__path-desc">{{ trans(key="navbarReadSourcesDesc", lang=detected_lang) }}</p>
                         <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>

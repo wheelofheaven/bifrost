@@ -592,18 +592,6 @@
                     <span data-navbar-key="read">{{ trans(key="navbarRead", lang=detected_lang) }}</span>
                 </h3>
                 <div class="navbar-dropdown__links">
-                    <a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}" class="navbar-dropdown__link">
-                        <span class="navbar-dropdown__link-icon">
-                            {% include "partials/icons/game-dragon-balls.html" %}
-                        </span>
-                        <div>
-                            <div class="navbar-dropdown__link-title">
-                                <span data-navbar-key="readWiki">{{ trans(key="navbarReadWiki", lang=detected_lang) }}</span>
-                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
-                            </div>
-                            <div class="navbar-dropdown__link-description" data-navbar-key="readWikiDesc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</div>
-                        </div>
-                    </a>
                     <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}" class="navbar-dropdown__link">
                         <span class="navbar-dropdown__link-icon">
                             {% include "partials/icons/game-star-cycle.html" %}
@@ -614,6 +602,18 @@
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
                             <div class="navbar-dropdown__link-description" data-navbar-key="readBookDesc">{{ trans(key="navbarReadBookDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
+                    <a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/game-dragon-balls.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="readWiki">{{ trans(key="navbarReadWiki", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="readWikiDesc">{{ trans(key="navbarReadWikiDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}" class="navbar-dropdown__link">

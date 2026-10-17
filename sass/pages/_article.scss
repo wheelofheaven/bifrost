@@ -79,18 +79,12 @@
             display: none;
         }
 
-        // Claim letters slim down a little so chip + badge stack share a
-        // row on a 360–390px screen; the active badge keeps its full label.
+        // Compact the single classification pill beside the article type.
         &__meta .claim-badge {
             padding: 0.15rem 0.5rem;
         }
 
-        // Fanned-out on a phone: tighter spacing so the open cluster (even
-        // with a letter expanded) stays on the chip's line instead of
-        // wrapping below it.
-        &__meta .claim-badges.claim-badges--open .claim-badge + .claim-badge {
-            margin-left: 0.25rem;
-        }
+
     }
 
     // Narrowest phones (≤380px): drop the chip's decorative icon and trim

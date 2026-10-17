@@ -51,7 +51,7 @@
         padding-right: var(--doc-gutter);
     }
 
-    // Right sidebar: header (always visible at top) + sticky TOC below.
+    // Contents first; the whole desktop sidebar scrolls within the viewport.
     // The panel supplies its own padding, so shared blocks nested inside it
     // (Cite this page, Read Next) must not inset a second time.
     &__sidebar {
@@ -60,16 +60,24 @@
         background: var(--color-background);
         display: flex;
         flex-direction: column;
+
+        @media (min-width: 901px) {
+            position: sticky;
+            top: 6rem;
+            align-self: start;
+            max-height: calc(100vh - 7rem);
+            max-height: calc(100dvh - 7rem);
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
     }
 
-    // Table of Contents — sticks to top once scrolled past the header
+    // The sidebar supplies stickiness; avoid overlapping its metadata.
     &__toc {
-        position: sticky;
-        top: 6rem; // Account for fixed navbar height + padding
+        position: static;
         background: var(--color-background);
         padding: 1.5rem 1.5rem 2rem;
-        max-height: calc(100vh - 6rem);
-        overflow-y: auto;
+        flex-shrink: 0;
 
         @media (max-width: 900px) {
             position: relative;

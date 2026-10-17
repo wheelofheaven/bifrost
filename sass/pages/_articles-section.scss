@@ -435,6 +435,11 @@
         font-size: v.$font-size-base;
         line-height: 1.6;
         color: var(--color-text-muted);
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 4;
+        line-clamp: 4;
+        overflow: hidden;
     }
 
     // Lead card — magazine-cover treatment for the featured/most-recent

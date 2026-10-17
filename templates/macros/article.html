@@ -80,10 +80,10 @@
     <h2 class="article-card__title">
         <a href="{{ page.permalink | escape_xml | safe }}" class="article-card__link">{{ page.title }}</a>
     </h2>
-    {% if page.extra.summary or page.description %}
+    {% if page.extra.card_summary or page.description or page.extra.summary %}
     {# Hoisted set: inline `default()` in output position double-escapes its fallback
        (Tera bug); markdown(inline=true) renders the summary's *emphasis* properly. #}
-    {% set card_summary = page.extra.summary | default(value=page.description) %}
+    {% set card_summary = page.extra.card_summary | default(value=page.description) | default(value=page.extra.summary) %}
     <p class="article-card__summary">
         {{ card_summary | markdown(inline=true) | safe }}
     </p>
@@ -120,10 +120,10 @@
     <h2 class="article-card__title">
         <a href="{{ page.permalink | escape_xml | safe }}" class="article-card__link">{{ page.title }}</a>
     </h2>
-    {% if page.extra.summary or page.description %}
+    {% if page.extra.card_summary or page.description or page.extra.summary %}
     {# Hoisted set: inline `default()` in output position double-escapes its fallback
        (Tera bug); markdown(inline=true) renders the summary's *emphasis* properly. #}
-    {% set card_summary = page.extra.summary | default(value=page.description) %}
+    {% set card_summary = page.extra.card_summary | default(value=page.description) | default(value=page.extra.summary) %}
     <p class="article-card__summary">
         {{ card_summary | markdown(inline=true) | safe }}
     </p>
