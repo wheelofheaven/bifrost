@@ -201,7 +201,7 @@
                                     <div class="library-book__segment-label" aria-label="Segment {{ segment.id }}">Segment {{ segment.id }}</div>
                                     {% endif %}
                                     {% for verse in segment.lines %}
-                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry) }}
+                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false)) }}
                                     {% endfor %}
                                 {% endfor %}
                             {% else %}
@@ -209,11 +209,11 @@
                                 {% for verse in verses %}
                                     {# Reading paragraphs can contain several stable reference units.
                                        Keep every unit's anchor, actions and audio target intact. #}
-                                    {% set continues = verse.kind | default(value="body") == "continuation" %}
+                                    {% set continues = verse.kindByLang[detected_lang] | default(value=verse.kind | default(value="body")) == "continuation" %}
                                     {% set next_continues = false %}
                                     {% if not loop.last %}
                                         {% set next_verse = verses[loop.index] %}
-                                        {% set next_continues = next_verse.kind | default(value="body") == "continuation" %}
+                                        {% set next_continues = next_verse.kindByLang[detected_lang] | default(value=next_verse.kind | default(value="body")) == "continuation" %}
                                     {% endif %}
                                     {% if (not continues or loop.first) and next_continues %}
                                     <div class="library-book__reading-paragraph" role="paragraph">
@@ -227,7 +227,7 @@
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
                                         {% endif %}
                                     {% endif %}
-                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry) }}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false)) }}
                                     {% if continues and not loop.first and not next_continues %}
                                     </div>
                                     {% endif %}
@@ -774,7 +774,7 @@
                      only Listen surface; pages without one don't show the
                      UI at all. -->
                 {% if audio_hold %}
-                <p class="library-book__para-reference">{{ audio_hold }}</p>
+                <p class="library-book__edition-note">{{ audio_hold }}</p>
                 {% elif page.extra.audioplay %}
                 <div class="library-book__listen-section">
                     <div class="library-book__meta-label">{{ trans(key="pageListen", lang=detected_lang) }}</div>

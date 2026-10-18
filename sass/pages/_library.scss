@@ -1424,6 +1424,20 @@
         color: var(--color-text);
     }
 
+    // Edition notices stay visible independently of reference-translation mode.
+    &__edition-note {
+        color: var(--color-text-muted);
+        font-size: vars.$font-size-sm;
+        line-height: 1.6;
+        margin-block: vars.$spacing-xs;
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 0.15em;
+        }
+    }
+
     // Actions bar is a floating glass pill, absolutely positioned at the
     // bottom-right of the paragraph so it never claims layout width or
     // adds vertical space. Only appears when the paragraph is selected;

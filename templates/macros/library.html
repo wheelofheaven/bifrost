@@ -124,7 +124,7 @@
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
-{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false) %}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false, preserve_paragraph_breaks=false) %}
     {# Notes model: verse.notes.official is the WoH-sanctioned commentary
        (markdown); verse.notes.community is an array of contributed notes
        (empty for now). has_notes drives the actions-gutter trigger and the
@@ -158,7 +158,7 @@
        "continuation" joins the preceding reference unit into one reading
        paragraph. The book template groups these units while retaining
        their individual anchors. Interlinear mode keeps separate rows. #}
-    {% set kind = verse.kind | default(value="body") %}
+    {% set kind = verse.kindByLang[lang] | default(value=verse.kind | default(value="body")) %}
     {# Use the `get` filter (not bracket-indexing) so speaker keys with
        non-ASCII characters — e.g. "Raël" — resolve. Tera's map[key] access
        silently misses on Unicode keys, which is why only ASCII speakers like
@@ -203,16 +203,16 @@
         </div>
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
-                {% if has_translation %}{{ verse.i18n[lang] }}
+                {% if has_translation %}{% if preserve_paragraph_breaks %}{% for part in verse.i18n[lang] | split(pat="\n\n") %}{% if not loop.first %}<br><br>{% endif %}{{ part }}{% endfor %}{% else %}{{ verse.i18n[lang] }}{% endif %}
                 {% elif alignment.status | default(value="") == "covered-by" %}
                 {% set target = alignment.refId | split(pat="-") | last | replace(from=":", to="p") %}
-                <em>English counterpart included at <a href="#c{{ target }}" onclick="event.stopPropagation()">{{ alignment.refId }}</a>.</em>
+                <em class="library-book__edition-note">English counterpart included at <a href="#c{{ target }}" onclick="event.stopPropagation()">{{ alignment.refId }}</a>.</em>
                 {% elif alignment.status | default(value="") == "not-in-witness" %}
-                <em>No counterpart in this English edition.</em>
+                <em class="library-book__edition-note">No counterpart in this English edition.</em>
                 {% else %}{{ source_text }}{% endif %}
             </div>
             {% if alignment.status | default(value="") == "group" %}
-            <p class="library-book__para-reference">Shared English passage for {{ alignment.refIds | join(sep=", ") }}.</p>
+            <p class="library-book__edition-note">Shared English passage for {{ alignment.refIds | join(sep=", ") }}.</p>
             {% elif alignment and not has_translation %}
             <details>
                 <summary>French source</summary>
