@@ -101,6 +101,10 @@
 {% macro get_paragraph_text(paragraph, lang) %}
     {%- if paragraph.i18n and paragraph.i18n[lang] -%}
         {{ paragraph.i18n[lang] }}
+    {%- elif paragraph.alignment[lang].status | default(value="") == "covered-by" -%}
+        English counterpart included at {{ paragraph.alignment[lang].refId }}.
+    {%- elif paragraph.alignment[lang].status | default(value="") == "not-in-witness" -%}
+        No counterpart in this English edition.
     {%- else -%}
         {{ paragraph.text }}
     {%- endif -%}
@@ -139,6 +143,7 @@
     {% set has_notes = official_note | trim != "" or community_notes | length > 0 %}
     {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
+    {% set alignment = verse.alignment[lang] | default(value=false) %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
     {% set has_hebrew_pair = verse.he | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {# CJK scripts have no space-delimited word boundaries, so the word-pair
@@ -198,8 +203,23 @@
         </div>
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
-                {% if has_translation %}{{ verse.i18n[lang] }}{% else %}{{ source_text }}{% endif %}
+                {% if has_translation %}{{ verse.i18n[lang] }}
+                {% elif alignment.status | default(value="") == "covered-by" %}
+                {% set target = alignment.refId | split(pat="-") | last | replace(from=":", to="p") %}
+                <em>English counterpart included at <a href="#c{{ target }}" onclick="event.stopPropagation()">{{ alignment.refId }}</a>.</em>
+                {% elif alignment.status | default(value="") == "not-in-witness" %}
+                <em>No counterpart in this English edition.</em>
+                {% else %}{{ source_text }}{% endif %}
             </div>
+            {% if alignment.status | default(value="") == "group" %}
+            <p class="library-book__para-reference">Shared English passage for {{ alignment.refIds | join(sep=", ") }}.</p>
+            {% elif alignment and not has_translation %}
+            <details>
+                <summary>French source</summary>
+                <p lang="{{ original_lang }}">{{ source_text }}</p>
+                {% if alignment.note %}<p>{{ alignment.note }}</p>{% endif %}
+            </details>
+            {% endif %}
             {% if ref_paragraph_text %}
             <div class="library-book__para-reference" aria-label="Reference translation">{{ ref_paragraph_text }}</div>
             {% endif %}
