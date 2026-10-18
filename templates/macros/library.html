@@ -150,9 +150,9 @@
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
     {# Paragraph kind — see docs.wheelofheaven.world Audio Play Cue Sheets.
        Absent means "body" (default verse). "title" renders as a heading;
-       "continuation" tightens the top margin to flow against the previous
-       paragraph (the source split a quotation across two paragraphs and
-       we want them to read as one). #}
+       "continuation" joins the preceding reference unit into one reading
+       paragraph. The book template groups these units while retaining
+       their individual anchors. Interlinear mode keeps separate rows. #}
     {% set kind = verse.kind | default(value="body") %}
     {# Use the `get` filter (not bracket-indexing) so speaker keys with
        non-ASCII characters — e.g. "Raël" — resolve. Tera's map[key] access

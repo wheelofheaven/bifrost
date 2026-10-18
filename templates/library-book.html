@@ -206,6 +206,17 @@
                             {% else %}
                                 {% set verses = chapter.paragraphs | default(value=chapter.lines | default(value=[])) %}
                                 {% for verse in verses %}
+                                    {# Reading paragraphs can contain several stable reference units.
+                                       Keep every unit's anchor, actions and audio target intact. #}
+                                    {% set continues = verse.kind | default(value="body") == "continuation" %}
+                                    {% set next_continues = false %}
+                                    {% if not loop.last %}
+                                        {% set next_verse = verses[loop.index] %}
+                                        {% set next_continues = next_verse.kind | default(value="body") == "continuation" %}
+                                    {% endif %}
+                                    {% if (not continues or loop.first) and next_continues %}
+                                    <div class="library-book__reading-paragraph" role="paragraph">
+                                    {% endif %}
                                     {# Look up matching reference verse by number (n). #}
                                     {% set ref_paragraph_text = "" %}
                                     {% if ref_chapter and ref_chapter.paragraphs %}
@@ -216,6 +227,9 @@
                                         {% endif %}
                                     {% endif %}
                                     {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry) }}
+                                    {% if continues and not loop.first and not next_continues %}
+                                    </div>
+                                    {% endif %}
                                 {% endfor %}
                             {% endif %}
                         </div>

@@ -3294,13 +3294,62 @@
 }
 
 .library-book__paragraph--continuation {
-    // Completes a quotation split across two paragraphs in the source
-    // (e.g. TBWTT 2:69 → 2:70 "Flood.» (Genesis, X-32)"). Pull up against
-    // the previous paragraph so the two read as one.
-    margin-top: calc(-1 * #{vars.$spacing-md});
+    // Completes the preceding reference unit. The reading-paragraph
+    // wrapper joins the text; interlinear rows retain normal spacing.
 
     .library-book__para-num {
         opacity: 0;  // hide the n+1 verse number; this is a continuation
+    }
+}
+
+// A source paragraph may have been split into several numbered reference
+// units during OCR. Flow those units inline without deleting their anchors.
+// Interlinear mode retains separate rows so each source/translation pair
+// stays together. Selection, bookmarks and audio still target each unit.
+.library-book:not(.library-book--interlinear) .library-book__reading-paragraph {
+    position: relative;
+    padding-block: 0.5rem;
+    padding-inline-start: 2.75rem;
+    font-size: var(--reader-font-size, 1.3125rem);
+    line-height: var(--reader-line-height, 1.8);
+
+    &:has(> .library-book__paragraph:first-child .library-book__speaker) {
+        padding-inline-start: 5.5rem;
+    }
+
+    @media (max-width: 600px) {
+        &,
+        &:has(> .library-book__paragraph:first-child .library-book__speaker) {
+            padding-inline-start: 1.625rem;
+        }
+    }
+
+    .library-book__paragraph {
+        display: inline;
+        position: static;
+        margin: 0;
+        padding: 0;
+    }
+
+    .library-book__para-content,
+    .library-book__para-translation {
+        display: inline;
+    }
+
+    .library-book__para-gutter {
+        display: none;
+    }
+
+    .library-book__paragraph:first-child .library-book__para-gutter {
+        position: absolute;
+        inset-inline-start: 0;
+        display: flex;
+        gap: 0.5rem;
+
+        @media (max-width: 600px) {
+            width: 1.5rem;
+            gap: 0.25rem;
+        }
     }
 }
 
