@@ -16,12 +16,13 @@
     // measured `left` (positionDropdown), never `translateX(-50%)` — a
     // transformed ancestor makes iOS/WebKit drop the container's
     // backdrop-filter, so this element must stay transform-free.
-    transition: opacity 0.2s ease, visibility 0.2s ease;
+    transition: opacity 0.2s ease, visibility 0s linear 0.2s;
 
     &--active {
         opacity: 1;
         visibility: visible;
         pointer-events: all;
+        transition-delay: 0s;
     }
 
     &__container {
@@ -29,6 +30,9 @@
         width: 100%;
         min-width: 300px;
         max-width: 500px;
+        max-height: calc(100dvh - var(--navbar-dropdown-top, 5.5rem) - #{vars.$spacing-md});
+        overflow-y: auto;
+        overscroll-behavior: contain;
         // Text menus need more body than the surrounding navbar chrome.
         background-color: var(--color-menu-bg);
         backdrop-filter: blur(12px);
@@ -98,7 +102,7 @@
         color: var(--color-text);
         text-decoration: none;
         border-radius: 0.5rem;
-        transition: all 0.2s ease;
+        transition: background-color 0.2s ease, color 0.2s ease;
         font-weight: 500;
         font-family: var(--font-family-body);
         font-size: 0.9rem;
@@ -110,7 +114,6 @@
         &:focus {
             background-color: var(--color-hover);
             color: var(--color-accent-primary);
-            outline: none;
 
             .navbar-dropdown__link-arrow {
                 opacity: 1;

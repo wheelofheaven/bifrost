@@ -47,7 +47,7 @@ class NavbarDropdown {
       if (trigger) {
         e.preventDefault();
         e.stopPropagation();
-        this.handleTriggerClick(trigger);
+        this.handleTriggerClick(trigger, e.detail === 0);
         return;
       }
 
@@ -67,18 +67,56 @@ class NavbarDropdown {
 
     // Escape key to close dropdowns
     document.addEventListener("keydown", (e) => {
+      const active = this.dropdowns.get(this.activeDropdown);
+      if (!active) return;
+      const links = [...active.dropdown.querySelectorAll('a[href], button')];
       if (e.key === "Escape") {
+        e.preventDefault();
+        active.trigger.focus();
+        this.closeAllDropdowns();
+      } else if (e.key === "Tab") {
+        if (e.target === active.trigger && !e.shiftKey) {
+          e.preventDefault();
+          links[0]?.focus();
+        } else if (e.target === links[0] && e.shiftKey) {
+          e.preventDefault();
+          active.trigger.focus();
+          this.closeAllDropdowns();
+        } else if (e.target === links[links.length - 1] && !e.shiftKey) {
+          e.preventDefault();
+          const controls = [...document.querySelectorAll('.navbar a[href], .navbar button')]
+            .filter(el => el.getClientRects().length && !el.closest('[inert]'));
+          controls[controls.indexOf(active.trigger) + 1]?.focus();
+          this.closeAllDropdowns();
+        }
+      }
+    });
+
+    document.addEventListener("focusin", (e) => {
+      const active = this.dropdowns.get(this.activeDropdown);
+      if (active && e.target !== active.trigger && !active.dropdown.contains(e.target)) {
         this.closeAllDropdowns();
       }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      const trigger = e.target.closest(".navbar__dropdown-trigger");
+      if (!trigger || window.innerWidth <= 999 || !["ArrowDown", "ArrowUp"].includes(e.key)) return;
+      e.preventDefault();
+      const id = trigger.closest(".navbar__dropdown").dataset.dropdown;
+      this.closeAllDropdowns();
+      this.openDropdown(id);
+      const links = this.dropdowns.get(id)?.dropdown.querySelectorAll('a[href], button');
+      (e.key === "ArrowUp" ? links?.[links.length - 1] : links?.[0])?.focus();
     });
 
     // Handle mobile navigation
     this.handleMobileNavigation();
   }
 
-  handleTriggerClick(trigger) {
+  handleTriggerClick(trigger, keyboard = false) {
     // Disable dropdown triggers in mobile viewport
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 999) {
       return;
     }
 
@@ -96,6 +134,7 @@ class NavbarDropdown {
     } else {
       this.closeAllDropdowns();
       this.openDropdown(dropdownId);
+      if (keyboard) dropdownData.dropdown.querySelector('a[href], button')?.focus();
     }
   }
 
@@ -187,6 +226,7 @@ class NavbarDropdown {
       // Position dropdown below navbar with 1px gap
       const topPosition = navbarRect.bottom + 1;
       dropdown.style.top = `${topPosition}px`;
+      dropdown.style.setProperty('--navbar-dropdown-top', `${topPosition}px`);
 
       // Center dropdown under trigger with a measured `left` — never
       // `translateX(-50%)`: a transform on the dropdown makes iOS/WebKit
@@ -219,7 +259,7 @@ class NavbarDropdown {
   handleMobileNavigation() {
     // In mobile, dropdowns should behave differently
     const handleMobileResize = () => {
-      if (window.innerWidth <= 768) {
+      if (window.innerWidth <= 999) {
         // Close all dropdowns when switching to mobile
         this.closeAllDropdowns();
       }

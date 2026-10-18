@@ -324,11 +324,18 @@ function createSearchModal() {
     const modal = document.createElement("div");
     modal.id = "search-modal";
     modal.className = "search-modal";
+    modal.setAttribute('role', 'dialog');
+    modal.setAttribute('aria-modal', 'true');
+    modal.setAttribute('aria-labelledby', 'search-modal-title');
+    // The input keeps its established navbar placement, but belongs to the
+    // search dialog in the accessibility tree and in its keyboard sequence.
+    modal.setAttribute('aria-owns', 'site-search-input');
+    modal.inert = true;
     modal.innerHTML = `
         <div class="search-modal__backdrop"></div>
         <div class="search-modal__container">
             <div class="search-modal__header">
-                <h3 class="search-modal__title">${t('modalTitle', 'Search')}</h3>
+                <h3 class="search-modal__title" id="search-modal-title">${t('modalTitle', 'Search')}</h3>
                 <div class="search-modal__shortcut">${t('closeHint', 'Press <kbd>Esc</kbd> to close')}</div>
                 <button class="search-modal__close" aria-label="${t('closeLabel', 'Close search')}">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -620,13 +627,30 @@ const debouncedSearch = debounce(performSearch, 150);
 // top: -scrollY` parks the page visually where the user was and lets
 // us restore the exact pixel offset on close.
 let savedScrollY = 0;
+let searchBackground = [];
+
+function isolateSearch(modal, input) {
+    function visit(parent) {
+        [...parent.children].forEach(element => {
+            if (element === modal || element === input) return;
+            if (element.contains(modal) || element.contains(input)) {
+                visit(element);
+            } else if (!element.inert && !['SCRIPT', 'STYLE', 'LINK'].includes(element.tagName)) {
+                element.inert = true;
+                searchBackground.push(element);
+            }
+        });
+    }
+    visit(document.body);
+}
 
 // Show search modal
 function showSearchModal() {
     const modal = document.getElementById("search-modal");
     const body = document.body;
 
-    if (modal) {
+    if (modal && !modal.classList.contains('search-modal--active')) {
+        document.dispatchEvent(new CustomEvent('woh:search-open'));
         if (window.navbarDropdown) {
             window.navbarDropdown.closeAllDropdowns();
         }
@@ -638,8 +662,10 @@ function showSearchModal() {
         body.style.right = "0";
         body.style.width = "100%";
 
+        modal.inert = false;
         modal.classList.add("search-modal--active");
         body.classList.add("search-modal-open");
+        isolateSearch(modal, document.querySelector('.navbar__search-input'));
 
         // Page blur via a dedicated overlay layered between content and
         // the navbar. We can't apply `filter: blur()` directly to
@@ -672,6 +698,8 @@ function hideSearchModal() {
         if (!modal.classList.contains("search-modal--active")) return;
         modal.classList.remove("search-modal--active");
         body.classList.remove("search-modal-open");
+        searchBackground.forEach(element => { element.inert = false; });
+        searchBackground = [];
 
         body.style.position = "";
         body.style.top = "";
@@ -691,6 +719,13 @@ function hideSearchModal() {
         // Reset to initial state
         activeFilters.clear();
         renderSearchResults([]);
+        const opener = window.WheelOfHeaven.search.opener;
+        const fallback = [...document.querySelectorAll('[data-search-toggle]')]
+            .find(element => element.getClientRects().length);
+        const target = opener?.isConnected && opener.getClientRects().length &&
+            !opener.closest('[inert]') && opener !== navbarInput ? opener : fallback;
+        target?.focus({ preventScroll: true });
+        modal.inert = true;
     }
 }
 
@@ -768,18 +803,9 @@ function initSearchUI() {
     });
 
     document.addEventListener("keydown", e => {
-        if ((e.ctrlKey || e.metaKey) && e.key === "/") {
+        if (e.key === "Escape" && modal.classList.contains('search-modal--active')) {
             e.preventDefault();
-            if (navbarSearchInput) {
-                navbarSearchInput.focus({ preventScroll: true });
-            }
-        }
-
-        if (e.key === "Escape") {
             hideSearchModal();
-            if (navbarSearchInput) {
-                navbarSearchInput.blur();
-            }
         }
     });
 }
@@ -800,6 +826,15 @@ document.addEventListener("keydown", e => {
     const allFocusable = [...suggestions, ...results];
     const currentFocus = document.activeElement;
     const navbarInput = document.querySelector(".navbar__search-input");
+
+    if (e.key === 'Tab') {
+        const controls = [navbarInput, ...modal.querySelectorAll('button:not([disabled]), a[href], [tabindex="0"]')]
+            .filter(element => element && element.getClientRects().length && !element.closest('[inert]'));
+        const index = controls.indexOf(currentFocus);
+        e.preventDefault();
+        controls[(index + (e.shiftKey ? -1 : 1) + controls.length) % controls.length]?.focus();
+        return;
+    }
 
     if (e.key === "ArrowDown") {
         e.preventDefault();

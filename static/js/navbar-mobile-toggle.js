@@ -159,23 +159,8 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.getAttribute("data-theme") || "dark";
   updateThemeIcons(currentTheme === "light");
 
-  // 🔍 Search keyboard shortcut (Ctrl+/)
-  const searchInput = document.querySelector(".navbar__search-input");
-
-  if (searchInput) {
-    document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && (e.key === "/" || e.key === "?")) {
-        e.preventDefault();
-        const isMobileView = isMobile();
-        if (isMobileView) {
-          toggleMobileSearch(true);
-        } else {
-          searchInput.focus();
-          searchInput.select();
-        }
-      }
-    });
-  }
+  // Search shortcuts are handled by search-loader.js, including the first
+  // interaction before the lazy bundle is available.
 
   // 🔍 Mobile search functionality with expandable input
   const mobileSearchInput = document.getElementById("mobileSearchInput");
@@ -184,7 +169,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function toggleMobileSearch(show = !isMobileSearchActive) {
     const isMobileView = isMobile();
 
-    if (!isMobile) return;
+    if (!isMobileView) return;
 
     // Close mobile nav if it's open
     if (show && isMobileNavExpanded) {
@@ -299,15 +284,17 @@ document.addEventListener("DOMContentLoaded", () => {
     // Enable scroll lock
     document.body.classList.add("mobile-nav-open");
     document.addEventListener("touchmove", preventBodyScroll, { passive: false });
+    mobileContentEl.querySelector('a[href], button')?.focus({ preventScroll: true });
   }
 
-  function closeMobileNav() {
+  function closeMobileNav(restoreFocus = false) {
     isMobileNavExpanded = false;
     if (navbar) {
       navbar.classList.remove("navbar--mobile-expanded");
     }
     if (mobileNavToggle) {
       mobileNavToggle.setAttribute("aria-expanded", false);
+      if (restoreFocus) mobileNavToggle.focus({ preventScroll: true });
     }
 
     // Remove scroll lock
@@ -362,9 +349,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Global escape key handler for mobile search
   document.addEventListener("keydown", (e) => {
+    if (e.defaultPrevented) return;
     if (e.key === "Escape" && isMobileSearchActive) {
       closeMobileSearch();
     }
+    if (!isMobileNavExpanded || document.body.classList.contains("search-modal-open")) return;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      if (navbar.querySelector('.navbar__content--lang-open')) {
+        document.getElementById('mobile-lang-back')?.click();
+      } else {
+        closeMobileNav(true);
+      }
+    } else if (e.key === "Tab") {
+      const controls = [...navbar.querySelectorAll('a[href], button, [tabindex="0"]')]
+        .filter(el => el.getClientRects().length && !el.closest('[inert]') &&
+          getComputedStyle(el).visibility !== 'hidden');
+      const index = controls.indexOf(document.activeElement);
+      e.preventDefault();
+      controls[(index + (e.shiftKey ? -1 : 1) + controls.length) % controls.length]?.focus();
+    }
+  });
+
+  document.addEventListener("woh:search-open", () => {
+    if (isMobileNavExpanded) closeMobileNav();
   });
 
   // Handle clicks outside navbar to close mobile search
@@ -454,9 +462,13 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // 📱 Handle window resize to reset mobile states
+  let wasMobileView = isMobile();
   window.addEventListener("resize", () => {
     const isMobileView = isMobile();
-    if (!isMobile) {
+    if (wasMobileView && !isMobileView) {
+      const mobileFocus = document.activeElement.closest('.mobile-only');
+      closeMobileNav();
+      if (mobileFocus) navbar.querySelector('.navbar__logo')?.focus();
       // Reset mobile states when switching to desktop
       if (navbar) {
         navbar.classList.remove(
@@ -481,6 +493,7 @@ document.addEventListener("DOMContentLoaded", () => {
         mobileSearchInput.value = "";
       }
     }
+    wasMobileView = isMobileView;
   });
 
   // 🎯 Mobile logo animation for touch devices

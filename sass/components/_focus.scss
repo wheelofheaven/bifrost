@@ -36,12 +36,13 @@ textarea {
     }
 }
 
-// Links within text content - subtle underline focus
+// Keep a visible ring on prose links in both themes; a low-opacity fill
+// alone disappears against the page background and existing link colour.
 .wiki__content,
 .article__content,
 .library-book__content {
     a:focus-visible {
-        outline: none;
+        outline: 2px solid var(--color-focus);
         background-color: rgba(var(--color-focus-rgb, 102, 126, 234), 0.15);
         border-radius: 2px;
         box-decoration-break: clone;

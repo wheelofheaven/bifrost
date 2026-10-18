@@ -149,7 +149,6 @@ html:has(body.mobile-nav-open) {
         &:focus {
             background-color: var(--color-hover);
             color: var(--color-accent-primary);
-            outline: none;
         }
 
         &--active {
@@ -345,7 +344,6 @@ html:has(body.mobile-nav-open) {
         &:focus {
             background-color: var(--color-hover);
             color: var(--color-accent-primary);
-            outline: none;
         }
 
         &--active {
@@ -652,7 +650,6 @@ html:has(body.mobile-nav-open) {
         }
 
         &:focus {
-            outline: none;
             border-color: var(--color-accent-primary);
             box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
         }
@@ -692,7 +689,7 @@ html:has(body.mobile-nav-open) {
         visibility: hidden;
         // Fade only — a transform on this glass popover (even during the
         // open animation) makes iOS/WebKit drop its backdrop-filter.
-        transition: opacity 0.2s ease, visibility 0.2s ease;
+        transition: opacity 0.2s ease, visibility 0s linear 0.2s;
         z-index: 100;
 
         // Backdrop blur for glassmorphism effect
@@ -702,6 +699,7 @@ html:has(body.mobile-nav-open) {
         &--open {
             opacity: 1;
             visibility: visible;
+            transition-delay: 0s;
         }
     }
 
@@ -711,7 +709,7 @@ html:has(body.mobile-nav-open) {
         color: var(--color-text);
         font-size: typo.$font-size-sm;
         cursor: pointer;
-        transition: all 0.15s ease;
+        transition: background-color 0.15s ease, color 0.15s ease;
 
         &:hover {
             background-color: var(--color-hover);
@@ -743,7 +741,6 @@ html:has(body.mobile-nav-open) {
         &:focus {
             background-color: var(--color-hover);
             color: var(--color-accent-primary);
-            outline: none;
         }
 
         &:active {
@@ -767,7 +764,6 @@ html:has(body.mobile-nav-open) {
         &:focus {
             background-color: var(--color-hover);
             color: var(--color-accent-primary);
-            outline: none;
         }
 
         svg {
@@ -1204,7 +1200,6 @@ html:has(body.mobile-nav-open) {
                 &:focus {
                     background-color: var(--color-hover);
                     color: var(--color-accent-primary);
-                    outline: none;
                 }
 
                 &--active {
@@ -1248,7 +1243,6 @@ html:has(body.mobile-nav-open) {
                 &:focus {
                     background-color: var(--color-hover);
                     color: var(--color-accent-primary);
-                    outline: none;
                 }
 
                 // Mobile lang trigger is an icon-only button — same
@@ -1425,7 +1419,6 @@ html:has(body.mobile-nav-open) {
                             &:focus {
                                 background-color: var(--color-hover);
                                 color: var(--color-accent-primary);
-                                outline: none;
                             }
                         }
 
@@ -1534,7 +1527,6 @@ html:has(body.mobile-nav-open) {
                         &:focus {
                             background-color: var(--color-hover);
                             color: var(--color-accent-primary);
-                            outline: none;
                         }
                     }
 
@@ -1575,7 +1567,6 @@ html:has(body.mobile-nav-open) {
                         &:focus {
                             background-color: var(--color-hover);
                             color: var(--color-accent-primary);
-                            outline: none;
                         }
 
                         &--active {
