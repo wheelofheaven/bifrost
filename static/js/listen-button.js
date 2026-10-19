@@ -840,6 +840,15 @@
         let unitListRef = null;
         let currentChapter = null;
 
+        function playbackDuration() {
+            // Streaming Opus may report Infinity until the entire file loads.
+            // The timing sidecar already records its decoded, finite duration.
+            const mediaDuration = audioEl ? audioEl.duration : 0;
+            const duration = Number.isFinite(mediaDuration) && mediaDuration > 0
+                ? mediaDuration : timing && timing.duration_seconds;
+            return Number.isFinite(duration) && duration > 0 ? duration : 0;
+        }
+
         async function probe(unitList) {
             const ctx = detectBookContext(unitList);
             if (!ctx) return null;
@@ -968,8 +977,9 @@
             audioEl.ontimeupdate = () => {
                 if (stopped || !audioEl) return;
                 const t = audioEl.currentTime;
-                if (audioEl.duration && cbs.onProgress) {
-                    cbs.onProgress(t / audioEl.duration, t, audioEl.duration);
+                const duration = playbackDuration();
+                if (duration && cbs.onProgress) {
+                    cbs.onProgress(t / duration, t, duration);
                 }
                 let current = null;
                 for (const p of timing.paragraphs) {
@@ -1110,9 +1120,10 @@
             // from a click/drag on the progress bar; we map it directly to
             // audioEl.currentTime. Ambient track follows via onseeked.
             seek(ratio) {
-                if (!audioEl || !audioEl.duration) return;
+                const duration = playbackDuration();
+                if (!audioEl || !duration) return;
                 const r = Math.max(0, Math.min(1, ratio));
-                audioEl.currentTime = r * audioEl.duration;
+                audioEl.currentTime = r * duration;
             },
             // v4.3 — direct jump to a chapter by manifest number. Used by
             // the chapter-jump overlay. Reuses the same playChapter() path
