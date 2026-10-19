@@ -563,6 +563,7 @@ html[data-theme="light"]:has(.landing-section--video.is-active) {
     // `:has()` is unavailable the chip degrades the same way the navbar
     // does, to a pale glass with dark text, which stays readable.
     .navbar,
+    .navbar-dropdown,
     .translation-notice,
     .search-fab,
     .to-top,

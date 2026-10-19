@@ -1340,7 +1340,7 @@ html:has(body.mobile-nav-open) {
                 margin-right: 0;
                 max-height: calc(100vh - 5rem);
                 max-height: calc(100dvh - 5rem);
-                background-color: var(--color-menu-bg);
+                background-color: var(--color-navbar-bg);
                 backdrop-filter: blur(12px);
                 -webkit-backdrop-filter: blur(12px);
                 border: 1px solid var(--color-border);
@@ -1612,7 +1612,7 @@ html:has(body.mobile-nav-open) {
         // alpha here or they'll split into two. (Engines without
         // backdrop-filter get the solid fallback from `themes/_init.scss`.)
         .navbar__content {
-            border-color: rgba(0, 0, 0, 0.1);
+            border-color: var(--color-border);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
         }
 
@@ -1630,8 +1630,17 @@ html:has(body.mobile-nav-open) {
 
 // Timeline space overlay - use dark-like styling when in light theme over dark space background
 body.timeline-space-overlay {
+    .navbar,
+    .navbar-dropdown {
+        --color-navbar-bg: rgba(27, 31, 34, 0.6);
+        --color-text: rgba(255, 255, 255, 0.95);
+        --color-text-muted: rgba(255, 255, 255, 0.7);
+        --color-border: rgba(255, 255, 255, 0.15);
+    }
+
     .navbar {
-        background-color: rgba(27, 31, 34, 0.6);
+        // The shared tint is painted once, by the navbar's glass pseudo.
+        background-color: transparent;
         border-color: rgba(255, 255, 255, 0.15);
         color: rgba(255, 255, 255, 0.95);
 
@@ -1734,7 +1743,7 @@ body.timeline-space-overlay {
     // Dropdown menus
     .navbar-dropdown {
         &__container {
-            background-color: rgba(27, 31, 34, 0.95);
+            background-color: var(--color-navbar-bg);
             border-color: rgba(255, 255, 255, 0.15);
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
         }
