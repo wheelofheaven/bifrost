@@ -21,7 +21,7 @@
     &__content {
         max-width: 1200px;
         margin-inline: auto;
-        margin-top: 0;
+        margin-top: 3rem;
         // No margin-bottom: the padding-bottom below already separates the
         // columns from the bottom bar. Stacking both left a ~6rem dead gap
         // above the copyright row on desktop.
@@ -29,30 +29,30 @@
         padding: 3rem vars.$spacing-xl;
 
         @media (max-width: 768px) {
-            margin-top: 0;
+            margin-top: 2rem;
             padding: 2.5rem vars.$spacing-lg;
         }
 
         @media (max-width: 600px) {
-            margin-top: 0;
+            margin-top: 1.5rem;
             padding: 2.5rem vars.$spacing-md;
         }
     }
 
     &__grid {
         display: grid;
-        grid-template-columns: 2fr 1fr 1fr;
+        grid-template-columns: 2.4fr 1fr 1fr 1fr 1fr;
         gap: 3rem;
         align-items: start;
 
         @media (max-width: 1100px) {
-            grid-template-columns: 2fr 1fr 1fr;
+            grid-template-columns: 2.4fr 1fr 1fr 1fr 1fr;
             gap: 2.25rem;
         }
 
         @media (max-width: 900px) {
-            // Brand spans full width above the two primary link groups.
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            // Brand spans full width on top, 4 content columns below.
+            grid-template-columns: repeat(4, 1fr);
             gap: 2.25rem;
 
             > .footer__col--brand {
@@ -61,7 +61,7 @@
         }
 
         @media (max-width: 768px) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1.75rem;
         }
     }
@@ -92,7 +92,7 @@
 
             li {
                 font-size: typo.$font-size-sm;
-                margin-bottom: 0.5rem;
+                margin-bottom: 1rem;
                 line-height: 1.5;
 
                 a {
@@ -124,40 +124,6 @@
         margin-top: 0.5rem;
         color: var(--color-text-muted);
         font-size: typo.$font-size-sm;
-    }
-
-    &__brand {
-        display: block;
-        color: var(--color-text);
-        text-decoration: none;
-    }
-
-    &__more {
-        margin-top: vars.$spacing-xl;
-        border-top: 1px solid var(--color-hairline);
-
-        > summary {
-            padding-block: vars.$spacing-md;
-            cursor: pointer;
-            color: var(--color-text-muted);
-            font-size: vars.$font-size-sm;
-
-            &:focus-visible {
-                outline: 2px solid var(--color-focus);
-                outline-offset: 3px;
-            }
-        }
-    }
-
-    &__more-grid {
-        display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
-        gap: vars.$spacing-lg;
-        padding-block: vars.$spacing-md;
-
-        @media (max-width: 900px) {
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
     }
 
     &__bottom {
@@ -318,11 +284,11 @@
     }
 }
 
-// Keep the two short primary groups side by side on phones.
+// Mobile override: stack columns
 @media (max-width: 640px) {
     .footer__grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 1.5rem;
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
     }
 
     .footer__col--brand {
@@ -340,7 +306,7 @@
 .footer__rainbow {
     display: block;
     position: relative;
-    height: 4rem;
+    height: 13rem;
     // Absorb the iOS bottom safe-area inset inside the strip so the rainbow
     // continues all the way to the device edge with no theme-bg gap below.
     padding-bottom: env(safe-area-inset-bottom, 0px);
