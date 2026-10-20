@@ -3287,6 +3287,15 @@
 // Set by the `kind` field on chapter-N.json paragraphs. See
 // docs.wheelofheaven.world Audio Play Cue Sheets for editorial guidance.
 // =====================================================
+.library-book__subheading {
+    margin-block: vars.$spacing-2xl vars.$spacing-xs;
+    font-family: var(--font-family-citation);
+    font-size: vars.$font-size-xl;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--color-text);
+}
+
 .library-book__paragraph--title {
     // Heading-like Narrator paragraph (e.g. "The Tower of Babel").
     // Bigger top margin, smaller bottom, suppress the verse-number gutter
