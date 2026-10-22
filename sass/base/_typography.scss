@@ -5,13 +5,13 @@
 @use "fonts";
 
 // Per-script font pairings. Each non-Latin script gets its own
-// "body" + "display" pair — the analog of Jost (humanist body) plus
+// "body" + "display" pair — the analog of Firmament Sans (humanist body) plus
 // Space Grotesk (geometric display) used for Latin. The web fonts
 // themselves are loaded conditionally in `partials/fonts-css.html`
 // based on detected_lang; system-font fallbacks come after so the page
 // stays readable if the network drops the web font.
 //
-// Japanese: Zen Kaku Gothic New (humanist, Jost-like) for body,
+// Japanese: Zen Kaku Gothic New (humanist, Firmament Sans-like) for body,
 //           M PLUS 1p (geometric, Space Grotesk-like) for display.
 $font-family-ja-body:
     "Zen Kaku Gothic New",
@@ -58,7 +58,7 @@ $font-family-zh-hant-display:
     "Source Han Serif TC",
     serif;
 
-// Korean: Pretendard (body, Jost-like) + IBM Plex Sans KR (display,
+// Korean: Pretendard (body, Firmament Sans-like) + IBM Plex Sans KR (display,
 // geometric-modernist Hangul with good range of weights).
 $font-family-ko-body:
     "Pretendard",
@@ -76,8 +76,8 @@ $font-family-ko-display:
     "Noto Sans KR",
     sans-serif;
 
-// Russian / Cyrillic — Jost already covers Cyrillic body (the local
-// `jost-full-*.woff2` files include the Cyrillic subset).
+// Russian / Cyrillic — Firmament Sans already covers Cyrillic body (the local
+// `FirmamentSans-*.woff2` files include upstream Cyrillic coverage).
 // For headings we need the Cyrillic-supporting Space Grotesk, which is
 // the Google Fonts version (registered as the two-word family name
 // "Space Grotesk", distinct from the project's local "SpaceGrotesk"
@@ -153,10 +153,10 @@ $font-family-cuneiform:
 // (ἀποκάλυψις) and IPA pronunciations (/əˈpɒkəlɪpsɪs/) thus get the
 // right typeface automatically, without requiring `lang="grc"` or a
 // `.greek` class on every span. Latin text continues to come from the
-// primary font (Jost / SpaceGrotesk) because it appears first in the
+// primary font (Firmament Sans / SpaceGrotesk) because it appears first in the
 // stack and has the matching glyphs.
 $font-family-sans:
-    "Jost",
+    "Firmament Sans",
     "GFS Didot",
     "Noto Sans IPA",
     // CJK fallbacks (order: Japanese, Simplified Chinese)

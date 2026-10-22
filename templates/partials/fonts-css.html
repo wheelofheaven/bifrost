@@ -3,13 +3,13 @@
         landing hero heading + every site h2/h3 use Space Grotesk
         *bold* (700), not regular. Preloading the wrong weight gets
         flagged ("resource preloaded but not used") and wastes a
-        request slot. Body prose uses Jost regular.
+        request slot. Body prose uses Firmament Sans regular.
      2. Don't preload fonts whose first paint is inside a hidden
         element (e.g. the navbar language dropdown). The browser
         counts those as unused until the dropdown opens. The CJK
         switcher subsets used to live here — they now load on demand
         via @font-face + unicode-range when the dropdown opens. -->
-<link rel="preload" href="{{ get_url(path='fonts/vendor/jost/jost-full-regular.woff2') }}" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="{{ get_url(path='fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-700.woff2') }}" as="font" type="font/woff2" crossorigin>
 
 <!-- Web fonts. Frank Ruhl Libre (Hebrew) and GFS Didot (Greek) are
@@ -41,14 +41,14 @@
    characters. System-font fallback turned out to be safer and works
    on every platform that has the corresponding script installed. #}
 
-{# Japanese: Zen Kaku Gothic New (body, humanist Jost analog) +
+{# Japanese: Zen Kaku Gothic New (body, humanist Firmament Sans analog) +
    M PLUS 1p (display, geometric Space Grotesk analog). #}
 {% if detected_lang == "ja" %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
 {% endif %}
 
 {# Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
-   serif contrast for headings — matches the Jost/Space-Grotesk pairing-
+   serif contrast for headings — matches the Firmament Sans/Space-Grotesk pairing-
    of-opposites feel). #}
 {% if detected_lang == "zh" %}
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;700;900&family=Noto+Serif+SC:wght@400;500;700;900&display=swap">
@@ -59,7 +59,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=Noto+Serif+TC:wght@400;500;700;900&display=swap">
 {% endif %}
 
-{# Korean: Pretendard (body, the de-facto Jost/SF-Pro analog for Hangul,
+{# Korean: Pretendard (body, the de-facto Firmament Sans/SF-Pro analog for Hangul,
    loaded from its official CDN since it's not on Google Fonts) +
    IBM Plex Sans KR (display, matches the project's existing IBM Plex
    Mono code font). #}
@@ -68,7 +68,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
 {% endif %}
 
-{# Russian/Cyrillic: Jost already covers Cyrillic body. Space Grotesk
+{# Russian/Cyrillic: Firmament Sans already covers Cyrillic body. Space Grotesk
    needs the Cyrillic subset for headings — Google Fonts ships exactly
    the unicode-range we need, so non-Cyrillic visitors aren't affected
    even on this page. #}

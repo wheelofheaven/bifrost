@@ -13,7 +13,7 @@ element. When in doubt, consult it before introducing new styles.
 
 | Layer | Role | Latin font | Signals |
 |---|---|---|---|
-| 1. Primary reading | Body prose, essays, explanations | Jost | interpretation, narrative voice |
+| 1. Primary reading | Body prose, essays, explanations | Firmament Sans | interpretation, narrative voice |
 | 2. Structural / conceptual | Titles, section headings, framing concepts | Space Grotesk | conceptual framing, geometric modernism |
 | 3. Citation / scholarly | Quotations, scripture, citations, epigraphs | IBM Plex Serif | source material, documentary gravitas |
 | 4. Technical / metadata | Badges, timestamps, IDs, taxonomies | iA Writer Quattro | systemization, archival cataloguing — warmer / more editorial than a developer-terminal mono |
@@ -21,7 +21,7 @@ element. When in doubt, consult it before introducing new styles.
 The semantic intent is what matters, not the font name.
 Readers subconsciously learn the mapping:
 
-- **sans (Jost)** → "this is interpretation"
+- **sans (Firmament Sans)** → "this is interpretation"
 - **grotesk display (Space Grotesk)** → "this is framing"
 - **serif (Plex Serif)** → "this is source material"
 - **mono (iA Writer Quattro)** → "this is system / meta"
@@ -35,9 +35,19 @@ in serif — destroys it.
 Use for: article prose, essays, explanatory paragraphs, long-form
 reading. Default body voice across the site.
 
-Latin: **Jost**, humanist geometric. Latin Extended and Cyrillic ship together in the full upstream Jost files
-(`jost-full-*.woff2`), with regular, italic, bold, and bold italic styles.
-The scholarly extension is developed separately as Firmament Sans; it is not yet the site body font.
+Latin: **Firmament Sans**, the scholarly extension of Jost by Wheel of Heaven.
+The four self-hosted 0.1 styles (regular, italic, bold, bold italic) each contain
+584 Unicode mappings, including 60 additions to full upstream Jost.
+The site supplies `fonts/vendor/firmament-sans/0.1/FirmamentSans-*.woff2`;
+Bifrost selects the family and preloads the regular face. Fonts load from these
+versioned paths without `local()` overrides. Preserve the included OFL and
+provenance when redistributing them.
+
+The pilot covers scholarly Latin transliteration and inherited Cyrillic.
+Optical refinement and broader combining-mark stacking remain ongoing;
+source-script companions and the other three typography layers retain their roles.
+See [the specimen](https://firmament.wheelofheaven.world/) and
+[coverage documentation](https://docs.wheelofheaven.world/components/tokens/typography/).
 
 Suggested settings for long-form prose:
 
@@ -48,7 +58,7 @@ max-width: 72ch;
 font-weight: 400;
 ```
 
-Avoid light weights (Jost looks fragile under 400) and avoid stretching
+Avoid light weights (Firmament Sans looks fragile under 400) and avoid stretching
 content past 72ch (reading rhythm breaks).
 
 ## Layer 2 — structural / conceptual
@@ -123,9 +133,9 @@ Why this mono, deliberately not IBM Plex Mono:
   — closer to a developer terminal than to an editorial archive.
   Quattro's slight warmth — a duospace, not a strict mono — fits
   this project better. The site already runs on the warm side
-  (Jost body, italic Plex Serif citations, accent-gradient
+  (Firmament Sans body, italic Plex Serif citations, accent-gradient
   hairlines), and a colder Plex Mono fights that.
-- Quattro pairs well with Jost: both have humanist warmth and a
+- Quattro pairs well with Firmament Sans: both have humanist warmth and a
   similar x-height profile. Reading from body sans into a mono pill
   on the same page doesn't feel like crossing into a different
   tooling layer — which is exactly the contrast we don't want for
@@ -156,7 +166,7 @@ preserve the layer-1/layer-2 distinction:
 | Simplified Chinese | Noto Sans SC | Noto Serif SC |
 | Traditional Chinese | Noto Sans TC | Noto Serif TC |
 | Korean | Pretendard | IBM Plex Sans KR |
-| Russian (Cyrillic) | Jost (Cyrillic subset) | Space Grotesk (Google Fonts, Cyrillic + Latin) |
+| Russian (Cyrillic) | Firmament Sans (Cyrillic subset) | Space Grotesk (Google Fonts, Cyrillic + Latin) |
 | Hebrew | — | Frank Ruhl Libre |
 | Greek | — | GFS Didot |
 
@@ -195,7 +205,7 @@ The root font-size is set to `106.25%` in `_reset.scss`, which rebases
 the rem unit from the 16px browser default to **17px**. All sizing in
 the codebase is `rem`-based and scales with this root.
 
-The decision is driven by Jost itself. Jost is a humanist geometric
+The decision is driven by Firmament Sans itself. Firmament Sans is a humanist geometric
 sans in the Futura / Avenir / Spartan family. Like all geometric sans,
 it has a **notably smaller x-height** than the humanist system fonts
 (San Francisco, Segoe UI, Roboto, Arial) that sites like Wikipedia,
@@ -205,9 +215,9 @@ identical pixel sizes:
 | Font | `x` height at 16px | Relative |
 |---|---|---|
 | Inter / SF Pro / Segoe UI | ~9px | 100% |
-| Jost | ~7-7.5px | ~80% |
+| Firmament Sans | ~7-7.5px | ~80% |
 
-The brain reads x-height, not em-square. So 16px Jost reads like
+The brain reads x-height, not em-square. So 16px Firmament Sans reads like
 13-14px Inter would. Our pages with a 16px body looked ~15-20%
 smaller than peer reading sites at the same nominal size.
 
@@ -220,9 +230,9 @@ scaling on top — the percentage compounds rather than overrides.
 
 If you find yourself wanting to bump a single component's text-size
 because it "feels small," check x-height first:
-- the body font is Jost (small x-height)
+- the body font is Firmament Sans (small x-height)
 - the citation/quote font is IBM Plex Serif (also slightly smaller
-  x-height than the surrounding Jost)
+  x-height than the surrounding Firmament Sans)
 Citations and quotes therefore sit at `1.0625rem` – `1.125rem` rather
 than `1rem` — they need a small bump to read at visual parity (or
 slightly above) the body, even though they're nominally the same
@@ -235,7 +245,7 @@ below for the per-component values.
 
 | Variable | Layer | Notes |
 |---|---|---|
-| `$font-family-body` (alias of `$font-family-sans`) | 1 | Body prose, Jost |
+| `$font-family-body` (alias of `$font-family-sans`) | 1 | Body prose, Firmament Sans |
 | `$font-family-lead` (alias of `$font-family-serif`) | 2 | Display/headlines. Name "serif" is historical; the actual font is Space Grotesk (sans). |
 | `$font-family-citation` | 3 | IBM Plex Serif → CJK serifs → Hebrew / Greek serifs → system serif |
 | `$font-family-tech` (alias of `$font-family-mono`) | 4 | iA Writer Quattro (`iAWriterQuattroS`) |
@@ -246,7 +256,7 @@ CSS variables in component SCSS so per-lang switches propagate.
 
 ## Current implementation state vs target
 
-- ✅ Layer 1 (Jost body) — in place.
+- ✅ Layer 1 (Firmament Sans body) — in place.
 - ✅ Layer 2 (Space Grotesk display) — in place.
 - ✅ Layer 3 (IBM Plex Serif citation) — in place as of the typography
   system rollout. Self-hosted Latin + Latin Extended, regular / bold /

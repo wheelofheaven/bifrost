@@ -22,38 +22,38 @@
             format("woff2");
 }
 
-// Full upstream Latin Extended + Cyrillic coverage; source pinned in vendor/jost/README.md.
-// No local() override: installed Jost versions may have different coverage.
+// Scholarly Latin + upstream Cyrillic; pinned in vendor/firmament-sans/README.md.
+// No local() override: installed Firmament Sans versions may have different coverage.
 @font-face {
-    font-family: Jost;
+    font-family: "Firmament Sans";
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: url("fonts/vendor/jost/jost-full-regular.woff2") format("woff2");
+    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2") format("woff2");
 }
 
 @font-face {
-    font-family: Jost;
+    font-family: "Firmament Sans";
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: url("fonts/vendor/jost/jost-full-bold.woff2") format("woff2");
+    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Bold.woff2") format("woff2");
 }
 
 @font-face {
-    font-family: Jost;
+    font-family: "Firmament Sans";
     font-style: italic;
     font-weight: 400;
     font-display: swap;
-    src: url("fonts/vendor/jost/jost-full-italic.woff2") format("woff2");
+    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-Italic.woff2") format("woff2");
 }
 
 @font-face {
-    font-family: Jost;
+    font-family: "Firmament Sans";
     font-style: italic;
     font-weight: 700;
     font-display: swap;
-    src: url("fonts/vendor/jost/jost-full-bolditalic.woff2") format("woff2");
+    src: url("fonts/vendor/firmament-sans/0.1/FirmamentSans-BoldItalic.woff2") format("woff2");
 }
 
 @font-face {
@@ -343,7 +343,7 @@
 // glyphs for pronunciation guides (e.g. /əˈpɒkəlɪpsɪs/). The .woff2
 // is Google's Noto Sans `latin-ext` subset; the unicode-range here
 // is narrowed to IPA-only codepoints so this @font-face is never
-// consulted for Latin Extended A or anything Jost already covers.
+// consulted for Latin Extended A or anything Firmament Sans already covers.
 @font-face {
     font-family: "Noto Sans IPA";
     font-style: normal;
