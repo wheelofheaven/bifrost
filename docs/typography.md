@@ -35,8 +35,9 @@ in serif — destroys it.
 Use for: article prose, essays, explanatory paragraphs, long-form
 reading. Default body voice across the site.
 
-Latin: **Jost**, humanist geometric. Cyrillic ships in the same Jost
-subset (`jost-v19-cyrillic_latin-*.woff2`).
+Latin: **Jost**, humanist geometric. Latin Extended and Cyrillic ship together in the full upstream Jost files
+(`jost-full-*.woff2`), with regular, italic, bold, and bold italic styles.
+The scholarly extension is developed separately as Firmament Sans; it is not yet the site body font.
 
 Suggested settings for long-form prose:
 

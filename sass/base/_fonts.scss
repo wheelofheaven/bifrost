@@ -22,15 +22,14 @@
             format("woff2");
 }
 
+// Full upstream Latin Extended + Cyrillic coverage; source pinned in vendor/jost/README.md.
+// No local() override: installed Jost versions may have different coverage.
 @font-face {
     font-family: Jost;
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src:
-        local("Jost-Regular"),
-        url("fonts/vendor/jost/jost-v19-cyrillic_latin-regular.woff2")
-            format("woff2");
+    src: url("fonts/vendor/jost/jost-full-regular.woff2") format("woff2");
 }
 
 @font-face {
@@ -38,10 +37,23 @@
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src:
-        local("Jost-Bold"),
-        url("fonts/vendor/jost/jost-v19-cyrillic_latin-700.woff2")
-            format("woff2");
+    src: url("fonts/vendor/jost/jost-full-bold.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: Jost;
+    font-style: italic;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/jost/jost-full-italic.woff2") format("woff2");
+}
+
+@font-face {
+    font-family: Jost;
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url("fonts/vendor/jost/jost-full-bolditalic.woff2") format("woff2");
 }
 
 @font-face {
