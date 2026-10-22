@@ -5,7 +5,7 @@
 @use "typography" as typo;
 @use "../abstracts/variables" as vars;
 
-// `--font-family-body` (reading text, Jost for Latin) and
+// `--font-family-body` (reading text, Firmament Sans for Latin) and
 // `--font-family-lead` (display/headings, Space Grotesk for Latin) are
 // declared at :root in `themes/_init.scss`. The `:lang()` blocks below
 // override them per-script so that the display font swaps correctly on
@@ -287,7 +287,7 @@ textarea {
 // Noto Serif JP, a Hebrew citation on Frank Ruhl Libre, etc. See
 // docs/typography.md.
 
-// Japanese — Zen Kaku Gothic New (humanist body, Jost analog) +
+// Japanese — Zen Kaku Gothic New (humanist body, Firmament Sans analog) +
 // M PLUS 1p (geometric display, Space Grotesk analog).
 :lang(ja) {
     --font-family-body: #{typo.$font-family-ja-body};
@@ -314,7 +314,7 @@ textarea {
     line-height: 1.8;
 }
 
-// Russian/Cyrillic — Jost already covers Cyrillic body. For headings
+// Russian/Cyrillic — Firmament Sans already covers Cyrillic body. For headings
 // we override `--font-family-lead` to use Google Fonts' "Space Grotesk"
 // (two-word family name with Cyrillic glyphs); the project's local
 // "SpaceGrotesk" (one-word) is Latin-only.
@@ -323,7 +323,7 @@ textarea {
     letter-spacing: 0.01em;
 }
 
-// Korean — Pretendard (body, Jost-like) + IBM Plex Sans KR (display,
+// Korean — Pretendard (body, Firmament Sans-like) + IBM Plex Sans KR (display,
 // geometric-modernist Hangul with good range of weights).
 :lang(ko) {
     --font-family-body: #{typo.$font-family-ko-body};
