@@ -591,3 +591,228 @@
 .library-book__share-btn {
     right: 0.5rem;
 }
+
+// The phone notes panel owns the foreground while open. Corner controls
+// otherwise cover Import and the backup action (their z-index is higher).
+@media (max-width: 999px) {
+    body:has(.study-panel:not(.hidden)) {
+        .reader-fab,
+        .search-fab,
+        .to-top {
+            visibility: hidden;
+        }
+    }
+
+    .study-panel {
+        height: calc(100dvh - 6rem - env(safe-area-inset-bottom));
+
+        @media (max-width: 768px) {
+            height: calc(100dvh - 4rem - env(safe-area-inset-bottom));
+        }
+
+        @media (max-height: 480px) {
+            top: max(0.75rem, env(safe-area-inset-top));
+            height: calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - max(0.75rem, env(safe-area-inset-bottom)));
+        }
+    }
+
+    .study-panel__content {
+        min-height: 0;
+        overscroll-behavior: contain;
+    }
+
+    .study-panel__close {
+        min-width: 44px;
+        min-height: 44px;
+    }
+}
+
+// Mobile paragraph-and-note workspace. A native modal dialog owns the
+// top layer; the book and its audio/search chrome remain inert underneath.
+body.study-note-open {
+    position: fixed;
+    top: var(--study-note-scroll-top);
+    width: 100%;
+    overflow: hidden;
+}
+
+.study-note-dialog {
+    position: fixed;
+    inset: auto;
+    top: var(--note-viewport-top, 0px);
+    left: var(--note-viewport-left, 0px);
+    width: var(--note-viewport-width, 100vw);
+    height: var(--note-viewport-height, 100dvh);
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    padding: env(safe-area-inset-top) max(vars.$spacing-md, env(safe-area-inset-right)) env(safe-area-inset-bottom) max(vars.$spacing-md, env(safe-area-inset-left));
+    border: 0;
+    background: var(--color-background);
+    color: var(--color-text);
+    overflow: hidden;
+    overscroll-behavior: none;
+    font-family: var(--font-family-body);
+
+    &[open] {
+        display: grid;
+        grid-template-rows: auto minmax(0, 0.85fr) minmax(0, 1.15fr) auto;
+    }
+
+    &::backdrop {
+        background: var(--color-background);
+    }
+
+    [hidden] { display: none; }
+
+    &__header {
+        display: flex;
+        align-items: center;
+        gap: vars.$spacing-sm;
+        padding-block: vars.$spacing-xs;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__heading {
+        flex: 1;
+        min-width: 0;
+
+        h2 {
+            margin: 0;
+            font-size: vars.$font-size-base;
+            line-height: 1.4;
+        }
+    }
+
+    &__book {
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        color: var(--color-text-muted);
+        font-size: vars.$font-size-xs;
+    }
+
+    &__close {
+        flex-shrink: 0;
+        display: grid;
+        place-items: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 1px solid var(--color-hairline);
+        border-radius: vars.$border-radius-lg;
+        background: var(--color-background-secondary);
+        color: var(--color-text);
+        cursor: pointer;
+    }
+
+    &__passage,
+    &__writing {
+        display: flex;
+        flex-direction: column;
+        gap: vars.$spacing-xs;
+        min-height: 0;
+        padding-block: vars.$spacing-sm;
+    }
+
+    &__passage {
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__passage h3,
+    &__writing label {
+        margin: 0;
+        font: inherit;
+        font-size: vars.$font-size-sm;
+        font-weight: 600;
+        color: var(--color-text-muted);
+    }
+
+    &__quote {
+        flex: 1;
+        min-height: 0;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        scrollbar-gutter: stable;
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+        font-family: var(--font-family-reader, Georgia, serif);
+        font-size: 1rem;
+        line-height: 1.65;
+        padding-inline-end: vars.$spacing-xs;
+    }
+
+    &__input {
+        flex: 1;
+        min-height: 0;
+        width: 100%;
+        padding: vars.$spacing-sm;
+        resize: none;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        border: 1px solid var(--color-border);
+        border-radius: vars.$border-radius-md;
+        background: var(--color-background-secondary);
+        color: var(--color-text);
+        // At least 16px so focusing doesn't trigger Safari's input zoom.
+        font: inherit;
+        font-size: max(16px, 1rem);
+        line-height: 1.5;
+    }
+
+    &__footer {
+        padding-bottom: vars.$spacing-sm;
+    }
+
+    &__hint,
+    &__error,
+    &__question {
+        margin: 0 0 vars.$spacing-xs;
+        font-size: vars.$font-size-xs;
+        line-height: 1.4;
+        color: var(--color-text-muted);
+    }
+
+    &__error { color: var(--color-error); }
+
+    &__actions {
+        display: flex;
+        gap: vars.$spacing-xs;
+
+        button {
+            flex: 1;
+            min-height: 44px;
+            padding: vars.$spacing-xs vars.$spacing-sm;
+            border: 1px solid var(--color-border);
+            border-radius: vars.$border-radius-md;
+            background: var(--color-background-secondary);
+            color: var(--color-text);
+            font: inherit;
+            font-size: vars.$font-size-sm;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .study-note-dialog__save {
+            background: var(--color-accent-primary);
+            color: var(--color-background);
+            border-color: transparent;
+        }
+
+        .study-note-dialog__delete,
+        .study-note-dialog__confirm {
+            color: var(--color-error);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: default;
+        }
+    }
+
+    :is(button, textarea, [tabindex]):focus-visible {
+        outline: 2px solid var(--color-accent-primary);
+        outline-offset: -2px;
+    }
+}

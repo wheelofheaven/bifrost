@@ -465,6 +465,9 @@ const LibraryReader = (function() {
 
         clearTimeout(state.progressSaveTimeout);
         state.progressSaveTimeout = setTimeout(() => {
+            // The mobile note editor pins the book body; window.scrollY is
+            // temporarily zero and must not overwrite the reading position.
+            if (document.body.classList.contains('study-note-open')) return;
             const prefs = window.LibraryStorage.getPreferences();
             if (prefs.autoSaveProgress) {
                 const ref = getCurrentRef();

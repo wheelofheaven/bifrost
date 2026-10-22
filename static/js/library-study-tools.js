@@ -392,9 +392,181 @@ const LibraryStudyTools = (function() {
     }
 
     /**
+     * Mobile note workspace. Native dialog provides top-layer rendering,
+     * background inertness and focus containment; the two panes scroll alone.
+     */
+    function openMobileNoteEditor(refId, btn, returnTarget = btn) {
+        if (document.querySelector('.study-note-dialog[open]')) return;
+        const para = btn.closest('.library-book__paragraph');
+        if (!para) return;
+        const existingNote = window.LibraryStorage.getNote(state.bookSlug, refId);
+        const originalContent = existingNote?.content || '';
+        const fromPanel = !!returnTarget.closest('.study-panel');
+        const dialog = document.createElement('dialog');
+        dialog.className = 'study-note-dialog';
+        dialog.setAttribute('aria-labelledby', 'study-note-title');
+        dialog.innerHTML = `
+            <header class="study-note-dialog__header">
+                <div class="study-note-dialog__heading">
+                    <h2 id="study-note-title"></h2>
+                    <p class="study-note-dialog__book"></p>
+                </div>
+                <button type="button" class="study-note-dialog__close" aria-label="Close note editor" autofocus>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg>
+                </button>
+            </header>
+            <section class="study-note-dialog__passage" aria-labelledby="study-note-passage-label">
+                <h3 id="study-note-passage-label">Passage</h3>
+                <div class="study-note-dialog__quote" tabindex="0" role="region" aria-labelledby="study-note-passage-label"></div>
+            </section>
+            <div class="study-note-dialog__writing">
+                <label for="study-note-input">Your note</label>
+                <textarea id="study-note-input" class="study-note-dialog__input" placeholder="Write your thoughts…" dir="auto" aria-describedby="study-note-storage"></textarea>
+            </div>
+            <footer class="study-note-dialog__footer">
+                <p id="study-note-storage" class="study-note-dialog__hint">Stored only in this browser.</p>
+                <p class="study-note-dialog__error" role="alert" hidden></p>
+                <div class="study-note-dialog__actions">
+                    <button type="button" class="study-note-dialog__delete" ${existingNote ? '' : 'hidden'}>Delete note</button>
+                    <button type="button" class="study-note-dialog__save">Save note</button>
+                </div>
+                <div class="study-note-dialog__confirmation" hidden>
+                    <p class="study-note-dialog__question" role="status"></p>
+                    <div class="study-note-dialog__actions">
+                        <button type="button" class="study-note-dialog__keep">Keep editing</button>
+                        <button type="button" class="study-note-dialog__confirm"></button>
+                    </div>
+                </div>
+            </footer>
+        `;
+        dialog.querySelector('h2').textContent = refId.replace(`${state.bookCode}-`, `${state.bookCode} `);
+        dialog.querySelector('.study-note-dialog__book').textContent = state.bookTitle;
+        const quote = dialog.querySelector('.study-note-dialog__quote');
+        const translation = para.querySelector('.library-book__para-translation');
+        quote.textContent = translation?.innerText.trim() || captureParagraphMeta(refId)?.quote || '';
+        quote.lang = document.documentElement.lang;
+        quote.dir = 'auto';
+        const input = dialog.querySelector('textarea');
+        input.value = originalContent;
+        const save = dialog.querySelector('.study-note-dialog__save');
+        const actions = dialog.querySelector('.study-note-dialog__footer > .study-note-dialog__actions');
+        const confirmation = dialog.querySelector('.study-note-dialog__confirmation');
+        const confirm = dialog.querySelector('.study-note-dialog__confirm');
+        const keep = dialog.querySelector('.study-note-dialog__keep');
+        const error = dialog.querySelector('.study-note-dialog__error');
+        let pendingAction = null;
+        let confirmationTrigger = null;
+
+        function reportStorageError() {
+            error.textContent = 'Could not save changes. Your text is still here; please try again.';
+            error.hidden = false;
+        }
+        function askConfirmation(action, trigger) {
+            pendingAction = action;
+            confirmationTrigger = trigger;
+            dialog.querySelector('.study-note-dialog__question').textContent = action === 'delete'
+                ? 'Delete this saved note?' : 'Discard your unsaved changes?';
+            confirm.textContent = action === 'delete' ? 'Delete note' : 'Discard changes';
+            actions.hidden = true;
+            confirmation.hidden = false;
+            keep.focus({ preventScroll: true });
+        }
+        function keepEditing() {
+            confirmation.hidden = true;
+            actions.hidden = false;
+            pendingAction = null;
+            (confirmationTrigger || input).focus({ preventScroll: true });
+        }
+        function requestClose() {
+            if (input.value !== originalContent) {
+                askConfirmation('discard', dialog.querySelector('.study-note-dialog__close'));
+            } else {
+                dialog.close();
+            }
+        }
+        input.addEventListener('input', () => { save.disabled = !input.value.trim(); });
+        save.disabled = !input.value.trim();
+        save.addEventListener('click', () => {
+            const content = input.value.trim();
+            if (!content) return;
+            if (!window.LibraryStorage.addNote(state.bookSlug, refId, content, captureParagraphMeta(refId))) {
+                reportStorageError();
+                return;
+            }
+            btn.classList.add('has-note');
+            updateBadge();
+            renderNotesList();
+            dialog.close();
+            showToast('Note saved');
+        });
+        dialog.querySelector('.study-note-dialog__delete').addEventListener('click', e => askConfirmation('delete', e.currentTarget));
+        keep.addEventListener('click', keepEditing);
+        confirm.addEventListener('click', () => {
+            if (pendingAction === 'delete') {
+                if (!window.LibraryStorage.removeNote(state.bookSlug, refId)) {
+                    keepEditing();
+                    reportStorageError();
+                    return;
+                }
+                btn.classList.remove('has-note');
+                updateBadge();
+                renderNotesList();
+            }
+            dialog.close();
+        });
+        dialog.querySelector('.study-note-dialog__close').addEventListener('click', requestClose);
+        dialog.addEventListener('cancel', e => {
+            e.preventDefault();
+            if (pendingAction) keepEditing();
+            else requestClose();
+        });
+        // Reader shortcuts must not act on the book while this dialog is up.
+        dialog.addEventListener('keydown', e => { e.stopPropagation(); });
+        dialog.addEventListener('click', e => { e.stopPropagation(); });
+
+        // Pin the underlying book on iOS as well as desktop browsers. Keep
+        // its exact reading position and restore existing page styles.
+        const scrollPosition = { x: window.scrollX, y: window.scrollY };
+        document.body.style.setProperty('--study-note-scroll-top', `${-scrollPosition.y}px`);
+        document.body.classList.add('study-note-open');
+        document.body.appendChild(dialog);
+        const viewport = window.visualViewport;
+        function fitViewport() {
+            dialog.style.setProperty('--note-viewport-height', `${viewport?.height || window.innerHeight}px`);
+            dialog.style.setProperty('--note-viewport-width', `${viewport?.width || window.innerWidth}px`);
+            dialog.style.setProperty('--note-viewport-top', `${viewport?.offsetTop || 0}px`);
+            dialog.style.setProperty('--note-viewport-left', `${viewport?.offsetLeft || 0}px`);
+        }
+        fitViewport();
+        viewport?.addEventListener('resize', fitViewport);
+        viewport?.addEventListener('scroll', fitViewport);
+        window.addEventListener('resize', fitViewport);
+        dialog.addEventListener('close', () => {
+            viewport?.removeEventListener('resize', fitViewport);
+            viewport?.removeEventListener('scroll', fitViewport);
+            window.removeEventListener('resize', fitViewport);
+            dialog.remove();
+            document.body.classList.remove('study-note-open');
+            document.body.style.removeProperty('--study-note-scroll-top');
+            window.scrollTo({ left: scrollPosition.x, top: scrollPosition.y, behavior: 'instant' });
+            const panelTarget = fromPanel && elements.notesList.querySelector(`[data-action="edit-note"][data-ref="${cssEscape(refId)}"]`);
+            const focusTarget = panelTarget || (fromPanel ? elements.panel.querySelector('.study-panel__close') : returnTarget);
+            if (focusTarget?.isConnected) focusTarget.focus({ preventScroll: true });
+        }, { once: true });
+        dialog.showModal();
+        // Start on Close so opening a note doesn't immediately summon the
+        // phone keyboard and hide the passage the reader came to consult.
+        dialog.querySelector('.study-note-dialog__close').focus({ preventScroll: true });
+    }
+
+    /**
      * Open note editor for a paragraph
      */
     function openNoteEditor(refId, btn) {
+        if (window.matchMedia('(max-width: 999px)').matches) {
+            openMobileNoteEditor(refId, btn);
+            return;
+        }
         const existingNote = window.LibraryStorage.getNote(state.bookSlug, refId);
         const para = btn.closest('.library-book__paragraph');
 
@@ -404,7 +576,7 @@ const LibraryStudyTools = (function() {
         const editor = document.createElement('div');
         editor.className = 'study-tools__note-editor';
         editor.innerHTML = `
-            <textarea class="study-tools__note-input" placeholder="Add your note...">${existingNote?.content || ''}</textarea>
+            <textarea class="study-tools__note-input" placeholder="Add your note..."></textarea>
             <div class="study-tools__note-actions">
                 <button class="study-tools__note-save" data-action="save-note" data-ref="${refId}">Save</button>
                 <button class="study-tools__note-cancel" data-action="cancel-note">Cancel</button>
@@ -415,6 +587,7 @@ const LibraryStudyTools = (function() {
         para.appendChild(editor);
 
         const textarea = editor.querySelector('textarea');
+        textarea.value = existingNote?.content || '';
         textarea.focus();
 
         // Handle save
@@ -708,6 +881,11 @@ const LibraryStudyTools = (function() {
         elements.notesList.querySelectorAll('[data-action="edit-note"]').forEach(btn => {
             btn.addEventListener('click', () => {
                 const ref = btn.dataset.ref;
+                if (window.matchMedia('(max-width: 999px)').matches) {
+                    const paraBtn = document.querySelector(`[data-ref="${cssEscape(ref)}"][data-action="note"]`);
+                    if (paraBtn) openMobileNoteEditor(ref, paraBtn, btn);
+                    return;
+                }
                 goToRef(ref);
                 setTimeout(() => {
                     const paraBtn = document.querySelector(`[data-ref="${ref}"][data-action="note"]`);

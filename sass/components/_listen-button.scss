@@ -679,7 +679,7 @@ body.has-audio-player {
     // declared on each component, so the lift is smooth both ways —
     // controls rise when the player opens, fall back when it closes.
     .reader-fab {
-        bottom: 6rem;
+        --reader-fab-bottom: 6rem;
     }
 
     .to-top {
