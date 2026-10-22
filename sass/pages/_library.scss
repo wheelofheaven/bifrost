@@ -3574,7 +3574,7 @@
 .library-book {
     // The reader drops to a narrower gutter one breakpoint later than the
     // wiki does, so the numeral column keeps its measure on phones.
-    @include mix.doc-gutter($mobile: 0.75rem, $mobile-at: 600px);
+    @include mix.doc-gutter($mobile: 0.625rem, $mobile-at: 600px);
 
     min-height: 100vh;
     background: var(--color-background);
@@ -4882,6 +4882,32 @@
     }
 }
 
+// The article already owns its reading inset. The shared main padding
+// must not add a second gutter on phone/tablet book pages.
+@media (max-width: 900px) {
+    main:has(> .library-book) {
+        padding-inline: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    // A quiet, short marker acknowledges a tap without painting a stripe
+    // down an entire screen of prose. Audio retains its distinct marker.
+    .library-book__paragraph--selected:not(.library-book__paragraph--reading) {
+        background: transparent;
+
+        &::before {
+            left: auto;
+            inset-inline-start: -0.375rem;
+            top: 0.6rem;
+            bottom: auto;
+            width: 1px;
+            height: 1.25rem;
+            background: color-mix(in srgb, var(--color-accent-primary) 35%, transparent);
+        }
+    }
+}
+
 // =============================================================
 // Wheel of Heaven Translation — commentary marker + side drawer
 // =============================================================
@@ -4950,14 +4976,12 @@
     // -------- Inline commentary popover (glassmorphism) --------
     //
     // Each verse with commentary carries its own popover, positioned
-    // absolutely below the verse and anchored to the right edge. Truly
-    // translucent surface (low-opacity tint over heavy backdrop-filter
-    // blur) so the page reads through it as glass.
+    // absolutely below the verse and anchored to the right edge. The
+    // shared menu surface keeps text readable even when blur is absent.
 
     &__commentary-popover {
-        // Hide-by-default state. Visibility lets us animate opacity
-        // and transform without leaving an inert overlay around the
-        // page consuming clicks.
+        // Hide-by-default state. Visibility and pointer-events prevent
+        // the closed panel from consuming clicks.
         position: absolute;
         top: calc(100% + 0.5rem);
         right: 0;
@@ -4968,47 +4992,20 @@
         flex-direction: column;
         overflow: hidden;
 
-        // Glass surface. ~28% tint of the theme's surface colour means
-        // the underlying page bleeds through and the backdrop-filter
-        // has something to act on; a hairline border + dual shadow
-        // give the card its edge.
-        background: color-mix(in srgb,
-            var(--color-card-bg, var(--color-background, #1a1a1a)) 28%,
-            transparent);
-        color: var(--color-text, inherit);
-        border: 1px solid color-mix(in srgb,
-            var(--color-text, currentColor) 14%,
-            transparent);
-        border-radius: 14px;
-        box-shadow:
-            0 24px 60px rgba(0, 0, 0, 0.28),
-            0 2px 10px rgba(0, 0, 0, 0.12),
-            inset 0 1px 0 rgba(255, 255, 255, 0.08);
-        backdrop-filter: blur(28px) saturate(180%);
-        -webkit-backdrop-filter: blur(28px) saturate(180%);
-
-        // Entrance state — fades + slides in from a touch above.
+        // Readable panel glass, with an opaque token fallback when blur
+        // is unsupported or reduced transparency is requested. Keep this
+        // panel transform-free: WebKit can lose blur during scale/slide.
+        @include mix.chrome-glass(vars.$border-radius-xl, var(--color-menu-bg));
+        color: var(--color-text);
+        box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-6px) scale(0.98);
-        transition:
-            opacity 0.2s ease,
-            transform 0.2s cubic-bezier(0.32, 0.72, 0, 1),
-            visibility 0.2s ease;
+        transition: opacity 0.2s ease, visibility 0.2s ease;
         pointer-events: none;
-
-        // Fallback for browsers without backdrop-filter: opaque the
-        // surface so legibility is preserved.
-        @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-            background: color-mix(in srgb,
-                var(--color-card-bg, var(--color-background, #1a1a1a)) 96%,
-                transparent);
-        }
 
         &.is-open {
             opacity: 1;
             visibility: visible;
-            transform: translateY(0) scale(1);
             pointer-events: auto;
         }
 
@@ -5018,8 +5015,9 @@
             right: 0;
             left: 0;
             margin-inline: auto;
-            width: calc(100vw - 1.5rem);
+            width: 100%;
             max-height: 70vh;
+            max-height: 70dvh;
         }
     }
 

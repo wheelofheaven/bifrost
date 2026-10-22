@@ -263,7 +263,9 @@
         const hasContents = !!document.querySelector(
             ".library-book__toc-list .library-book__toc-link, .wiki__toc-link"
         );
-        if (contentsBtn) contentsBtn.hidden = !hasContents;
+        // Books keep Contents inside the options menu so the collapsed
+        // controls don't cover another strip of the reading column.
+        if (contentsBtn) contentsBtn.hidden = isBookPage || !hasContents;
 
         function buildToc() {
             if (tocBuilt || !tocList) return;
