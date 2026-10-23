@@ -38,10 +38,14 @@
         color: var(--color-accent-primary);
     }
 
-    &.active {
-        background: var(--color-accent-primary);
-        border-color: var(--color-accent-primary);
-        color: white;
+    &--bookmark:hover,
+    &--bookmark.active {
+        background: transparent;
+        color: var(--color-text);
+    }
+
+    &--bookmark.active svg {
+        fill: currentColor;
     }
 
     &.has-note {

@@ -839,6 +839,17 @@
         let bookLangRef = null;
         let unitListRef = null;
         let currentChapter = null;
+        let chapterRequest = 0;
+
+        function positionAudioAt(chapterAudio, seconds, request) {
+            const setPosition = () => {
+                if (!stopped && audioEl === chapterAudio && request === chapterRequest) {
+                    chapterAudio.currentTime = seconds;
+                }
+            };
+            if (chapterAudio.readyState >= 1) setPosition();
+            else chapterAudio.addEventListener('loadedmetadata', setPosition, { once: true });
+        }
 
         function playbackDuration() {
             // Streaming Opus may report Infinity until the entire file loads.
@@ -871,10 +882,12 @@
         // the onended handler for auto-advance. Returns true if it started
         // playback, false if no manifest entry exists for the chapter (book
         // is finished).
-        async function playChapter(chapterN) {
+        async function playChapter(chapterN, paragraphN = null) {
             if (stopped) return false;
+            const request = ++chapterRequest;
             const chapEntry = manifestRef.chapters.find((c) => c.n === chapterN);
             if (!chapEntry) return false;
+            let chapterTiming;
             try {
                 // Revalidate: timing sidecars keep stable, unhashed names and
                 // are regenerated on every render. force-cache would pin a
@@ -882,8 +895,14 @@
                 // bug). no-cache => conditional GET, cheap 304 when unchanged.
                 const r = await fetch(`${ASSETS_BASE}/${chapEntry.timing_url}`, { cache: 'no-cache' });
                 if (!r.ok) return false;
-                timing = await r.json();
+                chapterTiming = await r.json();
             } catch (e) { return false; }
+            if (stopped || request !== chapterRequest) return false;
+
+            const targetParagraph = paragraphN === null ? null
+                : chapterTiming.paragraphs.find((p) => p.n === paragraphN);
+            if (paragraphN !== null && !targetParagraph) return false;
+            timing = chapterTiming;
 
             currentChapter = chapterN;
             lastUnitIdx = -1;
@@ -911,6 +930,12 @@
                 formats: chapEntry.formats || null,
                 ambientUrl: chapEntry.ambient_url ? `${ASSETS_BASE}/${chapEntry.ambient_url}` : null,
             });
+            if (targetParagraph) {
+                // Seek as soon as metadata permits it, before playback can
+                // begin. Starting first and seeking after play() briefly
+                // voices the chapter opening on a slow connection.
+                positionAudioAt(audioEl, targetParagraph.start, request);
+            }
             // v4.3: notify the controller of the chapter change so it can
             // update the title row + chapter-menu highlight.
             if (cbs.onChapterChange) {
@@ -960,11 +985,16 @@
 
             audioEl.onplay = () => {
                 if (stopped) return;
+                cbs.onStart && cbs.onStart();
+            };
+            audioEl.onplaying = () => {
+                if (stopped) return;
+                // `play` can fire before metadata and the initial seek.
+                // Start ambience only once narration actually begins.
                 if (ambientEl) {
                     ambientEl.currentTime = audioEl.currentTime;
                     ambientEl.play().catch(() => {});
                 }
-                cbs.onStart && cbs.onStart();
             };
             audioEl.onpause = () => {
                 if (stopped || audioEl.ended) return;
@@ -1083,6 +1113,7 @@
             audioEl.ontimeupdate = null;
             audioEl.onerror = null;
             audioEl.onplay = null;
+            audioEl.onplaying = null;
             audioEl.onpause = null;
             audioEl = null;
             // v4: tear down the ambient second track in lockstep.
@@ -1101,7 +1132,7 @@
             name: 'prerecorded',
             probe,
             async load() {},
-            async speak(unitList, callbacks, probeData) {
+            async speak(unitList, callbacks, probeData, paragraphN = null) {
                 cbs = callbacks;
                 stopped = false;
                 const data = probeData || (await probe(unitList));
@@ -1110,7 +1141,7 @@
                 bookSlugRef = data.slug;
                 bookLangRef = data.lang;
                 unitListRef = unitList;
-                const ok = await playChapter(data.chapter);
+                const ok = await playChapter(data.chapter, paragraphN);
                 if (!ok) throw new Error('prerecorded: failed to load first chapter');
             },
             pause() {
@@ -1135,7 +1166,7 @@
             // Seeks playback to the paragraph identified by `c{ch}p{n}`.
             // If the paragraph is in the currently-loaded chapter, sets
             // audio.currentTime directly; otherwise loads the right chapter
-            // via playChapter() first and then seeks inside it. Returns true
+            // via playChapter(), positioned before playback. Returns true
             // when a seek was attempted, false if there's no engine context
             // or the id doesn't resolve. Used by the click-to-seek
             // paragraph handler wired below.
@@ -1143,16 +1174,16 @@
                 if (!manifestRef || !id) return false;
                 const m = id.match(/^c(\d+)p(\d+)$/);
                 if (!m) return false;
+                const request = ++chapterRequest;
                 const targetChap = parseInt(m[1], 10);
                 const targetPara = parseInt(m[2], 10);
                 if (targetChap !== currentChapter) {
-                    const ok = await playChapter(targetChap);
-                    if (!ok || stopped) return false;
+                    return playChapter(targetChap, targetPara);
                 }
                 if (!audioEl || !timing) return false;
                 const p = timing.paragraphs.find((p) => p.n === targetPara);
                 if (!p) return false;
-                audioEl.currentTime = p.start;
+                positionAudioAt(audioEl, p.start, request);
                 if (audioEl.paused) {
                     try { await audioEl.play(); } catch (_e) {}
                 }
@@ -1167,6 +1198,7 @@
             },
             stop() {
                 stopped = true;
+                chapterRequest++;
                 teardownAudio();
                 unitIdxByParaN = null;
                 lastUnitIdx = -1;
@@ -1695,7 +1727,7 @@
     // removed — renderChapterMenu() is driven directly by chapter changes
     // and by expanding the panel.)
 
-    async function speak() {
+    async function speak(startParagraphId = null) {
         playQueue = getReadingUnits();
         if (!playQueue.length) return;
 
@@ -1718,8 +1750,12 @@
         if (probeData) {
             currentEngine = prerecordedEngine;
             try {
-                await prerecordedEngine.speak(playQueue, callbackBundle, probeData);
-                return;
+                const target = startParagraphId && startParagraphId.match(/^c(\d+)p(\d+)$/);
+                const playbackData = target
+                    ? { ...probeData, chapter: parseInt(target[1], 10) } : probeData;
+                await prerecordedEngine.speak(playQueue, callbackBundle, playbackData,
+                    target ? parseInt(target[2], 10) : null);
+                return true;
             } catch (err) {
                 console.error('prerecorded failed, falling through:', err);
                 // fall through to generated engines
@@ -1970,8 +2006,8 @@
 
         // Public entry point for the per-paragraph "play from here" button in
         // the actions pill (templates/macros/library.html). If the prerecorded
-        // engine is already running, just seek; otherwise start playback and
-        // then seek once the engine is live. Resolves to true when a seek was
+        // engine is already running, just seek; otherwise load the requested
+        // chapter positioned at that paragraph. Resolves to true when a seek was
         // attempted.
         window.WohListen = {
             available() { return document.body.classList.contains('woh-audio-available'); },
@@ -1981,12 +2017,7 @@
                     && typeof currentEngine.seekToParagraph === 'function') {
                     return currentEngine.seekToParagraph(id);
                 }
-                await speak();
-                if (currentEngine && currentEngine.name === 'prerecorded'
-                    && typeof currentEngine.seekToParagraph === 'function') {
-                    return currentEngine.seekToParagraph(id);
-                }
-                return false;
+                return (await speak(id)) === true;
             },
         };
 

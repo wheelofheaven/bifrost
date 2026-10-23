@@ -1562,8 +1562,8 @@
     .woh-audio-available &__para-listen-btn { display: flex; }
 
     // Drop the per-button border/fill on study-tools buttons inside the
-    // floating glass pill — the container provides the chrome. Hover/
-    // active states get a soft accent tint instead.
+    // floating glass pill — the container provides the chrome. Bookmarks
+    // indicate their state with the icon fill instead of a coloured circle.
     &__para-actions .study-tools__btn {
         border: 0;
         border-radius: 999px;
@@ -1575,9 +1575,10 @@
             color: var(--color-accent-primary);
         }
 
-        &.active {
-            background: var(--color-accent-primary);
-            color: white;
+        &--bookmark:hover,
+        &--bookmark.active {
+            background: transparent;
+            color: var(--color-text);
         }
 
         &.has-note {
@@ -2599,6 +2600,12 @@
     select:focus {
         outline: 2px solid var(--color-focus);
         outline-offset: 2px;
+    }
+
+    // Pointer taps use the bookmark fill for feedback; retain the focus
+    // ring when navigating with a keyboard.
+    .study-tools__btn--bookmark:focus:not(:focus-visible) {
+        outline: none;
     }
 
     // High contrast mode support
