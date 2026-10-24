@@ -109,6 +109,36 @@ $font-family-hebrew:
     "Times New Roman",
     serif;
 
+// Hebrew locale (`:lang(he)`) body + display stacks — the Hebrew analog of
+// the Firmament Sans / Space Grotesk pair used for Latin. Miriam Libre is a
+// monolinear Hebrew sans (Michal Sahar's revival of Raphael Frank's Miriam)
+// whose stems and typographic colour measure within a few per cent of
+// Firmament Sans at 400 and 700; see the companion proof at
+// https://firmament.wheelofheaven.world/companions/. Its @font-face is
+// bounded to the Hebrew blocks, so listing it first is safe: Latin words,
+// digits and punctuation skip it and come from the usual Latin faces.
+// Frank Ruhl Libre follows as the fallback for the few Hebrew codepoints
+// Miriam Libre lacks (sof pasuq, cantillation), then system Hebrew sans.
+//
+// Inline Hebrew *citations* inside other-language prose, and explicitly
+// tagged source text, keep $font-family-hebrew (the citation serif).
+$font-family-he-body:
+    "Miriam Libre",
+    "Firmament Sans",
+    "Frank Ruhl Libre",
+    "Arial Hebrew",
+    "Noto Sans Hebrew",
+    "Segoe UI",
+    sans-serif;
+$font-family-he-display:
+    "Miriam Libre",
+    "SpaceGrotesk",
+    "Frank Ruhl Libre",
+    "Arial Hebrew",
+    "Noto Sans Hebrew",
+    "Segoe UI",
+    sans-serif;
+
 // Greek font stack — GFS Didot is the Greek Font Society's revival of
 // Didot's Greek, the typeface used in critical editions of classical
 // Greek texts. Full polytonic coverage (breathings, accents, iota

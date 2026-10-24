@@ -11,6 +11,12 @@
         via @font-face + unicode-range when the dropdown opens. -->
 <link rel="preload" href="{{ get_url(path='fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-700.woff2') }}" as="font" type="font/woff2" crossorigin>
+{# Hebrew pages: the body/display companion renders the first paint of every
+   Hebrew word, so it earns a preload there and nowhere else (the @font-face
+   is unicode-range bounded; other locales never fetch it). #}
+{% if detected_lang == "he" %}
+<link rel="preload" href="{{ get_url(path='fonts/vendor/miriam-libre/miriam-libre-hebrew.woff2') }}" as="font" type="font/woff2" crossorigin>
+{% endif %}
 
 <!-- Web fonts. Frank Ruhl Libre (Hebrew) and GFS Didot (Greek) are
      always loaded because inline citations in those scripts (e.g.
@@ -90,7 +96,7 @@
      blocking cost only applies to uncached first visits. -->
 {# Invalidate stylesheet URLs that may have been requested by a preview before
    the font release reached production. Advance this with the deployed font release. #}
-{% set font_release = "firmament-0.1" %}
+{% set font_release = "firmament-0.1-hebrew-companion" %}
 {% set critical_css_url = get_url(path='critical.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% set main_css_url = get_url(path='main.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% if _is_landing %}

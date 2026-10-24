@@ -152,6 +152,30 @@
         U+FB1D-FB4F;
 }
 
+// ─── Miriam Libre (self-hosted) ───────────────────────────────────
+//
+// Hebrew body + display companion for the Hebrew locale (`:lang(he)`
+// in _base.scss). Monolinear Hebrew sans by Michal Sahar, reviving
+// Raphael Frank's Miriam; chosen in the Firmament companion proof
+// (https://firmament.wheelofheaven.world/companions/) for matching
+// Firmament Sans on stem weight and typographic colour. One variable
+// WOFF2 (wght 400–700) subset to the Hebrew blocks; the unicode-range
+// mirrors the subset so Latin, digits and punctuation keep coming from
+// Firmament Sans / Space Grotesk and the file is never fetched on pages
+// without Hebrew. Provenance and checksum: fonts/vendor/miriam-libre/.
+//
+// Not a replacement for Frank Ruhl Libre: inline Hebrew citations and
+// pointed source text stay in the citation serif (see _base.scss).
+
+@font-face {
+    font-family: "Miriam Libre";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("fonts/vendor/miriam-libre/miriam-libre-hebrew.woff2") format("woff2");
+    unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
 // ─── Noto Sans Cuneiform (self-hosted) ────────────────────────────
 //
 // Sumerian / Akkadian cuneiform script (𒀭, 𒆠, 𒈗). Self-hosted from
