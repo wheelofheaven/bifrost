@@ -522,9 +522,12 @@
             else if (content) content.prepend(toc);
             toc.classList.add('timeline-page__toc--inline');
         } else {
-            // On desktop: TOC returns to the sidebar (after the <header>).
+            // On desktop: TOC returns to the sidebar, below the metadata
+            // (after the meta block; after the <header> if there is none).
+            const meta = sidebar.querySelector('.timeline-page__meta');
             const header = sidebar.querySelector('.timeline-page__header');
-            if (header) header.after(toc);
+            if (meta) meta.after(toc);
+            else if (header) header.after(toc);
             else sidebar.appendChild(toc);
             toc.classList.remove('timeline-page__toc--inline');
         }

@@ -1,0 +1,273 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the sources index and the source record pages. The
+// index is a list of 800 rows: title, an eyebrow for the kind, a mono
+// line for author and date, and the pill for the one control. The
+// record page has the reading column and a sidebar of hairline rows.
+.sources {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        position: relative;
+        flex-wrap: wrap;
+        padding-top: 1rem;
+        padding-bottom: 2.5rem;
+        border-bottom: 0;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            position: absolute;
+            left: 0;
+            bottom: 1rem;
+        }
+    }
+
+    &__title {
+        font-family: var(--font-family-lead);
+        font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    &__count {
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    &__search-input {
+        border-radius: 999px;
+        border-color: var(--color-hairline);
+        background: transparent;
+        font-family: typo.$font-family-tech;
+        font-size: 0.875rem;
+
+        &:focus {
+            border-color: var(--color-text);
+            box-shadow: none;
+        }
+    }
+
+    &__description {
+        max-width: 44rem;
+        font-size: 1.125rem;
+        line-height: 1.5;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    &__filter,
+    &__cited-toggle {
+        border-radius: 999px;
+        border-color: var(--color-hairline);
+        background: transparent;
+        color: var(--color-text-muted);
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+
+        &:hover,
+        &[aria-pressed="true"],
+        &.is-active {
+            background: transparent;
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+    }
+}
+
+.source-card {
+    &__title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    &__category,
+    &__cite-badge {
+        @include grammar.grammar-eyebrow;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__cite-badge {
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    &__meta {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+
+        &::before {
+            content: none;
+        }
+    }
+
+    &__topic {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        color: var(--color-text-muted);
+
+        &:not(:last-child)::after {
+            content: ",";
+        }
+    }
+
+    &__cites-title {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__visit {
+        @include grammar.grammar-pill;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+            border-bottom-color: var(--color-text);
+        }
+    }
+}
+
+.source-page {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding-bottom: 1.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            margin-top: 1.25rem;
+        }
+    }
+
+    &__kind-row {
+        margin-bottom: 1rem;
+    }
+
+    &__kind {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__title {
+        max-width: 18ch;
+        font-size: clamp(2.25rem, 4vw, 3.25rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    &__summary {
+        margin-top: 0.75rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+    }
+
+    &__section-title {
+        @include grammar.grammar-section-title;
+        display: flex;
+        align-items: baseline;
+        gap: 0.6rem;
+    }
+
+    &__section-count {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__source-item {
+        padding: 0.6rem 0;
+    }
+
+    &__source-family {
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    // Sidebar: hairline blocks, not cards.
+    &__aside-block {
+        padding: 1.25rem 0 0;
+        border: 0;
+        border-top: 1px solid var(--color-hairline);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__aside-title {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__fact-label {
+        @include grammar.grammar-eyebrow;
+        font-size: 0.625rem;
+    }
+
+    &__fact-value {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text);
+    }
+
+    &__chip-list {
+        display: block;
+        line-height: 1.6;
+    }
+
+    &__chip {
+        display: inline;
+        padding: 0;
+        margin: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+
+        &:not(:last-child)::after {
+            content: ", ";
+        }
+    }
+
+    &__visit {
+        @include grammar.grammar-pill;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+}

@@ -226,47 +226,6 @@
              into the article body after the first paragraph (Wikipedia pattern). -->
         <aside class="wiki__sidebar" role="complementary" aria-labelledby="wiki-title">
             <!-- Sticky Table of Contents -->
-            {% if page.toc %}
-            <div class="wiki__toc">
-                <div class="wiki__toc-header">
-                    <h2 class="wiki__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
-                </div>
-                <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
-                    <ul class="wiki__toc-list">
-                        {% for h1 in page.toc %}
-                        <li class="wiki__toc-item wiki__toc-item--level-1">
-                            <a href="#{{ h1.id }}" class="wiki__toc-link">{{ h1.title }}</a>
-                            {% if h1.children %}
-                            <ul class="wiki__toc-sublist">
-                                {% for h2 in h1.children %}
-                                <li class="wiki__toc-item wiki__toc-item--level-2">
-                                    <a href="#{{ h2.id }}" class="wiki__toc-link">{{ h2.title }}</a>
-                                    {% if h2.children %}
-                                    <ul class="wiki__toc-sublist">
-                                        {% for h3 in h2.children %}
-                                        <li class="wiki__toc-item wiki__toc-item--level-3">
-                                            <a href="#{{ h3.id }}" class="wiki__toc-link">{{ h3.title }}</a>
-                                        </li>
-                                        {% endfor %}
-                                    </ul>
-                                    {% endif %}
-                                </li>
-                                {% endfor %}
-                            </ul>
-                            {% endif %}
-                        </li>
-                        {% endfor %}
-
-                        {# Read Next is rendered as the article's final section
-                           by partials/related-content.html with id="related-content-title".
-                           Mirror it here so the TOC reflects the full reading flow. #}
-                        <li class="wiki__toc-item wiki__toc-item--level-1 wiki__toc-item--read-next">
-                            <a href="#related-content-title" class="wiki__toc-link">{{ trans(key="readNext", lang=detected_lang) }}</a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-            {% endif %}
 
             <header class="wiki__header">
                 {% if page.extra.image %}
@@ -375,6 +334,49 @@
                 </div>
 
                 <!-- Share -->
+            {# Contents follow the metadata: portrait, infobox, claim, names, meta, then the list. #}
+            {% if page.toc %}
+            <div class="wiki__toc">
+                <div class="wiki__toc-header">
+                    <h2 class="wiki__toc-title" id="toc-heading">{{ trans(key="tocContents", lang=detected_lang) }}</h2>
+                </div>
+                <nav class="wiki__toc-nav" aria-labelledby="toc-heading">
+                    <ul class="wiki__toc-list">
+                        {% for h1 in page.toc %}
+                        <li class="wiki__toc-item wiki__toc-item--level-1">
+                            <a href="#{{ h1.id }}" class="wiki__toc-link">{{ h1.title }}</a>
+                            {% if h1.children %}
+                            <ul class="wiki__toc-sublist">
+                                {% for h2 in h1.children %}
+                                <li class="wiki__toc-item wiki__toc-item--level-2">
+                                    <a href="#{{ h2.id }}" class="wiki__toc-link">{{ h2.title }}</a>
+                                    {% if h2.children %}
+                                    <ul class="wiki__toc-sublist">
+                                        {% for h3 in h2.children %}
+                                        <li class="wiki__toc-item wiki__toc-item--level-3">
+                                            <a href="#{{ h3.id }}" class="wiki__toc-link">{{ h3.title }}</a>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% endif %}
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+
+                        {# Read Next is rendered as the article's final section
+                           by partials/related-content.html with id="related-content-title".
+                           Mirror it here so the TOC reflects the full reading flow. #}
+                        <li class="wiki__toc-item wiki__toc-item--level-1 wiki__toc-item--read-next">
+                            <a href="#related-content-title" class="wiki__toc-link">{{ trans(key="readNext", lang=detected_lang) }}</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+            {% endif %}
+
                 <div class="wiki__share-section">
                     <div class="wiki__meta-label">{{ trans(key="shareThisPage", lang=detected_lang) }}</div>
                     {% include "partials/social-share.html" %}
@@ -438,7 +440,12 @@
         } else {
             // On desktop: Contents comes before metadata and the portrait.
             const header = sidebar.querySelector('.wiki__header');
-            if (header) header.before(toc);
+            // Below the metadata: after the meta block inside the sidebar
+            // header (the template places it there too; this is the return
+            // path from the inline mobile position).
+            const meta = sidebar.querySelector('.wiki__meta');
+            if (meta) meta.after(toc);
+            else if (header) header.after(toc);
             else sidebar.appendChild(toc);
             toc.classList.remove('wiki__toc--inline');
         }

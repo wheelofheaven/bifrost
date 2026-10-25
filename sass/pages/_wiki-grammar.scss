@@ -176,8 +176,17 @@
     }
 
     // ---- Sidebar --------------------------------------------------------
+    // The contents list follows the metadata inside the sidebar header
+    // block, which already carries the gutter; the list takes a hairline
+    // above it and no gutter of its own.
     &__toc {
         padding: 0.35rem 1.5rem 1.5rem;
+    }
+
+    &__header > &__toc {
+        margin: 0.75rem 0 0;
+        padding: 1.25rem 0 0.75rem;
+        border-top: 1px solid var(--color-hairline);
     }
 
     &__toc-title {

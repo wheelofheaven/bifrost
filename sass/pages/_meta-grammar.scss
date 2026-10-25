@@ -1,0 +1,327 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the meta pages (About, the info pages such as
+// Contributing, Code of Conduct, Privacy, Method, Forums, and the FAQ)
+// and the Press Kit. One centred reading column: kicker, headline, dash,
+// lede on a hairline; body sections as display headings; the footer as
+// a section on a hairline.
+.about,
+.info-page,
+.faq {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__article {
+        background: transparent;
+    }
+
+    > .breadcrumbs,
+    &__container > .breadcrumbs {
+        position: relative;
+        z-index: 1;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    // Header order: kicker (claim badge) → headline → dash → lede.
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2.25rem 0 1.75rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before {
+            @include grammar.grammar-rainbow-dash;
+            order: 3;
+            margin: 0.5rem 0 1.75rem;
+        }
+    }
+
+    &__badge {
+        order: 1;
+        margin: 0 0 1.25rem;
+    }
+
+    &__title {
+        order: 2;
+        max-width: 16ch;
+        margin: 0;
+        font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    &__description,
+    &__summary {
+        order: 4;
+        display: block;
+        max-width: 44rem;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-size: 1.375rem;
+        line-height: 1.45;
+        color: var(--color-text);
+        opacity: 0.88;
+
+        p {
+            margin: 0;
+            font-size: inherit;
+            line-height: inherit;
+            color: inherit;
+        }
+    }
+
+    &__meta {
+        order: 5;
+        margin: 1.25rem 0 0;
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    // Body: the reading column's type; section headings in display,
+    // without the short accent rule the pages drew above them.
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+
+        h2 {
+            padding-top: 0;
+            font-family: var(--font-family-lead);
+            font-size: 1.625rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.015em;
+            text-transform: none;
+            color: var(--color-text);
+
+            &::before,
+            &::after {
+                content: none;
+            }
+        }
+
+        h3 {
+            font-family: var(--font-family-lead);
+            font-size: 1.25rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            text-transform: none;
+        }
+    }
+
+    // Group titles (About's commitments, FAQ groups): section heads.
+    &__group-title {
+        @include grammar.grammar-section-title;
+        padding-top: 0;
+        text-transform: none;
+    }
+
+    &__footer {
+        margin-top: 3.5rem;
+        padding-top: 0;
+        border-top: 0;
+    }
+
+    &__footer-title {
+        @include grammar.grammar-section-title;
+        padding-top: 0;
+        text-transform: none;
+
+        &::before {
+            content: none;
+        }
+    }
+
+    &__footer-text,
+    &__footer-cta {
+        font-size: 1rem;
+        line-height: 1.6;
+    }
+}
+
+// About: the numbered commitments keep their counter in muted ink.
+.about {
+    &__commitment::before {
+        color: var(--color-text-muted);
+        font-family: typo.$font-family-tech;
+    }
+
+    &__commitment-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+}
+
+// FAQ: the summary is a paragraph under the lede, not a second lede; the
+// "on this page" box becomes a hairline list; questions are display
+// headings on hairline rows.
+.faq {
+    &__summary {
+        margin-top: 1rem;
+        font-size: 1.0625rem;
+        line-height: 1.65;
+        color: var(--color-text-muted);
+        opacity: 1;
+    }
+
+    &__toc {
+        margin: 0 0 2.5rem;
+        padding: 0 0 1rem;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__toc-title {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    &__toc-list {
+        a {
+            color: var(--color-text-muted);
+            text-decoration: none;
+
+            &:hover {
+                color: var(--color-text);
+            }
+        }
+    }
+
+    &__item {
+        padding: 0.85rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+    }
+
+    &__question {
+        margin: 0 0 0.5rem;
+        font-family: var(--font-family-lead);
+        font-size: 1.125rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    &__answer {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+}
+
+// Press kit: same header sequence; the two calls to action are the pill,
+// the primary one filled with ink.
+.press {
+    &__hero {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+        padding-top: 0;
+    }
+
+    &__eyebrow {
+        order: 1;
+        @include grammar.grammar-eyebrow;
+
+        &::before,
+        &::after {
+            content: none;
+        }
+    }
+
+    &__title {
+        order: 2;
+        margin: 0;
+        font-size: 1.625rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.015em;
+    }
+
+    &__lede {
+        order: 4;
+        max-width: 44rem;
+        margin: 0;
+        font-size: 1.0625rem;
+        line-height: 1.65;
+        color: var(--color-text-muted);
+    }
+
+    &__cta {
+        order: 5;
+    }
+
+    &__contact-line {
+        order: 6;
+    }
+
+    &__btn,
+    .press-asset__btn,
+    .press-boilerplate__copy,
+    [data-press-copy] {
+        @include grammar.grammar-pill;
+        background-image: none;
+        box-shadow: none;
+        text-shadow: none;
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+        }
+    }
+
+    &__btn--primary,
+    &__btn:first-child {
+        background: var(--color-text);
+        border-color: var(--color-text);
+        color: var(--color-background);
+
+        &:hover {
+            background: var(--color-text);
+            color: var(--color-background);
+            opacity: 0.88;
+        }
+    }
+
+    &__section > h2,
+    .press-boilerplate__head h2 {
+        @include grammar.grammar-section-title;
+        text-transform: none;
+        letter-spacing: -0.01em;
+
+        &::before {
+            content: none;
+        }
+    }
+}

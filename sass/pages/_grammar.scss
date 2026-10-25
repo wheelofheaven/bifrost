@@ -11,8 +11,8 @@
 // wash behind the header carries the colour as atmosphere.
 //
 // Page roots that take the grammar, and their reading columns.
-$grammar-pages: ".article, .wiki, .timeline-page, .dispatch, .library-book";
-$grammar-content: ".article__content, .wiki__content, .timeline-page__content, .dispatch__content, .library-book__content";
+$grammar-pages: ".article, .wiki, .timeline-page, .dispatch, .library-book, .about, .info-page, .faq, .press, .sources, .source-page";
+$grammar-content: ".article__content, .wiki__content, .timeline-page__content, .dispatch__content, .library-book__content, .about__content, .info-page__content, .faq__content, .source-page__content";
 
 // ---- Tokens -------------------------------------------------------------
 // The pastel 300 band the navbar and footer already hand-write.

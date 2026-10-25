@@ -118,8 +118,23 @@
       }
     }
 
+    // The list may live inside a taller scroll container (the wiki and
+    // timeline sidebars scroll as a whole); scroll whichever ancestor
+    // actually scrolls, so the current entry stays in view.
+    scrollContainer() {
+      let el = this.tocNav;
+      while (el && el !== document.body) {
+        const { overflowY } = getComputedStyle(el);
+        if ((overflowY === "auto" || overflowY === "scroll") && el.scrollHeight > el.clientHeight) {
+          return el;
+        }
+        el = el.parentElement;
+      }
+      return this.tocNav;
+    }
+
     scrollTocToView(activeLink) {
-      const tocContainer = this.tocNav;
+      const tocContainer = this.scrollContainer();
       const linkRect = activeLink.getBoundingClientRect();
       const containerRect = tocContainer.getBoundingClientRect();
 
