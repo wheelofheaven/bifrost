@@ -162,13 +162,15 @@ preserve the layer-1/layer-2 distinction:
 
 | Script | Layer 1 (body) | Layer 2 (display) |
 |---|---|---|
-| Japanese | Noto Sans JP | M PLUS 1p |
-| Simplified Chinese | Noto Sans SC | Noto Serif SC |
-| Traditional Chinese | Noto Sans TC | Noto Serif TC |
-| Korean | Pretendard | IBM Plex Sans KR |
+| Japanese | Firmament Sans → Noto Sans JP | M PLUS 1p |
+| Simplified Chinese | Firmament Sans → Noto Sans SC | Noto Serif SC |
+| Traditional Chinese | Firmament Sans → Noto Sans TC | Noto Serif TC |
+| Korean | Firmament Sans → Pretendard | IBM Plex Sans KR |
 | Russian (Cyrillic) | Firmament Sans (Cyrillic subset) | Space Grotesk (Google Fonts, Cyrillic + Latin) |
 | Hebrew | — | Frank Ruhl Libre |
 | Greek | — | GFS Didot |
+
+The arrow means Firmament Sans is listed first and the regional face supplies only the glyphs Firmament lacks (kana, kanji, hanzi, hangul); Latin and Cyrillic stay in Firmament on every locale.
 
 Stacks live in `sass/base/_typography.scss` as
 `$font-family-{lang}-body` and `$font-family-{lang}-display`.

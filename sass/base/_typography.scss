@@ -11,6 +11,14 @@
 // based on detected_lang; system-font fallbacks come after so the page
 // stays readable if the network drops the web font.
 //
+// Every CJK body stack starts with Firmament Sans. Firmament has no CJK
+// glyphs, so kana, kanji, hanzi and hangul fall through to the regional
+// face, while Latin and Cyrillic — navigation labels, brand words,
+// transliterations, the "Русский" entry in the language menu — stay in
+// the same face as on every other page. Without it the regional face
+// supplies them: Noto Sans JP's Cyrillic is full-width, so "Русский"
+// rendered wide and wrapped in the switcher (reported 2026-10-25).
+//
 // Japanese: Noto Sans JP for body, M PLUS 1p (geometric, Space Grotesk-like)
 //           for display. Noto Sans JP replaced Zen Kaku Gothic New on
 //           2026-10-25: in the Firmament companion proof its stem measured
@@ -18,6 +26,7 @@
 //           visibly lighter than Firmament beside it; it also matches the
 //           Noto Sans SC/TC/KR siblings in weight and rhythm.
 $font-family-ja-body:
+    "Firmament Sans",
     "Noto Sans JP",
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
@@ -37,6 +46,7 @@ $font-family-ja-display:
 // Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
 // serif contrast for headings).
 $font-family-zh-body:
+    "Firmament Sans",
     "Noto Sans SC",
     "PingFang SC",
     "Hiragino Sans GB",
@@ -51,6 +61,7 @@ $font-family-zh-display:
 
 // Traditional Chinese: Noto Sans TC + Noto Serif TC.
 $font-family-zh-hant-body:
+    "Firmament Sans",
     "Noto Sans TC",
     "PingFang TC",
     "Microsoft JhengHei",
@@ -65,6 +76,7 @@ $font-family-zh-hant-display:
 // Korean: Pretendard (body, Firmament Sans-like) + IBM Plex Sans KR (display,
 // geometric-modernist Hangul with good range of weights).
 $font-family-ko-body:
+    "Firmament Sans",
     "Pretendard",
     "Pretendard Variable",
     "Apple SD Gothic Neo",
