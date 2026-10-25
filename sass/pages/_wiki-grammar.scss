@@ -1,0 +1,317 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the wiki entry on the shared grammar.
+// The encyclopedia layout stays (reading column + sticky sidebar), but the
+// sidebar becomes a column of mono eyebrows and hairline rows instead of
+// cards and chips, the header takes the headline → dash → lede sequence,
+// and the end matter uses the same titles, rows and strips as the article.
+.wiki {
+    @include grammar.grammar-prism;
+
+    // The prism sits behind everything, so the layers above it go clear.
+    &__container,
+    &__main,
+    &__article,
+    &__sidebar,
+    &__toc {
+        background: transparent;
+    }
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    > .breadcrumbs {
+        position: relative;
+        z-index: 1;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    // ---- Header ---------------------------------------------------------
+    &__page-header {
+        gap: 1rem;
+        padding-top: 2.25rem;
+        padding-bottom: 0;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            margin-top: 0.75rem;
+        }
+    }
+
+    &__title {
+        max-width: 16ch;
+        font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    // The lede loses its accent bar and rotated label: large, light,
+    // directly under the dash, then a hairline before the body.
+    &__lede {
+        min-height: 0;
+        margin: 0 var(--doc-gutter) 1.5rem;
+        padding: 1.25rem 0 1.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        p {
+            max-width: 44rem;
+            font-size: 1.375rem;
+            line-height: 1.45;
+            color: var(--color-text);
+            opacity: 0.88;
+        }
+    }
+
+    // ---- Reading column -------------------------------------------------
+    &__content {
+        padding-top: 0.5rem;
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+    }
+
+    // ---- End matter -----------------------------------------------------
+    &__section-title,
+    &__footnotes > h2,
+    &__references > h2 {
+        @include grammar.grammar-section-title;
+    }
+
+    &__link-list {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    &__link-item {
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        font-size: 1rem;
+        line-height: 1.55;
+
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            transform: none;
+        }
+    }
+
+    &__link {
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    &__link-description {
+        font-size: 0.9375rem;
+        color: var(--color-text-muted);
+    }
+
+    &__edit-footer {
+        @include grammar.grammar-meta-strip;
+        margin-top: 2rem;
+        padding-inline: var(--doc-gutter);
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__history,
+    &__history-meta {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    &__history-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__history-link,
+    &__edit-btn,
+    &__agent-btn {
+        @include grammar.grammar-pill;
+        background-image: none;
+        box-shadow: none;
+        text-shadow: none;
+        color: var(--color-text);
+
+        // The glass-cloud button paints its clouds on pseudo-elements.
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+            color: var(--color-text);
+        }
+    }
+
+    // ---- Sidebar --------------------------------------------------------
+    &__toc {
+        padding: 0.35rem 1.5rem 1.5rem;
+    }
+
+    &__toc-title {
+        @include grammar.grammar-rail-title;
+    }
+
+    &__toc-header {
+        margin: 0;
+    }
+
+    // The sidebar is the scroll container here, so the nav takes only the
+    // marker inset, not its own scroll.
+    &__toc-nav {
+        margin-left: -0.75rem;
+        padding-right: 0.5rem;
+        font-family: var(--font-family-body);
+    }
+
+    &__toc-link {
+        @include grammar.grammar-rail-link;
+    }
+
+    // Labels: one eyebrow for every sidebar heading.
+    &__claim-label,
+    &__alternative-label,
+    &__meta-label,
+    &__infobox-summary {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    // Infobox: no card, hairline rows.
+    &__infobox {
+        margin: 0 0 1.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        overflow: visible;
+    }
+
+    &__infobox-summary {
+        padding: 0 0 0.6rem;
+        border-bottom: 1px solid var(--color-hairline);
+        background: transparent;
+
+        &:hover {
+            background: transparent;
+            color: var(--color-text);
+        }
+    }
+
+    &__infobox-list {
+        padding: 0;
+        margin: 0;
+    }
+
+    &__infobox-row {
+        padding: 0.55rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+    }
+
+    &__infobox-key {
+        @include grammar.grammar-eyebrow;
+        font-size: 0.625rem;
+    }
+
+    &__infobox-value {
+        font-size: 0.875rem;
+        line-height: 1.45;
+    }
+
+    // Also known as: a comma list in the metadata voice, not stacked chips.
+    &__alternative-list {
+        display: block;
+        white-space: normal;
+        line-height: 1.5;
+        cursor: default;
+    }
+
+    &__alternative-name {
+        display: inline;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        font-weight: 400;
+        letter-spacing: 0.02em;
+        color: var(--color-text);
+
+        &:not(:last-child)::after {
+            content: ", ";
+        }
+    }
+
+    &__alternatives-more {
+        @include grammar.grammar-eyebrow;
+        margin-left: 0.35rem;
+    }
+
+    // Meta rows: mono.
+    &__meta {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+    }
+
+    &__meta-value {
+        color: var(--color-text);
+    }
+
+    &__category {
+        color: var(--color-text);
+        font-weight: 500;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+    }
+
+    &__agent-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+}
+
+// Current chapter in the sidebar rail: the rainbow marker.
+.wiki__toc-link--active {
+    @include grammar.grammar-rail-link-active;
+}

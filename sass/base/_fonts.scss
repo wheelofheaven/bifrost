@@ -22,6 +22,30 @@
             format("woff2");
 }
 
+// True monospace sibling of Quattro, for code: every glyph is 600/1000 wide,
+// so BibTeX fields and listings align. Pinned in vendor/ia-writer-mono/README.md.
+@font-face {
+    font-family: iAWriterMonoS;
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src:
+        local("iAWriterMonoS-Regular"),
+        url("fonts/vendor/ia-writer-mono/iAWriterMonoS-Regular.woff2")
+            format("woff2");
+}
+
+@font-face {
+    font-family: iAWriterMonoS;
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src:
+        local("iAWriterMonoS-Bold"),
+        url("fonts/vendor/ia-writer-mono/iAWriterMonoS-Bold.woff2")
+            format("woff2");
+}
+
 // Scholarly Latin + upstream Cyrillic; pinned in vendor/firmament-sans/README.md.
 // No local() override: installed Firmament Sans versions may have different coverage.
 @font-face {

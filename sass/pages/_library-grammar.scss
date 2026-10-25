@@ -1,0 +1,258 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the library book page on the shared
+// grammar. The reader itself (verses, settings, listen, interlinear) is
+// untouched; this pass takes the page chrome: header, chapter heads,
+// related books, edit footer and the sidebar's labels, rows and controls.
+.library-book {
+    @include grammar.grammar-prism;
+
+    &__container,
+    &__main,
+    &__article,
+    &__sidebar,
+    &__sidebar-header,
+    &__toc {
+        background: transparent;
+    }
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    > .breadcrumbs {
+        position: relative;
+        z-index: 1;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    // ---- Header ---------------------------------------------------------
+    &__page-header {
+        gap: 0.75rem;
+        padding-top: 2.25rem;
+        padding-bottom: 0;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            margin-top: 0.75rem;
+        }
+    }
+
+    &__title {
+        font-size: clamp(2.25rem, 4vw, 3.25rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    &__version {
+        @include grammar.grammar-eyebrow;
+        margin: 0;
+    }
+
+    &__subtitle {
+        font-size: 1.125rem;
+        letter-spacing: -0.01em;
+    }
+
+    &__lede {
+        max-width: 44rem;
+        margin: 1.25rem 0 1.5rem;
+        padding: 0 0 1.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+        font-size: 1.25rem;
+        line-height: 1.5;
+        opacity: 0.88;
+    }
+
+    &__dataset {
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    // ---- Chapter heads: eyebrow number, plain title, one hairline ------
+    &__chapter-header {
+        padding: 0.75rem 0 1rem;
+        border-bottom: 1px solid var(--color-hairline);
+        text-align: left;
+
+        &::after {
+            content: none;
+        }
+    }
+
+    &__chapter-number {
+        @include grammar.grammar-eyebrow;
+        margin-bottom: 0.35rem;
+    }
+
+    &__content .library-book__chapter-title {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        letter-spacing: -0.015em;
+    }
+
+    &__segment-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    // ---- Related books ----------------------------------------------------
+    &__related {
+        padding-inline: 0;
+        padding-bottom: 0;
+        border-top: 0;
+        background: transparent;
+
+        // The section's own padding was the gutter; with it gone the dash
+        // sits on the box edge.
+        &::before {
+            left: 0;
+        }
+    }
+
+    &__section-title {
+        @include grammar.grammar-section-title;
+    }
+
+    &__link-item {
+        padding: 0.6rem 0;
+    }
+
+    &__link-meta {
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    &__edit-footer {
+        @include grammar.grammar-meta-strip;
+        margin-top: 2rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__history-link,
+    &__edit-btn,
+    &__agent-btn {
+        @include grammar.grammar-pill;
+        background-image: none;
+        box-shadow: none;
+        text-shadow: none;
+        color: var(--color-text);
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+            color: var(--color-text);
+        }
+    }
+
+    // ---- Sidebar --------------------------------------------------------
+    &__meta-label,
+    &__licensing-title,
+    &__provenance-title,
+    &__toc-title {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    &__meta-row {
+        padding: 0.45rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+
+        .library-book__meta-label {
+            margin: 0;
+        }
+    }
+
+    &__meta-value {
+        color: var(--color-text);
+        text-align: right;
+
+        code {
+            background: transparent;
+            border: 0;
+            padding: 0;
+            font: inherit;
+        }
+    }
+
+    &__licensing,
+    &__provenance-section {
+        padding-top: 1.25rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__licensing-item,
+    &__provenance-item {
+        padding: 0.4rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+    }
+
+    &__translation-chip {
+        @include grammar.grammar-pill;
+        padding: 0.2rem 0.65rem;
+        font-size: 0.6875rem;
+        color: var(--color-text-muted);
+    }
+
+    &__agent-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    &__toc {
+        padding-top: 0.35rem;
+    }
+
+    &__toc-header {
+        margin: 0;
+    }
+
+    &__toc-nav {
+        margin-left: -0.75rem;
+        padding-right: 0.5rem;
+        font-family: var(--font-family-body);
+    }
+
+    &__toc-link {
+        @include grammar.grammar-rail-link;
+        display: flex;
+        align-items: baseline;
+        gap: 0.5rem;
+    }
+
+    &__toc-chapter-number {
+        font-size: 0.6875rem;
+        color: var(--color-text-subtle);
+    }
+}
+
+// library-reader.js marks the current chapter on the item, not the link.
+.library-book__toc-item--active .library-book__toc-link {
+    @include grammar.grammar-rail-link-active;
+}

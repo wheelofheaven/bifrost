@@ -1,0 +1,341 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the timeline chapter on the shared
+// grammar. Same bones as the wiki entry (reading column + sidebar): the
+// age badge becomes a mono line under the headline, the Genesis verse a
+// quotation rule, the interpretation the lede; chapter navigation and the
+// sidebar take hairline rows, eyebrows and pills.
+.timeline-page {
+    @include grammar.grammar-prism;
+
+    &__container,
+    &__main,
+    &__article,
+    &__sidebar,
+    &__toc {
+        background: transparent;
+    }
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    > .breadcrumbs {
+        position: relative;
+        z-index: 1;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    // ---- Header ---------------------------------------------------------
+    &__page-header {
+        gap: 1rem;
+        margin: 0 var(--doc-gutter) 1.5rem;
+        padding: 2.25rem 0 1.75rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    &__title {
+        max-width: 16ch;
+        font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+        font-weight: 500;
+        line-height: 1.04;
+        letter-spacing: -0.03em;
+    }
+
+    // Glyph, dates and day as one mono line; the dash wraps beneath it.
+    &__age-badge {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.1rem;
+        width: 100%;
+        padding-bottom: 1.5rem;
+        @include grammar.grammar-eyebrow;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            position: absolute;
+            left: 0;
+            bottom: 0;
+        }
+    }
+
+    &__symbol,
+    &__dates,
+    &__day {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font: inherit;
+        letter-spacing: inherit;
+        color: inherit;
+    }
+
+    &__symbol svg {
+        width: 1.1rem;
+        height: 1.1rem;
+    }
+
+    // The verse is a quotation: rule and serif, no tinted card.
+    &__verse {
+        margin: 0.5rem 0 0;
+        padding: 0.15rem 0 0.15rem 1.25rem;
+        border: 0;
+        border-left: 2px solid var(--color-text-muted);
+        border-radius: 0;
+        background: transparent;
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        color: var(--color-text);
+
+        p {
+            margin: 0;
+        }
+    }
+
+    // The interpretation is the lede.
+    &__interpretation {
+        max-width: 44rem;
+        margin: 0.75rem 0 0;
+        font-size: 1.25rem;
+        line-height: 1.5;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    // ---- Reading column -------------------------------------------------
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+    }
+
+    .wiki__footnotes > h2,
+    .wiki__references > h2 {
+        @include grammar.grammar-section-title;
+    }
+
+    // ---- Chapter navigation: rows, not cards ----------------------------
+    // The navigation insets itself with a margin, so the dash sits on its
+    // box edge, which is already the text edge.
+    &__navigation {
+        margin-top: 0;
+        padding-top: 0;
+        border-top: 0;
+
+        &::before {
+            left: 0;
+        }
+    }
+
+    // The sidebar's Earth card: image and caption on the page, no card.
+    &__header {
+        background: transparent;
+    }
+
+    &__earth-figure {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    &__earth-link {
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+        }
+    }
+
+    &__earth-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__earth-title {
+        font-size: 1rem;
+        font-weight: 600;
+    }
+
+    &__earth-summary {
+        font-size: 0.8125rem;
+        color: var(--color-text-muted);
+    }
+
+    &__prev-next {
+        gap: 0 3rem;
+    }
+
+    &__nav-btn {
+        padding: 0.9rem 0;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+
+        &:hover {
+            background: transparent;
+            border-color: var(--color-text-muted);
+            box-shadow: none;
+            transform: none;
+        }
+    }
+
+    &__nav-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__nav-title {
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    &__nav-icon {
+        color: var(--color-text-muted);
+    }
+
+    &__hub-link {
+        margin-top: 1.25rem;
+    }
+
+    &__hub-btn {
+        @include grammar.grammar-pill;
+        color: var(--color-text-muted);
+
+        &:hover {
+            background: transparent;
+            color: var(--color-text);
+        }
+    }
+
+    // ---- Edit footer ----------------------------------------------------
+    &__edit-footer {
+        @include grammar.grammar-meta-strip;
+        margin-top: 2rem;
+        padding-inline: var(--doc-gutter);
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__history,
+    &__history-meta {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    &__history-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__history-link,
+    &__edit-btn,
+    &__agent-btn {
+        @include grammar.grammar-pill;
+        background-image: none;
+        box-shadow: none;
+        text-shadow: none;
+        color: var(--color-text);
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+            color: var(--color-text);
+        }
+    }
+
+    // ---- Sidebar --------------------------------------------------------
+    &__claim-label,
+    &__meta-label {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    &__meta {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+    }
+
+    &__meta-value {
+        color: var(--color-text);
+    }
+
+    &__category {
+        color: var(--color-text);
+        font-weight: 500;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &:hover {
+            text-decoration: none;
+            border-bottom-color: currentColor;
+        }
+    }
+
+    &__agent-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    &__toc {
+        padding: 0.35rem 1.5rem 1.5rem;
+    }
+
+    &__toc-title {
+        @include grammar.grammar-rail-title;
+    }
+
+    &__toc-header {
+        margin: 0;
+    }
+
+    // The toc block is its own scroll container here.
+    &__toc-nav {
+        margin-left: -0.75rem;
+        padding-right: 0.5rem;
+        font-family: var(--font-family-body);
+    }
+
+    &__toc-link {
+        @include grammar.grammar-rail-link;
+    }
+}
+
+.timeline-page__toc-link--active {
+    @include grammar.grammar-rail-link-active;
+}

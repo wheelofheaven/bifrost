@@ -92,3 +92,14 @@
 @use "themes/init";
 @use "themes/light";
 @use "themes/dark";
+
+// Reading grammar: the shared tokens and rules every reading page follows
+// (pages/_grammar.scss) and each page's placement of them. Loaded last so
+// they layer over the page stylesheets above.
+@use "pages/grammar";
+@use "pages/article-grammar";
+@use "pages/wiki-grammar";
+@use "pages/dispatch-grammar";
+@use "pages/timeline-grammar";
+@use "pages/library-grammar";
+@use "pages/wiki-index-grammar";

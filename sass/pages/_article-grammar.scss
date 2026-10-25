@@ -1,0 +1,314 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the article page on the shared grammar
+// (pages/_grammar.scss). Header spans the full measure: mono kicker,
+// large light headline, the rainbow dash, the summary as a lede, a mono
+// meta row on a hairline. Below it the reading column with a sticky
+// contents rail on the right.
+.article {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        max-width: 72rem;
+    }
+
+    > .breadcrumbs {
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    // ---- Layout: reading column + rail --------------------------------
+    &__article {
+        display: grid;
+        grid-template-columns: minmax(0, 44rem) minmax(12rem, 16rem);
+        column-gap: clamp(3rem, 7vw, 7rem);
+        align-items: start;
+        background: transparent;
+
+        > * {
+            grid-column: 1;
+            min-width: 0;
+        }
+
+        > .article__header {
+            grid-column: 1 / -1;
+        }
+
+        // The rail is sticky for the whole document (row 2 to the end).
+        > .article__toc {
+            grid-column: 2;
+            grid-row: 2 / span 40;
+            align-self: start;
+            position: sticky;
+            top: 6rem;
+            margin: 0.35rem 0 0;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+        }
+
+        @media (max-width: 1024px) {
+            display: block;
+
+            > .article__toc {
+                position: static;
+                margin: v.$spacing-xl 0;
+            }
+        }
+    }
+
+    // ---- Header ---------------------------------------------------------
+    // Order: kicker → title → dash → lede → meta row → share. The template
+    // emits the summary after the byline, so the header is a flex column
+    // and `order` sets the editorial sequence without touching markup.
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2.75rem 0 1.75rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before {
+            @include grammar.grammar-rainbow-dash;
+            order: 3;
+            margin: 0.75rem 0 2rem;
+        }
+
+        > .article__meta { order: 1; }
+        > .article__title { order: 2; }
+        > .article__summary { order: 4; }
+        > .article__byline { order: 5; }
+        > .social-share { order: 6; }
+
+        .social-share {
+            margin: 0.9rem 0 0;
+        }
+    }
+
+    &__meta {
+        gap: 1.1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.6875rem;
+        letter-spacing: 0.1em;
+        color: var(--color-text-muted);
+
+        .article-chip {
+            background: none;
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+            font: inherit;
+            letter-spacing: inherit;
+            text-transform: inherit;
+        }
+
+        .article-chip__icon,
+        .article-chip svg {
+            display: none;
+        }
+    }
+
+    &__category {
+        color: inherit;
+        font-weight: 500;
+    }
+
+    &__title {
+        max-width: 16ch;
+        margin: 0 0 1.5rem;
+        font-size: clamp(2.75rem, 4.8vw, 4rem);
+        font-weight: 500;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+    }
+
+    // The summary becomes the lede: large, light, directly under the dash.
+    &__summary {
+        width: 100%;
+        max-width: 44rem;
+        margin: 0 0 2rem;
+        padding: 0;
+        min-height: 0;
+        border: 0;
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        p {
+            font-size: 1.375rem;
+            line-height: 1.45;
+            font-weight: 400;
+            color: var(--color-text);
+            opacity: 0.88;
+        }
+    }
+
+    // Meta row: one mono line on a hairline.
+    &__byline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        margin: 0;
+        padding-top: 1.1rem;
+        border-top: 1px solid var(--color-hairline);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+
+    &__byline-link {
+        color: var(--color-text);
+        font-weight: 500;
+        text-decoration: none;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &:hover {
+            border-bottom-color: currentColor;
+        }
+    }
+
+    &__byline-sep {
+        opacity: 0.5;
+    }
+
+    // ---- Contents rail --------------------------------------------------
+    &__toc-title {
+        @include grammar.grammar-rail-title;
+    }
+
+    &__toc-nav {
+        @include grammar.grammar-rail-nav;
+    }
+
+    &__toc-link {
+        @include grammar.grammar-rail-link;
+
+        &--active {
+            @include grammar.grammar-rail-link-active;
+        }
+    }
+
+    // ---- Reading column -------------------------------------------------
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+    }
+
+    // ---- End matter -----------------------------------------------------
+    &__section-title {
+        @include grammar.grammar-section-title;
+    }
+
+    &__link-list {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    &__link-item {
+        margin: 0;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        font-size: 1rem;
+        line-height: 1.55;
+
+        a {
+            font-style: normal;
+        }
+    }
+
+    &__footnote-item,
+    &__source-item {
+        padding: 0.4rem 0;
+    }
+
+    &__agent-section,
+    &__edit-footer {
+        @include grammar.grammar-meta-strip;
+    }
+
+    &__agent-section {
+        margin-top: 3.5rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__agent-label,
+    &__history-label {
+        @include grammar.grammar-eyebrow;
+        margin: 0;
+    }
+
+    &__agent-buttons,
+    &__history,
+    &__history-meta {
+        display: inline-flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+    }
+
+    &__agent-btn,
+    &__edit-btn,
+    &__history-link {
+        @include grammar.grammar-pill;
+    }
+
+    &__footer {
+        margin-top: 0;
+        padding: 0.9rem 0 0;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__back-card {
+        @include grammar.grammar-eyebrow;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        border: 0;
+        background: transparent;
+        color: var(--color-text-muted);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+
+    @media (max-width: 768px) {
+        &__header {
+            padding-top: 1.5rem;
+        }
+
+        &__title {
+            font-size: clamp(2rem, 9vw, 2.75rem);
+        }
+
+        &__summary p {
+            font-size: 1.125rem;
+        }
+    }
+}

@@ -1,0 +1,301 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the newsroom dispatch on the shared
+// grammar: the article's header sequence (kicker → headline → dash → lede
+// → mono byline → share) in a single reading column, with the canon links
+// and sources as hairline rows.
+.dispatch {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+        max-width: 72rem;
+    }
+
+    > .breadcrumbs,
+    &__container > .breadcrumbs {
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+
+    &__article {
+        max-width: 48rem;
+        background: transparent;
+    }
+
+    // ---- Header ---------------------------------------------------------
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        max-width: none;
+        padding: 2.75rem 0 1.75rem;
+        margin-bottom: 3rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before {
+            @include grammar.grammar-rainbow-dash;
+            order: 3;
+            margin: 0.75rem 0 2rem;
+        }
+
+        > .dispatch__meta { order: 1; }
+        > .dispatch__title { order: 2; }
+        > .dispatch__summary { order: 4; }
+        > .dispatch__byline { order: 5; }
+        > .social-share { order: 6; }
+
+        .social-share {
+            margin: 0.9rem 0 0;
+        }
+    }
+
+    // Kicker: the event-type chip becomes plain mono caps; the claim badge
+    // keeps its outline and dot (shared rule).
+    &__meta {
+        gap: 1.1rem;
+        margin-bottom: 1.5rem;
+        @include grammar.grammar-eyebrow;
+
+        > :not(.claim-badge) {
+            background: none;
+            border: 0;
+            box-shadow: none;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+            font: inherit;
+            letter-spacing: inherit;
+            text-transform: inherit;
+
+            svg {
+                display: none;
+            }
+        }
+    }
+
+    &__title {
+        max-width: 16ch;
+        margin: 0 0 1.5rem;
+        font-size: clamp(2.75rem, 4.8vw, 4rem);
+        font-weight: 500;
+        line-height: 1.02;
+        letter-spacing: -0.03em;
+    }
+
+    &__summary {
+        width: 100%;
+        max-width: 44rem;
+        margin: 0 0 2rem;
+        padding: 0;
+        min-height: 0;
+        border: 0;
+        font-size: 1.375rem;
+        line-height: 1.45;
+        color: var(--color-text);
+        opacity: 0.88;
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        p {
+            margin: 0;
+            font-size: inherit;
+            line-height: inherit;
+            color: inherit;
+        }
+    }
+
+    &__byline {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        width: 100%;
+        margin: 0;
+        padding-top: 1.1rem;
+        border-top: 1px solid var(--color-hairline);
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+
+    &__byline-event {
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    &__byline-sep {
+        margin: 0;
+        opacity: 0.5;
+    }
+
+    // ---- Reading column -------------------------------------------------
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+    }
+
+    // ---- End matter -----------------------------------------------------
+    // Canon links follow the body directly (the shared rule gives that
+    // section its dash and top padding); sources sit under their own title.
+    &__canon,
+    &__sources {
+        margin-top: 0;
+        border-top: 0;
+    }
+
+    &__sources {
+        padding-top: 0;
+    }
+
+    &__section-title {
+        @include grammar.grammar-section-title;
+    }
+
+    &__link-list,
+    &__source-list {
+        padding-left: 0;
+        list-style: none;
+    }
+
+    &__link-item,
+    &__source-item {
+        margin: 0;
+        padding: 0.6rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        line-height: 1.55;
+    }
+
+    &__link {
+        font-weight: 500;
+    }
+
+    &__link-description {
+        font-size: 0.9375rem;
+    }
+
+    &__source-link {
+        &:hover {
+            color: var(--color-text);
+            border-bottom-color: currentColor;
+        }
+    }
+
+    &__source-date {
+        color: var(--color-text-muted);
+    }
+
+    &__agent-section,
+    &__edit-footer {
+        @include grammar.grammar-meta-strip;
+        justify-content: flex-start;
+    }
+
+    &__agent-section {
+        margin-top: 3.5rem;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__agent-label,
+    &__history-label {
+        @include grammar.grammar-eyebrow;
+        margin: 0;
+    }
+
+    &__agent-buttons,
+    &__history,
+    &__history-meta {
+        display: inline-flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6rem;
+        margin: 0;
+        font-family: inherit;
+        font-size: inherit;
+    }
+
+    &__agent-btn,
+    &__edit-btn,
+    &__history-link {
+        @include grammar.grammar-pill;
+        background-image: none;
+        box-shadow: none;
+        text-shadow: none;
+        color: var(--color-text);
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        &:hover {
+            background: transparent;
+            box-shadow: none;
+            transform: none;
+            color: var(--color-text);
+        }
+    }
+
+    &__footer {
+        margin-top: 0;
+        padding: 0.9rem 0 0;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__back-card {
+        @include grammar.grammar-eyebrow;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        color: var(--color-text-muted);
+        text-decoration: none;
+
+        &:hover {
+            color: var(--color-text);
+            background: transparent;
+            transform: none;
+            box-shadow: none;
+        }
+    }
+
+    &__back-card-icon {
+        color: inherit;
+    }
+
+    @media (max-width: 768px) {
+        &__header {
+            padding-top: 1.5rem;
+        }
+
+        &__title {
+            font-size: clamp(2rem, 9vw, 2.75rem);
+        }
+
+        &__summary {
+            font-size: 1.125rem;
+        }
+    }
+}

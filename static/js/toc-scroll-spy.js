@@ -4,21 +4,43 @@
 (function () {
   "use strict";
 
+  // One entry per page type that carries a contents list. Each names the
+  // page root, the nav holding the links, the region whose headings are
+  // watched (the whole article, so Read Next and references highlight
+  // too) and the class that marks the current entry.
+  const PAGES = [
+    {
+      ROOT_SELECTOR: ".wiki",
+      TOC_SELECTOR: ".wiki__toc-nav",
+      CONTENT_SELECTOR: ".wiki__article",
+      ACTIVE_CLASS: "wiki__toc-link--active",
+    },
+    {
+      ROOT_SELECTOR: ".article",
+      TOC_SELECTOR: ".article__toc-nav",
+      CONTENT_SELECTOR: ".article__article",
+      ACTIVE_CLASS: "article__toc-link--active",
+    },
+    {
+      ROOT_SELECTOR: ".timeline-page",
+      TOC_SELECTOR: ".timeline-page__toc-nav",
+      CONTENT_SELECTOR: ".timeline-page__article",
+      ACTIVE_CLASS: "timeline-page__toc-link--active",
+    },
+  ];
+
   const CONFIG = {
-    ROOT_MARGIN: "-80px 0px -60% 0px",
-    THRESHOLD: 0,
-    ACTIVE_CLASS: "wiki__toc-link--active",
-    TOC_SELECTOR: ".wiki__toc-nav",
+    // Pixels below the viewport top; a heading at or above it is "read".
+    // Sits under the navbar and the 6rem scroll-margin of the headings.
+    READING_LINE: 120,
     HEADING_SELECTOR: "h1[id], h2[id], h3[id], h4[id]",
-    // Watch the whole article so Read Next (rendered outside .wiki__content,
-    // inside .related-content) also triggers TOC highlighting.
-    CONTENT_SELECTOR: ".wiki__article",
   };
 
   class TocScrollSpy {
-    constructor() {
-      this.tocNav = document.querySelector(CONFIG.TOC_SELECTOR);
-      this.contentArea = document.querySelector(CONFIG.CONTENT_SELECTOR);
+    constructor(page) {
+      this.page = page;
+      this.tocNav = document.querySelector(page.TOC_SELECTOR);
+      this.contentArea = document.querySelector(page.CONTENT_SELECTOR);
 
       if (!this.tocNav || !this.contentArea) {
         return;
@@ -37,47 +59,61 @@
     }
 
     init() {
-      this.createObserver();
-      this.observeHeadings();
-      this.bindTocClicks();
-    }
-
-    createObserver() {
-      this.observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              this.setActiveLink(entry.target.id);
-            }
-          });
-        },
-        {
-          rootMargin: CONFIG.ROOT_MARGIN,
-          threshold: CONFIG.THRESHOLD,
-        },
+      // Only headings that have an entry in the list can be current.
+      this.linked = Array.from(this.headings).filter((h) =>
+        this.tocNav.querySelector(`a[href="#${CSS.escape(h.id)}"]`),
       );
+      this.ticking = false;
+      this.onScroll = () => {
+        if (this.ticking) return;
+        this.ticking = true;
+        requestAnimationFrame(() => {
+          this.ticking = false;
+          this.updateActive();
+        });
+      };
+      window.addEventListener("scroll", this.onScroll, { passive: true });
+      window.addEventListener("resize", this.onScroll);
+      this.bindTocClicks();
+      this.updateActive();
     }
 
-    observeHeadings() {
-      this.headings.forEach((heading) => {
-        if (heading.id) {
-          this.observer.observe(heading);
+    // The current chapter is the last linked heading above the reading
+    // line, a fixed distance below the top of the viewport; before the
+    // first heading reaches it, the first chapter is current. Reading
+    // positions, not intersections, so short chapters and clicked
+    // entries resolve the same way as long ones.
+    updateActive() {
+      if (this.linked.length === 0) return;
+      let current = this.linked[0].id;
+      for (const heading of this.linked) {
+        if (heading.getBoundingClientRect().top <= CONFIG.READING_LINE) {
+          current = heading.id;
+        } else {
+          break;
         }
-      });
+      }
+      // At the end of the document the last chapters can never reach the
+      // reading line; once the page is scrolled out, the last one is current.
+      const scrolledOut =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2;
+      if (scrolledOut) {
+        current = this.linked[this.linked.length - 1].id;
+      }
+      if (current !== this.currentId) {
+        this.setActiveLink(current);
+      }
     }
 
     setActiveLink(headingId) {
-      // Remove active class from all links
+      this.currentId = headingId;
       this.tocLinks.forEach((link) => {
-        link.classList.remove(CONFIG.ACTIVE_CLASS);
+        link.classList.remove(this.page.ACTIVE_CLASS);
       });
-
-      // Find and activate the matching link
       const activeLink = this.tocNav.querySelector(`a[href="#${headingId}"]`);
       if (activeLink) {
-        activeLink.classList.add(CONFIG.ACTIVE_CLASS);
-
-        // Scroll TOC to keep active link visible (for long TOCs)
+        activeLink.classList.add(this.page.ACTIVE_CLASS);
         this.scrollTocToView(activeLink);
       }
     }
@@ -109,7 +145,9 @@
 
           if (targetElement) {
             // Calculate offset for fixed navbar
-            const navbarHeight = 80;
+            // Land the heading inside the observer band (which starts
+            // 80px down) and on the headings' scroll-margin-top of 6rem.
+            const navbarHeight = 96;
             const elementPosition = targetElement.getBoundingClientRect().top;
             const offsetPosition =
               elementPosition + window.pageYOffset - navbarHeight;
@@ -130,17 +168,16 @@
     }
 
     destroy() {
-      if (this.observer) {
-        this.observer.disconnect();
-      }
+      window.removeEventListener("scroll", this.onScroll);
+      window.removeEventListener("resize", this.onScroll);
     }
   }
 
   // Initialize when DOM is ready
   document.addEventListener("DOMContentLoaded", () => {
-    // Only initialize on wiki pages
-    if (document.querySelector(".wiki")) {
-      window.tocScrollSpy = new TocScrollSpy();
+    const page = PAGES.find((p) => document.querySelector(p.ROOT_SELECTOR));
+    if (page) {
+      window.tocScrollSpy = new TocScrollSpy(page);
     }
   });
 })();

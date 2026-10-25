@@ -1,0 +1,572 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+
+// Reading grammar — the shared grammar of the reading pages.
+// One accent (links, copied state), ink and hairlines for everything else,
+// one mono voice for metadata, one pill for every control, serif where it
+// means "citation", and the Bifrost rainbow in four fixed placements: a
+// dash under the headline, its twin above the end matter, the current
+// chapter in the contents rail, and the reading progress bar. A prism
+// wash behind the header carries the colour as atmosphere.
+//
+// Page roots that take the grammar, and their reading columns.
+$grammar-pages: ".article, .wiki, .timeline-page, .dispatch, .library-book";
+$grammar-content: ".article__content, .wiki__content, .timeline-page__content, .dispatch__content, .library-book__content";
+
+// ---- Tokens -------------------------------------------------------------
+// The pastel 300 band the navbar and footer already hand-write.
+$grammar-rainbow: (
+    c.$pink-300 0%,
+    c.$lavender-300 14%,
+    c.$mauve-300 28%,
+    c.$blue-300 42%,
+    c.$cyan-300 56%,
+    c.$mint-300 70%,
+    c.$green-300 84%,
+    c.$pink-300 100%
+);
+
+@mixin grammar-rainbow($angle: 90deg) {
+    background: linear-gradient($angle, $grammar-rainbow);
+}
+
+@mixin grammar-rainbow-dash {
+    content: "";
+    display: block;
+    width: 5rem;
+    height: 4px;
+    border-radius: 2px;
+    @include grammar-rainbow;
+}
+
+// Metadata voice: small mono caps.
+@mixin grammar-eyebrow {
+    font-family: typo.$font-family-tech;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+// The one control.
+@mixin grammar-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: 999px;
+    background: transparent;
+    font-family: typo.$font-family-tech;
+    font-size: 0.75rem;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+    text-decoration: none;
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+
+    &:hover {
+        border-color: var(--color-text);
+    }
+
+    svg {
+        width: 0.9rem;
+        height: 0.9rem;
+    }
+}
+
+// Section header below the body: small display title on a hairline.
+@mixin grammar-section-title {
+    margin: 3.5rem 0 1rem;
+    padding-bottom: 0.65rem;
+    border-bottom: 1px solid var(--color-hairline);
+    font-family: var(--font-family-lead);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    color: var(--color-text);
+
+    &::before,
+    &::after {
+        content: none;
+    }
+}
+
+// Mono strip on a hairline (agent buttons, edit history, footer).
+@mixin grammar-meta-strip {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem 1rem;
+    margin: 0;
+    padding: 0.9rem 0;
+    border: 0;
+    border-top: 1px solid var(--color-hairline-subtle);
+    border-radius: 0;
+    background: transparent;
+    font-family: typo.$font-family-tech;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+}
+
+// Prism wash behind the header, edge to edge. Dark paper takes the 400
+// shades (the 300s go grey over near-black); light takes the 300s at a
+// lower dose via the --grammar-prism* custom properties set below.
+@mixin grammar-prism {
+    position: relative;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: -12rem calc(50% - 50vw) auto;
+        height: 42rem;
+        background:
+            radial-gradient(50% 55% at 12% 0%, color-mix(in srgb, var(--grammar-prism-a, #{c.$mauve-400}) var(--grammar-prism, 16%), transparent), transparent 70%),
+            radial-gradient(45% 50% at 55% 5%, color-mix(in srgb, var(--grammar-prism-b, #{c.$cyan-400}) var(--grammar-prism, 16%), transparent), transparent 70%),
+            radial-gradient(40% 50% at 92% 12%, color-mix(in srgb, var(--grammar-prism-c, #{c.$pink-400}) var(--grammar-prism, 16%), transparent), transparent 70%);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+    @media (max-width: 768px) {
+        &::before {
+            height: 30rem;
+        }
+    }
+}
+
+// Contents rail: eyebrow title, muted entries, the current one marked by
+// a vertical slice of the rainbow. The nav is its own scroll container,
+// so the marker's inset lives on the nav, not the entry.
+@mixin grammar-rail-title {
+    @include grammar-eyebrow;
+    margin: 0 0 0.75rem;
+    padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--color-hairline);
+}
+
+@mixin grammar-rail-nav {
+    max-height: calc(100vh - 8.5rem);
+    margin-left: -0.75rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-hairline) transparent;
+    padding-right: 0.5rem;
+    font-family: var(--font-family-body);
+}
+
+@mixin grammar-rail-link {
+    display: block;
+    margin: 0;
+    padding: 0.2rem 0.5rem 0.2rem 0.625rem;
+    border-left: 2px solid transparent;
+    border-radius: 0;
+    background: transparent;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    transition: color 0.15s ease, border-color 0.15s ease;
+
+    &:hover {
+        color: var(--color-text);
+        background: transparent;
+        border-left-color: var(--color-border-strong);
+    }
+}
+
+@mixin grammar-rail-link-active {
+    color: var(--color-text);
+    font-weight: 500;
+    background: transparent;
+    border-left-color: transparent;
+    border-image: linear-gradient(180deg, $grammar-rainbow) 1;
+    border-image-width: 0 0 0 2px;
+
+    &:hover {
+        color: var(--color-text);
+        background: transparent;
+    }
+}
+
+// Neutral claim badge: outline pill, the claim colour only as a dot.
+@mixin grammar-claim-badge {
+    background: transparent;
+    border: 1px solid var(--color-hairline);
+    color: var(--color-text-muted);
+    font-family: typo.$font-family-tech;
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.22rem 0.7rem 0.22rem 0.6rem;
+
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 0.42rem;
+        height: 0.42rem;
+        margin-right: 0.5rem;
+        border-radius: 50%;
+        background: var(--claim-border);
+    }
+}
+
+// ---- Shared component rules ----------------------------------------------
+:root[data-theme="light"] {
+    #{$grammar-pages} {
+        --grammar-prism: 13%;
+        --grammar-prism-a: #{c.$mauve-300};
+        --grammar-prism-b: #{c.$cyan-300};
+        --grammar-prism-c: #{c.$pink-300};
+    }
+}
+
+// Reading progress: the band, edge to edge, no glow.
+.reading-progress__bar {
+    @include grammar-rainbow;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+#{$grammar-pages} {
+    // Cite this page: hairline disclosure; each format a faint panel with
+    // a title bar (label + copy pill); BibTeX in the code face.
+    .cite {
+        margin: 3.5rem 0 0;
+        padding: 0;
+        border: 0;
+        border-top: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .cite__summary {
+        @include grammar-eyebrow;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.9rem 0;
+        color: var(--color-text);
+
+        &::after {
+            content: "+";
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+        }
+    }
+
+    .cite[open] .cite__summary {
+        border-bottom: 1px solid var(--color-hairline-subtle);
+
+        &::after {
+            content: "−";
+        }
+    }
+
+    .cite__body {
+        padding: 1.1rem 0 1.4rem;
+        gap: 1.1rem;
+    }
+
+    .cite__format-label {
+        @include grammar-eyebrow;
+    }
+
+    .cite__copy {
+        @include grammar-pill;
+        font-size: 0.6875rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        padding: 0.25rem 0.7rem;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+            border-color: var(--color-text);
+        }
+
+        &--done {
+            color: var(--color-accent-primary);
+            border-color: var(--color-accent-primary);
+        }
+    }
+
+    .cite__format {
+        border: 1px solid var(--color-hairline-subtle);
+        border-radius: 0.5rem;
+        background: color-mix(in srgb, var(--color-text) 3.5%, transparent);
+        overflow: hidden;
+    }
+
+    .cite__format-head {
+        margin: 0;
+        padding: 0.6rem 0.6rem 0 1rem;
+        border-bottom: 0;
+
+        .cite__copy {
+            border-color: color-mix(in srgb, currentColor 22%, transparent);
+
+            &:hover,
+            &--done {
+                border-color: currentColor;
+            }
+        }
+    }
+
+    .cite__text {
+        margin: 0;
+        padding: 0.5rem 1rem 0.95rem;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+    }
+
+    .cite__format:last-child .cite__text {
+        font-family: typo.$font-family-code;
+        font-size: 0.8125rem;
+        line-height: 1.55;
+    }
+
+    // Read next: hairline rows in two columns, no cards.
+    .related-content__title {
+        @include grammar-section-title;
+    }
+
+    .related-content__grid {
+        gap: 0 3rem;
+    }
+
+    .related-content__card {
+        padding: 1rem 0 1.1rem;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        transform: none;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+            box-shadow: none;
+            transform: none;
+        }
+    }
+
+    .related-content__card-category {
+        @include grammar-eyebrow;
+        margin-bottom: 0.4rem;
+    }
+
+    .related-content__card-title {
+        font-size: 1.0625rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .related-content__card-desc {
+        font-size: 0.9375rem;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+    }
+
+    .related-content__card-link {
+        @include grammar-eyebrow;
+        letter-spacing: 0.06em;
+        margin-top: 0.5rem;
+    }
+
+    // Share: one neutral control.
+    .social-share__btn,
+    .social-share__btn--download,
+    .social-share__btn--copy {
+        border-color: var(--color-hairline);
+        color: var(--color-text-muted);
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-text);
+            color: var(--color-text);
+            outline: 0;
+        }
+    }
+
+    .claim-badge {
+        @include grammar-claim-badge;
+    }
+}
+
+// ---- Quotation surfaces inside the reading column -----------------------
+// A quotation is a rule and a typeface, not a card. Attribution speaks in
+// the metadata voice; the one control is the pill. Reference markers are
+// apparatus, so they take muted ink and only the hover adds colour.
+#{$grammar-content} {
+    blockquote,
+    .library-quote {
+        margin: 2rem 0;
+        padding: 0.15rem 0 0.15rem 1.25rem;
+        border: 0;
+        border-left: 2px solid var(--color-text-muted);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+        font-family: var(--font-family-citation);
+        font-size: 1.0625rem;
+        line-height: 1.6;
+        color: var(--color-text);
+
+        &::before,
+        &::after {
+            content: none;
+        }
+
+        p {
+            margin: 0 0 0.75em;
+
+            &:last-child {
+                margin-bottom: 0;
+            }
+        }
+    }
+
+    blockquote > p:last-child:not(:first-child) {
+        margin-top: 0.6rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+
+        em {
+            font-style: normal;
+        }
+    }
+
+    .library-quote {
+        &__content {
+            padding-bottom: 0;
+            margin-bottom: 0.6rem;
+            border-bottom: 0;
+        }
+
+        &__meta {
+            gap: 0.75rem;
+        }
+
+        &__citation {
+            font-family: typo.$font-family-tech;
+            font-size: 0.75rem;
+            font-style: normal;
+            letter-spacing: 0.02em;
+            color: var(--color-text-muted);
+        }
+
+        &__work-link,
+        &__work-title {
+            color: inherit;
+            border-bottom: 0;
+
+            &:hover {
+                color: var(--color-text);
+                border-bottom: 0;
+            }
+        }
+
+        &__button {
+            @include grammar-pill;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.6875rem;
+            color: var(--color-text-muted);
+
+            &:hover,
+            &:focus-visible {
+                border-color: var(--color-text);
+                color: var(--color-text);
+            }
+        }
+    }
+
+    .wiki-cite__link,
+    .wiki-footnote__link,
+    .footnote-ref a {
+        color: var(--color-text-muted);
+        font-weight: 500;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+        }
+    }
+
+    .wiki-cite__text {
+        font-weight: 500;
+    }
+
+    .footnote-definition {
+        .footnote-definition-label::before,
+        .footnote-definition-label::after {
+            color: var(--color-text-muted);
+        }
+
+        .footnote-return {
+            background: transparent;
+            color: var(--color-text-muted);
+
+            &:hover {
+                background: transparent;
+                color: var(--color-text);
+            }
+        }
+    }
+
+    // Body type shared by every reading column.
+    h2 {
+        margin: 3rem 0 1rem;
+        font-size: 1.625rem;
+        font-weight: 600;
+        line-height: 1.2;
+        letter-spacing: -0.015em;
+    }
+
+    h3 {
+        margin: 2.25rem 0 0.75rem;
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    a {
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+    }
+}
+
+// The end matter opens with the header's dash, so the body is bookended.
+#{$grammar-content} {
+    + * {
+        position: relative;
+        padding-top: 2.75rem;
+
+        &::before {
+            @include grammar-rainbow-dash;
+            position: absolute;
+            top: 0;
+            // Sections that inset themselves (wiki, library) carry a
+            // --doc-gutter; the dash sits on the text edge, not the box.
+            left: var(--doc-gutter, 0);
+        }
+
+        // The section's own title follows the dash directly.
+        > h2,
+        > .related-content__title {
+            margin-top: 0;
+        }
+    }
+}

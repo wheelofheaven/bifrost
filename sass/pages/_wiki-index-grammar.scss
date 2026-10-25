@@ -1,0 +1,122 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the wiki index on the shared grammar,
+// header and controls only. The cards keep their production design: the
+// featured glass cards, the topic tiles and the entry grid stay as they
+// are (founder preference, 2026-10-25). Everything here is scoped to
+// .wiki-section so the library index, which shares the rail and group
+// components, is untouched.
+.wiki-section {
+    @include grammar.grammar-prism;
+    background: transparent;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    // ---- Header: headline, count as eyebrow, the dash beneath ------------
+    .wiki-header {
+        position: relative;
+        padding: 2.25rem 0 2.6rem;
+        margin-bottom: 1.5rem;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            position: absolute;
+            left: 0;
+            bottom: 1.1rem;
+        }
+
+        &__title {
+            font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+            font-weight: 500;
+            line-height: 1.04;
+            letter-spacing: -0.03em;
+        }
+
+        &__count {
+            @include grammar.grammar-eyebrow;
+        }
+
+        &__search-input {
+            border-radius: 999px;
+            border-color: var(--color-hairline);
+            background: transparent;
+            font-family: typo.$font-family-tech;
+            font-size: 0.875rem;
+
+            &:focus {
+                border-color: var(--color-text);
+                box-shadow: none;
+            }
+        }
+    }
+
+    // ---- Section heads ----------------------------------------------------
+    .wiki-featured__title,
+    .category-rail__title,
+    .category-group__title,
+    .wiki-footer__title,
+    .wiki-section__subsections-title {
+        @include grammar.grammar-section-title;
+        margin-top: 0;
+    }
+
+    .wiki-featured__lede,
+    .category-rail__lede {
+        margin-top: -0.35rem;
+        font-size: 0.9375rem;
+        color: var(--color-text-muted);
+    }
+
+    // ---- Controls: pills ---------------------------------------------------
+    .wiki-filters {
+        &__select {
+            border-radius: 999px;
+            border-color: var(--color-hairline);
+            background: transparent;
+            font-size: 0.75rem;
+            letter-spacing: 0.02em;
+        }
+
+        &__random {
+            @include grammar.grammar-pill;
+            color: var(--color-text-muted);
+
+            &:hover {
+                background: transparent;
+                color: var(--color-text);
+            }
+        }
+    }
+
+    .wiki-view-toggle {
+        border-radius: 999px;
+
+        &__btn {
+            background: transparent;
+            color: var(--color-text-muted);
+
+            &--active,
+            &[aria-pressed="true"] {
+                background: transparent;
+                color: var(--color-text);
+            }
+        }
+    }
+
+    // ---- Footer stats ------------------------------------------------------
+    .wiki-footer {
+        &__stat-number {
+            font-weight: 500;
+        }
+
+        &__stat-label,
+        &__recent-title {
+            @include grammar.grammar-eyebrow;
+        }
+    }
+}
