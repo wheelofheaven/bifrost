@@ -47,10 +47,11 @@
    characters. System-font fallback turned out to be safer and works
    on every platform that has the corresponding script installed. #}
 
-{# Japanese: Zen Kaku Gothic New (body, humanist Firmament Sans analog) +
-   M PLUS 1p (display, geometric Space Grotesk analog). #}
+{# Japanese: Noto Sans JP (body; measured 1.01× the Firmament contract in
+   the companion proof, where Zen Kaku Gothic New ran 0.84×) + M PLUS 1p
+   (display, geometric Space Grotesk analog). #}
 {% if detected_lang == "ja" %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
 {% endif %}
 
 {# Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
@@ -96,7 +97,7 @@
      blocking cost only applies to uncached first visits. -->
 {# Invalidate stylesheet URLs that may have been requested by a preview before
    the font release reached production. Advance this with the deployed font release. #}
-{% set font_release = "firmament-0.1-hebrew-companion" %}
+{% set font_release = "firmament-0.1-arabic-companions" %}
 {% set critical_css_url = get_url(path='critical.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% set main_css_url = get_url(path='main.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% if _is_landing %}

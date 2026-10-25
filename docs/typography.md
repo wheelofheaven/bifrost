@@ -162,7 +162,7 @@ preserve the layer-1/layer-2 distinction:
 
 | Script | Layer 1 (body) | Layer 2 (display) |
 |---|---|---|
-| Japanese | Zen Kaku Gothic New | M PLUS 1p |
+| Japanese | Noto Sans JP | M PLUS 1p |
 | Simplified Chinese | Noto Sans SC | Noto Serif SC |
 | Traditional Chinese | Noto Sans TC | Noto Serif TC |
 | Korean | Pretendard | IBM Plex Sans KR |

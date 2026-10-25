@@ -370,6 +370,25 @@ textarea {
     display: inline-block;
 }
 
+// Arabic — inline terms in prose (`.arabic`, as content writes them) read
+// in Cairo, right-to-left and bidi-isolated like inline Hebrew. Elements
+// tagged `lang="ar"` get direction and isolation only and keep the font
+// of their layer: in running prose that resolves to Cairo through the
+// body stack's unicode-range, in library originals and scripture blocks
+// to Noto Naskh Arabic through --font-family-citation, which is where
+// extended Arabic reading text belongs.
+.arabic,
+.text-arabic {
+    font-family: typo.$font-family-arabic;
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
+:not(:root)[lang="ar"] {
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
 // Greek text styling — single font stack (typo.$font-family-greek, which
 // leads with GFS Didot) used everywhere Greek renders, so terms stay
 // typographically consistent across the site. Both Ancient Greek (grc,
