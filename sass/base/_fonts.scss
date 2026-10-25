@@ -152,6 +152,62 @@
         U+FB1D-FB4F;
 }
 
+// ─── Miriam Libre (self-hosted) ───────────────────────────────────
+//
+// Hebrew body + display companion for the Hebrew locale (`:lang(he)`
+// in _base.scss). Monolinear Hebrew sans by Michal Sahar, reviving
+// Raphael Frank's Miriam; chosen in the Firmament companion proof
+// (https://firmament.wheelofheaven.world/companions/) for matching
+// Firmament Sans on stem weight and typographic colour. One variable
+// WOFF2 (wght 400–700) subset to the Hebrew blocks; the unicode-range
+// mirrors the subset so Latin, digits and punctuation keep coming from
+// Firmament Sans / Space Grotesk and the file is never fetched on pages
+// without Hebrew. Provenance and checksum: fonts/vendor/miriam-libre/.
+//
+// Not a replacement for Frank Ruhl Libre: inline Hebrew citations and
+// pointed source text stay in the citation serif (see _base.scss).
+
+@font-face {
+    font-family: "Miriam Libre";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("fonts/vendor/miriam-libre/miriam-libre-hebrew.woff2") format("woff2");
+    unicode-range: U+0590-05FF, U+200C-2010, U+20AA, U+25CC, U+FB1D-FB4F;
+}
+
+// ─── Cairo + Noto Naskh Arabic (self-hosted) ──────────────────────
+//
+// Arabic companions chosen in the Firmament companion proof
+// (https://firmament.wheelofheaven.world/companions/): Cairo for
+// interface text and inline citations (Kufi-based, stem 0.96× the
+// Firmament contract), Noto Naskh Arabic for extended reading through
+// the citation layer (the Hidden Words in the library). Each is one
+// variable WOFF2 subset to the Arabic blocks, with the unicode-range
+// mirroring the subset so neither file is fetched on pages without
+// Arabic. Provenance and checksums: fonts/vendor/cairo/ and
+// fonts/vendor/noto-naskh-arabic/. Cairo's slant axis is pinned upright.
+
+@font-face {
+    font-family: "Cairo";
+    font-style: normal;
+    font-weight: 200 1000;
+    font-display: swap;
+    src: url("fonts/vendor/cairo/cairo-arabic.woff2") format("woff2");
+    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+25CC,
+        U+FB50-FDFF, U+FE70-FEFF;
+}
+
+@font-face {
+    font-family: "Noto Naskh Arabic";
+    font-style: normal;
+    font-weight: 400 700;
+    font-display: swap;
+    src: url("fonts/vendor/noto-naskh-arabic/noto-naskh-arabic.woff2") format("woff2");
+    unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+200C-200F, U+25CC,
+        U+FB50-FDFF, U+FE70-FEFF;
+}
+
 // ─── Noto Sans Cuneiform (self-hosted) ────────────────────────────
 //
 // Sumerian / Akkadian cuneiform script (𒀭, 𒆠, 𒈗). Self-hosted from

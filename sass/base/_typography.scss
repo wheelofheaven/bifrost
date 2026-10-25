@@ -11,10 +11,23 @@
 // based on detected_lang; system-font fallbacks come after so the page
 // stays readable if the network drops the web font.
 //
-// Japanese: Zen Kaku Gothic New (humanist, Firmament Sans-like) for body,
-//           M PLUS 1p (geometric, Space Grotesk-like) for display.
+// Every CJK body stack starts with Firmament Sans. Firmament has no CJK
+// glyphs, so kana, kanji, hanzi and hangul fall through to the regional
+// face, while Latin and Cyrillic — navigation labels, brand words,
+// transliterations, the "Русский" entry in the language menu — stay in
+// the same face as on every other page. Without it the regional face
+// supplies them: Noto Sans JP's Cyrillic is full-width, so "Русский"
+// rendered wide and wrapped in the switcher (reported 2026-10-25).
+//
+// Japanese: Noto Sans JP for body, M PLUS 1p (geometric, Space Grotesk-like)
+//           for display. Noto Sans JP replaced Zen Kaku Gothic New on
+//           2026-10-25: in the Firmament companion proof its stem measured
+//           1.01× the contract (81 ‰ vs 80 ‰) where Zen Kaku ran 0.84×,
+//           visibly lighter than Firmament beside it; it also matches the
+//           Noto Sans SC/TC/KR siblings in weight and rhythm.
 $font-family-ja-body:
-    "Zen Kaku Gothic New",
+    "Firmament Sans",
+    "Noto Sans JP",
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
     "Yu Gothic UI",
@@ -24,7 +37,7 @@ $font-family-ja-body:
     sans-serif;
 $font-family-ja-display:
     "M PLUS 1p",
-    "Zen Kaku Gothic New",
+    "Noto Sans JP",
     "Hiragino Kaku Gothic ProN",
     "Yu Gothic UI",
     "Noto Sans JP",
@@ -33,6 +46,7 @@ $font-family-ja-display:
 // Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
 // serif contrast for headings).
 $font-family-zh-body:
+    "Firmament Sans",
     "Noto Sans SC",
     "PingFang SC",
     "Hiragino Sans GB",
@@ -47,6 +61,7 @@ $font-family-zh-display:
 
 // Traditional Chinese: Noto Sans TC + Noto Serif TC.
 $font-family-zh-hant-body:
+    "Firmament Sans",
     "Noto Sans TC",
     "PingFang TC",
     "Microsoft JhengHei",
@@ -61,6 +76,7 @@ $font-family-zh-hant-display:
 // Korean: Pretendard (body, Firmament Sans-like) + IBM Plex Sans KR (display,
 // geometric-modernist Hangul with good range of weights).
 $font-family-ko-body:
+    "Firmament Sans",
     "Pretendard",
     "Pretendard Variable",
     "Apple SD Gothic Neo",
@@ -109,6 +125,61 @@ $font-family-hebrew:
     "Times New Roman",
     serif;
 
+// Hebrew locale (`:lang(he)`) body + display stacks — the Hebrew analog of
+// the Firmament Sans / Space Grotesk pair used for Latin. Miriam Libre is a
+// monolinear Hebrew sans (Michal Sahar's revival of Raphael Frank's Miriam)
+// whose stems and typographic colour measure within a few per cent of
+// Firmament Sans at 400 and 700; see the companion proof at
+// https://firmament.wheelofheaven.world/companions/. Its @font-face is
+// bounded to the Hebrew blocks, so listing it first is safe: Latin words,
+// digits and punctuation skip it and come from the usual Latin faces.
+// Frank Ruhl Libre follows as the fallback for the few Hebrew codepoints
+// Miriam Libre lacks (sof pasuq, cantillation), then system Hebrew sans.
+//
+// Inline Hebrew *citations* inside other-language prose, and explicitly
+// tagged source text, keep $font-family-hebrew (the citation serif).
+$font-family-he-body:
+    "Miriam Libre",
+    "Firmament Sans",
+    "Frank Ruhl Libre",
+    "Arial Hebrew",
+    "Noto Sans Hebrew",
+    "Segoe UI",
+    sans-serif;
+$font-family-he-display:
+    "Miriam Libre",
+    "SpaceGrotesk",
+    "Frank Ruhl Libre",
+    "Arial Hebrew",
+    "Noto Sans Hebrew",
+    "Segoe UI",
+    sans-serif;
+
+// Arabic font stacks — two faces for two jobs, chosen in the Firmament
+// companion proof (https://firmament.wheelofheaven.world/companions/).
+// Cairo (Mohamed Gaber; Kufi-based, drawn as the companion to a geometric
+// Latin) measures 0.96× Firmament's stem with its alef on the cap height:
+// the interface and inline-citation face. Noto Naskh Arabic is the
+// reading face for extended text (the Hidden Words in the library),
+// where Naskh is kinder than Kufi. Both @font-faces are unicode-range
+// bounded to the Arabic blocks, so listing them in the main stacks is
+// safe: Latin never touches them, and they load only when Arabic is on
+// the page. Until 2026-10-25 the site shipped no Arabic web font at all.
+$font-family-arabic:
+    "Cairo",
+    "Noto Naskh Arabic",
+    "Geeza Pro",
+    "Segoe UI",
+    "Noto Sans Arabic",
+    sans-serif;
+$font-family-arabic-reading:
+    "Noto Naskh Arabic",
+    "Cairo",
+    "Geeza Pro",
+    "Segoe UI",
+    "Noto Naskh Arabic UI",
+    serif;
+
 // Greek font stack — GFS Didot is the Greek Font Society's revival of
 // Didot's Greek, the typeface used in critical editions of classical
 // Greek texts. Full polytonic coverage (breathings, accents, iota
@@ -145,11 +216,11 @@ $font-family-cuneiform:
 
 // Main font stacks with comprehensive fallbacks.
 //
-// "GFS Didot" and "Noto Sans IPA" sit right after the primary Latin
-// font in every stack. Both @font-face declarations are bounded by
-// `unicode-range` (Greek codepoints for GFS Didot, IPA/Phonetic blocks
-// for Noto Sans IPA), so the browser only consults them when a glyph
-// in the corresponding range appears — inline Greek terms
+// "GFS Didot", "Noto Sans IPA" and "Cairo" sit right after the primary
+// Latin font in every stack. All three @font-face declarations are
+// bounded by `unicode-range` (Greek codepoints for GFS Didot, IPA/Phonetic
+// blocks for Noto Sans IPA, the Arabic blocks for Cairo), so the browser
+// only consults them when a glyph in the corresponding range appears — inline Greek terms
 // (ἀποκάλυψις) and IPA pronunciations (/əˈpɒkəlɪpsɪs/) thus get the
 // right typeface automatically, without requiring `lang="grc"` or a
 // `.greek` class on every span. Latin text continues to come from the
@@ -159,6 +230,7 @@ $font-family-sans:
     "Firmament Sans",
     "GFS Didot",
     "Noto Sans IPA",
+    "Cairo",
     // CJK fallbacks (order: Japanese, Simplified Chinese)
     "Hiragino Kaku Gothic ProN",
     "Hiragino Sans",
@@ -184,6 +256,7 @@ $font-family-serif:
     "SpaceGrotesk",
     "GFS Didot",
     "Noto Sans IPA",
+    "Cairo",
     // CJK serif/display fallbacks
     "Hiragino Mincho ProN",
     "Yu Mincho",
@@ -221,6 +294,7 @@ $font-family-citation:
     "Frank Ruhl Libre",
     "GFS Didot",
     "Noto Sans IPA",
+    "Noto Naskh Arabic",
     // CJK serif for scriptural / classical passages
     "Noto Serif JP",
     "Hiragino Mincho ProN",

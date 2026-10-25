@@ -332,11 +332,29 @@ textarea {
     word-break: keep-all; // Prevent breaking within words
 }
 
-// Hebrew text styling — single font stack (typo.$font-family-hebrew, which
-// leads with Frank Ruhl Libre) used everywhere Hebrew renders, so terms
-// stay typographically consistent across the site.
-[lang="he"],
+// Hebrew locale — the only RTL locale. Like the CJK blocks above, it
+// overrides the body and display layers through the custom properties so
+// every component picks up the Hebrew companion pair (Miriam Libre for
+// Hebrew glyphs, the usual Latin faces for everything else) without
+// knowing which language it is in. Before this, `:lang(he)` set the
+// citation serif directly on every element, which out-specified the
+// heading rules on plain elements and lost to component class selectors,
+// so Hebrew pages had no body/display layering and component headings
+// fell to system Hebrew fonts. The citation layer is untouched: scripture
+// and interlinear originals still read via --font-family-citation.
 :lang(he) {
+    --font-family-body: #{typo.$font-family-he-body};
+    --font-family-lead: #{typo.$font-family-he-display};
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
+// Hebrew *tagged inline* — a `<span lang="he">` citation inside Latin
+// prose, an interlinear token, the language-switcher item — stays in the
+// citation serif (Frank Ruhl Libre, which also carries sof pasuq and
+// cantillation). `:not(:root)` keeps `<html lang="he">` out of this rule
+// so the locale override above governs running Hebrew prose.
+:not(:root)[lang="he"] {
     font-family: typo.$font-family-hebrew;
     direction: rtl;
     unicode-bidi: isolate;
@@ -350,6 +368,25 @@ textarea {
     direction: rtl;
     unicode-bidi: isolate;
     display: inline-block;
+}
+
+// Arabic — inline terms in prose (`.arabic`, as content writes them) read
+// in Cairo, right-to-left and bidi-isolated like inline Hebrew. Elements
+// tagged `lang="ar"` get direction and isolation only and keep the font
+// of their layer: in running prose that resolves to Cairo through the
+// body stack's unicode-range, in library originals and scripture blocks
+// to Noto Naskh Arabic through --font-family-citation, which is where
+// extended Arabic reading text belongs.
+.arabic,
+.text-arabic {
+    font-family: typo.$font-family-arabic;
+    direction: rtl;
+    unicode-bidi: isolate;
+}
+
+:not(:root)[lang="ar"] {
+    direction: rtl;
+    unicode-bidi: isolate;
 }
 
 // Greek text styling — single font stack (typo.$font-family-greek, which

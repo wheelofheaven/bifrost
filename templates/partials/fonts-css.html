@@ -11,6 +11,12 @@
         via @font-face + unicode-range when the dropdown opens. -->
 <link rel="preload" href="{{ get_url(path='fonts/vendor/firmament-sans/0.1/FirmamentSans-Regular.woff2') }}" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="{{ get_url(path='fonts/vendor/space-grotesk/space-grotesk-v21-latin-700.woff2') }}" as="font" type="font/woff2" crossorigin>
+{# Hebrew pages: the body/display companion renders the first paint of every
+   Hebrew word, so it earns a preload there and nowhere else (the @font-face
+   is unicode-range bounded; other locales never fetch it). #}
+{% if detected_lang == "he" %}
+<link rel="preload" href="{{ get_url(path='fonts/vendor/miriam-libre/miriam-libre-hebrew.woff2') }}" as="font" type="font/woff2" crossorigin>
+{% endif %}
 
 <!-- Web fonts. Frank Ruhl Libre (Hebrew) and GFS Didot (Greek) are
      always loaded because inline citations in those scripts (e.g.
@@ -41,10 +47,11 @@
    characters. System-font fallback turned out to be safer and works
    on every platform that has the corresponding script installed. #}
 
-{# Japanese: Zen Kaku Gothic New (body, humanist Firmament Sans analog) +
-   M PLUS 1p (display, geometric Space Grotesk analog). #}
+{# Japanese: Noto Sans JP (body; measured 1.01× the Firmament contract in
+   the companion proof, where Zen Kaku Gothic New ran 0.84×) + M PLUS 1p
+   (display, geometric Space Grotesk analog). #}
 {% if detected_lang == "ja" %}
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Zen+Kaku+Gothic+New:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=M+PLUS+1p:wght@400;500;700;900&display=swap">
 {% endif %}
 
 {# Simplified Chinese: Noto Sans SC (body) + Noto Serif SC (display,
@@ -90,7 +97,7 @@
      blocking cost only applies to uncached first visits. -->
 {# Invalidate stylesheet URLs that may have been requested by a preview before
    the font release reached production. Advance this with the deployed font release. #}
-{% set font_release = "firmament-0.1" %}
+{% set font_release = "firmament-0.1-arabic-companions" %}
 {% set critical_css_url = get_url(path='critical.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% set main_css_url = get_url(path='main.css', cachebust=true) ~ "&fonts=" ~ font_release %}
 {% if _is_landing %}
