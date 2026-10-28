@@ -1,0 +1,425 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the people pages: the author profile, the
+// contributors index and a contributor's page. One left-aligned column:
+// kicker, headline, dash, lede on a hairline; facts as mono hairline
+// rows; contributors as hairline rows rather than cards.
+
+// ---- Shared header -----------------------------------------------------
+@mixin people-breadcrumbs {
+    > .breadcrumbs {
+        position: relative;
+        z-index: 1;
+        font-size: 0.75rem;
+        letter-spacing: 0.04em;
+        opacity: 0.75;
+
+        svg,
+        .section-mark,
+        .breadcrumbs__item:first-child {
+            display: none;
+        }
+    }
+}
+
+@mixin people-title {
+    max-width: 16ch;
+    margin: 0;
+    font-family: var(--font-family-lead);
+    font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+    color: var(--color-text);
+}
+
+@mixin people-lede {
+    max-width: 44rem;
+    margin: 0;
+    font-size: 1.375rem;
+    font-style: normal;
+    line-height: 1.45;
+    color: var(--color-text);
+    opacity: 0.88;
+
+    @media (max-width: 600px) {
+        font-size: 1.125rem;
+    }
+}
+
+@mixin people-link {
+    color: var(--color-accent-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+
+    &:hover {
+        text-decoration-thickness: 2px;
+    }
+}
+
+// ---- Author profile ----------------------------------------------------
+.author {
+    @include grammar.grammar-prism;
+    @include people-breadcrumbs;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__article {
+        background: transparent;
+    }
+
+    // Grid: kicker, headline and dash on the left with the round portrait
+    // beside them on the right; lede and claim badge span the full width.
+    &__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        column-gap: 2rem;
+        align-items: end;
+        padding: 2rem 0 1.75rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before {
+            @include grammar.grammar-rainbow-dash;
+            grid-column: 1;
+            grid-row: 3;
+            margin: 1.25rem 0 1.75rem;
+        }
+    }
+
+    &__portrait {
+        grid-column: 2;
+        grid-row: 1 / 4;
+        align-self: center;
+        margin: 0;
+
+        img {
+            width: 8.5rem;
+            height: 8.5rem;
+            border-radius: 999px;
+            border: 1px solid var(--color-hairline);
+            box-shadow: none;
+        }
+
+        @media (max-width: 600px) {
+            img {
+                width: 5.5rem;
+                height: 5.5rem;
+            }
+        }
+    }
+
+    &__role {
+        grid-column: 1;
+        grid-row: 1;
+        margin: 0 0 1rem;
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__title {
+        grid-column: 1;
+        grid-row: 2;
+        @include people-title;
+    }
+
+    &__description {
+        grid-column: 1 / -1;
+        grid-row: 4;
+        @include people-lede;
+    }
+
+    &__badge {
+        grid-column: 1 / -1;
+        grid-row: 5;
+        margin: 1.5rem 0 0;
+    }
+
+    // At a glance: mono hairline rows, no card.
+    &__card {
+        margin: 0 0 3rem;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+    }
+
+    &__card-title {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    &__card-list {
+        display: grid;
+        grid-template-columns: max-content 1fr;
+        column-gap: 2rem;
+        margin: 0;
+        border-top: 1px solid var(--color-hairline);
+
+        dt,
+        dd {
+            margin: 0;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--color-hairline-subtle);
+        }
+
+        dt {
+            @include grammar.grammar-eyebrow;
+            font-size: 0.625rem;
+            align-self: center;
+        }
+
+        dd {
+            font-family: typo.$font-family-tech;
+            font-size: 0.8125rem;
+            letter-spacing: 0.02em;
+            color: var(--color-text);
+        }
+
+        @media (max-width: 600px) {
+            grid-template-columns: 1fr;
+
+            dt {
+                padding-bottom: 0;
+                border-bottom: 0;
+            }
+        }
+    }
+
+    // Body: the reading column's type; section heads in display.
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        > p {
+            margin: 0 0 1.35em;
+        }
+
+        h2 {
+            padding-top: 0;
+            font-family: var(--font-family-lead);
+            font-size: 1.625rem;
+            font-weight: 600;
+            line-height: 1.2;
+            letter-spacing: -0.015em;
+            text-transform: none;
+            color: var(--color-text);
+
+            &::before,
+            &::after {
+                content: none;
+            }
+        }
+    }
+
+    // Signature: mono, on a hairline, left-aligned.
+    &__footer {
+        margin-top: 3rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--color-hairline);
+        text-align: left;
+    }
+
+    &__signature {
+        font-family: typo.$font-family-tech;
+        font-size: 0.8125rem;
+        letter-spacing: 0.02em;
+        line-height: 1.7;
+
+        em {
+            font-style: normal;
+        }
+    }
+}
+
+// ---- Contributors index --------------------------------------------------
+.contributors {
+    @include grammar.grammar-prism;
+    @include people-breadcrumbs;
+    max-width: 48rem;
+
+    &__header {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 0 0;
+        margin-bottom: 0;
+        text-align: left;
+
+        &::after {
+            @include grammar.grammar-rainbow-dash;
+            margin: 1.5rem 0 1.75rem;
+        }
+    }
+
+    &__title {
+        @include people-title;
+    }
+
+    &__description {
+        order: 3;
+        @include people-lede;
+    }
+
+    &__header::after {
+        order: 2;
+    }
+
+    &__intro {
+        position: relative;
+        z-index: 1;
+        max-width: none;
+        margin: 1.75rem 0 2.5rem;
+        padding-top: 1.75rem;
+        border-top: 1px solid var(--color-hairline);
+        text-align: left;
+        font-size: 1.0625rem;
+        line-height: 1.72;
+        color: var(--color-text);
+
+        p {
+            margin: 0 0 1em;
+        }
+
+        a {
+            @include people-link;
+        }
+    }
+
+    // People as hairline rows.
+    &__grid {
+        position: relative;
+        z-index: 1;
+        display: block;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__card {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        column-gap: 1.5rem;
+        padding: 1.25rem 0;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        border-radius: 0;
+        background: transparent;
+        box-shadow: none;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+            box-shadow: none;
+        }
+
+        > * {
+            grid-column: 1;
+        }
+    }
+
+    &__name {
+        margin: 0 0 0.25rem;
+        font-family: var(--font-family-lead);
+        font-size: 1.25rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+
+        a:hover {
+            color: var(--color-text);
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+        }
+    }
+
+    &__role {
+        grid-row: 1;
+        grid-column: 2;
+        align-self: center;
+        margin: 0;
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__bio {
+        margin: 0 0 0.6rem;
+        font-size: 1rem;
+        line-height: 1.55;
+    }
+
+    &__github {
+        @include grammar.grammar-pill;
+        width: fit-content;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+}
+
+// ---- A contributor's page ------------------------------------------------
+.contributor {
+    @include grammar.grammar-prism;
+    @include people-breadcrumbs;
+    max-width: 48rem;
+
+    &__article {
+        position: relative;
+        z-index: 1;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 0 1.75rem;
+        margin-bottom: 2.5rem;
+        border-bottom: 1px solid var(--color-hairline);
+
+        &::before {
+            @include grammar.grammar-rainbow-dash;
+            order: 3;
+            margin: 1.25rem 0 1.5rem;
+        }
+    }
+
+    &__role {
+        order: 1;
+        margin: 0 0 1rem;
+        @include grammar.grammar-eyebrow;
+    }
+
+    &__name {
+        order: 2;
+        @include people-title;
+    }
+
+    &__github {
+        order: 4;
+        @include grammar.grammar-pill;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+
+    &__content {
+        font-size: 1.125rem;
+        line-height: 1.65;
+        color: var(--color-text);
+
+        a {
+            @include people-link;
+        }
+    }
+}

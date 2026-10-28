@@ -56,8 +56,8 @@
                     <dd>{{ page.extra.profession }}</dd>
                     {% endif %}
                     {% if page.extra.languages_read %}
-                    <dt>Languages read</dt>
-                    <dd>{{ page.extra.languages_read | join(sep=", ") }}</dd>
+                    <dt>Languages</dt>
+                    <dd>{{ page.extra.languages_read | join(sep="; ") }}</dd>
                     {% endif %}
                     {% if page.extra.on_the_corpus %}
                     <dt>On the corpus</dt>

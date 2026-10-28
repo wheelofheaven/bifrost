@@ -3,7 +3,7 @@
 
 {% block content %}
 <div class="contributor">
-    {{ breadcrumbs::generic_page(title=page.title, parent_title="Contributors", parent_path="contributors/", lang=detected_lang) }}
+    {{ breadcrumbs::generic_page(title=page.title, parent_title=trans(key="footerContributors", lang=detected_lang), parent_path="contributors/", lang=detected_lang) }}
 
     <article class="contributor__article">
         <header class="contributor__header">
