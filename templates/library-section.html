@@ -84,6 +84,16 @@
                     {% if f_book_data %}
                         {% set f_title = library_macros::get_book_title(book_data=f_book_data, lang=detected_lang) %}
                         {% set f_desc = library_macros::get_book_description(book_data=f_book_data, lang=detected_lang) | trim %}
+                        {# In-house translations whose page sets review_status carry a
+                           plain reader description; prefer it over the _meta.json
+                           wording, which holds production notes. #}
+                        {% set f_pages = section.pages | filter(attribute="slug", value=book_entry.slug) %}
+                        {% if f_pages | length > 0 %}
+                            {% set f_page = f_pages | first %}
+                            {% if f_page.extra.review_status and f_page.description %}
+                                {% set f_desc = f_page.description %}
+                            {% endif %}
+                        {% endif %}
                         {% set_global f_tradition_name = "" %}
                         {% for t in catalog.traditions %}
                             {% if t.id == book_entry.tradition %}
@@ -384,6 +394,15 @@
                                     {% set card_text = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
                                     {% if not card_text and first_chapter and first_chapter.paragraphs and first_chapter.paragraphs[0] %}
                                         {% set card_text = library_macros::get_paragraph_text(paragraph=first_chapter.paragraphs[0], lang=detected_lang) %}
+                                    {% endif %}
+                                    {% if book_entry.slug is ending_with("-woh") %}
+                                        {% set card_pages = section.pages | filter(attribute="slug", value=book_entry.slug) %}
+                                        {% if card_pages | length > 0 %}
+                                            {% set card_page = card_pages | first %}
+                                            {% if card_page.extra.review_status and card_page.description %}
+                                                {% set card_text = card_page.description %}
+                                            {% endif %}
+                                        {% endif %}
                                     {% endif %}
                                     {% if card_text %}
                                     <div class="wiki-card__summary">

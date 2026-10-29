@@ -224,6 +224,13 @@
                 {% elif alignment.status | default(value="") == "not-in-witness" %}
                 <em class="library-book__edition-note">No counterpart in this English edition.</em>
                 {% else %}{{ self::formatted_text(text=source_text, preserve_line_breaks=preserve_lines) }}{% endif %}
+                {# Bracketed note marker: always visible and clickable at rest,
+                   so a reader can open the commentary in one click/tap without
+                   selecting the paragraph first. The brackets are CSS
+                   pseudo-elements and the icon is an aria-hidden SVG, so the
+                   button adds no text nodes to the translation (copy, cite,
+                   in-book search and word-highlighting read its textContent). #}
+                {%- if has_notes %} <button class="library-book__commentary-link" type="button" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" aria-label="Open notes for verse {{ verse.n }}" aria-controls="commentary-c{{ chapter_n }}p{{ verse.n }}" aria-haspopup="dialog" aria-expanded="false" title="Open notes"><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button>{% endif %}
             </div>
             {% if alignment.status | default(value="") == "group" %}
             <p class="library-book__edition-note">Shared English passage for {{ alignment.refIds | join(sep=", ") }}.</p>
@@ -343,8 +350,10 @@
             </button>
             {% if has_notes %}
             {# Notes — opens the official WoH commentary (and any community
-               notes) for this paragraph. This actions-gutter button is the
-               sole trigger; the old inline prose link has been retired. #}
+               notes) for this paragraph. Secondary trigger: it only shows
+               once the paragraph is selected. The primary, always-visible
+               trigger is the bracketed `.library-book__commentary-link`
+               marker at the end of the translated line. #}
             <button class="library-book__para-commentary-btn" onclick="event.stopPropagation(); toggleCommentary('c{{ chapter_n }}p{{ verse.n }}', this)" title="Open notes" aria-label="Open notes for verse {{ verse.n }}" aria-expanded="false">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>

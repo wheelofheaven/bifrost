@@ -73,6 +73,15 @@
 {# Pre-resolve a few values to keep the template body tidy. #}
 {% set book_title = library_macros::get_book_title(book_data=book_data, lang=detected_lang) %}
 {% set book_subtitle = library_macros::get_book_subtitle(book_data=book_data, lang=detected_lang) | trim %}
+{# Reader-facing status for in-house (Wheel of Heaven) translations. A page
+   that sets [extra] review_status supplies its own plain intro (page body),
+   subtitle, edition / coverage / review status and a collapsed editorial
+   history; these replace the _meta.json lede and subtitle, which carry
+   production wording. Pages without the field render as before. #}
+{% set reader_status = page.extra.review_status | default(value="") %}
+{% if reader_status and page.extra.subtitle %}
+    {% set book_subtitle = page.extra.subtitle %}
+{% endif %}
 {% set book_description = library_macros::get_book_description(book_data=book_data, lang=detected_lang) | trim %}
 {% set book_version_title = library_macros::get_book_version_title(book_data=book_data, lang=detected_lang) | trim %}
 {% set book_short_version_title = library_macros::get_book_short_version_title(book_data=book_data, lang=detected_lang) | trim %}
@@ -140,8 +149,37 @@
                 </header>
 
                 {# Lede paragraph — localized description from _meta.json. Always
-                   rendered in main body, never collapsed. #}
-                {% if book_description %}
+                   rendered in main body, never collapsed. Pages with a
+                   reader_status use their own body as the intro instead,
+                   followed by the edition / coverage / review-status block. #}
+                {% if reader_status %}
+                {% if page.content %}
+                <div class="library-book__intro" data-ai-summary="true">
+                    {{ page.content | safe }}
+                </div>
+                {% endif %}
+                <section class="library-book__provenance-section library-book__status" aria-labelledby="book-status-heading">
+                    <h2 class="library-book__provenance-title" id="book-status-heading">About this translation</h2>
+                    <dl class="library-book__provenance-list">
+                        {% if page.extra.edition %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Edition</dt>
+                            <dd class="library-book__provenance-description">{{ page.extra.edition | markdown(inline=true) | safe }}</dd>
+                        </div>
+                        {% endif %}
+                        {% if page.extra.coverage %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Coverage</dt>
+                            <dd class="library-book__provenance-description">{{ page.extra.coverage | markdown(inline=true) | safe }}</dd>
+                        </div>
+                        {% endif %}
+                        <div class="library-book__provenance-item library-book__provenance-item--stack">
+                            <dt class="library-book__provenance-term">Review status</dt>
+                            <dd class="library-book__provenance-description">{{ reader_status | markdown(inline=true) | safe }}</dd>
+                        </div>
+                    </dl>
+                </section>
+                {% elif book_description %}
                 <div class="library-book__lede" data-ai-summary="true">
                     <p>{{ book_description | markdown(inline=true) | safe }}</p>
                 </div>
@@ -276,6 +314,18 @@
                 {% endif %}
                 {% endif %}
 
+                {# Editorial history — production notes (pipeline, glossary
+                   versions, sign-off logistics) kept for transparency but
+                   collapsed at the foot of the page, out of the reader's way. #}
+                {% if reader_status and page.extra.editorial_history %}
+                <section class="library-book__provenance-section library-book__history" aria-label="Editorial history">
+                    <details class="library-book__provenance-details">
+                        <summary>Editorial history</summary>
+                        {{ page.extra.editorial_history | markdown | safe }}
+                    </details>
+                </section>
+                {% endif %}
+
                 {# Edit footer — history + edit-on-GitHub CTA, matching wiki-page. #}
                 {% set edit_url = "https://github.com/wheelofheaven/data-library/edit/main/" ~ book_slug ~ ".json" %}
                 {% set history_url = "https://github.com/wheelofheaven/data-library/commits/main/" ~ book_slug ~ ".json" %}
@@ -393,7 +443,8 @@
                        citation, used by WoH translations). Falls back to
                        a truncated `translationNote` for legacy imports
                        where the source info is in prose form. #}
-                    {% if current_book_entry and (current_book_entry.versionSource or current_book_entry.translationNote) %}
+                    {# Hidden when the page states its own edition (reader_status). #}
+                    {% if not reader_status and current_book_entry and (current_book_entry.versionSource or current_book_entry.translationNote) %}
                     <div class="library-book__meta-row library-book__meta-row--source">
                         <span class="library-book__meta-label">Source</span>
                         <span class="library-book__meta-value">
@@ -438,7 +489,7 @@
                     </div>
                     {% endif %}
 
-                    {% if current_book_entry and current_book_entry.status == "partial" %}
+                    {% if not reader_status and current_book_entry and current_book_entry.status == "partial" %}
                     <div class="library-book__meta-row">
                         <span class="library-book__meta-label">{{ trans(key="libraryStatus", lang=detected_lang) }}</span>
                         <span class="library-book__meta-value">{{ trans(key="libraryStatusInProgress", lang=detected_lang) }}</span>

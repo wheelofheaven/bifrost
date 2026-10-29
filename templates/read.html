@@ -24,6 +24,10 @@
         {% elif section.description %}
         <p class="read__lede">{{ section.description }}</p>
         {% endif %}
+        {# English-only until the /start/ translations are signed off. #}
+        {% if detected_lang == "en" %}
+        <a class="read__start" href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="startHereLink", lang=detected_lang) }} →</a>
+        {% endif %}
     </header>
 
     {# Open items, rendered client-side by continue-reading.js. Sits above

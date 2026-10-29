@@ -4911,57 +4911,102 @@
 // =============================================================
 // Wheel of Heaven Translation — commentary marker + side drawer
 // =============================================================
-// Renders only when a paragraph carries a `commentary` field in
-// the chapter JSON. The marker sits next to the verse number;
-// clicking it opens an off-canvas drawer with the markdown
-// commentary rendered server-side via the `markdown` filter.
+// Renders only when a verse carries notes (`notes.official` /
+// `notes.community` in the chapter JSON). The bracketed marker sits at
+// the end of the translated line; clicking it opens the inline popover
+// with the markdown commentary rendered server-side.
 
 .library-book {
 
     // Scholarly footnote-marker affordance: monospace brackets around a
     // small comment-bubble icon, inlined at the trailing edge of the
     // verse's translated text. Looks like [📝] in a critical edition.
+    //
+    // This is the PRIMARY trigger for a verse's notes and must work at
+    // rest: always visible, one click/tap opens the popover, no paragraph
+    // selection first (the actions-pill notes button is only a secondary
+    // trigger, hidden until selection). Never gate this on
+    // `--selected` / opacity / pointer-events.
+    //
+    // Colour follows the surrounding translation text (`currentColor`), so
+    // it stays legible on every reader surface: site light/dark themes and
+    // the sepia/dark reader themes, which hard-set the translation colour.
+    // Mixed to 72% so it reads as apparatus rather than prose, but stays
+    // above 3:1 (WCAG 1.4.11 for UI controls) on all of them.
+    //
+    // Brackets are pseudo-elements so the button contributes no text to
+    // the translation's textContent (copy, cite, search, word-highlight).
     &__commentary-link {
         display: inline-flex;
         align-items: center;
-        gap: 0.05rem;
-        margin-inline-start: 0.4rem;
-        padding: 0 0.15rem;
+        gap: 0;
+        margin-inline-start: vars.$spacing-2xs;
+        // Comfortable hit area without inflating the line box: padding
+        // grows the target, negative block margin gives the height back.
+        padding: vars.$spacing-2xs 0.2em;
+        margin-block: calc(-1 * #{vars.$spacing-2xs});
         background: transparent;
         border: 0;
-        color: var(--color-text-muted, currentColor);
+        border-radius: vars.$border-radius-xs;
+        color: inherit;
+        color: color-mix(in srgb, currentColor 72%, transparent);
         font-family: typo.$font-family-mono;
         font-size: 0.85em;
+        font-style: normal;
+        font-weight: 400;
         line-height: 1;
         cursor: pointer;
         vertical-align: baseline;
-        opacity: 0.55;
-        transition: opacity 0.15s ease, color 0.15s ease;
+        -webkit-tap-highlight-color: transparent;
+        transition:
+            color vars.$transition-base ease,
+            background-color vars.$transition-base ease;
 
-        &:hover,
-        &:focus-visible {
-            opacity: 1;
-            color: var(--color-accent-primary, currentColor);
+        &::before,
+        &::after {
+            // Visually hairline brackets to match the icon's stroke
+            // weight. iA Writer Quattro Mono only ships Regular and Bold,
+            // so `scaleX(0.78)` does the real work, compressing the glyph
+            // horizontally so the stems read as thin lines.
+            display: inline-block;
+            font-family: typo.$font-family-mono;
+            font-weight: 300;
+            transform: scaleX(0.78);
+            transform-origin: center;
+        }
+
+        &::before { content: "["; }
+        &::after { content: "]"; }
+
+        &:hover {
+            color: var(--color-accent-primary);
+            background-color: color-mix(in srgb, var(--color-accent-primary) 12%, transparent);
         }
 
         &:focus-visible {
-            outline: 1px solid currentColor;
+            color: var(--color-accent-primary);
+            outline: 2px solid var(--color-focus, var(--color-accent-primary));
             outline-offset: 2px;
-            border-radius: 2px;
         }
-    }
 
-    &__commentary-link-bracket {
-        // Visually hairline brackets to match the icon's 1px stroke
-        // weight. iA Writer Quattro Mono only ships Regular and Bold,
-        // so `font-weight: 300` is a no-op there — `scaleX(0.78)`
-        // does the real work, compressing the glyph horizontally so
-        // the stems read as thin lines regardless of font support.
-        display: inline-block;
-        font-family: typo.$font-family-mono;
-        font-weight: 300;
-        transform: scaleX(0.78);
-        transform-origin: center;
+        // Pointer clicks/taps get feedback from the open-state tint; the
+        // library-wide `button:focus` ring stays for keyboard focus only
+        // (same exception as the study-tools bookmark button).
+        &:focus:not(:focus-visible) {
+            outline: none;
+        }
+
+        &[aria-expanded="true"] {
+            color: var(--color-accent-primary);
+            background-color: color-mix(in srgb, var(--color-accent-primary) 16%, transparent);
+        }
+
+        // Touch: a bigger target (closer to the 24px WCAG 2.5.8 minimum),
+        // still without pushing the surrounding lines apart.
+        @media (pointer: coarse) {
+            padding: vars.$spacing-xs vars.$spacing-2xs;
+            margin-block: calc(-1 * #{vars.$spacing-xs});
+        }
     }
 
     &__commentary-link-icon {
@@ -5148,8 +5193,7 @@
         z-index: 200;
 
         .library-book__commentary-link {
-            opacity: 1;
-            color: var(--color-accent-primary, currentColor);
+            color: var(--color-accent-primary);
         }
     }
 }

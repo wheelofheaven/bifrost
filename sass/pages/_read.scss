@@ -49,6 +49,28 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         line-height: 1.55;
     }
 
+    // Newcomer route to /start/, under the lede.
+    &__start {
+        display: inline-block;
+        margin-top: v.$spacing-md;
+        padding: v.$spacing-xs v.$spacing-md;
+        color: var(--color-text);
+        font-family: $_landing-mono;
+        font-size: v.$font-size-sm;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        text-decoration: none;
+        border: 1px solid var(--color-border);
+        border-radius: v.$border-radius-full;
+        transition: border-color v.$transition-base ease, background-color v.$transition-base ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-text-muted);
+            background-color: var(--color-hover);
+        }
+    }
+
     // ---- Three reading paths in a row ----
     // Each card is a glass surface: low-alpha fill + backdrop-filter
     // blur so whatever sits behind softens into the card. Two slow,
