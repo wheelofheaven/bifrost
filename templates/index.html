@@ -75,16 +75,12 @@
                 — {{ trans(key="landingS1SubLead", lang=detected_lang) }} —
                 {{ trans(key="landingS1SubTrail", lang=detected_lang) }}
             </p>
-            {# The ten-minute route exists in English only until its
-               translations are signed off; drop the lang gate then. #}
-            {% if detected_lang == "en" %}
             <a class="landing-section__link" href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}">
                 <span>{{ trans(key="startHereLink", lang=detected_lang) }}</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                     <path d="M5 12h14M12 5l7 7-7 7"/>
                 </svg>
             </a>
-            {% endif %}
             {# Resume slot. continue-reading.js fills this after idle if the
                reader has something open, and leaves it empty otherwise —
                empty means zero-height, so a first-time visitor's hero (the
