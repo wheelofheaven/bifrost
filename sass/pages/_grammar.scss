@@ -241,7 +241,10 @@ $grammar-rainbow: (
 
 // ---- Shared component rules ----------------------------------------------
 :root[data-theme="light"] {
-    #{$grammar-pages} {
+    // The wiki and library indexes carry the prism without the shared
+    // component rules, so they join the list only here.
+    #{$grammar-pages},
+    .wiki-section {
         --grammar-prism: 13%;
         --grammar-prism-a: #{c.$mauve-300};
         --grammar-prism-b: #{c.$cyan-300};
