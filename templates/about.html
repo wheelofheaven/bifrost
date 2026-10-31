@@ -31,8 +31,8 @@
 
             {% if page.extra.commitments %}
             <section class="about__commitments" aria-labelledby="commitments-title">
-                <h2 class="about__group-title" id="commitments-title">How the project works</h2>
-                <p class="about__commitments-intro">Four commitments shape how the corpus is written.</p>
+                <h2 class="about__group-title" id="commitments-title">{{ trans(key="aboutCommitmentsTitle", lang=detected_lang) }}</h2>
+                <p class="about__commitments-intro">{{ trans(key="aboutCommitmentsIntro", lang=detected_lang) }}</p>
                 <ol class="about__commitment-list">
                     {% for c in page.extra.commitments %}
                     <li class="about__commitment" id="{{ c.slug }}">
