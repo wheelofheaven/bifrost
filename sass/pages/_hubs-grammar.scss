@@ -1,0 +1,223 @@
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the tradition hubs under /sources/tradition/ and the
+// generic section index that lists them. A hub reads like a source record:
+// kicker, headline, lede, the dash, then the reading column and a sidebar
+// of hairline blocks.
+.tradition-hub {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        @include grammar.grammar-index-header;
+        margin-bottom: 2.5rem;
+    }
+
+    &__kind-row {
+        margin-bottom: 1rem;
+    }
+
+    &__kind {
+        @include grammar.grammar-eyebrow;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+    }
+
+    &__title {
+        @include grammar.grammar-headline;
+        margin: 0 0 1rem;
+    }
+
+    &__summary {
+        max-width: 44rem;
+        font-size: 1.125rem;
+        line-height: 1.55;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        h2 {
+            padding-bottom: 0;
+            border-bottom: 0;
+        }
+
+        a {
+            color: var(--color-accent-primary);
+
+            &:hover {
+                color: var(--color-accent-primary);
+                text-decoration-thickness: 2px;
+            }
+        }
+    }
+
+    // Sidebar: hairline blocks, rows, and a comma list for the motifs.
+    &__aside {
+        gap: 1.75rem;
+    }
+
+    &__aside-block {
+        padding: 1.1rem 0 0;
+        border: 0;
+        border-top: 1px solid var(--color-hairline);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__aside-title {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.6rem;
+    }
+
+    &__aside-note {
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+    }
+
+    &__aside-check {
+        color: var(--color-text);
+        font-weight: 500;
+    }
+
+    &__source-list,
+    &__related-list {
+        gap: 0;
+    }
+
+    &__source-link,
+    &__related-link {
+        padding: 0.5rem 0;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        border-radius: 0;
+        background: transparent;
+        font-size: 0.875rem;
+
+        &:hover,
+        &:focus {
+            border-color: var(--color-text-muted);
+            color: var(--color-accent-primary);
+        }
+    }
+
+    &__source-title {
+        font-weight: 500;
+    }
+
+    &__chip-list {
+        display: block;
+        line-height: 1.6;
+    }
+
+    &__chip {
+        display: inline;
+        padding: 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+
+        &:not(:last-child)::after {
+            content: ", ";
+        }
+    }
+}
+
+// ---- Generic section index (templates/section.html) ------------------------
+.section-page {
+    @include grammar.grammar-prism;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+        max-width: 56rem;
+        margin: 0 auto;
+        padding: 3rem 1.5rem 4rem;
+
+        @media (max-width: 768px) {
+            padding: 2rem 1rem 3rem;
+        }
+    }
+
+    &__header {
+        @include grammar.grammar-index-header;
+        margin-bottom: 1rem;
+    }
+
+    &__title {
+        @include grammar.grammar-headline;
+        margin: 0 0 1rem;
+    }
+
+    &__description {
+        max-width: 44rem;
+        margin: 0;
+        font-size: 1.125rem;
+        line-height: 1.55;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    &__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+    }
+
+    &__group-title {
+        @include grammar.grammar-section-title;
+        margin-top: 2.5rem;
+    }
+
+    &__list {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+    }
+
+    &__link {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        padding: 1rem 0 1.1rem;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        color: var(--color-text);
+        text-decoration: none;
+        transition: border-color 0.2s ease;
+
+        &:hover {
+            border-color: var(--color-text-muted);
+
+            .section-page__item-title {
+                color: var(--color-accent-primary);
+            }
+        }
+    }
+
+    &__item-title {
+        font-family: var(--font-family-lead);
+        font-size: 1.1875rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        transition: color 0.2s ease;
+    }
+
+    &__item-desc {
+        font-size: 0.9375rem;
+        line-height: 1.55;
+        color: var(--color-text-muted);
+    }
+}

@@ -1,0 +1,191 @@
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — a dataset page (/datasets/{slug}/). Headline, lede and
+// the dash; the figures as a mono strip between hairlines; downloads as
+// hairline rows; the citation as the same faint panel the cite widget
+// uses. Everything is scoped to the article, so the /datasets/ index
+// (.dataset--index), which was already quiet, stays as it is.
+.dataset__article {
+    @include grammar.grammar-prism;
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    .dataset__header {
+        @include grammar.grammar-index-header;
+        margin-bottom: 1.5rem;
+    }
+
+    .dataset__title {
+        @include grammar.grammar-headline;
+        margin: 0 0 1rem;
+    }
+
+    .dataset__description {
+        font-size: 1.125rem;
+        line-height: 1.55;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    .dataset__license {
+        margin: 0.75rem 0 0;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+
+            &:hover {
+                color: var(--color-text);
+            }
+        }
+    }
+
+    // Figures: one strip, hairline above and below.
+    .dataset__stats {
+        gap: 0;
+        margin-bottom: 2rem;
+        border-top: 1px solid var(--color-hairline);
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    .dataset__stat {
+        padding: 0.9rem 0;
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+    }
+
+    .dataset__stat-label {
+        @include grammar.grammar-eyebrow;
+    }
+
+    .dataset__stat-value {
+        margin-top: 0.3rem;
+        font-family: typo.$font-family-tech;
+        font-size: 1.125rem;
+        font-weight: 500;
+        color: var(--color-text);
+    }
+
+    // Downloads: hairline rows, the format as a pill, the note beside it.
+    .dataset__downloads {
+        flex-direction: column;
+        gap: 0;
+        margin-bottom: 2.5rem;
+    }
+
+    .dataset__download {
+        flex: none;
+        flex-direction: row;
+        align-items: center;
+        gap: 1rem;
+        padding: 0.75rem 0;
+        border: 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        border-radius: 0;
+        background: transparent;
+
+        &:hover {
+            background: transparent;
+            transform: none;
+
+            .dataset__download-label {
+                border-color: var(--color-text);
+            }
+
+            .dataset__download-note {
+                color: var(--color-text);
+            }
+        }
+    }
+
+    .dataset__download-label {
+        @include grammar.grammar-pill;
+        flex: none;
+        min-width: 4.5rem;
+        justify-content: center;
+        color: var(--color-text);
+
+        &::after {
+            content: "↓";
+            color: var(--color-text-muted);
+        }
+    }
+
+    .dataset__download-note {
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+
+    .dataset__content {
+        font-size: 1.0625rem;
+        line-height: 1.72;
+
+        a {
+            color: var(--color-accent-primary);
+
+            &:hover {
+                text-decoration-thickness: 2px;
+            }
+        }
+    }
+
+    // Citation: section title, the reference in the citation serif, BibTeX
+    // in the code face on a faint panel.
+    .dataset__cite {
+        margin-top: 3.5rem;
+        border-top: 0;
+    }
+
+    .dataset__cite-heading {
+        @include grammar.grammar-section-title;
+        margin-top: 0;
+    }
+
+    .dataset__cite-text {
+        font-family: var(--font-family-citation);
+        font-size: 0.9375rem;
+        line-height: 1.6;
+        color: var(--color-text);
+        overflow-wrap: anywhere;
+    }
+
+    .dataset__cite-bibtex {
+        padding: 0.95rem 1rem;
+        border: 1px solid var(--color-hairline-subtle);
+        border-radius: 0.5rem;
+        background: color-mix(in srgb, var(--color-text) 3.5%, transparent);
+        font-family: typo.$font-family-code;
+        font-size: 0.8125rem;
+        line-height: 1.55;
+
+        code {
+            font-family: inherit;
+            background: none;
+            padding: 0;
+        }
+    }
+
+    .dataset__footer {
+        @include grammar.grammar-meta-strip;
+        margin-top: 2.5rem;
+
+        a {
+            color: inherit;
+            text-decoration: underline;
+            text-underline-offset: 0.18em;
+
+            &:hover {
+                color: var(--color-text);
+            }
+        }
+    }
+}

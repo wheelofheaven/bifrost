@@ -11,8 +11,8 @@
 // wash behind the header carries the colour as atmosphere.
 //
 // Page roots that take the grammar, and their reading columns.
-$grammar-pages: ".article, .wiki, .timeline-page, .dispatch, .library-book, .about, .info-page, .faq, .press, .sources, .source-page, .author, .contributors, .contributor";
-$grammar-content: ".article__content, .wiki__content, .timeline-page__content, .dispatch__content, .library-book__content, .about__content, .info-page__content, .faq__content, .source-page__content, .author__content";
+$grammar-pages: ".article, .wiki, .timeline-page, .dispatch, .library-book, .about, .info-page, .faq, .press, .sources, .source-page, .author, .contributors, .contributor, .tradition-hub, .section-page, .dataset, .articles-feed, .newsroom";
+$grammar-content: ".article__content, .wiki__content, .timeline-page__content, .dispatch__content, .library-book__content, .about__content, .info-page__content, .faq__content, .source-page__content, .author__content, .tradition-hub__content, .section-page__content, .dataset__content";
 
 // ---- Tokens -------------------------------------------------------------
 // The pastel 300 band the navbar and footer already hand-write.
@@ -38,6 +38,29 @@ $grammar-rainbow: (
     height: 4px;
     border-radius: 2px;
     @include grammar-rainbow;
+}
+
+// Index headline: the display face at weight 500, set tight.
+@mixin grammar-headline {
+    font-family: var(--font-family-lead);
+    font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+    font-weight: 500;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+}
+
+// Index header: no rule of its own, the dash sits at its foot.
+@mixin grammar-index-header {
+    position: relative;
+    padding-bottom: 2.6rem;
+    border-bottom: 0;
+
+    &::after {
+        @include grammar-rainbow-dash;
+        position: absolute;
+        left: 0;
+        bottom: 1.1rem;
+    }
 }
 
 // Metadata voice: small mono caps.

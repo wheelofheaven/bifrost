@@ -1,0 +1,139 @@
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Reading grammar — the /articles/ and /news/ indexes. Like the wiki
+// index, the header and controls join the grammar and the lead cover
+// card keeps its production design. The feed rows were already hairline
+// rows; their kickers lose the accent and the claim pill becomes the
+// outline badge with a dot, as on the article page itself.
+.articles-feed,
+.newsroom {
+    @include grammar.grammar-prism;
+    background: transparent;
+
+    &__container {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        @include grammar.grammar-index-header;
+    }
+
+    &__title {
+        @include grammar.grammar-headline;
+    }
+
+    &__description {
+        max-width: 44rem;
+        margin-top: 0.75rem;
+        font-size: 1.125rem;
+        line-height: 1.5;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    // Rail: hairline blocks with eyebrow titles, not cards.
+    &__rail-module,
+    &__rail-module--subscribe {
+        padding: 1.1rem 0 0;
+        border: 0;
+        border-top: 1px solid var(--color-hairline);
+        border-radius: 0;
+        background: transparent;
+    }
+
+    &__rail-heading {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.75rem;
+    }
+
+    &__feed-link,
+    &__pagination-link {
+        @include grammar.grammar-pill;
+        color: var(--color-text-muted);
+
+        &:hover {
+            color: var(--color-text);
+            text-decoration: none;
+        }
+    }
+
+    &__pagination-info {
+        @include grammar.grammar-eyebrow;
+        text-transform: none;
+        letter-spacing: 0.02em;
+    }
+
+    &__footer {
+        border-top-color: var(--color-hairline-subtle);
+    }
+}
+
+// ---- Feed rows ------------------------------------------------------------
+.articles-feed {
+    .article-card__category {
+        @include grammar.grammar-eyebrow;
+        color: var(--color-text-muted);
+    }
+
+    .article-card__date,
+    .article-card__reading-time {
+        color: var(--color-text-muted);
+    }
+
+    .article-card__title {
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+
+    .article-card__claim {
+        @include grammar.grammar-claim-badge;
+        padding: 0.12rem 0.6rem 0.12rem 0.5rem;
+        font-size: 0.625rem;
+
+        &::before {
+            width: 0.375rem;
+            height: 0.375rem;
+            margin-right: 0.4rem;
+        }
+    }
+
+    // The badge's dot takes the claim colour the full badge would use.
+    @each $type, $shades in (
+        "direct": (c.$cyan-300, c.$cyan-600),
+        "framework": (c.$mauve-300, c.$mauve-600),
+        "inferred": (c.$yellow-300, c.$yellow-600),
+        "speculative": (c.$lavender-300, c.$lavender-600)
+    ) {
+        .article-card__claim--#{$type} {
+            --claim-border: #{nth($shades, 1)};
+        }
+
+        :root[data-theme="dark"] & .article-card__claim--#{$type} {
+            --claim-border: #{nth($shades, 2)};
+        }
+    }
+}
+
+.newsroom {
+    // Event-type chip: plain mono caps, as on the dispatch page.
+    .dispatch-card__meta .dispatch-chip {
+        @include grammar.grammar-eyebrow;
+        padding: 0;
+        border: 0;
+        background: none;
+        box-shadow: none;
+    }
+
+    .dispatch-card__event-date {
+        font-family: typo.$font-family-tech;
+        color: var(--color-text-muted);
+    }
+
+    .dispatch-card__title {
+        font-weight: 600;
+        letter-spacing: -0.01em;
+    }
+}

@@ -1,53 +1,55 @@
-{% extends "base.html" %} {% block content %}
-<div class="section-page">
-    <header class="section-header">
-        <h1>{{ section.title }}</h1>
-        {% if section.description %}
-        <p class="section-description">{{ section.description }}</p>
-        {% endif %}
-    </header>
+{% extends "base.html" %}
 
-    {% if section.content %}
-    <div class="section-content">{{ section.content | safe }}</div>
-    {% endif %} {% if section.pages %}
-    <div class="section-pages">
-        <h2>Pages in this section</h2>
-        <div class="page-list">
-            {% for page in section.pages %}
-            <article class="page-card">
-                <h3><a href="{{ page.permalink | escape_xml | safe }}">{{ page.title }}</a></h3>
-                {% if page.description %}
-                <p class="page-description">{{ page.description }}</p>
-                {% endif %} {% if page.date %}
-                <time class="page-date"
-                    >{{ page.date | date(format="%B %d, %Y") }}</time
-                >
-                {% endif %}
-            </article>
-            {% endfor %}
-        </div>
+{% block content %}
+<div class="section-page">
+    <div class="section-page__container">
+        <header class="section-page__header">
+            <h1 class="section-page__title" id="page-title">{{ section.title }}</h1>
+            {% if section.description %}
+            <p class="section-page__description" data-ai-summary="true">{{ section.description }}</p>
+            {% endif %}
+        </header>
+
+        {% if section.content %}
+        <div class="section-page__content">{{ section.content | safe }}</div>
+        {% endif %}
+
+        {% if section.pages %}
+        <section class="section-page__group" aria-labelledby="section-pages-title">
+            <h2 class="section-page__group-title" id="section-pages-title">Pages in this section</h2>
+            <ul class="section-page__list">
+                {% for page in section.pages %}
+                <li class="section-page__item">
+                    <a class="section-page__link" href="{{ page.permalink | escape_xml | safe }}">
+                        <span class="section-page__item-title">{{ page.title }}</span>
+                        {% if page.description %}
+                        <span class="section-page__item-desc">{{ page.description }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        {% if section.subsections %}
+        <section class="section-page__group" aria-labelledby="section-subsections-title">
+            <h2 class="section-page__group-title" id="section-subsections-title">Subsections</h2>
+            <ul class="section-page__list">
+                {% for subsection_path in section.subsections %}
+                {% set subsection = get_section(path=subsection_path) %}
+                <li class="section-page__item">
+                    <a class="section-page__link" href="{{ subsection.permalink | escape_xml | safe }}">
+                        <span class="section-page__item-title">{{ subsection.title }}</span>
+                        {% if subsection.description %}
+                        <span class="section-page__item-desc">{{ subsection.description }}</span>
+                        {% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
     </div>
-    {% endif %} {% if section.subsections %}
-    <div class="subsections">
-        <h2>Subsections</h2>
-        <div class="subsection-list">
-            {% for subsection_path in section.subsections %} {% set subsection =
-            get_section(path=subsection_path) %}
-            <div class="subsection-card">
-                <h3>
-                    <a href="{{ subsection.permalink | escape_xml | safe }}"
-                        >{{ subsection.title }}</a
-                    >
-                </h3>
-                {% if subsection.description %}
-                <p class="subsection-description">
-                    {{ subsection.description }}
-                </p>
-                {% endif %}
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-    {% endif %}
 </div>
 {% endblock content %}
