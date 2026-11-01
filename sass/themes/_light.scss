@@ -10,7 +10,11 @@
     --color-background: #{colors.$white};
     --color-background-secondary: #{colors.$gray-100};
     --color-background-tertiary: #{colors.$gray-200};
-    --color-accent-primary: #{colors.$mauve-500};
+    // mauve-700, not the palette's mid mauve-500: the accent is the link
+    // colour on white, and mauve-500 measures 3.2:1 there (WCAG AA wants
+    // 4.5:1 for body text). mauve-700 gives 6.8:1 on white and 6.2:1 on
+    // the secondary surface, and white text on accent fills rises with it.
+    --color-accent-primary: #{colors.$mauve-700};
     --color-accent-secondary: #{colors.$blue-500};
     --color-hairline: #{colors.$gray-300};
     --color-hairline-subtle: #{colors.$gray-200};
@@ -18,7 +22,7 @@
     // Interactive states
     --color-hover: rgba(0, 0, 0, 0.1);
     --color-active: rgba(0, 0, 0, 0.2);
-    --color-focus: #{colors.$mauve-500};
+    --color-focus: #{colors.$mauve-700};
 
     // Notification colors
     --color-success: #{colors.$green-500};

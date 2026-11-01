@@ -88,15 +88,16 @@
         --color-background: #{colors.$white};
         --color-background-secondary: #{colors.$gray-100};
         --color-background-tertiary: #{colors.$gray-200};
-        --color-accent-primary: #{colors.$mauve-600};
-        --color-accent-secondary: #{colors.$mauve-700};
+        // Mirrors [data-theme="light"] — see the contrast note there.
+        --color-accent-primary: #{colors.$mauve-700};
+        --color-accent-secondary: #{colors.$blue-500};
         --color-hairline: #{colors.$gray-300};
         --color-hairline-subtle: #{colors.$gray-200};
 
         // Interactive states
         --color-hover: rgba(0, 0, 0, 0.1);
         --color-active: rgba(0, 0, 0, 0.2);
-        --color-focus: #{colors.$mauve-600};
+        --color-focus: #{colors.$mauve-700};
 
         // Component-specific colors
         --color-landing-backdrop: #{colors.$white};

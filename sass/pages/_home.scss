@@ -409,6 +409,21 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         color: #fff;
     }
 
+    // Inline links in the copy (§6 "source texts", "datasets") had no rule
+    // and fell through to the browser's blue, unreadable on the footage.
+    // They take the copy's white and mark themselves with the underline.
+    .landing-section__body a {
+        color: inherit;
+        text-decoration-line: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+
+        &:hover,
+        &:focus-visible {
+            text-decoration-thickness: 2px;
+        }
+    }
+
     .landing-section__sub {
         color: rgba(255, 255, 255, 0.85);
 
@@ -534,7 +549,9 @@ $_landing-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 // So for exactly as long as a hero is behind it, the chrome borrows the dark
 // theme's tokens. Nothing switches theme — the accent stays light-theme
 // mauve — the chrome just adapts to a dark backdrop, which is what lets it
-// go as glassy here as it is in dark mode.
+// go as glassy here as it is in dark mode. The accent does step to a
+// paler mauve here: the page accent is mauve-700, dark enough to pass on
+// white, and that same darkness sinks into a dark backdrop.
 //
 // The trigger is the `is-active` class the IntersectionObserver in
 // index.html already sets, read with `:has()` from the root, so there is no
@@ -562,6 +579,11 @@ html[data-theme="light"]:has(.landing-section--video.is-active) {
     // need of the remap than the bar floating above it, not less. If
     // `:has()` is unavailable the chip degrades the same way the navbar
     // does, to a pale glass with dark text, which stays readable.
+    //
+    // `.landing__nav`, the fixed section-dot rail, is hero content in the
+    // same sense: its grey numbers and accent dot sat on the footage with
+    // nothing behind them.
+    .landing__nav,
     .navbar,
     .navbar-dropdown,
     .translation-notice,
@@ -573,6 +595,7 @@ html[data-theme="light"]:has(.landing-section--video.is-active) {
         --color-text-muted: rgba(255, 255, 255, 0.75);
         --color-border: rgba(255, 255, 255, 0.01);
         --color-hover: rgba(255, 255, 255, 0.1);
+        --color-accent-primary: #{c.$mauve-300};
     }
 }
 
