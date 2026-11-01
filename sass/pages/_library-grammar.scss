@@ -256,3 +256,22 @@
 .library-book__toc-item--active .library-book__toc-link {
     @include grammar.grammar-rail-link-active;
 }
+
+// Links in the page's own prose — the intro, the "About this translation"
+// block and the dataset line — had no colour rule and fell back to the
+// browser's default blue. They take the accent, like the people pages'
+// links. `text-decoration-line` (not the shorthand) leaves the dotted
+// style of `.glossary-term` intact.
+.library-book__intro a,
+.library-book__provenance-description a,
+.library-book__provenance-details a,
+.library-book__dataset-link {
+    color: var(--color-accent-primary);
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+
+    &:hover {
+        text-decoration-thickness: 2px;
+    }
+}
