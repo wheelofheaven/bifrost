@@ -9,6 +9,9 @@
 {% set book_slug = page.slug %}
 {% set catalog = load_data(path="data/library/catalog.json") %}
 {% set portrait_registry = load_data(path="data/personality_portraits.json", required=false) %}
+{# Scripture citations in the Raëlian canon books → verse links into the
+   Wheel of Heaven translations (scripts/build_canon_citations.py). #}
+{% set canon_citations = load_data(path="data/canon_citations/" ~ book_slug ~ ".json", required=false) %}
 
 {# Try split format first (directory with _meta.json), fall back to single file #}
 {% set book_meta = load_data(path="data/library/" ~ book_slug ~ "/_meta.json", required=false) %}
@@ -239,7 +242,7 @@
                                     <div class="library-book__segment-label" aria-label="Segment {{ segment.id }}">Segment {{ segment.id }}</div>
                                     {% endif %}
                                     {% for verse in segment.lines %}
-                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false)) }}
+                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
                                     {% endfor %}
                                 {% endfor %}
                             {% else %}
@@ -265,7 +268,7 @@
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
                                         {% endif %}
                                     {% endif %}
-                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false)) }}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
                                     {% if continues and not loop.first and not next_continues %}
                                     </div>
                                     {% endif %}

@@ -122,8 +122,26 @@
 
 {# Explicit print layout only: ordinary prose still collapses whitespace.
    Escape each text part normally; never interpret source text as HTML. #}
-{% macro formatted_text(text, preserve_line_breaks=false, preserve_paragraph_breaks=false) -%}
-    {%- if preserve_line_breaks -%}
+{% macro formatted_text(text, preserve_line_breaks=false, preserve_paragraph_breaks=false, links=false) -%}
+    {#- `links`: optional [[raw, href, title], ...] — exact substrings of
+        `text` (the canon books' scripture citations, from
+        data/canon_citations/) to wrap in a quiet link to the cited verse.
+        The text is escaped first and each escaped citation replaced, so
+        the output is as safe as the plain autoescaped branch. -#}
+    {%- if links -%}
+        {%- set_global linked_text = text | escape -%}
+        {%- for link in links -%}
+            {%- set raw = link.0 | escape -%}
+            {%- set cite_title = link.2 | escape -%}
+            {%- set anchor = '<a class="library-book__canon-cite" href="' ~ link.1 ~ '" title="' ~ cite_title ~ '" onclick="event.stopPropagation()">' ~ raw ~ '</a>' -%}
+            {%- set_global linked_text = linked_text | replace(from=raw, to=anchor) -%}
+        {%- endfor -%}
+        {%- if preserve_line_breaks -%}
+            {%- for part in linked_text | split(pat="\n") -%}{% if not loop.first %}<br>{% endif %}{{ part | safe }}{%- endfor -%}
+        {%- elif preserve_paragraph_breaks -%}
+            {%- for part in linked_text | split(pat="\n\n") -%}{% if not loop.first %}<br><br>{% endif %}{{ part | safe }}{%- endfor -%}
+        {%- else -%}{{ linked_text | safe }}{%- endif -%}
+    {%- elif preserve_line_breaks -%}
         {%- for part in text | split(pat="\n") -%}{% if not loop.first %}<br>{% endif %}{{ part }}{%- endfor -%}
     {%- elif preserve_paragraph_breaks -%}
         {%- for part in text | split(pat="\n\n") -%}{% if not loop.first %}<br><br>{% endif %}{{ part }}{%- endfor -%}
@@ -134,7 +152,7 @@
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
-{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false, preserve_paragraph_breaks=false) %}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, portrait_registry=false, preserve_paragraph_breaks=false, citations=false) %}
     {# Notes model: verse.notes.official is the WoH-sanctioned commentary
        (markdown); verse.notes.community is an array of contributed notes
        (empty for now). has_notes drives the actions-gutter trigger and the
@@ -153,6 +171,13 @@
     {% set has_notes = official_note | trim != "" or community_notes | length > 0 %}
     {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
+    {# Scripture citations in the canon books, linked to the cited verse
+       of the Wheel of Heaven translation (data/canon_citations/). #}
+    {% set cite_links = false %}
+    {% if citations and verse.refId %}
+        {% set verse_cites = citations | get(key=verse.refId, default="") %}
+        {% if verse_cites %}{% set cite_links = verse_cites | get(key=lang, default=false) %}{% endif %}
+    {% endif %}
     {% set preserve_lines = verse.preserveLineBreaks | default(value=false) %}
     {% set alignment = verse.alignment[lang] | default(value=false) %}
     {% set has_cuneiform = verse.cuneiform | default(value="") | trim != "" %}
@@ -217,13 +242,13 @@
         </div>
         <div class="library-book__para-content">
             <div class="library-book__para-translation">
-                {% if has_translation %}{{ self::formatted_text(text=verse.i18n[lang], preserve_line_breaks=preserve_lines, preserve_paragraph_breaks=preserve_paragraph_breaks) }}
+                {% if has_translation %}{{ self::formatted_text(text=verse.i18n[lang], preserve_line_breaks=preserve_lines, preserve_paragraph_breaks=preserve_paragraph_breaks, links=cite_links) }}
                 {% elif alignment.status | default(value="") == "covered-by" %}
                 {% set target = alignment.refId | split(pat="-") | last | replace(from=":", to="p") %}
                 <em class="library-book__edition-note">English counterpart included at <a href="#c{{ target }}" onclick="event.stopPropagation()">{{ alignment.refId }}</a>.</em>
                 {% elif alignment.status | default(value="") == "not-in-witness" %}
                 <em class="library-book__edition-note">No counterpart in this English edition.</em>
-                {% else %}{{ self::formatted_text(text=source_text, preserve_line_breaks=preserve_lines) }}{% endif %}
+                {% else %}{{ self::formatted_text(text=source_text, preserve_line_breaks=preserve_lines, links=cite_links) }}{% endif %}
                 {# Bracketed note marker: always visible and clickable at rest,
                    so a reader can open the commentary in one click/tap without
                    selecting the paragraph first. The brackets are CSS

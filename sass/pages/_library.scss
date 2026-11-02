@@ -1424,6 +1424,27 @@
         color: var(--color-text);
     }
 
+    // Scripture citations in the canon books, linked to the cited verse of
+    // the Wheel of Heaven translation. Deliberately quiet: the citation
+    // keeps the text colour and carries only a faint dotted underline, so
+    // the reading line is undisturbed; the accent appears on hover/focus.
+    &__canon-cite {
+        color: inherit;
+        text-decoration-line: underline;
+        text-decoration-style: dotted;
+        text-decoration-thickness: 1px;
+        text-decoration-color: color-mix(in srgb, currentColor 35%, transparent);
+        text-underline-offset: 0.2em;
+        transition: color vars.$transition-base ease, text-decoration-color vars.$transition-base ease;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-accent-primary);
+            text-decoration-style: solid;
+            text-decoration-color: currentColor;
+        }
+    }
+
     // Edition notices stay visible independently of reference-translation mode.
     &__edition-note {
         color: var(--color-text-muted);
