@@ -67,6 +67,12 @@
     {% endif %}
 {% endif %}
 {% set show_reference_toggle = ref_chapters | length > 0 %}
+{# Named on each reference line, so it can't be mistaken for a duplicate of
+   the translation above it. #}
+{% set ref_verse_label = "Reference translation" %}
+{% if ref_book_version %}
+    {% set ref_verse_label = ref_book_version %}
+{% endif %}
 
 <!-- Book Schema (renders from frontmatter, independent of book_data, so
      data-less reference pages still carry their sameAs / identity) -->
@@ -278,7 +284,7 @@
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
                                         {% endif %}
                                     {% endif %}
-                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, ref_label=ref_verse_label, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
                                     {% if continues and not loop.first and not next_continues %}
                                     </div>
                                     {% endif %}

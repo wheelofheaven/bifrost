@@ -1420,6 +1420,18 @@
         }
     }
 
+    &__para-reference-label {
+        display: block;
+        font-family: var(--font-family-body);
+        font-size: vars.$font-size-xs;
+        font-style: normal;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        line-height: 1.4;
+        hyphens: none;
+        -webkit-hyphens: none;
+    }
+
     &__para-translation {
         color: var(--color-text);
     }
