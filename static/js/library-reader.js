@@ -139,8 +139,9 @@ const LibraryReader = (function() {
         // Apply reader theme
         setReaderTheme(prefs.theme, false);
 
-        // Apply view mode
-        setViewMode(prefs.viewMode, false);
+        // Interlinear visibility is restored by library-book.html, the
+        // single owner of that state; the retired viewMode pref must not
+        // switch it on or off here.
     }
 
     /**
@@ -635,8 +636,7 @@ const LibraryReader = (function() {
      * toggleSideBySide pair.
      */
     function toggleInterlinear() {
-        const prefs = window.LibraryStorage ? window.LibraryStorage.getPreferences() : { viewMode: 'translation' };
-        setViewMode(prefs.viewMode === 'interlinear' ? 'translation' : 'interlinear');
+        if (typeof window.toggleInterlinear === 'function') window.toggleInterlinear();
     }
 
     /**

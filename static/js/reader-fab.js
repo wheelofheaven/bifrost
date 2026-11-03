@@ -192,25 +192,47 @@
         if (incBtn) incBtn.addEventListener("click", function () { stepFontSize(+1); });
 
         // ── Interlinear toggle (book pages only) ────────────────────
-        // The original `#interlinear-toggle` button lives in the
-        // book's sidebar. From the FAB we just defer to its global
-        // `toggleInterlinear()` and mirror the resulting state — same
-        // pattern as the font controls below.
-        const interlinearBtn = panel.querySelector('[data-action="interlinear"]');
+        // Both rows drive the sidebar's single interlinear state through
+        // its globals: one source shows at a time, and neither by default.
+        // A row appears only when the book has that layer to show, and the
+        // class observer keeps the rows right however the state changes
+        // (sidebar button, source menu, `o` shortcut).
+        const sourceBtns = panel.querySelectorAll("[data-interlinear-source]");
+        const sourceClass = {
+            original: "library-book--interlinear",
+            reference: "library-book--show-reference",
+        };
+        const sourceLayer = {
+            original: ".library-book__para-original",
+            reference: ".library-book__para-reference",
+        };
         function syncInterlinearState() {
-            if (!interlinearBtn || !bookEl) return;
-            const on = bookEl.classList.contains("library-book--interlinear");
-            interlinearBtn.setAttribute("aria-pressed", on ? "true" : "false");
-            interlinearBtn.classList.toggle("reader-fab__option--active", on);
-        }
-        if (interlinearBtn && isBookPage) {
-            syncInterlinearState();
-            interlinearBtn.addEventListener("click", function () {
-                if (typeof window.toggleInterlinear === "function") {
-                    window.toggleInterlinear();
-                }
-                syncInterlinearState();
+            sourceBtns.forEach(function (btn) {
+                const on = bookEl.classList.contains(sourceClass[btn.dataset.interlinearSource]);
+                btn.setAttribute("aria-pressed", on ? "true" : "false");
+                btn.classList.toggle("reader-fab__option--active", on);
             });
+        }
+        if (sourceBtns.length && isBookPage) {
+            sourceBtns.forEach(function (btn) {
+                const source = btn.dataset.interlinearSource;
+                btn.hidden = !document.querySelector(sourceLayer[source]);
+                const name = document.querySelector('#interlinear-menu [data-source="' + source + '"]');
+                const label = btn.querySelector("[data-interlinear-label]");
+                if (name && label) label.textContent = name.textContent.trim();
+                btn.addEventListener("click", function () {
+                    if (bookEl.classList.contains(sourceClass[source])) {
+                        window.toggleInterlinear();
+                    } else {
+                        window.selectInterlinearSource(source);
+                    }
+                });
+            });
+            new MutationObserver(syncInterlinearState).observe(bookEl, {
+                attributes: true,
+                attributeFilter: ["class"],
+            });
+            syncInterlinearState();
         }
 
         // ── Bookmarks shortcut ──────────────────────────────────────

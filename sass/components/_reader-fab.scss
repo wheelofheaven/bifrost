@@ -272,6 +272,12 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
             }
         }
 
+        // Book rows that have no layer to show on this page. The class's
+        // display: flex would otherwise outweigh the UA `[hidden]` rule.
+        &[hidden] {
+            display: none;
+        }
+
         // Active state for toggle-style options (e.g. Interlinear). The
         // sidebar control uses `.library-book__btn--active`; we mirror
         // the visual cue here so the FAB stays in sync with the page.

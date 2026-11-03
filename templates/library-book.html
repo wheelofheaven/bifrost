@@ -989,18 +989,9 @@ function readInterlinearPrefs() {
         }
         const storedShown = localStorage.getItem(INTERLINEAR_SHOWN_KEY);
         if (storedShown === '1') interlinearShown = true;
-        // One-time migration of the previous Reference button's
-        // standalone preference. If a legacy key says reference was on,
-        // adopt it as the new (source=reference, shown=true) state and
-        // drop the legacy key so this branch never fires again.
-        const legacy = localStorage.getItem(LEGACY_REFERENCE_KEY);
-        if (legacy !== null) {
-            if (legacy === '1' && storedSource === null) {
-                interlinearSource = 'reference';
-                interlinearShown = true;
-            }
-            localStorage.removeItem(LEGACY_REFERENCE_KEY);
-        }
+        // The old standalone Reference button's preference is retired:
+        // the reading text alone is the default until a reader opts in.
+        localStorage.removeItem(LEGACY_REFERENCE_KEY);
     } catch (_) {}
 }
 
