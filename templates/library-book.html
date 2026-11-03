@@ -260,10 +260,19 @@
                                     {% if (not continues or loop.first) and next_continues %}
                                     <div class="library-book__reading-paragraph" role="paragraph">
                                     {% endif %}
-                                    {# Look up matching reference verse by number (n). #}
+                                    {# Look up the reference verse: same chapter and number, unless
+                                       the verse names its counterpart because the two editions
+                                       number differently (Daniel 6: BHS 6:1 = English 5:31). #}
                                     {% set ref_paragraph_text = "" %}
-                                    {% if ref_chapter and ref_chapter.paragraphs %}
-                                        {% set ref_paragraph_matches = ref_chapter.paragraphs | filter(attribute="n", value=verse.n) %}
+                                    {% set ref_source_chapter = ref_chapter %}
+                                    {% set ref_source_n = verse.n %}
+                                    {% if verse.referenceVerse %}
+                                        {% set ref_chapter_index = verse.referenceVerse.chapter - 1 %}
+                                        {% set ref_source_chapter = ref_chapters | nth(n=ref_chapter_index) %}
+                                        {% set ref_source_n = verse.referenceVerse.n %}
+                                    {% endif %}
+                                    {% if ref_source_chapter and ref_source_chapter.paragraphs %}
+                                        {% set ref_paragraph_matches = ref_source_chapter.paragraphs | filter(attribute="n", value=ref_source_n) %}
                                         {% if ref_paragraph_matches | length > 0 %}
                                             {% set first_match = ref_paragraph_matches | first %}
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
