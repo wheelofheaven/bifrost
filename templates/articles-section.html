@@ -121,32 +121,6 @@
                     </a>
                 </section>
 
-                {# By claim type — counts of each claim type across all
-                   articles. Only renders when at least one article has
-                   a claim_type set. #}
-                {% set claim_total = 0 %}
-                {% for key in claim_keys %}
-                    {% set m = all_pages | filter(attribute="extra.claim_type", value=key) %}
-                    {% set m_len = m | length %}
-                    {% set_global claim_total = claim_total + m_len %}
-                {% endfor %}
-                {% if claim_total > 0 %}
-                <section class="articles-feed__rail-module">
-                    <h3 class="articles-feed__rail-heading">{{ trans(key="articlesByClaimType", lang=detected_lang) }}</h3>
-                    <ul class="articles-feed__claim-list">
-                        {% for key in claim_keys %}
-                        {% set matches = all_pages | filter(attribute="extra.claim_type", value=key) %}
-                        {% if matches | length > 0 %}
-                        <li class="articles-feed__claim-item">
-                            <span class="articles-feed__claim-dot articles-feed__claim-dot--{{ key }}" aria-hidden="true"></span>
-                            <span class="articles-feed__claim-label">{{ claim_labels[loop.index0] }}</span>
-                            <span class="articles-feed__claim-count">{{ matches | length }}</span>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                    </ul>
-                </section>
-                {% endif %}
             </aside>
         </div>
         {% else %}

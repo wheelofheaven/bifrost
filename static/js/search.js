@@ -655,16 +655,20 @@ function showSearchModal() {
             window.navbarDropdown.closeAllDropdowns();
         }
 
+        // Scroll lock lives in CSS on the root element
+        // (`html:has(body.search-modal-open)`, layout/_search-grammar.scss),
+        // like the burger menu and reading list. The old lock pinned <body>
+        // with `position: fixed; top: -scrollY`, and iOS WebKit then painted
+        // the fixed navbar — the search field — against the shifted body:
+        // open search after scrolling and the field was invisible.
         savedScrollY = window.scrollY || window.pageYOffset || 0;
-        body.style.position = "fixed";
-        body.style.top = `-${savedScrollY}px`;
-        body.style.left = "0";
-        body.style.right = "0";
-        body.style.width = "100%";
 
         modal.inert = false;
         modal.classList.add("search-modal--active");
         body.classList.add("search-modal-open");
+        // Bring the navbar (and the search field in it) back if the reader
+        // had scrolled it away.
+        document.querySelector(".navbar")?.classList.remove("navbar--hidden");
         isolateSearch(modal, document.querySelector('.navbar__search-input'));
 
         // Page blur via a dedicated overlay layered between content and
@@ -701,15 +705,11 @@ function hideSearchModal() {
         searchBackground.forEach(element => { element.inert = false; });
         searchBackground = [];
 
-        body.style.position = "";
-        body.style.top = "";
-        body.style.left = "";
-        body.style.right = "";
-        body.style.width = "";
-        // Restore the pre-modal scroll position. `scrollTo` instead of
-        // assigning `scrollTop` so it works on whichever element ends
-        // up being the document scroller across browsers.
-        window.scrollTo(0, savedScrollY);
+        // Nothing moved the page, but iOS can nudge it while the keyboard
+        // rises; put the reader back where they were.
+        if (Math.abs((window.scrollY || 0) - savedScrollY) > 2) {
+            window.scrollTo(0, savedScrollY);
+        }
 
         const navbarInput = document.querySelector(".navbar__search-input");
         if (navbarInput) {

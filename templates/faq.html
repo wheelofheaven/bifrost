@@ -5,7 +5,6 @@
 {% include "partials/schema/faq-page.html" %}
 
 <div class="faq">
-    {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <div class="faq__container">
         <article class="faq__article" role="article" aria-labelledby="faq-title">
@@ -72,3 +71,10 @@
     </div>
 </div>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::community(page=page, lang=detected_lang) %}
+{% endblock trail %}

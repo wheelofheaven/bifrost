@@ -3,7 +3,6 @@
 
 {% block content %}
 <div class="contributor">
-    {{ breadcrumbs::generic_page(title=page.title, parent_title=trans(key="footerContributors", lang=detected_lang), parent_path="contributors/", lang=detected_lang) }}
 
     <article class="contributor__article">
         <header class="contributor__header">
@@ -31,3 +30,10 @@
     </article>
 </div>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::generic_page(title=page.title, parent_title=trans(key="footerContributors", lang=detected_lang), parent_path="contributors/", lang=detected_lang) %}
+{% endblock trail %}

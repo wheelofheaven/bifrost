@@ -1,0 +1,162 @@
+// Inline claim markers — templates/shortcodes/claim.html + static/js/claim-notes.js
+//
+// The epistemic label sits on the assertion it describes. Reading comes
+// first: the sentence keeps the body colour, gains only a hairline
+// underline in the label hue, and ends in a small dot. Colour is the whole
+// signal — no pill, no caps — so a paragraph with three labelled clauses
+// still reads as prose.
+
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+
+$claim-hues: (
+    "direct": (c.$cyan-600, c.$cyan-300),
+    "framework": (c.$mauve-600, c.$mauve-300),
+    "inferred": (c.$yellow-700, c.$yellow-300),
+    "speculative": (c.$lavender-600, c.$lavender-300)
+);
+
+@each $type, $hue in $claim-hues {
+    .claim--#{$type},
+    .claim-note--#{$type} {
+        --claim-hue: #{nth($hue, 1)};
+    }
+
+    [data-theme="dark"] .claim--#{$type},
+    [data-theme="dark"] .claim-note--#{$type} {
+        --claim-hue: #{nth($hue, 2)};
+    }
+}
+
+.claim {
+    // Never break the dot onto its own line.
+    &__text {
+        text-decoration-line: underline;
+        text-decoration-style: solid;
+        text-decoration-color: color-mix(in srgb, var(--claim-hue) 55%, transparent);
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.28em;
+        text-decoration-skip-ink: auto;
+        transition: background-color 0.2s ease;
+        border-radius: 0.15em;
+    }
+
+    &--active &__text {
+        background-color: color-mix(in srgb, var(--claim-hue) 14%, transparent);
+    }
+
+    &__marker {
+        position: relative;
+        display: inline-block;
+        width: 0.5em;
+        height: 0.5em;
+        margin-inline: 0.18em 0.05em;
+        padding: 0;
+        vertical-align: 0.42em;
+        border: 0;
+        border-radius: 50%;
+        background: var(--claim-hue);
+        cursor: pointer;
+        // 44px hit area without disturbing the line box.
+        &::before {
+            content: "";
+            position: absolute;
+            inset: -0.9rem;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--claim-hue);
+            outline-offset: 3px;
+        }
+    }
+}
+
+.claim-note {
+    position: fixed;
+    z-index: 120;
+    width: min(20rem, calc(100vw - 2rem));
+    padding: 0.875rem 1rem 0.75rem;
+    border-radius: 1rem;
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    // One element on the page, open-only: the blur budget stays at one.
+    background: var(--color-menu-bg);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+    opacity: 0;
+    transition: opacity 0.16s ease;
+
+    &[hidden] {
+        display: none;
+    }
+
+    &--open {
+        opacity: 1;
+    }
+
+    // Phones: dock above the bottom edge, clear of the right-hand FAB rail
+    // (3rem FAB + gutters), so it never covers the controls.
+    &--docked {
+        left: 1rem;
+        right: 5rem;
+        bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+        width: auto;
+    }
+
+    &__label {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text);
+    }
+
+    &__dot {
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background: var(--claim-hue);
+        flex: none;
+    }
+
+    &__desc {
+        margin: 0.4rem 0 0;
+        font-size: 0.875rem;
+        line-height: 1.45;
+        color: var(--color-text-muted);
+    }
+
+    &__links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem 1rem;
+        margin: 0.6rem 0 0;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+
+        a {
+            color: var(--color-text);
+            text-decoration: none;
+            border-bottom: 1px solid var(--color-hairline);
+
+            &:hover {
+                border-bottom-color: currentColor;
+            }
+
+            &[hidden] {
+                display: none;
+            }
+        }
+    }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .claim-note {
+        background: var(--color-card-bg, var(--color-background));
+    }
+}

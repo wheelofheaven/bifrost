@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{#- /graph/ — the knowledge graph: every page, topic, core claim and cited source,
+    and the links between them (static/graph/graph.json, built by
+    scripts/build_graph.py; drawn by static/js/knowledge-graph.js). Below the
+    graph: how to read it, the data, and the topic index as plain lists for
+    readers without JavaScript. Front matter: template = "graph.html". -#}
+
+{% block content %}
+{%- set topics = load_data(path="data/graph/topics.toml") -%}
+{%- set onto = load_data(path="data/graph/ontology.toml") -%}
+
+<div class="graph-page">
+    <header class="graph-page__header">
+        <p class="graph-page__eyebrow"><span data-kg-total>—</span></p>
+        <h1 class="graph-page__title">{{ page.title }}</h1>
+        {% if page.description %}<p class="graph-page__lede" data-ai-summary="true">{{ page.description }}</p>{% endif %}
+        <p class="graph-page__links">
+            <a class="graph-page__pill" href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarMap", lang=detected_lang) }} →</a>
+            <a class="graph-page__pill" href="#graph-key">How to read the graph</a>
+        </p>
+    </header>
+
+    <figure class="kg" data-knowledge-graph data-src="{{ get_url(path='graph/graph.json') }}">
+        <canvas class="kg__canvas" aria-hidden="true"></canvas>
+        <p class="kg__status" role="status" data-error="The graph could not be loaded. The index below lists everything on it.">Laying out the graph…</p>
+
+        <div class="kg__legend" role="group" aria-label="Show on the graph">
+            {% for k in onto.kinds %}
+            <button type="button" class="kg__chip" data-kind="{{ k.key }}" data-kind-name="{{ k.name }}" aria-pressed="true" style="--dot: var(--kg-{{ k.key }})">
+                <span class="kg__chip-dot" aria-hidden="true"></span>{{ k.name }}<span class="kg__chip-count" data-kind-count="{{ k.key }}"></span>
+            </button>
+            {% endfor %}
+        </div>
+
+        <div class="kg__search">
+            <label class="visually-hidden" for="kg-search">Find on the graph</label>
+            <input class="kg__search-input" id="kg-search" type="search" placeholder="Find a page, topic or source…" autocomplete="off">
+            <ul class="kg__results" hidden></ul>
+        </div>
+
+        <div class="kg__zoom">
+            <button type="button" data-zoom="in" aria-label="Zoom in">+</button>
+            <button type="button" data-zoom="out" aria-label="Zoom out">−</button>
+            <button type="button" data-zoom="fit" aria-label="Fit the whole graph" title="Fit the whole graph"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="8" cy="8" r="2.2"/><path d="M8 1.5v2.5M8 12v2.5M1.5 8H4M12 8h2.5"/></svg></button>
+            <a class="kg__download" href="{{ get_url(path='graph/graph.json') }}" download="wheel-of-heaven-graph.json" aria-label="Download the graph as JSON" title="Download the graph as JSON"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v8M4.5 6.8 8 10.3l3.5-3.5M2.5 13.5h11"/></svg></a>
+            <button type="button" data-fullscreen aria-pressed="false" aria-label="Full screen" title="Full screen"><svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M6 2H2v4M10 2h4v4M6 14H2v-4M10 14h4v-4"/></svg></button>
+        </div>
+
+        <aside class="kg__card" hidden aria-live="polite">
+            <button type="button" class="kg__card-close" aria-label="Close">×</button>
+            <p class="kg__card-kind"></p>
+            <p class="kg__card-title"></p>
+            <p class="kg__card-desc"></p>
+            <a class="kg__card-open" href="#">Open →</a>
+            <p class="kg__card-label">Connected to <span class="kg__card-count"></span></p>
+            <ul class="kg__card-links"></ul>
+        </aside>
+
+        <figcaption class="kg__hint">Tap a dot to see what it is and what it connects to. Drag to move; pinch or ⌘ / Ctrl + scroll to zoom.</figcaption>
+        <p class="kg__wheel-hint" aria-hidden="true">Hold ⌘ / Ctrl to zoom, or open full screen</p>
+    </figure>
+
+    <section class="graph-key" id="graph-key" aria-labelledby="graph-key-title">
+        <h2 class="graph-key__title" id="graph-key-title">How to read the graph</h2>
+        <p class="graph-key__deck">Every dot is something on the site; its colour says what kind, its size how connected it is. Every line is one of the relations below. Topics come from one vocabulary, <code>data/graph/topics.toml</code>; everything else is distilled from the pages themselves.</p>
+        <div class="graph-key__grid">
+            <div>
+                <h3 class="graph-key__sub">Kinds</h3>
+                <ul class="graph-key__list">
+                    {% for k in onto.kinds %}
+                    <li><span class="graph-key__dot" style="--dot: var(--kg-{{ k.key }})" aria-hidden="true"></span><strong>{{ k.name }}</strong> {{ k.desc }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div>
+                <h3 class="graph-key__sub">Relations</h3>
+                <ul class="graph-key__list graph-key__list--rel">
+                    {% for r in onto.relations %}
+                    <li><strong>{{ r.name }}</strong> <span class="graph-key__shape">{{ r.shape }}</span> {{ r.desc }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="graph-data" aria-labelledby="graph-data-title">
+        <h2 class="graph-key__title" id="graph-data-title">The graph as data</h2>
+        <p class="graph-key__deck">Every node and link as one JSON file, released CC0 like the rest of the site. Hand it to an agent with its URL, or load it into Gephi or NetworkX.</p>
+        {%- set gjson = get_url(path='graph/graph.json') %}
+        <p><a class="graph-page__pill" href="{{ gjson }}" download="wheel-of-heaven-graph.json">Download graph.json <span class="graph-data__size" data-kg-size></span></a> <a class="graph-page__pill" href="https://huggingface.co/datasets/wheelofheaven/knowledge-graph" rel="noopener">Hugging Face ↗</a></p>
+    </section>
+
+    <section class="graph-index" aria-labelledby="graph-index-title">
+        <h2 class="graph-key__title" id="graph-index-title">Topics</h2>
+        <p class="graph-key__deck">The vocabulary the graph is organised by, grouped by kind.</p>
+                <div class="graph-index__grid">
+            {% for tk in onto.topic_kinds %}
+            <div class="graph-index__group">
+                <h3 class="graph-key__sub">{{ tk.name }}</h3>
+                <ul class="graph-index__list">
+                    {% for slug, t in topics %}{% if t.kind == tk.key %}
+                    <li id="topic:{{ slug }}">{% if t.page %}<a href="{{ get_url(path='wiki/' ~ t.page, lang=detected_lang, trailing_slash=true) }}">{{ t.name }}</a>{% else %}<span>{{ t.name }}</span>{% endif %}<small>{{ t.description }}</small></li>
+                    {% endif %}{% endfor %}
+                </ul>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+</div>
+
+<script src="{{ get_url(path='js/knowledge-graph.js', cachebust=true) | safe }}" defer></script>
+{% endblock content %}

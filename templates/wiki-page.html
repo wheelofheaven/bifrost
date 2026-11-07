@@ -10,8 +10,6 @@
 {% include "partials/schema/defined-term.html" %}
 
 <div class="wiki">
-    <!-- Breadcrumb Navigation -->
-    {{ breadcrumbs::wiki(page=page, lang=detected_lang) }}
 
     <div class="wiki__container">
         <!-- Main column comes first in DOM so mobile readers see title + body before
@@ -24,7 +22,6 @@
                 <!-- Page Title (between breadcrumbs and the first chapter heading) -->
                 <header class="wiki__page-header">
                     <h1 class="wiki__title" id="wiki-title">{{ page.title }}</h1>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </header>
 
                 {# Soft-redirect banner — when an entry has been superseded by a renamed
@@ -570,3 +567,10 @@
 })();
 </script>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::wiki(page=page, lang=detected_lang) %}
+{% endblock trail %}

@@ -12,8 +12,10 @@ main:has(.map-page) {
     overflow: hidden;
 }
 
+// The map sits on the site's own background colour (it used to be pure
+// #000 / #fff, a separate surface from every other page).
 body.map-route {
-    --map-surface-bg: #fff;
+    --map-surface-bg: var(--color-background);
     background: var(--map-surface-bg);
 }
 
@@ -72,7 +74,7 @@ body:has(.map-page) .to-top {
 }
 
 [data-theme="dark"] .map-page {
-    --map-bg: #000;
+    --map-bg: var(--color-background);
     --map-line: rgb(238 244 255 / 46%);
     --map-line-soft: rgb(238 244 255 / 24%);
     --map-shadow: #000;
@@ -81,7 +83,7 @@ body:has(.map-page) .to-top {
 }
 
 [data-theme="dark"] body.map-route {
-    --map-surface-bg: #000;
+    --map-surface-bg: var(--color-background);
 }
 
 .map-hero {
@@ -1052,3 +1054,56 @@ body:has(.map-page) .to-top {
 
 
 
+
+// ---- Shelves below the equator ---------------------------------------------
+// Library traditions (with live counts) and the open datasets, set on the
+// lower band of the Earth disc — the same label recipe as the Earth nodes
+// (map text on a background-coloured halo) and the strip's spaced caps.
+.map-shelves text {
+    paint-order: stroke;
+    stroke: color-mix(in srgb, var(--map-bg) 86%, transparent);
+    stroke-linejoin: round;
+    stroke-width: 5px;
+}
+
+.map-shelf__caption {
+    cursor: pointer;
+
+    text {
+        fill: var(--map-text);
+        font-size: 16px;
+        font-weight: 800;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+    }
+}
+
+.map-shelf__item {
+    cursor: pointer;
+    opacity: 0.8;
+    transition: opacity 0.18s ease;
+
+    text {
+        fill: var(--map-text);
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    &:hover,
+    &:focus-visible {
+        opacity: 1;
+    }
+
+    &--data text {
+        font-style: italic;
+        font-weight: 500;
+    }
+}
+
+.map-shelf__count {
+    fill: var(--map-muted);
+    font-family: var(--font-family-tech, var(--font-family-body));
+    font-size: 12px;
+    font-weight: 400;
+    font-style: normal;
+}

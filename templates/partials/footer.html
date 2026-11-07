@@ -5,6 +5,38 @@
       <div class="footer__col footer__col--brand">
         <h3 class="footer__brand">{% include "partials/brand/wordmark.html" %}</h3>
         <p class="footer__muted">{{ trans(key="elevatorPitch", lang=detected_lang) | safe }}</p>
+        {#- Breadcrumb trail. Page types with a hand-built trail set `page_trail`
+            (base.html `trail` block); every other page gets one built from its
+            section ancestors, so no page goes without. The home page has none. -#}
+        {% if page_trail is defined and page_trail %}
+        <div class="footer__trail">{{ page_trail | safe }}</div>
+        {% else %}
+        {%- set _tr_home = get_url(path='', lang=detected_lang, trailing_slash=true) -%}
+        {%- if page is defined -%}{%- set _tr_anc = page.ancestors -%}{%- set _tr_title = page.title -%}
+        {%- elif section is defined -%}{%- set _tr_anc = section.ancestors -%}{%- set _tr_title = section.title -%}
+        {%- else -%}{%- set _tr_anc = [] -%}{%- set _tr_title = "" -%}{%- endif -%}
+        {% if _tr_title and current_url is defined and current_url != _tr_home %}
+        <div class="footer__trail">
+            <nav class="breadcrumbs" aria-label="Breadcrumb">
+                <ol class="breadcrumbs__list">
+                    <li class="breadcrumbs__item">
+                        <a href="{{ _tr_home }}" class="breadcrumbs__link breadcrumbs__link--home">
+                            {% include "partials/brand/logomark.html" %}
+                            <span class="visually-hidden">{{ trans(key="footerHome", lang=detected_lang) }}</span>
+                        </a>
+                    </li>
+                    {% for _a in _tr_anc %}
+                    {%- set _s = get_section(path=_a, metadata_only=true) -%}
+                    {% if _s.permalink != _tr_home %}
+                    <li class="breadcrumbs__item"><a href="{{ _s.permalink }}" class="breadcrumbs__link">{{ _s.title }}</a></li>
+                    {% endif %}
+                    {% endfor %}
+                    <li class="breadcrumbs__item"><span class="breadcrumbs__current">{{ _tr_title }}</span></li>
+                </ol>
+            </nav>
+        </div>
+        {% endif %}
+        {% endif %}
       </div>
 
       <div class="footer__col">
@@ -14,6 +46,7 @@
           <li><a href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarMethod", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='read', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarRead", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerMap", lang=detected_lang) }}</a></li>
+          <li><a href="{{ get_url(path='graph', trailing_slash=true) }}">{{ trans(key="navbarGraph", lang=detected_lang) }}</a></li>
           <li><a href="{{ get_url(path='faq', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="footerFAQ", lang=detected_lang) }}</a></li>
         </ul>
 

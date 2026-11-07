@@ -1,0 +1,118 @@
+// Compact contents on phones — static/js/toc-compact.js
+//
+// Below 1000px the inline TOC of articles, wiki entries and timeline ages
+// collapses to one hairline row: CONTENTS · N  ⌄. One look for all three
+// page types (they were an open list, a boxed card and a boxed card).
+
+@use "../base/typography" as typo;
+
+body :is(.article__toc, .wiki__toc, .timeline-page__toc).toc-compact {
+    // Only a bottom rule: the lede / share row above already ends on one.
+    margin-block: 0 1.5rem;
+    padding: 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-hairline);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+
+    &::before,
+    &::after {
+        content: none;
+    }
+
+    // Wiki / timeline: the original heading is replaced by the toggle.
+    :is(.wiki__toc-header, .timeline-page__toc-header) {
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    :is(.wiki__toc-title, .timeline-page__toc-title) {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    // Article: the <summary> is the toggle.
+    .article__toc-title,
+    .toc-compact__toggle {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        width: 100%;
+        min-height: 3rem;
+        margin: 0;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: var(--color-text);
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        font-weight: 400;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::after {
+            content: "";
+            margin-inline-start: auto;
+            width: 0.5rem;
+            height: 0.5rem;
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
+            transform: translateY(-0.15rem) rotate(45deg);
+            opacity: 0.6;
+            transition: transform 0.2s ease;
+        }
+    }
+
+    .toc-compact__chevron {
+        display: none;
+    }
+
+    .toc-compact__count {
+        color: var(--color-text-muted);
+        letter-spacing: 0.04em;
+
+        &::before {
+            content: "· ";
+        }
+    }
+
+    &[open] .article__toc-title::after,
+    &.toc-compact--open .toc-compact__toggle::after {
+        transform: translateY(0.1rem) rotate(-135deg);
+    }
+
+    // Collapsed: list hidden.
+    &:not(.toc-compact--open) :is(.wiki__toc-nav, .timeline-page__toc-nav) {
+        display: none;
+    }
+
+    :is(.article__toc-nav, .wiki__toc-nav, .timeline-page__toc-nav) {
+        padding: 0 0 1rem;
+        max-height: none;
+    }
+}
+
+@media (max-width: 999px) {
+    html.toc-inline-ahead .reader-fab__contents {
+        display: none;
+    }
+}
+
+// Outside the compact state (desktop rail) the injected toggle and count
+// stay out of sight.
+.toc-compact__toggle,
+:is(.article__toc, .wiki__toc, .timeline-page__toc):not(.toc-compact) .toc-compact__count {
+    display: none;
+}

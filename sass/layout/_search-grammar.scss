@@ -1,0 +1,452 @@
+// Search overlay — reading-grammar layer over layout/_search-modal.scss.
+//
+// What it fixes:
+//   * Desktop: one result column (title → snippet, metadata on one mono
+//     line) with the section filters as a rail on the right, instead of a
+//     1,300px-wide two-column table whose snippets sat far from titles.
+//   * Phones: a full-height sheet under the navbar (it stopped two-thirds
+//     down), section filters on one swipeable row, and the corner FABs
+//     hidden while it is open (they floated over the results).
+//   * One type voice: mono eyebrows for labels (no bold caps), 500-weight
+//     titles, a quiet tinted highlight instead of solid mint blocks.
+//   * Glass: the expanded navbar input is centred without a transform
+//     (a transformed ancestor makes iOS/WebKit drop its blur).
+
+@use "../base/typography" as typo;
+
+$search-rail: 15rem;
+
+@mixin search-eyebrow {
+    font-family: typo.$font-family-tech;
+    font-size: 0.6875rem;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+// ---- Expanded navbar input: transform-free centring -----------------------
+.search-modal-open .navbar__search {
+    top: 0;
+    bottom: 0;
+    height: auto;
+    display: flex;
+    align-items: center;
+    transform: none;
+
+    // The base rule gives the input `height: 100%`; with a definite parent
+    // height that would now fill the whole navbar.
+    .navbar__search-input {
+        height: auto;
+    }
+}
+
+// The search field lives in the navbar. If the reader had scrolled down,
+// the navbar was hidden (`--hidden`, slid off the top) and opening search
+// left the field — and what you type — off-screen. Pin it in view.
+.search-modal-open .navbar.navbar--hidden {
+    top: 0.5rem;
+}
+
+// Scroll lock on the root element — see showSearchModal() in search.js.
+html:has(body.search-modal-open) {
+    overflow: hidden;
+}
+
+// ---- Shell ------------------------------------------------------------------
+.search-modal {
+    &__backdrop {
+        background-color: rgba(0, 0, 0, 0.4);
+    }
+
+    &__container {
+        // Readable panel: the shared menu surface (94% in dark) rather than
+        // the 10% navbar glass — result text sits on it, not over prose.
+        &::before {
+            background-color: var(--color-menu-bg);
+            backdrop-filter: blur(16px) saturate(140%);
+            -webkit-backdrop-filter: blur(16px) saturate(140%);
+        }
+    }
+
+    // Slim header: the input above already says "search".
+    &__header {
+        min-height: 3rem;
+        padding: 0.5rem 0.75rem 0.5rem 1.5rem;
+        border-bottom: 1px solid var(--color-hairline);
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    &__title {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    &__shortcut {
+        @include search-eyebrow;
+        margin-inline-end: auto;
+        letter-spacing: 0.04em;
+        text-transform: none;
+
+        kbd {
+            padding: 0.1rem 0.4rem;
+            border: 1px solid var(--color-hairline);
+            border-radius: 0.375rem;
+            background: transparent;
+            font-family: inherit;
+            font-size: inherit;
+        }
+    }
+
+    &__close {
+        margin-inline-start: auto;
+        width: 2.25rem;
+        height: 2.25rem;
+        border-radius: 50%;
+    }
+
+    // Results area: result column + filter rail.
+    &__results {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) $search-rail;
+        grid-auto-rows: max-content;
+        align-content: start;
+        padding: 0;
+
+        > * {
+            grid-column: 1;
+        }
+
+        > .search-filters {
+            grid-column: 2;
+            grid-row: 1 / span 80;
+            align-self: start;
+            position: sticky;
+            top: 0;
+            margin: 0;
+            padding: 1.25rem 1.25rem 1.5rem;
+            border: 0;
+            border-inline-start: 1px solid var(--color-hairline);
+            min-height: 100%;
+        }
+    }
+
+    &__navigation {
+        padding: 0;
+    }
+
+    &__navigation-title {
+        @include search-eyebrow;
+        margin: 0;
+        padding: 1.25rem 1.5rem 0.5rem;
+        border: 0;
+    }
+}
+
+// ---- Labels ---------------------------------------------------------------
+.search-filters__label,
+.search-suggestions__label {
+    @include search-eyebrow;
+}
+
+.search-filters {
+    &__header {
+        margin-bottom: 0.75rem;
+    }
+
+    &__chips {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
+}
+
+// Filters read as a list in the rail: hairline-free rows, active = ink pill.
+.search-filter-chip {
+    justify-content: flex-start;
+    min-height: 2.25rem;
+    padding: 0.375rem 0.75rem;
+    border: 1px solid transparent;
+    border-radius: 999px;
+    background: transparent;
+    font-family: typo.$font-family-tech;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+
+    &:hover {
+        border-color: var(--color-hairline);
+        background: transparent;
+        color: var(--color-text);
+    }
+
+    &--active,
+    &[aria-pressed="true"] {
+        border-color: var(--color-text);
+        background: transparent;
+        color: var(--color-text);
+    }
+}
+
+.search-suggestions {
+    padding: 1.25rem 1.5rem 0.25rem;
+    border: 0;
+
+    &__header {
+        margin-bottom: 0.75rem;
+    }
+
+    &__list {
+        gap: 0.5rem;
+    }
+}
+
+.search-suggestion {
+    padding: 0.4rem 0.875rem;
+    border-radius: 999px;
+    background: transparent;
+    border-color: var(--color-hairline);
+    font-size: 0.875rem;
+
+    &:hover {
+        border-color: var(--color-text-muted);
+    }
+
+    &__text {
+        font-weight: 400;
+    }
+
+    // The section tag on every popular term was noise.
+    &__section {
+        display: none;
+    }
+}
+
+.search-results-count {
+    @include search-eyebrow;
+    padding: 1.25rem 1.5rem 0.5rem;
+    border: 0;
+    letter-spacing: 0.06em;
+
+    &__number {
+        font-weight: 400;
+        color: var(--color-text);
+    }
+}
+
+// ---- Result rows ----------------------------------------------------------
+// Markup stays (search.js): __left {title, url, section} + __right {body}.
+// `display: contents` lifts them into one grid:
+//     SECTION · /url/
+//     Title
+//     Snippet…
+.search-result {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+        "section url"
+        "title title"
+        "body body";
+    column-gap: 0.625rem;
+    row-gap: 0.25rem;
+    padding: 0.875rem 1.5rem;
+    border: 0;
+    border-top: 1px solid var(--color-hairline-subtle, var(--color-hairline));
+    border-radius: 0;
+    background: transparent;
+
+    &:hover,
+    &:focus-visible,
+    &--selected {
+        background: var(--color-hover);
+        outline: none;
+    }
+
+    &__left,
+    &__right {
+        display: contents;
+    }
+
+    &__section {
+        grid-area: section;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.375rem;
+        margin: 0;
+        padding: 0;
+        background: none;
+        @include search-eyebrow;
+        color: var(--color-text);
+    }
+
+    &__section-icon {
+        display: inline-flex;
+        opacity: 0.8;
+
+        &:empty {
+            display: none;
+        }
+
+        svg {
+            width: 0.875rem;
+            height: 0.875rem;
+        }
+    }
+
+    &__url {
+        grid-area: url;
+        align-self: center;
+        min-width: 0;
+        margin: 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        color: var(--color-text-subtle, var(--color-text-muted));
+
+        &::before {
+            content: "· ";
+        }
+    }
+
+    &__title {
+        grid-area: title;
+        margin: 0;
+        font-family: var(--font-family-lead);
+        font-size: 1.0625rem;
+        font-weight: 500;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        color: var(--color-text);
+    }
+
+    &__body {
+        grid-area: body;
+        margin: 0;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+}
+
+// "Browse sections" rows: name + path on one line. The section eyebrow
+// repeated the name ("TIMELINE · /timeline/ — Timeline").
+.search-result--nav {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: "title url";
+    align-items: baseline;
+    padding-block: 0.625rem;
+
+    .search-result__section {
+        display: none;
+    }
+
+    .search-result__title {
+        font-size: 1rem;
+    }
+}
+
+// Quiet match highlight: tint + ink, not a solid accent block.
+// (Theme-qualified so it outranks the `[data-theme] .search-highlight`
+// solid fills in _search-modal.scss.)
+.search-highlight,
+[data-theme] .search-highlight {
+    background-color: color-mix(in srgb, var(--color-accent-primary) 22%, transparent);
+    color: inherit;
+    box-shadow: none;
+    padding: 0 0.1em;
+    font-weight: inherit;
+    border-radius: 0.2em;
+}
+
+// ---- Phones / tablets -----------------------------------------------------
+@media (max-width: 999px) {
+    // A sheet from under the navbar to the bottom edge.
+    .search-modal {
+        top: 4.75rem;
+        bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
+        display: flex;
+
+        // Doubled class: outranks the `.search-modal .search-modal__container`
+        // max-height caps in _search-modal.scss's breakpoint blocks.
+        & &__container {
+            flex: 1;
+            max-height: none;
+        }
+
+        & &__results {
+            grid-template-columns: minmax(0, 1fr);
+            flex: 1;
+            min-height: 0;
+            max-height: none;
+            overflow-y: auto;
+
+            > .search-filters {
+                grid-column: 1;
+                grid-row: auto;
+                position: static;
+                min-height: 0;
+                padding: 0.875rem 0 0.5rem;
+                border: 0;
+                border-bottom: 1px solid var(--color-hairline);
+            }
+        }
+    }
+
+    .search-filters {
+        &__header {
+            display: none;
+        }
+
+        // One swipeable row.
+        &__chips {
+            flex-direction: row;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-inline: 1.25rem;
+            scrollbar-width: none;
+
+            &::-webkit-scrollbar {
+                display: none;
+            }
+        }
+    }
+
+    .search-filter-chip {
+        flex: none;
+        border-color: var(--color-hairline);
+    }
+
+    // Phones: no Esc hint, so the header is just the close button — keep
+    // the strip short.
+    .search-modal__header {
+        min-height: 0;
+        padding: 0.25rem 0.5rem;
+    }
+
+    .search-result,
+    .search-suggestions,
+    .search-results-count,
+    .search-modal__navigation-title {
+        padding-inline: 1.25rem;
+    }
+
+    // The FAB rail floated over the results.
+    html:has(.search-modal--active) {
+        .search-fab,
+        .reader-fab,
+        .to-top,
+        .back-fab {
+            display: none;
+        }
+    }
+}

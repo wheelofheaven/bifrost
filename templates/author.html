@@ -6,12 +6,6 @@
 {% include "partials/schema/person.html" %}
 
 <div class="author">
-    {{ breadcrumbs::generic_page(
-        title=page.title,
-        parent_title=trans(key="navbarAbout", lang=detected_lang),
-        parent_path="/about/",
-        lang=detected_lang
-    ) }}
 
     <div class="author__container">
         <article class="author__article" role="article" aria-labelledby="author-title">
@@ -35,11 +29,6 @@
                 <p class="author__description">{{ page.description }}</p>
                 {% endif %}
 
-                {% if page.extra.claim_type %}
-                <div class="author__badge">
-                    {{ claim_badge::render(claim_type=page.extra.claim_type, lang=detected_lang) }}
-                </div>
-                {% endif %}
             </header>
 
             {% set has_card = page.extra.location or page.extra.profession or page.extra.languages_read or page.extra.on_the_corpus %}
@@ -81,3 +70,15 @@
     </div>
 </div>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::generic_page(
+        title=page.title,
+        parent_title=trans(key="navbarAbout", lang=detected_lang),
+        parent_path="/about/",
+        lang=detected_lang
+    ) %}
+{% endblock trail %}

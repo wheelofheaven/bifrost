@@ -9,7 +9,6 @@
 {% include "partials/schema/scholarly-article.html" %}
 
 <div class="article">
-    {{ breadcrumbs::articles(page=page, lang=detected_lang) }}
 
     <div class="article__container">
         <article class="article__article" role="article" aria-labelledby="article-title">
@@ -19,7 +18,6 @@
                    the byline under the headline (editorial best practice). #}
                 <div class="article__meta" aria-label="Article classification">
                     {{ article::chip(type=page.extra.article_type | default(value="explainer"), lang=detected_lang) }}
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                     {% if page.extra.category %}
                     <span class="article__category">{{ page.extra.category }}</span>
                     {% endif %}
@@ -35,7 +33,7 @@
                 <p class="article__byline">
                     <span class="article__byline-label">{{ trans(key="referenceBy", lang=detected_lang) }}</span>
                     {% if byline_slug %}<a class="article__byline-link" href="{{ get_url(path='author/' ~ byline_slug, trailing_slash=true) }}" rel="author">{{ byline_name }}</a>{% else %}<span class="article__byline-name">{{ byline_name }}</span>{% endif %}
-                    {% if page.date %}<span class="article__byline-sep" aria-hidden="true">·</span><time class="article__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%B %d, %Y") }}</time>{% endif %}
+                    {% if page.date %}<span class="article__byline-sep" aria-hidden="true">·</span><time class="article__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%b %d, %Y") }}</time>{% endif %}
                     {% if page.reading_time %}<span class="article__byline-sep" aria-hidden="true">·</span><span class="article__byline-readtime">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>{% endif %}
                 </p>
 
@@ -268,18 +266,18 @@
                 </a>
             </div>
 
-            <footer class="article__footer">
-                <a href="{{ get_url(path='articles', lang=detected_lang, trailing_slash=true) }}" class="article__back-card">
-                    <svg class="article__back-card-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    <span class="article__back-card-text">{{ trans(key="articleBackToHub", lang=detected_lang) }}</span>
-                </a>
-            </footer>
+            {# "Back to the hub" card removed: the page trail directly below
+               (base.html `trail` block) carries the same link and more. #}
         </article>
     </div>
 </div>
 
 {% include "partials/doc-chrome-script.html" %}
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::articles(page=page, lang=detected_lang) %}
+{% endblock trail %}

@@ -1,0 +1,95 @@
+// Reading polish — small consistency fixes across reading pages, loaded
+// after the *-grammar layers so it can settle their leftovers.
+
+@use "grammar";
+
+// ---- Headings: one weight ladder ----------------------------------------
+// h1 500 · section/chapter titles 600 (grammar). The library chapter title
+// still rendered at 700 because the grammar rule is scoped to
+// `__content` and the chapter header sits outside it.
+.library-book .library-book__chapter-title {
+    font-weight: 600;
+    letter-spacing: -0.015em;
+}
+
+// Library book title follows the reading headline (500, tight tracking),
+// like article, wiki, timeline and dispatch titles.
+.library-book .library-book__title {
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    line-height: 1.04;
+}
+
+// ---- Phones: the head of a reading page ----------------------------------
+@media (max-width: 600px) {
+    // Byline: one line where it fits, and a wrap never strands a separator
+    // inside a date. "by" is implied by the link.
+    :is(.article__byline, .dispatch__byline) {
+        gap: 0.45rem;
+        row-gap: 0.25rem;
+
+        > * {
+            white-space: nowrap;
+        }
+    }
+
+    .article__byline-label {
+        display: none;
+    }
+
+    // Share row: on phones the system share sheet already covers X, Reddit
+    // and friends, and saving to the reading list caches the page offline.
+    // Keep the three controls that do something the sheet can't: share,
+    // copy link, save.
+    .social-share:has(.social-share__btn--native:not([hidden])) {
+        .social-share__btn--x,
+        .social-share__btn--reddit,
+        .social-share__btn--offline {
+            display: none;
+        }
+    }
+
+    .social-share__label {
+        @include grammar.grammar-eyebrow;
+    }
+}
+
+// ---- Side panels: part of the page -----------------------------------------
+// The reading pages' aside (wiki infobox, timeline age card, library book
+// facts + contents) was three different things: a square filled block on
+// the wiki, bare rows on timeline and library. Now all three are the same:
+// no fill, no outline — a column of the page, not a box on it.
+:is(.wiki__sidebar, .timeline-page__sidebar, .library-book__sidebar) {
+    background: transparent;
+
+    > :is(.wiki__header, .timeline-page__header, .library-book__sidebar-header, .library-book__toc) {
+        background: transparent;
+    }
+}
+
+// ---- One desktop frame for every reading page ------------------------------
+// Wiki, timeline and library pages run edge to edge of the navbar frame:
+// text column under the logo, side column on the frame's right edge.
+// Articles and dispatches sat in a centred 72rem box, so their contents rail
+// floated mid-page and their text started 40px further in. Same frame now —
+// the navbar's (90%, max 80rem) — with the 44rem reading measure kept and
+// the rail pinned right at the wiki rail's position.
+@media (min-width: 1025px) {
+    .article .article__container,
+    .dispatch .dispatch__container {
+        max-width: min(80rem, 90vw);
+        margin-inline: auto;
+        // Matches the wiki: text at the logo's edge, rail ending 0.625rem
+        // inside the navbar's right edge.
+        padding-inline: 1.125rem 0.625rem;
+    }
+
+    .article .article__article {
+        grid-template-columns: minmax(0, 44rem) minmax(2rem, 1fr) 13.5rem;
+        column-gap: 0;
+
+        > .article__toc {
+            grid-column: 3;
+        }
+    }
+}

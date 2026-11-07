@@ -11,8 +11,6 @@
 {% set age_matches = ages_data | filter(attribute="link", value="/timeline/" ~ page.slug) %}
 
 <div class="timeline-page">
-    <!-- Breadcrumb Navigation -->
-    {{ breadcrumbs::timeline(page=page, lang=detected_lang) }}
 
     <div class="timeline-page__container">
         <!-- Main column comes first in DOM so mobile readers see title + body before
@@ -359,12 +357,6 @@
                 </a>
                 {% endif %}
 
-                <!-- Reading-status / claim-type cluster -->
-                <div class="timeline-page__claim-section">
-                    <div class="timeline-page__claim-label">{{ trans(key="claimReadingThisAs", lang=detected_lang) }}</div>
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
-                </div>
-
                 <!-- Metadata — each item on its own labeled row -->
                 <div class="timeline-page__meta">
                     <div class="timeline-page__meta-row timeline-page__meta-row--split">
@@ -624,3 +616,10 @@
 })();
 </script>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::timeline(page=page, lang=detected_lang) %}
+{% endblock trail %}

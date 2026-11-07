@@ -4,7 +4,6 @@
 
 {% block content %}
 <div class="info-page">
-    {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <div class="info-page__container">
         <article class="info-page__article" role="article" aria-labelledby="info-title">
@@ -15,11 +14,6 @@
                 <p class="info-page__description">{{ page.description }}</p>
                 {% endif %}
 
-                {% if page.extra.claim_type %}
-                <div class="info-page__badge">
-                    {{ claim_badge::render(claim_type=page.extra.claim_type, lang=detected_lang) }}
-                </div>
-                {% endif %}
             </header>
 
             {% if page.content %}
@@ -43,3 +37,10 @@
     </div>
 </div>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::community(page=page, lang=detected_lang) %}
+{% endblock trail %}

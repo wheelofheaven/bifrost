@@ -1,6 +1,9 @@
 {% import "macros/link.html" as link_macros %}
 {% set detected_lang = "en" %}
-{% if current_path is starting_with("/") %}{% set_global _p = current_path %}{% else %}{% set_global _p = "/" ~ current_path %}{% endif %}
+{#- 404.html renders without current_path / current_url; give the partials the 404's own address. -#}
+{% if current_path is not defined %}{% set_global current_path = "/404.html" %}{% endif %}
+{% if current_url is not defined %}{% set_global current_url = config.base_url ~ "/404.html" %}{% endif %}
+{% set _cp = current_path %}{% if _cp is starting_with("/") %}{% set_global _p = _cp %}{% else %}{% set_global _p = "/" ~ _cp %}{% endif %}
 {% if _p is starting_with("/zh-Hant/") %}{% set_global detected_lang = "zh-Hant" %}
 {% elif _p is starting_with("/zh/") %}{% set_global detected_lang = "zh" %}
 {% elif _p is starting_with("/de/") %}{% set_global detected_lang = "de" %}
@@ -76,6 +79,8 @@
         {% include "partials/totop.html" %}
         {% include "partials/search-fab.html" %}
         {% include "partials/reader-fab.html" %}
+        {#- Page trail: pages set `page_trail` (their breadcrumb) in this block; partials/footer.html prints it under the brand description. Rendered before the footer so the variable exists when it is read. #}
+        {% block trail %}{% endblock trail %}
         {% include "partials/footer.html" %}
         {% include "partials/snackbar.html" %}
         {% include "partials/glossary-tooltip.html" %}

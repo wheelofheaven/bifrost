@@ -1,0 +1,39 @@
+{#- Inline claim marker — the epistemic label on ONE assertion, not on a page.
+
+    A page argues many things at once: a philological fact, a canon premise,
+    a reading, a synthesis. A single page-level pill had to pick one of them
+    and mislabelled the rest, so the label now travels with the sentence it
+    describes (core RFC 0001: "public badges mix … axes"; claim records carry
+    `public_label` per claim, not per page).
+
+    Usage (body = the assertion, inline markdown allowed):
+
+        The Hebrew word is {% claim(type="direct") %}plural in form{% end %},
+        and {% claim(type="framework", id="woh-claim-0001") %}the Elohim
+        created life on Earth{% end %}.
+
+    type  direct | framework | inferred | speculative   (required)
+    id    optional core claim record, e.g. "woh-claim-0073" — links the note
+          to the record that controls the label.
+
+    Renders the assertion with a hairline underline in the label colour and a
+    small dot marker after it; tapping the dot opens one shared note
+    (static/js/claim-notes.js) with the label, what it means, and links to
+    the method page and the record. Without JS the label is still announced
+    (visually-hidden text) and the dot carries a title. -#}
+{%- set t = type | capitalize -%}
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _lang = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _lang = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _lang = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _lang = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _lang = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _lang = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _lang = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _lang = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _lang = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _lang = "he" -%}
+{%- endif -%}
+{%- set _label = trans(key='claimType' ~ t, lang=_lang) -%}
+{%- set _id = id | default(value="") -%}
+<span class="claim claim--{{ type }}"><span class="claim__text">{{ body | markdown(inline=true) | safe }}</span><button type="button" class="claim__marker" data-claim-type="{{ type }}" data-claim-label="{{ _label }}" data-claim-desc="{{ trans(key='claimBadge' ~ t ~ 'Desc', lang=_lang) }}" data-claim-method="{{ get_url(path='method/', lang=_lang, trailing_slash=true) }}" data-claim-method-label="{{ trans(key='navbarMethod', lang=_lang) }}"{% if _id %} data-claim-id="{{ _id }}"{% endif %} aria-haspopup="dialog" title="{{ _label }}"><span class="visually-hidden">{{ _label }}</span></button></span>

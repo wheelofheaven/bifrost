@@ -117,3 +117,58 @@
         // Styles for structured data markup
     }
 }
+
+// ---- Footer trail -----------------------------------------------------
+//
+// The breadcrumb lives in the footer's brand column, under the site
+// description (base.html `trail` block sets `page_trail`; footer.html prints
+// it) — not above the title, where on a phone the trail plus the claim pill
+// pushed the headline a third of the screen down. "Where am I / go up a
+// level" is answered where a reader finishes, inside the footer they already
+// know, without a strip of its own.
+.footer__trail {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-hairline);
+
+    .breadcrumbs {
+        margin: 0;
+        padding: 0;
+    }
+
+    .breadcrumbs__list {
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        gap: 0.25rem 0.375rem;
+    }
+
+    .breadcrumbs__item {
+        gap: 0.375rem;
+    }
+
+    .breadcrumbs__link {
+        padding: 0.25rem 0.375rem;
+    }
+
+    .breadcrumbs__item:first-child .breadcrumbs__link {
+        margin-inline-start: -0.375rem;
+    }
+
+    .breadcrumbs__current {
+        max-width: 100%;
+        white-space: normal;
+        padding-inline: 0.375rem 0;
+    }
+
+    // Separator leads each item instead of trailing it, so a wrapped line
+    // never ends on a dangling "/".
+    .breadcrumbs__item:not(:last-child)::after {
+        content: none;
+    }
+
+    .breadcrumbs__item + .breadcrumbs__item::before {
+        content: "/";
+        color: var(--color-text-muted);
+        opacity: 0.6;
+    }
+}

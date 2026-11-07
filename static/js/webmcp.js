@@ -113,6 +113,8 @@
     }
 
     function claimType() {
+        const meta = document.querySelector('meta[name="ai.claim_type"]');
+        if (meta && meta.content) return meta.content;
         const active = document.querySelector(".claim-badge--active");
         if (!active) return null;
         const m = active.className.match(/claim-badge--(direct|framework|inferred|speculative)/);

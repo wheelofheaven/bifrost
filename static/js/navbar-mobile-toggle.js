@@ -52,7 +52,12 @@ document.addEventListener("DOMContentLoaded", () => {
   // 📱 Mobile navbar scroll behavior with throttling
   function updateNavbarVisibility() {
     // Don't process scroll events when mobile menu is open (body is locked)
-    if (isMobileNavExpanded) {
+    // Search open: the field lives in the navbar, so the bar must stay in
+    // view (iOS also scrolls the page as the keyboard rises, which used
+    // to read as "scrolling down" and slide the field off-screen).
+    if (isMobileNavExpanded || document.body.classList.contains("search-modal-open")) {
+      if (navbar) navbar.classList.remove("navbar--hidden");
+      lastScrollY = window.scrollY;
       ticking = false;
       return;
     }

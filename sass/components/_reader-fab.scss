@@ -128,13 +128,22 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
     // Direct access to the existing Contents sheet; hidden while the
     // options panel occupies this space. Long translations stay in view.
+    // Same material as the toggle beside it (shared translucent token +
+    // 12px blur, 0.75rem radius). It used `--color-menu-bg`, which in dark
+    // mode is the page colour at 94% — the pill vanished and its label
+    // floated over the prose as loose text.
     &__contents {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
         height: 3rem;
         max-width: calc(100vw - 7rem);
-        padding: 0 vars.$spacing-md;
+        padding: 0 vars.$spacing-md 0 0.875rem;
         border: 1px solid var(--color-border);
-        border-radius: vars.$border-radius-lg;
-        background: var(--color-menu-bg);
+        border-radius: 0.75rem;
+        background-color: var(--color-navbar-bg);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
         color: var(--color-text);
         font: inherit;
         font-size: vars.$font-size-sm;
@@ -142,6 +151,27 @@ $_fab-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
+
+        &::before {
+            content: "";
+            flex: none;
+            width: 1rem;
+            height: 1rem;
+            background: currentColor;
+            -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01'/%3E%3C/svg%3E") center / contain no-repeat;
+            opacity: 0.8;
+        }
+
+        &:hover {
+            background-color: var(--color-hover);
+        }
+
+        // `display: inline-flex` above outranks the UA `[hidden]` rule;
+        // reader-fab.js hides this pill on book pages.
+        &[hidden] {
+            display: none;
+        }
 
         &:focus-visible {
             outline: 2px solid var(--color-accent-primary);

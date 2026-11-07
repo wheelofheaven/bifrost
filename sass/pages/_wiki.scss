@@ -11,7 +11,9 @@
 .wiki {
     // Every section of the entry insets to this one value — see the
     // doc-gutter mixin in abstracts/_mixins.scss.
-    @include mix.doc-gutter;
+    // Phones: main pads 0.75rem, so a 0.75rem gutter puts the text edge at
+    // 1.5rem — the same edge as articles, dispatches and the navbar logo.
+    @include mix.doc-gutter($mobile: 0.75rem);
 
     min-height: 100vh;
     background: var(--color-background);

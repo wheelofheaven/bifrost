@@ -52,6 +52,9 @@ const bundles = {
     'listen-button.js',
     'category-rail.js',
     'cite-copy.js',
+    // One shared note for the inline {% claim %} markers.
+    'claim-notes.js',
+    'toc-compact.js',
     // Tiny stub: injects webmcp.bundle.js only when a model context exists.
     'webmcp-loader.js',
   ],

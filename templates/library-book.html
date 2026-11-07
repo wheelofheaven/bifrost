@@ -116,8 +116,6 @@
 {% endif %}
 
 <div class="library-book" data-book-slug="{{ book_slug }}" data-book-code="{{ book_data.code | default(value='') }}" data-book-title="{{ book_title | default(value='') | escape }}">
-    <!-- Breadcrumb Navigation -->
-    {{ breadcrumbs::library(book_title=book_title, lang=detected_lang) }}
 
     <div class="library-book__container">
         <!-- Main column comes first so mobile readers see title + body before
@@ -154,7 +152,6 @@
                     {% if book_subtitle %}
                     <p class="library-book__subtitle">{{ book_subtitle }}</p>
                     {% endif %}
-                    {{ claim_badge::render(claim_type=page.extra.claim_type | default(value=""), lang=detected_lang) }}
                 </header>
 
                 {# Lede paragraph — localized description from _meta.json. Always
@@ -1470,3 +1467,10 @@ document.addEventListener('DOMContentLoaded', function() {
 <script src="{{ get_url(path='js/dist/library.bundle.js', cachebust=true) | safe }}"></script>
 
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::library(book_title=page.title, lang=detected_lang) %}
+{% endblock trail %}

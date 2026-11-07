@@ -43,7 +43,7 @@ $grammar-rainbow: (
 // Index headline: the display face at weight 500, set tight.
 @mixin grammar-headline {
     font-family: var(--font-family-lead);
-    font-size: clamp(2.5rem, 4.2vw, 3.5rem);
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
     font-weight: 500;
     line-height: 1.04;
     letter-spacing: -0.03em;

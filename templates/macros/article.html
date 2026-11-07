@@ -67,7 +67,6 @@
         {% if page.extra.category %}
         <span class="article-card__category">{{ page.extra.category }}</span>
         {% endif %}
-        {{ self::claim_pill(claim_type=page.extra.claim_type | default(value=''), lang=lang) }}
         {% if page.date %}
         <time class="article-card__date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">
             {{ page.date | date(format="%b %d, %Y") }}

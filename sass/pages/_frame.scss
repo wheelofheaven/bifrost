@@ -1,0 +1,317 @@
+// The page frame — one geometry for every page type. Loaded last.
+//
+// Audit 2026-11-07 (32 page types × 1440 / 390 px) found the title/text edge
+// at eleven different x positions on desktop (91 → 356 px) and nine on phones
+// (24 → 111 px): every template centred its own container at its own
+// max-width (748, 780, 816, 952, 1088, 1100, 1280 …). The rule now:
+//
+//   desktop  the navbar's frame — min(80rem, 90vw), centred — with the text
+//            edge under the logo and side columns ending at its right edge.
+//            Text-only pages keep a 44rem measure, left-aligned on that edge.
+//   phones   text edge at 1.5rem (main 0.75rem + container 0.75rem), the
+//            same edge as the navbar logo.
+//
+// Wiki, timeline and library pages already sat on this frame (their own
+// doc-gutter); articles and dispatches are set in _reading-polish.scss.
+
+@use "grammar";
+
+$frame-containers: ".about__container, .info-page__container, .faq__container, .author__container, .contributors, .contributor, .articles-feed__container, .newsroom__container, .wiki-section__container, .sources__container, .source-page__container, .section-page__container, .tradition-hub__container, .dataset, .read, .listen, .gallery, .contact-hero, .contact-container, .offline-page__container, .not-found";
+
+// Text-only pages: the reading measure, on the frame's left edge.
+$frame-measured: ".about__article, .info-page__article, .faq__article, .author__article, .contributor__article, .contributors > *, .dataset > *, .contact-container > *, .contact-hero__content, .offline-page__container > *, .not-found > *";
+
+// Every page title, one headline.
+$frame-titles: ".about__title, .info-page__title, .faq__title, .contact-hero__title, .author__title, .contributors__title, .contributor__name, .articles-feed__title, .newsroom__title, .article__title, .dispatch__title, .wiki-header__title, .wiki__title, .library-book__title, .timeline-page__title, .sources__title, .source-page__title, .section-page__title, .tradition-hub__title, .dataset > .dataset__header .dataset__title, .dataset__article .dataset__title, .read__title, .listen__title, .gallery__title, .offline-page__title, .not-found__title";
+
+@media (min-width: 1025px) {
+    #{$frame-containers} {
+        box-sizing: border-box;
+        width: 100%;
+        max-width: min(80rem, 90vw);
+        margin-inline: auto;
+        padding-inline: 1.125rem 0.625rem;
+    }
+
+    // Roots that padded their container a second time.
+    .wiki-section {
+        padding-inline: 0;
+    }
+}
+
+@media (max-width: 1024px) {
+    #{$frame-containers} {
+        box-sizing: border-box;
+        max-width: none;
+        margin-inline: 0;
+        padding-inline: 0.75rem;
+    }
+
+    .wiki-section {
+        padding-inline: 0;
+    }
+}
+
+#{$frame-measured} {
+    max-width: 44rem;
+    margin-inline: 0;
+}
+
+#{$frame-titles} {
+    @include grammar.grammar-headline;
+    font-size: clamp(2.25rem, 4.2vw, 3.5rem);
+    color: var(--color-text);
+}
+
+// ---- Headers that were centred heroes ----------------------------------------
+.read__header,
+.listen__header,
+.contact-hero__content {
+    text-align: start;
+    margin-inline: 0;
+    align-items: flex-start;
+}
+
+.offline-page__container,
+.not-found {
+    text-align: start;
+    align-items: flex-start;
+}
+
+.read__header,
+.listen__header,
+.contact-hero,
+.offline-page__header,
+.not-found__header,
+.dataset--index > .dataset__header {
+    @include grammar.grammar-index-header;
+}
+
+// Contact: the banner box, its glow and the icon tile were a hero style no
+// other page uses. Plain header on the page, like every other index.
+.contact-hero {
+    min-height: 0;
+    padding-block: 2.5rem 2.6rem;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+
+    &__bg,
+    &__icon {
+        display: none;
+    }
+}
+
+.contact-hero__description,
+.read__description,
+.listen__description,
+.offline-page__description,
+.read__lede,
+.listen__lede {
+    margin-inline: 0;
+    text-align: start;
+}
+
+// Offline / 404: state pages read like any other page — title, lede, pills.
+.offline-page {
+    min-height: 0;
+    padding-block: 2.5rem 4rem;
+    align-items: flex-start;
+    justify-content: flex-start;
+
+    &__icon {
+        display: none;
+    }
+
+    &__actions {
+        justify-content: flex-start;
+    }
+
+    &__btn {
+        @include grammar.grammar-pill;
+
+        &--primary {
+            border-color: var(--color-text);
+        }
+    }
+}
+
+.not-found {
+    padding-block: 2.5rem 4rem;
+
+    &__code {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 0.75rem;
+    }
+
+    &__title {
+        margin: 0;
+    }
+
+    &__body {
+        margin: 0 0 1.5rem;
+        font-size: 1.125rem;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+    }
+
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    &__link {
+        @include grammar.grammar-pill;
+
+        &--primary {
+            border-color: var(--color-text);
+        }
+    }
+
+    &__note {
+        margin: 2rem 0 0;
+        font-size: 0.875rem;
+        color: var(--color-text-muted);
+    }
+}
+
+// ---- Index headers: one shape ----------------------------------------------
+// Title (left-aligned on every breakpoint), lede, dash. The big section
+// glyph before the title existed on four of eleven indexes only (there is
+// no icon for datasets, read, listen, gallery, contributors, traditions);
+// section glyphs stay in the navbar menus, search results and the trail.
+.articles-feed__header,
+.newsroom__header,
+.wiki-header,
+.sources__header,
+.read__header,
+.listen__header,
+.gallery__header,
+.contributors__header,
+.section-page__header,
+.dataset--index > .dataset__header {
+    text-align: start;
+
+    .section-mark--hero {
+        display: none;
+    }
+}
+
+.articles-feed__title-row,
+.newsroom__title-row,
+.wiki-header__left,
+.sources__header-left {
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: start;
+    margin-inline: 0;
+}
+
+.wiki-header__title,
+.sources__title,
+.articles-feed__title,
+.newsroom__title {
+    margin-inline: 0;
+}
+
+// Offline page root padded its container a second time.
+.offline-page {
+    padding-inline: 0;
+}
+
+// ---- One vertical start ------------------------------------------------------
+// The header begins where `main`'s content begins, padded 2.25rem — so the
+// first line of every page (eyebrow, or the title when there is none) sits at
+// the same height. Wiki, timeline and library already did this; the other
+// templates stacked root padding, container padding and header margins of
+// their own (first line anywhere from 136 to 174 px).
+$frame-above-header: ".about, .info-page, .faq, .author, .contributors, .contributor, .articles-feed, .newsroom, .article, .dispatch, .wiki-section, .sources, .source-page, .section-page, .tradition-hub, .dataset, .read, .listen, .gallery, .contact-page, .offline-page, .not-found, .about__container, .info-page__container, .faq__container, .author__container, .articles-feed__container, .newsroom__container, .article__container, .dispatch__container, .wiki-section__container, .sources__container, .source-page__container, .section-page__container, .tradition-hub__container, .about__article, .info-page__article, .faq__article, .author__article, .contributor__article, .article__article, .dispatch__article, .dataset__article";
+
+$frame-headers: ".about__header, .info-page__header, .faq__header, .author__header, .contributors__header, .contributor__header, .articles-feed__header, .newsroom__header, .article__header, .dispatch__header, .wiki-section .wiki-header, .sources__header, .source-page__header, .section-page__header, .tradition-hub__header, .dataset__header, .read__header, .listen__header, .gallery__header, .contact-hero, .not-found__header";
+
+#{$frame-above-header} {
+    padding-top: 0;
+    margin-top: 0;
+}
+
+#{$frame-headers} {
+    margin-top: 0;
+    padding-top: 2.25rem;
+}
+
+// Stragglers the audit caught.
+// Sources index: a phone rule centred the title column.
+.sources .sources__header-left {
+    align-items: flex-start;
+}
+
+// Offline: no header wrapper — the container itself takes the header inset.
+.offline-page .offline-page__container {
+    padding-top: 2.25rem;
+}
+
+// Sources index on phones: the search box's 260px flex-basis became its
+// HEIGHT once the header stacked into a column — an empty block with a
+// floating magnifier.
+@media (max-width: 1024px) {
+    .sources .sources__search {
+        flex: 0 0 auto;
+        min-width: 0;
+        max-width: none;
+        width: 100%;
+    }
+}
+
+// Contact: the support card was the only gradient-bordered, glowing card on
+// the site (plus a gradient icon tile and a gradient button). Same grammar
+// as everything else: a hairline section, one pill.
+.contact-support__card {
+    padding: 1.5rem 0;
+    border: 0;
+    border-block: 1px solid var(--color-hairline);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+
+    &::before,
+    &::after {
+        content: none;
+    }
+}
+
+.contact-support__icon {
+    display: none;
+}
+
+.contact-support__button {
+    @include grammar.grammar-pill;
+    border-color: var(--color-text);
+    background: none;
+    box-shadow: none;
+    color: var(--color-text);
+
+    &::before,
+    &::after {
+        content: none;
+    }
+}
+
+// Datasets index: rows flush with the title, on hairlines — like the
+// sources, articles and newsroom lists — not boxed cards inset by 1.5rem.
+.dataset--index .dataset__card {
+    padding: 1.1rem 0;
+    border: 0;
+    border-bottom: 1px solid var(--color-hairline);
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+}
+
+// Source record: the section glyph above the eyebrow appeared on this one
+// page type only.
+.source-page__kind-row .section-mark,
+.source-page__kind-row svg {
+    display: none;
+}

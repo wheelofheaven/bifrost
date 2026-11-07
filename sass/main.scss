@@ -52,6 +52,8 @@
 @use "components/continue";
 @use "components/figure";
 @use "components/claim-badge";
+@use "components/claim-inline";
+@use "components/toc-compact";
 @use "components/translation-badge";
 @use "components/dispatch-chip";
 @use "components/notification-stack";
@@ -83,7 +85,6 @@
 @use "pages/press";
 @use "pages/faq";
 @use "pages/map";
-@use "pages/map-graph";
 @use "pages/contributors";
 @use "pages/sources";
 @use "pages/hubs";
@@ -109,3 +110,7 @@
 @use "pages/feeds-grammar";
 @use "pages/hubs-grammar";
 @use "pages/dataset-grammar";
+@use "pages/reading-polish";
+@use "layout/search-grammar";
+@use "pages/graph";
+@use "pages/frame";

@@ -68,8 +68,13 @@
 
     // Handle messages from Service Worker
     function handleSWMessage(event) {
+        // CACHE_COMPLETE follows every reading-list save (reading-list.js
+        // pre-caches the page). It used to raise its own English-only
+        // "Page saved for offline reading" toast on top of — and replacing —
+        // the localized "Added to reading list" receipt: two notifications
+        // for one tap. Offline caching is a silent side effect of saving.
         if (event.data.type === 'CACHE_COMPLETE') {
-            showSnackbar('Page saved for offline reading');
+            document.dispatchEvent(new CustomEvent('woh:page-cached', { detail: event.data }));
         }
     }
 

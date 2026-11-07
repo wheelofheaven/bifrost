@@ -12,7 +12,7 @@
         if (loadPromise) return loadPromise;
         loadPromise = new Promise(function (resolve, reject) {
             const s = document.createElement("script");
-            s.src = "/js/dist/search.bundle.js?v=7";
+            s.src = "/js/dist/search.bundle.js?v=8";
             s.async = true;
             // When the bundle finishes loading, re-fire focus on the input
             // if the user is already there, so the modal opens without a

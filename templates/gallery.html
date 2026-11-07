@@ -4,7 +4,6 @@
 {% block content %}
 {% set gallery = load_data(path="data/gallery.json") %}
 <div class="gallery" data-gallery>
-    {{ breadcrumbs::generic(title=page.title, lang=detected_lang) }}
 
     <header class="gallery__header">
         <h1 class="gallery__title" id="gallery-title">{{ page.title }}</h1>
@@ -73,3 +72,10 @@
 
 <script src="{{ get_url(path='js/gallery.js', cachebust=true) | safe }}" defer></script>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::generic(title=page.title, lang=detected_lang) %}
+{% endblock trail %}

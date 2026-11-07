@@ -83,11 +83,8 @@
         transform: scaleX(-1);
     }
 
-    // Snackbar / toast positioning — default is bottom-right; mirror it.
-    .snackbar {
-        right: auto;
-        left: var(--spacing-md, 1rem);
-    }
+    // (Snackbar needs no mirror: it docks on the side opposite the FAB
+    // rail, which stays on the right in RTL too.)
 
     // Code blocks stay LTR — code is universally read left-to-right
     // regardless of surrounding language. Re-anchor them.

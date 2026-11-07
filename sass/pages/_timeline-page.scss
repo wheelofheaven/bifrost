@@ -14,7 +14,7 @@
 .timeline-page {
     // Every section of the chapter insets to this one value — see the
     // doc-gutter mixin in abstracts/_mixins.scss.
-    @include mix.doc-gutter($desktop: 2rem, $tablet: 1.25rem, $mobile: 1.25rem);
+    @include mix.doc-gutter($desktop: 2rem, $tablet: 1.25rem, $mobile: 0.75rem);
 
     min-height: 100vh;
     background: var(--color-background);

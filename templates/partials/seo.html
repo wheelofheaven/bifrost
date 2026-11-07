@@ -135,6 +135,8 @@
       Toggled by config.extra.noindex_translations + index_languages, so a
       locale can be re-opened without a content change. #}
 {% set _noindex_hard = page.extra.noindex or page.extra.source_id %}
+{#- The 404 (no page, no section) is never indexed. -#}
+{% if page is not defined and section is not defined %}{% set _noindex_hard = true %}{% endif %}
 {% set _seo_lang = detected_lang | default(value="en") %}
 {% set _noindex_soft = config.extra.noindex_translations and (_seo_lang not in config.extra.index_languages) and not _noindex_hard %}
 {% set _noindex = _noindex_hard or _noindex_soft %}
@@ -170,7 +172,10 @@
 {% endif %}
 
 <!-- Enhanced AI/AEO Meta Tags -->
-<meta name="ai.extractable_sections" content=".wiki__summary, .wiki__content, .article__content, [data-ai-summary], [data-ai-definition], [data-ai-answer], blockquote[data-ai-cite]">
+{# Page-level epistemic label stays machine-readable (agents, WebMCP) even though
+   the reader-facing pill moved inline to individual assertions. #}
+{% if page.extra.claim_type %}<meta name="ai.claim_type" content="{{ page.extra.claim_type }}">
+{% endif %}<meta name="ai.extractable_sections" content=".wiki__summary, .wiki__content, .article__content, [data-ai-summary], [data-ai-definition], [data-ai-answer], blockquote[data-ai-cite]">
 <meta name="ai.entity_type" content="{% if page %}{% if current_path is containing('/wiki/') %}concept{% elif current_path is containing('/timeline/') %}historical_event{% elif current_path is containing('/library/') %}book{% elif current_path is containing('/articles/') %}explanation{% else %}article{% endif %}{% else %}website{% endif %}">
 {% if page.taxonomies.tags %}
 <meta name="ai.related_topics" content="{{ page.taxonomies.tags | join(sep=', ') }}">

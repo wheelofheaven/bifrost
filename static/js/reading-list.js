@@ -115,12 +115,18 @@
             const description = btn.dataset.description || '';
             const section = btn.dataset.section || '';
 
+            const item = { url, title, description, section };
+            const t = window.snackbarTranslations || {};
             if (isInList(url)) {
                 removeItem(url);
-                showSnackbar(getTranslation('removedFromList', 'Removed from reading list'));
+                // Removal is the destructive direction — offer Undo.
+                showSnackbar(getTranslation('removedFromList', 'Removed from reading list'), 'unsaved',
+                    { label: t.undo || 'Undo', onClick: () => addItem(item) });
             } else {
-                addItem({ url, title, description, section });
-                showSnackbar(getTranslation('addedToList', 'Added to reading list'));
+                addItem(item);
+                // Adding is where people learn the list exists — offer View.
+                showSnackbar(getTranslation('addedToList', 'Added to reading list'), 'saved',
+                    { label: t.view || 'View', onClick: () => openPanel('saved') });
             }
         });
     }
@@ -799,8 +805,8 @@
     }
 
     // Show snackbar
-    function showSnackbar(message) {
-        if (typeof window.showSnackbar === 'function') { window.showSnackbar(message); return; }
+    function showSnackbar(message, type = 'info', action = null) {
+        if (typeof window.showSnackbar === 'function') { window.showSnackbar(message, type, action ? 5000 : 4000, action); return; }
         const snackbar = document.querySelector('.snackbar');
         if (snackbar) {
             snackbar.textContent = message;

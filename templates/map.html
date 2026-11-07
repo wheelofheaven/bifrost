@@ -10,7 +10,6 @@
 {% set map_copy = map_i18n[detected_lang] %}
 
 <div class="map-page" id="map-page" data-map-root data-active-age="age-of-aquarius">
-    {{ breadcrumbs::community(page=page, lang=detected_lang) }}
 
     <header class="map-hero">
         <p class="map-hero__eyebrow">Wheel of Heaven</p>
@@ -174,6 +173,70 @@
                         {% endfor %}
                     </g>
 
+                    {#- Below the equator: the Earth's lower band was bare photo. Two shelves
+                        generated from the content itself, so they stay current — the
+                        library's traditions with live book counts, and the open datasets.
+                        Rows are laid out evenly across the chord of the disc at their depth. -#}
+                    {% set shelf_catalog = load_data(path="data/library/catalog.json") %}
+                    {#- Tera has no object literals: keep the shown traditions as parallel lists. -#}
+                    {% set_global shelf_trads = [] %}{% set_global shelf_names = [] %}{% set_global shelf_counts = [] %}
+                    {% for t in shelf_catalog.traditions %}
+                        {% set t_n = shelf_catalog.books | filter(attribute="tradition", value=t.id) | length %}
+                        {% if t_n > 0 %}
+                        {% set t_name = t.name[detected_lang] | default(value=t.name.en) %}
+                        {% set_global shelf_trads = shelf_trads | concat(with=t.id) %}
+                        {% set_global shelf_names = shelf_names | concat(with=t_name) %}
+                        {% set_global shelf_counts = shelf_counts | concat(with=t_n) %}
+                        {% endif %}
+                    {% endfor %}
+                    {% set shelf_total = shelf_catalog.books | length %}
+                    {% set ds_section = get_section(path="datasets/_index.md") %}
+                    {% set ds_pages = ds_section.pages | sort(attribute="title") %}
+                    {#- Flow layout: estimate each label's width (chars × 7.4 at 14px +
+                        count + gap), wrap rows at the chord width, centre each row. -#}
+                    {% set shelf_max = 1220 %}
+                    {% set_global shelf_row = 0 %}{% set_global shelf_cur = 0 %}
+                    {% set_global shelf_rows = [] %}{% set_global shelf_offs = [] %}{% set_global shelf_widths = [] %}
+                    {% for t_id in shelf_trads %}
+                        {% set t_name = shelf_names[loop.index0] %}
+                        {% set t_len = t_name | length %}{% set t_w = t_len * 7.4 + 52 %}
+                        {% if shelf_cur + t_w > shelf_max %}{% set_global shelf_widths = shelf_widths | concat(with=shelf_cur) %}{% set_global shelf_row = shelf_row + 1 %}{% set_global shelf_cur = 0 %}{% endif %}
+                        {% set_global shelf_rows = shelf_rows | concat(with=shelf_row) %}
+                        {% set_global shelf_offs = shelf_offs | concat(with=shelf_cur) %}
+                        {% set_global shelf_cur = shelf_cur + t_w %}
+                    {% endfor %}
+                    {% set_global shelf_widths = shelf_widths | concat(with=shelf_cur) %}
+                    <g class="map-shelves" aria-label="{{ map_copy.shelves.library }} · {{ map_copy.shelves.datasets }}">
+                        <a class="map-shelf__caption" href="{{ get_url(path='library/', lang=detected_lang, trailing_slash=true) }}" transform="translate(834 2206)">
+                            <text text-anchor="middle">{{ map_copy.shelves.library }} · {{ shelf_total }} {{ map_copy.shelves.texts }}</text>
+                        </a>
+                        {% for t_id in shelf_trads %}
+                        {% set t_name = shelf_names[loop.index0] %}{% set t_n = shelf_counts[loop.index0] %}
+                        {% set row = shelf_rows[loop.index0] %}
+                        {% set row_w = shelf_widths[row] %}
+                        {% set x = 834 - row_w / 2 + shelf_offs[loop.index0] + 15 %}
+                        {% set row_y = 2232 + row * 24 %}
+                        <a class="map-shelf__item map-shelf__item--library" href="{{ get_url(path='library/', lang=detected_lang, trailing_slash=true) }}#tradition-{{ t_id }}" transform="translate({{ x }} {{ row_y }})" data-map-title="{{ t_name }}">
+                            <title>{{ t_name }} — {{ t_n }} {{ map_copy.shelves.texts }}</title>
+                            <text text-anchor="start">{{ t_name }}<tspan class="map-shelf__count" dx="5">{{ t_n }}</tspan></text>
+                        </a>
+                        {% endfor %}
+                        {% set ds_top = 2232 + (shelf_row + 1) * 24 + 12 %}
+                        <a class="map-shelf__caption" href="{{ get_url(path='datasets/', trailing_slash=true) }}" transform="translate(834 {{ ds_top }})">
+                            <text text-anchor="middle">{{ map_copy.shelves.datasets }} · {{ map_copy.shelves.datasetsNote }}</text>
+                        </a>
+                        {% set n_ds = ds_pages | length %}{% set ds_half = n_ds / 2 %}{% set ds_cols = ds_half | round(method="ceil") %}
+                        {% for d in ds_pages %}
+                        {% set row_f = loop.index0 / ds_cols %}{% set row = row_f | round(method="floor") %}
+                        {% set col = loop.index0 - row * ds_cols %}
+                        {% set x = 254 + (col + 0.5) * (1160 / ds_cols) %}
+                        <a class="map-shelf__item map-shelf__item--data" href="{{ d.permalink | safe }}" transform="translate({{ x }} {{ ds_top + 25 + row * 23 }})" data-map-title="{{ d.title }}">
+                            <title>{{ d.title }}</title>
+                            <text text-anchor="middle">{{ d.title | replace(from="Wheel of Heaven ", to="") }}</text>
+                        </a>
+                        {% endfor %}
+                    </g>
+
                     <ellipse class="map-rim" cx="834" cy="864.7" rx="671.35" ry="414.05" transform="rotate(140.39 834 864.7)" aria-hidden="true" />
 
                     {% include "partials/map/constellations.html" %}
@@ -326,38 +389,14 @@
                     {% include "partials/map/icons.html" %}
                 </svg>
 
-                <div class="map-graph" id="map-graph" hidden data-graph-src="https://api.wheelofheaven.world/v1/graph/content-graph.json">
-                    <a class="map-graph__skip" href="#map-graph-footer">{{ map_copy.graphSkip }}</a>
-                    <svg
-                        class="map-graph__canvas"
-                        viewBox="0 0 2000 2000"
-                        preserveAspectRatio="xMidYMid meet"
-                        role="group"
-                        aria-label="{{ map_copy.graphAria }}"
-                        lang="en"
-                        xmlns="http://www.w3.org/2000/svg"
-                    >
-                        <rect class="map-graph__bg" x="0" y="0" width="2000" height="2000" />
-                        <g class="map-graph__edges" aria-hidden="true">
-                            <path class="map-graph__edge-batch map-graph__edge-batch--see-also" d="" />
-                            <path class="map-graph__edge-batch map-graph__edge-batch--in-body" d="" />
-                            <g class="map-graph__edges-active"></g>
-                        </g>
-                        <g class="map-graph__nodes"></g>
-                        <g class="map-graph__labels" aria-hidden="true"></g>
-                    </svg>
-                    <div class="map-graph__status" role="status">
-                        <p class="map-graph__status-loading" hidden>{{ map_copy.graphLoading }}</p>
-                        <p class="map-graph__status-error" hidden>{{ map_copy.graphError }}</p>
-                        <button class="map-graph__retry" type="button" hidden>{{ map_copy.graphRetry }}</button>
-                    </div>
-                </div>
             </div>
 
             <div class="map-zoom-controls" aria-label="{{ map_copy.zoomControlsAria }}">
-                <button class="map-zoom-controls__button map-zoom-controls__button--graph" id="map-graph-toggle" type="button" hidden aria-pressed="false" aria-label="{{ map_copy.graphToggle }}" title="{{ map_copy.graphToggle }}">
+                {#- The graph has its own page now (/graph/); the old in-map mode and its
+                    ?view=graph links redirect there. -#}
+                <a class="map-zoom-controls__button map-zoom-controls__button--graph" href="{{ get_url(path='graph', trailing_slash=true) }}" aria-label="{{ map_copy.graphToggle }}" title="{{ map_copy.graphToggle }}">
                     {% include "partials/icons/lucide-waypoints.html" %}
-                </button>
+                </a>
                 <button class="map-zoom-controls__button map-zoom-controls__button--poster" id="map-poster-toggle" type="button" aria-pressed="false" aria-label="{{ map_copy.posterToggle }}" title="{{ map_copy.posterToggle }}">
                     {% include "partials/icons/feather-image.html" %}
                 </button>
@@ -369,59 +408,17 @@
                 </button>
             </div>
 
-            <div class="map-graph-title-wrap" aria-hidden="false">
-                {% include "partials/brand/graph-title.html" %}
-            </div>
-
-            <nav class="map-graph-legend" aria-label="{{ map_copy.graphLegend }}" data-label-shown="{{ map_copy.graphShown }}" data-label-hidden="{{ map_copy.graphHidden }}" data-label-links="{{ map_copy.graphLinks }}">
-                <ul class="map-graph-legend__sections">
-                    {% set legend_sections = ["wiki", "articles", "timeline", "news"] %}
-                    {% set legend_keys = ["navbarWiki", "navbarArticles", "navbarTimeline", "navbarNews"] %}
-                    {% for section_id in legend_sections %}
-                    <li class="map-graph-legend__item">
-                        <button type="button" class="map-graph-legend__filter" data-graph-filter="{{ section_id }}" aria-pressed="true">
-                            <span class="map-graph-legend__swatch map-graph-legend__swatch--{{ section_id }}" aria-hidden="true"></span>
-                            <span class="map-graph-legend__name" data-graph-section-name="{{ section_id }}">{{ trans(key=legend_keys[loop.index0], lang=detected_lang) }}</span>
-                            <span class="map-graph-legend__count" data-graph-count="{{ section_id }}" aria-hidden="true"></span>
-                        </button>
-                    </li>
-                    {% endfor %}
-                </ul>
-                <ul class="map-graph-legend__claims">
-                    {% set legend_claims = ["direct", "framework", "inferred", "speculative"] %}
-                    {% set legend_claim_keys = ["claimTypeDirect", "claimTypeFramework", "claimTypeInferred", "claimTypeSpeculative"] %}
-                    {% for claim_id in legend_claims %}
-                    <li class="map-graph-legend__item map-graph-legend__item--claim">
-                        <span class="map-graph-legend__ring map-graph-legend__ring--{{ claim_id }}" aria-hidden="true"></span>
-                        <span class="map-graph-legend__name" data-graph-claim-name="{{ claim_id }}">{{ trans(key=legend_claim_keys[loop.index0], lang=detected_lang) }}</span>
-                    </li>
-                    {% endfor %}
-                    <li class="map-graph-legend__item map-graph-legend__item--claim">
-                        <span class="map-graph-legend__ring map-graph-legend__ring--unset" aria-hidden="true"></span>
-                        <span class="map-graph-legend__name" data-graph-claim-name="unset">{{ map_copy.graphClaimUnset }}</span>
-                    </li>
-                </ul>
-                <p class="map-graph-legend__announce" role="status" aria-live="polite" id="map-graph-announce"></p>
-            </nav>
-
-            <div class="map-graph-card" id="map-graph-card" hidden>
-                <p class="map-graph-card__title"></p>
-                <p class="map-graph-card__meta"></p>
-            </div>
-
-            <footer class="map-graph-footer" id="map-graph-footer">
-                <span class="map-graph-footer__label">{{ map_copy.graphDownload }}:</span>
-                <a class="map-graph-footer__link" href="https://api.wheelofheaven.world/v1/graph/content-graph.json" download>JSON</a>
-                <span class="map-graph-footer__sep" aria-hidden="true">·</span>
-                <a class="map-graph-footer__link" href="https://api.wheelofheaven.world/v1/graph/content-graph.graphml" download>GraphML</a>
-                <span class="map-graph-footer__sep" aria-hidden="true">·</span>
-                <a class="map-graph-footer__link" href="{{ get_url(path='datasets/content-graph/', trailing_slash=true) }}">{{ map_copy.graphAbout }}</a>
-            </footer>
-
         </div>
     </section>
 </div>
 
 <script src="{{ get_url(path='js/map-native.js', cachebust=true) | safe }}" defer></script>
-<script src="{{ get_url(path='js/map-graph.js', cachebust=true) | safe }}" defer></script>
+<script>if (/[?&]view=graph\b/.test(location.search)) location.replace("{{ get_url(path='graph', trailing_slash=true) }}");</script>
 {% endblock content %}
+
+{# Breadcrumbs render in the footer's brand column, under the description
+   (base.html `trail` block → partials/footer.html) — on phones the top of a
+   page belongs to the title. #}
+{% block trail %}
+{% set_global page_trail = breadcrumbs::community(page=page, lang=detected_lang) %}
+{% endblock trail %}
