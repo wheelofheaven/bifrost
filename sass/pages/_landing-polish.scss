@@ -1,0 +1,270 @@
+// Landing polish (2026-11-07) — a layer over pages/_home.scss.
+//
+// Keeps the nine cinematic sections, their imagery and order, and brings the
+// type and controls in line with the rest of the site:
+//   * headlines at weight 500 with the site's tight tracking (were 700)
+//   * the hero gets two pills: Start here (filled) + Explore the map
+//   * the per-section "Continue" hints go; the dot rail is the navigation
+//     (the hero keeps "Read on" — first-time visitors need the cue)
+//   * five ways in (Timeline, Wiki, Library, Map, Graph) + the latest dispatch
+//   * the coda states the corpus in real numbers
+
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+
+.landing-section {
+    &__heading {
+        font-weight: 500;
+        letter-spacing: -0.025em;
+        line-height: 1.08;
+    }
+
+    // ---- Hero calls to action ------------------------------------------------
+    &__ctas {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.625rem;
+        margin-top: 0.75rem;
+    }
+
+    &__ctas &__link {
+        margin-top: 0;
+        min-height: 2.75rem;
+        padding: 0.6rem 1.1rem;
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        background: color-mix(in srgb, var(--color-background) 35%, transparent);
+    }
+
+    &__ctas &__link--primary {
+        background: var(--color-text);
+        border-color: var(--color-text);
+        color: var(--color-background);
+
+        &:hover,
+        &:focus-visible {
+            background: var(--color-text);
+            color: var(--color-background);
+            border-color: var(--color-text);
+            opacity: 0.88;
+        }
+    }
+
+    // ---- Navigation: the dot rail, not a hint per section ------------------------
+    &:not(#section-1) .landing-section__hint {
+        display: none;
+    }
+}
+
+// ---- Five ways in --------------------------------------------------------------
+.landing-section--paths {
+    // Wide enough for five cards, narrow enough to clear the dot rail.
+    .landing-section__inner {
+        max-width: 64rem;
+    }
+
+    .read__paths {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        max-width: 72rem;
+        width: 100%;
+        gap: 1rem;
+
+        // /read/'s fourth card (Listen) spans its row; here all five are peers.
+        .read__path:nth-child(4) {
+            grid-column: auto;
+        }
+
+        // The other two clouds, so the five cards don't repeat a palette.
+        .read__path:nth-child(5) {
+            --cloud-a: #{c.$blue-300};
+            --cloud-b: #{c.$lavender-300};
+
+            &::before { animation-delay: -48s; }
+        }
+
+        @media (max-width: 1100px) {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+        }
+
+        // Phones: two columns, compact cards — five full-width cards made
+        // the section scroll three screens.
+        @media (max-width: 700px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 0.625rem;
+
+            .read__path:first-child {
+                grid-column: 1 / -1;
+            }
+
+            .read__path-main {
+                padding: 0.9rem 0.9rem 1rem;
+            }
+
+            // Half-width cards: title and glyph only — a clipped sentence
+            // under the arrow said less than nothing. Timeline keeps its line.
+            .read__path:not(:first-child) .read__path-desc {
+                display: none;
+            }
+        }
+    }
+}
+
+.landing-latest {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: center;
+    gap: 0.25rem 0.75rem;
+    max-width: 44rem;
+    margin-top: 1.75rem;
+    padding: 0.75rem 1.25rem;
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--color-text);
+        outline: none;
+    }
+
+    &__label,
+    &__date {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    &__title {
+        font-weight: 500;
+    }
+
+    @media (max-width: 700px) {
+        border-radius: 1rem;
+        margin-top: 1.25rem;
+    }
+}
+
+// ---- Coda: the corpus in numbers ----------------------------------------------
+.landing-coda__stats {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem 1.5rem;
+    margin: 1.25rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-hairline);
+    font-family: typo.$font-family-tech;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    color: var(--color-text-muted);
+
+    strong {
+        color: var(--color-text);
+        font-weight: 500;
+        margin-right: 0.25rem;
+    }
+}
+
+// ---- Method: the four labels on real assertions --------------------------------
+// Replaces the definition list. Each row: the label in its hue (mono eyebrow),
+// then a real claim set the way the site sets claims inline — underline and a
+// tappable dot that opens the shared claim note. 2 × 2 on wide screens.
+.landing-claims {
+    list-style: none;
+    margin: 0.5rem 0 0;
+    padding: 0;
+    width: 100%;
+    max-width: 52rem;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0;
+    text-align: start;
+
+    @media (max-width: 700px) {
+        grid-template-columns: 1fr;
+    }
+
+    &__item {
+        padding: 0.85rem 0.25rem 0.95rem;
+        border-top: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent);
+
+        @media (min-width: 701px) {
+            padding-inline: 1rem;
+
+            &:nth-child(odd) {
+                padding-inline-start: 0;
+            }
+        }
+    }
+
+    &__label {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: var(--claim-hue);
+
+        &::before {
+            content: "";
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--claim-hue);
+        }
+    }
+
+    &__text {
+        margin: 0.35rem 0 0;
+        font-size: 1.0625rem;
+        line-height: 1.45;
+        color: inherit;
+
+        @media (max-width: 700px) {
+            font-size: 1rem;
+        }
+    }
+
+    &__hint {
+        margin: 0;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+}
+
+
+// The landing screens keep light text over their photos in both themes, so
+// the examples inherit that colour and always take the bright (300) hues —
+// the light-theme 600s sank into the light photograph.
+.landing-claims {
+    color: inherit;
+
+    .claim--direct { --claim-hue: #{c.$cyan-300}; }
+    .claim--framework { --claim-hue: #{c.$mauve-300}; }
+    .claim--inferred { --claim-hue: #{c.$yellow-300}; }
+    .claim--speculative { --claim-hue: #{c.$lavender-300}; }
+
+    &__item {
+        border-top-color: rgba(255, 255, 255, 0.18);
+    }
+}
+
+.landing-claims__hint {
+    color: inherit;
+    opacity: 0.75;
+}
+
+.landing-section--method .landing-section__link {
+    color: inherit;
+    border-color: rgba(255, 255, 255, 0.35);
+}

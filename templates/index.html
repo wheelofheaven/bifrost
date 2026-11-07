@@ -75,12 +75,17 @@
                 — {{ trans(key="landingS1SubLead", lang=detected_lang) }} —
                 {{ trans(key="landingS1SubTrail", lang=detected_lang) }}
             </p>
-            <a class="landing-section__link" href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}">
-                <span>{{ trans(key="startHereLink", lang=detected_lang) }}</span>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                </svg>
-            </a>
+            <div class="landing-section__ctas">
+                <a class="landing-section__link landing-section__link--primary" href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}">
+                    <span>{{ trans(key="startHereLink", lang=detected_lang) }}</span>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+                <a class="landing-section__link" href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}">
+                    <span>{{ trans(key="landingHeroMap", lang=detected_lang) }}</span>
+                </a>
+            </div>
             {# Resume slot. continue-reading.js fills this after idle if the
                reader has something open, and leaves it empty otherwise —
                empty means zero-height, so a first-time visitor's hero (the
@@ -320,7 +325,22 @@
             <p class="landing-section__body">
                 {{ trans(key="landingS6Body", lang=detected_lang) | safe }}
             </p>
-            {{ claim_badge::render(legend=true, lang=detected_lang) }}
+            {#- The four labels shown the way the site uses them: on an assertion.
+                Each example is a real claim record with the label its record
+                carries; the dot opens the shared claim note (claim-notes.js). -#}
+            <ul class="landing-claims" role="list">
+                {%- set ex_types = ["direct", "framework", "inferred", "speculative"] -%}
+                {%- set ex_ids = ["woh-claim-0005", "woh-claim-0001", "woh-claim-0014", "woh-claim-0004"] -%}
+                {%- for t in ex_types -%}
+                {%- set T = t | capitalize -%}
+                {%- set label = trans(key="claimType" ~ T, lang=detected_lang) -%}
+                <li class="landing-claims__item">
+                    <span class="landing-claims__label claim--{{ t }}">{{ label }}</span>
+                    <p class="landing-claims__text"><span class="claim claim--{{ t }}"><span class="claim__text">{{ trans(key="landingClaimEx" ~ T, lang=detected_lang) }}</span><button type="button" class="claim__marker" data-claim-type="{{ t }}" data-claim-label="{{ label }}" data-claim-desc="{{ trans(key='claimBadge' ~ T ~ 'Desc', lang=detected_lang) }}" data-claim-method="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}" data-claim-method-label="{{ trans(key='navbarMethod', lang=detected_lang) }}" data-claim-id="{{ ex_ids[loop.index0] }}" aria-haspopup="dialog" title="{{ label }}"><span class="visually-hidden">{{ label }}</span></button></span></p>
+                </li>
+                {%- endfor -%}
+            </ul>
+            <p class="landing-claims__hint">{{ trans(key="landingClaimHint", lang=detected_lang) }}</p>
             <a class="landing-section__link" href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}">
                 <span>{{ trans(key="landingS6Link", lang=detected_lang) }}</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -371,7 +391,39 @@
                         <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
                     </a>
                 </article>
+                <article class="read__path read__path--solo">
+                    <a class="read__path-main" href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}">
+                        <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/gis-time-map.html" %}</span>
+
+                        <h3 class="read__path-title">{{ trans(key="navbarMap", lang=detected_lang) }}</h3>
+                        <p class="read__path-desc">{{ trans(key="navbarMapDesc", lang=detected_lang) }}</p>
+                        <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                    </a>
+                </article>
+                <article class="read__path read__path--solo">
+                    <a class="read__path-main" href="{{ get_url(path='graph', trailing_slash=true) }}">
+                        <span class="read__path-icon" aria-hidden="true">{% include "partials/icons/lucide-waypoints.html" %}</span>
+
+                        <h3 class="read__path-title">{{ trans(key="navbarGraph", lang=detected_lang) }}</h3>
+                        <p class="read__path-desc">{{ trans(key="navbarGraphDesc", lang=detected_lang) }}</p>
+                        <span class="read__path-arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                    </a>
+                </article>
             </nav>
+            {#- The newest dispatch, one line: the site is alive. English dispatches
+                stand in where a locale has none. -#}
+            {%- set news_lang_path = "news/_index.md" -%}
+            {%- if detected_lang != "en" -%}{%- set news_lang_path = detected_lang ~ "/news/_index.md" -%}{%- endif -%}
+            {%- set news_sec = get_section(path=news_lang_path, required=false) -%}
+            {%- if not news_sec or news_sec.pages | length == 0 -%}{%- set news_sec = get_section(path="news/_index.md") -%}{%- endif -%}
+            {%- set latest = news_sec.pages | sort(attribute="date") | reverse | first -%}
+            {% if latest %}
+            <a class="landing-latest" href="{{ latest.permalink | safe }}">
+                <span class="landing-latest__label">{{ trans(key="landingLatest", lang=detected_lang) }}</span>
+                <span class="landing-latest__title">{{ latest.title }}</span>
+                <span class="landing-latest__date">{{ latest.date | date(format="%b %d, %Y") }}</span>
+            </a>
+            {% endif %}
         </div>
         <a href="#section-8" class="landing-section__hint" aria-label="{{ trans(key='landingHintContinue', lang=detected_lang) }}">
             <span>{{ trans(key="landingHintContinue", lang=detected_lang) }}</span>
@@ -427,6 +479,17 @@
             </blockquote>
             <p class="landing-coda__desc">
                 {{ trans(key="landingCodaDesc", lang=detected_lang) }}
+            </p>
+            {#- The corpus in real numbers, counted at build time. -#}
+            {%- set st_cat = load_data(path="data/library/catalog.json") -%}
+            {%- set st_wiki = get_section(path="wiki/_index.md", metadata_only=false) -%}
+            {%- set st_art = get_section(path="articles/_index.md", metadata_only=false) -%}
+            {%- set st_langs = config.languages | length + 1 -%}
+            <p class="landing-coda__stats">
+                <span><strong>{{ st_cat.books | length }}</strong> {{ trans(key="landingStatsTexts", lang=detected_lang) }}</span>
+                <span><strong>{{ st_wiki.pages | length }}</strong> {{ trans(key="landingStatsEntries", lang=detected_lang) }}</span>
+                <span><strong>{{ st_art.pages | length }}</strong> {{ trans(key="landingStatsArticles", lang=detected_lang) }}</span>
+                <span><strong>{{ st_langs }}</strong> {{ trans(key="landingStatsLanguages", lang=detected_lang) }}</span>
             </p>
             <div class="landing-coda__links">
                 <a href="https://github.com/wheelofheaven/www.wheelofheaven.world" class="landing-coda__link" target="_blank" rel="noopener">
