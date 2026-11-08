@@ -1,65 +1,120 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 540 600" role="img" aria-labelledby="wh-t wh-d">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 640" role="img" aria-labelledby="wh-t wh-d" class="dg dg--wheel">
   <title id="wh-t">Wheel of Heaven — doce eras precesionales del proyecto</title>
   <desc id="wh-d">Las doce eras precesionales de ~2.160 años leídas como fases del proyecto de la alianza, con los años frontera marcados alrededor del borde: desde la Era de Capricornio (~21.810 a. C., apertura del proyecto) pasando por Leo (humanos creados), Cáncer (Edén), Géminis (el Diluvio), Tauro (Babel), Aries (los profetas), Piscis (los evangelios), hasta la actual Era de Acuario (desde 1950 d. C.).</desc>
-  <circle cx="270" cy="270" r="202" fill="none" class="dg-muted" stroke-width="1.5"/>
-  <circle cx="270" cy="270" r="112" fill="none" class="dg-muted" stroke-width="1.5"/>
-  <g class="dg-muted" stroke-width="1">
-    <line x1="299.0" y1="161.8" x2="322.3" y2="74.9"/>
-    <line x1="349.2" y1="190.8" x2="412.8" y2="127.2"/>
-    <line x1="378.2" y1="241.0" x2="465.1" y2="217.7"/>
-    <line x1="378.2" y1="299.0" x2="465.1" y2="322.3"/>
-    <line x1="349.2" y1="349.2" x2="412.8" y2="412.8"/>
-    <line x1="299.0" y1="378.2" x2="322.3" y2="465.1"/>
-    <line x1="241.0" y1="378.2" x2="217.7" y2="465.1"/>
-    <line x1="190.8" y1="349.2" x2="127.2" y2="412.8"/>
-    <line x1="161.8" y1="299.0" x2="74.9" y2="322.3"/>
-    <line x1="161.8" y1="241.0" x2="74.9" y2="217.7"/>
-    <line x1="190.8" y1="190.8" x2="127.2" y2="127.2"/>
-    <line x1="241.0" y1="161.8" x2="217.7" y2="74.9"/>
+  <defs>
+    <symbol id="wh-z-capricorn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7 V17 M4 7 L9 13 L13 7 Q17 7 17 13 Q17 18 13 18 Q9 18 9 14"/></symbol>
+    <symbol id="wh-z-sagittarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="13 5 19 5 19 11"/><line x1="9" y1="12" x2="12" y2="15"/></symbol>
+    <symbol id="wh-z-scorpio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 V7 L8 12 L12 7 V18 L16 12 V18 H21"/><path d="M19 16 L21 18 L19 20"/></symbol>
+    <symbol id="wh-z-libra" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13 Q6 8 12 8 Q18 8 18 13"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="wh-z-virgo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 V7 L9 13 L13 7 V19 Q15 14 18 14 Q21 14 19 19 Q17 22 15 19"/></symbol>
+    <symbol id="wh-z-leo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3"/><path d="M11 16 Q11 8 14 6 Q19 5 19 11 Q19 14 17 16 Q15 17 17 19"/></symbol>
+    <symbol id="wh-z-cancer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="14" y2="9"/><circle cx="16" cy="11" r="2"/><line x1="20" y1="15" x2="10" y2="15"/><circle cx="8" cy="13" r="2"/></symbol>
+    <symbol id="wh-z-gemini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="19" x2="19" y2="19"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></symbol>
+    <symbol id="wh-z-taurus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="4"/><path d="M5 8 Q12 13 19 8"/></symbol>
+    <symbol id="wh-z-aries" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18 V11 Q5 5 9 5 Q12 5 12 12 Q12 5 15 5 Q19 5 19 11 V18"/></symbol>
+    <symbol id="wh-z-pisces" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 Q4 12 7 19"/><path d="M17 5 Q20 12 17 19"/><line x1="7" y1="12" x2="17" y2="12"/></symbol>
+    <symbol id="wh-z-aquarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 L7 7 L11 9 L15 7 L19 9"/><path d="M3 15 L7 13 L11 15 L15 13 L19 15"/></symbol>
+  </defs>
+  <g>
+    <path d="M 262.0 103.6 A 224.0 224.0 0 0 1 378.0 103.6 L 352.6 198.3 A 126.0 126.0 0 0 0 287.4 198.3 Z" class="dg-age dg-age-0"/>
+    <path d="M 378.0 103.6 A 224.0 224.0 0 0 1 478.4 161.6 L 409.1 230.9 A 126.0 126.0 0 0 0 352.6 198.3 Z" class="dg-age dg-age-1"/>
+    <path d="M 478.4 161.6 A 224.0 224.0 0 0 1 536.4 262.0 L 441.7 287.4 A 126.0 126.0 0 0 0 409.1 230.9 Z" class="dg-age dg-age-2"/>
+    <path d="M 536.4 262.0 A 224.0 224.0 0 0 1 536.4 378.0 L 441.7 352.6 A 126.0 126.0 0 0 0 441.7 287.4 Z" class="dg-age dg-age-3"/>
+    <path d="M 536.4 378.0 A 224.0 224.0 0 0 1 478.4 478.4 L 409.1 409.1 A 126.0 126.0 0 0 0 441.7 352.6 Z" class="dg-age dg-age-4"/>
+    <path d="M 478.4 478.4 A 224.0 224.0 0 0 1 378.0 536.4 L 352.6 441.7 A 126.0 126.0 0 0 0 409.1 409.1 Z" class="dg-age dg-age-5"/>
+    <path d="M 378.0 536.4 A 224.0 224.0 0 0 1 262.0 536.4 L 287.4 441.7 A 126.0 126.0 0 0 0 352.6 441.7 Z" class="dg-age dg-age-6"/>
+    <path d="M 262.0 536.4 A 224.0 224.0 0 0 1 161.6 478.4 L 230.9 409.1 A 126.0 126.0 0 0 0 287.4 441.7 Z" class="dg-age dg-age-7"/>
+    <path d="M 161.6 478.4 A 224.0 224.0 0 0 1 103.6 378.0 L 198.3 352.6 A 126.0 126.0 0 0 0 230.9 409.1 Z" class="dg-age dg-age-8"/>
+    <path d="M 103.6 378.0 A 224.0 224.0 0 0 1 103.6 262.0 L 198.3 287.4 A 126.0 126.0 0 0 0 198.3 352.6 Z" class="dg-age dg-age-9"/>
+    <path d="M 103.6 262.0 A 224.0 224.0 0 0 1 161.6 161.6 L 230.9 230.9 A 126.0 126.0 0 0 0 198.3 287.4 Z" class="dg-age dg-age-10"/>
+    <path d="M 161.6 161.6 A 224.0 224.0 0 0 1 262.0 103.6 L 287.4 198.3 A 126.0 126.0 0 0 0 230.9 230.9 Z" class="dg-age dg-age-11 dg-age--now"/>
+  </g>
+  <g class="dg-rim">
+    <path d="M 263.9 94.9 A 232.0 232.0 0 0 1 376.1 94.9" class="dg-rim-0"/>
+    <path d="M 383.9 97.0 A 232.0 232.0 0 0 1 481.2 153.1" class="dg-rim-1"/>
+    <path d="M 486.9 158.8 A 232.0 232.0 0 0 1 543.0 256.1" class="dg-rim-2"/>
+    <path d="M 545.1 263.9 A 232.0 232.0 0 0 1 545.1 376.1" class="dg-rim-3"/>
+    <path d="M 543.0 383.9 A 232.0 232.0 0 0 1 486.9 481.2" class="dg-rim-4"/>
+    <path d="M 481.2 486.9 A 232.0 232.0 0 0 1 383.9 543.0" class="dg-rim-5"/>
+    <path d="M 376.1 545.1 A 232.0 232.0 0 0 1 263.9 545.1" class="dg-rim-6"/>
+    <path d="M 256.1 543.0 A 232.0 232.0 0 0 1 158.8 486.9" class="dg-rim-7"/>
+    <path d="M 153.1 481.2 A 232.0 232.0 0 0 1 97.0 383.9" class="dg-rim-8"/>
+    <path d="M 94.9 376.1 A 232.0 232.0 0 0 1 94.9 263.9" class="dg-rim-9"/>
+    <path d="M 97.0 256.1 A 232.0 232.0 0 0 1 153.1 158.8" class="dg-rim-10"/>
+    <path d="M 158.8 153.1 A 232.0 232.0 0 0 1 256.1 97.0" class="dg-rim-11"/>
+  </g>
+  <circle cx="320" cy="320" r="126" class="dg-hair" fill="none"/>
+  <g class="dg-hair">
+    <line x1="352.6" y1="198.3" x2="378.0" y2="103.6"/>
+    <line x1="409.1" y1="230.9" x2="478.4" y2="161.6"/>
+    <line x1="441.7" y1="287.4" x2="536.4" y2="262.0"/>
+    <line x1="441.7" y1="352.6" x2="536.4" y2="378.0"/>
+    <line x1="409.1" y1="409.1" x2="478.4" y2="478.4"/>
+    <line x1="352.6" y1="441.7" x2="378.0" y2="536.4"/>
+    <line x1="287.4" y1="441.7" x2="262.0" y2="536.4"/>
+    <line x1="230.9" y1="409.1" x2="161.6" y2="478.4"/>
+    <line x1="198.3" y1="352.6" x2="103.6" y2="378.0"/>
+    <line x1="198.3" y1="287.4" x2="103.6" y2="262.0"/>
+    <line x1="230.9" y1="230.9" x2="161.6" y2="161.6"/>
+    <line x1="287.4" y1="198.3" x2="262.0" y2="103.6"/>
   </g>
   <g text-anchor="middle">
-    <text x="270.0" y="104.0" class="dg-label" font-size="12">Capricornio</text>
-    <text x="353.0" y="126.2" class="dg-label" font-size="12">Sagitario</text>
-    <text x="413.8" y="187.0" class="dg-label" font-size="12">Escorpio</text>
-    <text x="436.0" y="270.0" class="dg-label" font-size="12">Libra</text>
-    <text x="413.8" y="353.0" class="dg-label" font-size="12">Virgo</text>
-    <text x="353.0" y="413.8" class="dg-label" font-size="12">Leo</text>
-    <text x="353.0" y="427.8" class="dg-label--muted" font-size="9.5">humanos creados</text>
-    <text x="270.0" y="436.0" class="dg-label" font-size="12">Cáncer</text>
-    <text x="270.0" y="450.0" class="dg-label--muted" font-size="9.5">Edén</text>
-    <text x="187.0" y="413.8" class="dg-label" font-size="12">Géminis</text>
-    <text x="187.0" y="427.8" class="dg-label--muted" font-size="9.5">el Diluvio</text>
-    <text x="126.2" y="353.0" class="dg-label" font-size="12">Tauro</text>
-    <text x="126.2" y="367.0" class="dg-label--muted" font-size="9.5">Babel</text>
-    <text x="104.0" y="270.0" class="dg-label" font-size="12">Aries</text>
-    <text x="104.0" y="284.0" class="dg-label--muted" font-size="9.5">los profetas</text>
-    <text x="126.2" y="187.0" class="dg-label" font-size="12">Piscis</text>
-    <text x="126.2" y="201.0" class="dg-label--muted" font-size="9.5">los evangelios</text>
-    <text x="187.0" y="126.2" class="dg-label--accent" font-size="12" font-weight="600">Acuario</text>
+    <use href="#wh-z-capricorn" x="311.0" y="125.0" width="18" height="18" class="dg-glyph dg-ink-0"/>
+    <text x="320.0" y="160.0" class="dg-label" font-size="13.5">Capricornio</text>
+    <use href="#wh-z-sagittarius" x="399.0" y="148.6" width="18" height="18" class="dg-glyph dg-ink-1"/>
+    <text x="408.0" y="183.6" class="dg-label" font-size="13.5">Sagitario</text>
+    <use href="#wh-z-scorpio" x="463.4" y="213.0" width="18" height="18" class="dg-glyph dg-ink-2"/>
+    <text x="472.4" y="248.0" class="dg-label" font-size="13.5">Escorpio</text>
+    <use href="#wh-z-libra" x="487.0" y="301.0" width="18" height="18" class="dg-glyph dg-ink-3"/>
+    <text x="496.0" y="336.0" class="dg-label" font-size="13.5">Libra</text>
+    <use href="#wh-z-virgo" x="463.4" y="389.0" width="18" height="18" class="dg-glyph dg-ink-4"/>
+    <text x="472.4" y="424.0" class="dg-label" font-size="13.5">Virgo</text>
+    <use href="#wh-z-leo" x="399.0" y="439.4" width="18" height="18" class="dg-glyph dg-ink-5"/>
+    <text x="408.0" y="474.4" class="dg-label" font-size="13.5">Leo</text>
+    <text x="408.0" y="490.4" class="dg-label--muted" font-size="10.5">humanos</text>
+    <text x="408.0" y="503.4" class="dg-label--muted" font-size="10.5">creados</text>
+    <use href="#wh-z-cancer" x="311.0" y="469.5" width="18" height="18" class="dg-glyph dg-ink-6"/>
+    <text x="320.0" y="504.5" class="dg-label" font-size="13.5">Cáncer</text>
+    <text x="320.0" y="520.5" class="dg-label--muted" font-size="10.5">Edén</text>
+    <use href="#wh-z-gemini" x="223.0" y="445.9" width="18" height="18" class="dg-glyph dg-ink-7"/>
+    <text x="232.0" y="480.9" class="dg-label" font-size="13.5">Géminis</text>
+    <text x="232.0" y="496.9" class="dg-label--muted" font-size="10.5">el Diluvio</text>
+    <use href="#wh-z-taurus" x="158.6" y="381.5" width="18" height="18" class="dg-glyph dg-ink-8"/>
+    <text x="167.6" y="416.5" class="dg-label" font-size="13.5">Tauro</text>
+    <text x="167.6" y="432.5" class="dg-label--muted" font-size="10.5">Babel</text>
+    <use href="#wh-z-aries" x="135.0" y="293.5" width="18" height="18" class="dg-glyph dg-ink-9"/>
+    <text x="144.0" y="328.5" class="dg-label" font-size="13.5">Aries</text>
+    <text x="144.0" y="344.5" class="dg-label--muted" font-size="10.5">los profetas</text>
+    <use href="#wh-z-pisces" x="158.6" y="205.5" width="18" height="18" class="dg-glyph dg-ink-10"/>
+    <text x="167.6" y="240.5" class="dg-label" font-size="13.5">Piscis</text>
+    <text x="167.6" y="256.5" class="dg-label--muted" font-size="10.5">los evangelios</text>
+    <use href="#wh-z-aquarius" x="223.0" y="148.6" width="18" height="18" class="dg-glyph dg-ink-11"/>
+    <text x="232.0" y="183.6" class="dg-label dg-label--now" font-size="13.5">Acuario</text>
   </g>
-  <g text-anchor="middle">
-    <text x="326.2" y="63.4" class="dg-label--muted" font-size="8">19,7k a. C.</text>
-    <text x="423.4" y="119.6" class="dg-label--muted" font-size="8">17,5k a. C.</text>
-    <text x="479.6" y="216.8" class="dg-label--muted" font-size="8">15,3k a. C.</text>
-    <text x="479.6" y="329.2" class="dg-label--muted" font-size="8">13,2k a. C.</text>
-    <text x="423.4" y="426.4" class="dg-label--muted" font-size="8">11,0k a. C.</text>
-    <text x="326.2" y="482.6" class="dg-label--muted" font-size="8">8,85k a. C.</text>
-    <text x="213.8" y="482.6" class="dg-label--muted" font-size="8">6,69k a. C.</text>
-    <text x="116.6" y="426.4" class="dg-label--muted" font-size="8">4,53k a. C.</text>
-    <text x="60.4" y="329.2" class="dg-label--muted" font-size="8">2,37k a. C.</text>
-    <text x="60.4" y="216.8" class="dg-label--muted" font-size="8">210 a. C.</text>
-    <text x="213.8" y="58.4" class="dg-label--muted" font-size="8">21,8k a. C.</text>
-    <text x="213.8" y="69.4" class="dg-label--muted" font-size="8">/ 4110 d. C.</text>
+  <g class="dg-mono">
+    <text x="383.7" y="78.4" text-anchor="middle">19,7k a. C.</text>
+    <text x="493.9" y="142.1" text-anchor="start">17,5k a. C.</text>
+    <text x="557.6" y="259.8" text-anchor="start">15,3k a. C.</text>
+    <text x="557.6" y="387.2" text-anchor="start">13,2k a. C.</text>
+    <text x="493.9" y="503.9" text-anchor="start">11,0k a. C.</text>
+    <text x="383.7" y="567.6" text-anchor="middle">8,85k a. C.</text>
+    <text x="256.3" y="567.6" text-anchor="middle">6,69k a. C.</text>
+    <text x="146.1" y="503.9" text-anchor="end">4,53k a. C.</text>
+    <text x="82.4" y="387.2" text-anchor="end">2,37k a. C.</text>
+    <text x="82.4" y="259.8" text-anchor="end">210 a. C.</text>
+    <text x="256.3" y="66.4" text-anchor="middle">21,8k a. C.</text>
+    <text x="256.3" y="78.4" text-anchor="middle">/ 4110 d. C.</text>
   </g>
-  <circle cx="127.2" cy="127.2" r="5" class="dg-accent--fill"/>
-  <text x="116.6" y="113.6" text-anchor="middle" class="dg-label--accent" font-size="10" font-weight="600">estamos aquí</text>
-  <text x="116.6" y="125.6" text-anchor="middle" class="dg-label--accent" font-size="8.5">1950 d. C.</text>
-  <path d="M 210.0 45.9 A 232 232 0 0 1 330.0 45.9" fill="none" class="dg-accent" stroke-width="1.6"/>
-  <path d="M 337.8 48.1 L 319.3 38.2 L 317.2 48.0 Z" class="dg-accent--fill"/>
-  <text x="270" y="16" text-anchor="middle" class="dg-label--muted" font-size="10.5">eras avanzan →</text>
-  <text x="270" y="248" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Wheel of</text>
-  <text x="270" y="266" text-anchor="middle" class="dg-label" font-size="15" font-weight="600">Heaven</text>
-  <text x="270" y="287" text-anchor="middle" class="dg-label--muted" font-size="11">doce eras del</text>
-  <text x="270" y="301" text-anchor="middle" class="dg-label--muted" font-size="11">proyecto de la alianza</text>
-  <text x="270" y="590" text-anchor="middle" class="dg-label--muted" font-size="11">Cada era ≈ 2.160 años · una vuelta completa ≈ un Gran Año</text>
+  <circle cx="156.0" cy="156.0" r="11" class="dg-now-halo"/>
+  <circle cx="156.0" cy="156.0" r="5.5" class="dg-now"/>
+  <text x="138.4" y="136.4" text-anchor="end" class="dg-label--now" font-size="13" font-weight="600">estamos aquí</text>
+  <text x="138.4" y="150.4" text-anchor="end" class="dg-mono dg-mono--now">1950 d. C.</text>
+  <path d="M 271.8 221.1 A 110.0 110.0 0 0 1 368.2 221.1" class="dg-dir" fill="none"/>
+  <path d="M 373.3 223.8 L 366.4 215.9 L 363.1 223.2 Z" class="dg-dir-head"/>
+  <text x="320" y="230.0" text-anchor="middle" class="dg-mono">eras avanzan</text>
+  <text x="320" y="311.0" text-anchor="middle" class="dg-label dg-title" font-size="23" font-weight="600">Wheel of</text>
+  <text x="320" y="337.0" text-anchor="middle" class="dg-label dg-title" font-size="23" font-weight="600">Heaven</text>
+  <text x="320" y="361.0" text-anchor="middle" class="dg-label--muted" font-size="12.5">doce eras del</text>
+  <text x="320" y="377.0" text-anchor="middle" class="dg-label--muted" font-size="12.5">proyecto de la alianza</text>
+  <text x="320" y="626" text-anchor="middle" class="dg-mono">Cada era ≈ 2.160 años · una vuelta completa ≈ un Gran Año</text>
 </svg>

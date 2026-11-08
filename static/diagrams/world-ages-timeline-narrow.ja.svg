@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 710" role="img" aria-labelledby="tbn-t tbn-d" class="dg dg--timeline-narrow">
+  <title id="tbn-t">年表としての歳差時代の枠組み</title>
+  <desc id="tbn-d">山羊座の時代(紀元前約21,810年、プロジェクト開始)から、みずがめ座の時代(西暦1950年から、現在の時代)まで続く、各約2,160年の連続する十二の歳差時代で、それぞれに黄道十二宮の記号を付しています。</desc>
+  <defs>
+    <symbol id="tbn-z-capricorn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7 V17 M4 7 L9 13 L13 7 Q17 7 17 13 Q17 18 13 18 Q9 18 9 14"/></symbol>
+    <symbol id="tbn-z-sagittarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"/><polyline points="13 5 19 5 19 11"/><line x1="9" y1="12" x2="12" y2="15"/></symbol>
+    <symbol id="tbn-z-scorpio" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 18 V7 L8 12 L12 7 V18 L16 12 V18 H21"/><path d="M19 16 L21 18 L19 20"/></symbol>
+    <symbol id="tbn-z-libra" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 13 Q6 8 12 8 Q18 8 18 13"/><line x1="3" y1="14" x2="21" y2="14"/><line x1="3" y1="18" x2="21" y2="18"/></symbol>
+    <symbol id="tbn-z-virgo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19 V7 L9 13 L13 7 V19 Q15 14 18 14 Q21 14 19 19 Q17 22 15 19"/></symbol>
+    <symbol id="tbn-z-leo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="16" r="3"/><path d="M11 16 Q11 8 14 6 Q19 5 19 11 Q19 14 17 16 Q15 17 17 19"/></symbol>
+    <symbol id="tbn-z-cancer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="9" x2="14" y2="9"/><circle cx="16" cy="11" r="2"/><line x1="20" y1="15" x2="10" y2="15"/><circle cx="8" cy="13" r="2"/></symbol>
+    <symbol id="tbn-z-gemini" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="5" x2="19" y2="5"/><line x1="5" y1="19" x2="19" y2="19"/><line x1="9" y1="5" x2="9" y2="19"/><line x1="15" y1="5" x2="15" y2="19"/></symbol>
+    <symbol id="tbn-z-taurus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="15" r="4"/><path d="M5 8 Q12 13 19 8"/></symbol>
+    <symbol id="tbn-z-aries" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M5 18 V11 Q5 5 9 5 Q12 5 12 12 Q12 5 15 5 Q19 5 19 11 V18"/></symbol>
+    <symbol id="tbn-z-pisces" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M7 5 Q4 12 7 19"/><path d="M17 5 Q20 12 17 19"/><line x1="7" y1="12" x2="17" y2="12"/></symbol>
+    <symbol id="tbn-z-aquarius" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9 L7 7 L11 9 L15 7 L19 9"/><path d="M3 15 L7 13 L11 15 L15 13 L19 15"/></symbol>
+  </defs>
+  <text x="16" y="24" class="dg-mono">紀元前約21,810年 · プロジェクト開始</text>
+  <rect x="10" y="42" width="340" height="48" rx="8" class="dg-age dg-age-0"/>
+  <rect x="10" y="42" width="4" height="48" rx="2" class="dg-bar-0"/>
+  <use href="#tbn-z-capricorn" x="26" y="55.0" width="22" height="22" class="dg-glyph dg-ink-0"/>
+  <text x="60" y="64.0" class="dg-label" font-size="14" font-weight="500">山羊座</text>
+  <text x="60" y="80.0" class="dg-mono">紀元前2.18万年 – 紀元前1.97万年</text>
+  <rect x="10" y="94" width="340" height="48" rx="8" class="dg-age dg-age-1"/>
+  <rect x="10" y="94" width="4" height="48" rx="2" class="dg-bar-1"/>
+  <use href="#tbn-z-sagittarius" x="26" y="107.0" width="22" height="22" class="dg-glyph dg-ink-1"/>
+  <text x="60" y="116.0" class="dg-label" font-size="14" font-weight="500">射手座</text>
+  <text x="60" y="132.0" class="dg-mono">紀元前1.97万年 – 紀元前1.75万年</text>
+  <rect x="10" y="146" width="340" height="48" rx="8" class="dg-age dg-age-2"/>
+  <rect x="10" y="146" width="4" height="48" rx="2" class="dg-bar-2"/>
+  <use href="#tbn-z-scorpio" x="26" y="159.0" width="22" height="22" class="dg-glyph dg-ink-2"/>
+  <text x="60" y="168.0" class="dg-label" font-size="14" font-weight="500">蠍座</text>
+  <text x="60" y="184.0" class="dg-mono">紀元前1.75万年 – 紀元前1.53万年</text>
+  <rect x="10" y="198" width="340" height="48" rx="8" class="dg-age dg-age-3"/>
+  <rect x="10" y="198" width="4" height="48" rx="2" class="dg-bar-3"/>
+  <use href="#tbn-z-libra" x="26" y="211.0" width="22" height="22" class="dg-glyph dg-ink-3"/>
+  <text x="60" y="220.0" class="dg-label" font-size="14" font-weight="500">天秤座</text>
+  <text x="60" y="236.0" class="dg-mono">紀元前1.53万年 – 紀元前1.32万年</text>
+  <rect x="10" y="250" width="340" height="48" rx="8" class="dg-age dg-age-4"/>
+  <rect x="10" y="250" width="4" height="48" rx="2" class="dg-bar-4"/>
+  <use href="#tbn-z-virgo" x="26" y="263.0" width="22" height="22" class="dg-glyph dg-ink-4"/>
+  <text x="60" y="272.0" class="dg-label" font-size="14" font-weight="500">乙女座</text>
+  <text x="60" y="288.0" class="dg-mono">紀元前1.32万年 – 紀元前1.1万年</text>
+  <rect x="10" y="302" width="340" height="48" rx="8" class="dg-age dg-age-5"/>
+  <rect x="10" y="302" width="4" height="48" rx="2" class="dg-bar-5"/>
+  <use href="#tbn-z-leo" x="26" y="315.0" width="22" height="22" class="dg-glyph dg-ink-5"/>
+  <text x="60" y="324.0" class="dg-label" font-size="14" font-weight="500">獅子座</text>
+  <text x="60" y="340.0" class="dg-mono">紀元前1.1万年 – 紀元前8850年</text>
+  <text x="340" y="330.0" text-anchor="end" class="dg-label--muted" font-size="11.5">人類創造</text>
+  <rect x="10" y="354" width="340" height="48" rx="8" class="dg-age dg-age-6"/>
+  <rect x="10" y="354" width="4" height="48" rx="2" class="dg-bar-6"/>
+  <use href="#tbn-z-cancer" x="26" y="367.0" width="22" height="22" class="dg-glyph dg-ink-6"/>
+  <text x="60" y="376.0" class="dg-label" font-size="14" font-weight="500">蟹座</text>
+  <text x="60" y="392.0" class="dg-mono">紀元前8850年 – 紀元前6690年</text>
+  <text x="340" y="382.0" text-anchor="end" class="dg-label--muted" font-size="11.5">エデン</text>
+  <rect x="10" y="406" width="340" height="48" rx="8" class="dg-age dg-age-7"/>
+  <rect x="10" y="406" width="4" height="48" rx="2" class="dg-bar-7"/>
+  <use href="#tbn-z-gemini" x="26" y="419.0" width="22" height="22" class="dg-glyph dg-ink-7"/>
+  <text x="60" y="428.0" class="dg-label" font-size="14" font-weight="500">双子座</text>
+  <text x="60" y="444.0" class="dg-mono">紀元前6690年 – 紀元前4530年</text>
+  <text x="340" y="434.0" text-anchor="end" class="dg-label--muted" font-size="11.5">洪水</text>
+  <rect x="10" y="458" width="340" height="48" rx="8" class="dg-age dg-age-8"/>
+  <rect x="10" y="458" width="4" height="48" rx="2" class="dg-bar-8"/>
+  <use href="#tbn-z-taurus" x="26" y="471.0" width="22" height="22" class="dg-glyph dg-ink-8"/>
+  <text x="60" y="480.0" class="dg-label" font-size="14" font-weight="500">牡牛座</text>
+  <text x="60" y="496.0" class="dg-mono">紀元前4530年 – 紀元前2370年</text>
+  <text x="340" y="479.0" text-anchor="end" class="dg-label--muted" font-size="11.5">バベル</text>
+  <text x="340" y="493.0" text-anchor="end" class="dg-label--muted" font-size="11.5">族長</text>
+  <rect x="10" y="510" width="340" height="48" rx="8" class="dg-age dg-age-9"/>
+  <rect x="10" y="510" width="4" height="48" rx="2" class="dg-bar-9"/>
+  <use href="#tbn-z-aries" x="26" y="523.0" width="22" height="22" class="dg-glyph dg-ink-9"/>
+  <text x="60" y="532.0" class="dg-label" font-size="14" font-weight="500">牡羊座</text>
+  <text x="60" y="548.0" class="dg-mono">紀元前2370年 – 紀元前210年</text>
+  <text x="340" y="531.0" text-anchor="end" class="dg-label--muted" font-size="11.5">預言者</text>
+  <text x="340" y="545.0" text-anchor="end" class="dg-label--muted" font-size="11.5">モーセの律法</text>
+  <rect x="10" y="562" width="340" height="48" rx="8" class="dg-age dg-age-10"/>
+  <rect x="10" y="562" width="4" height="48" rx="2" class="dg-bar-10"/>
+  <use href="#tbn-z-pisces" x="26" y="575.0" width="22" height="22" class="dg-glyph dg-ink-10"/>
+  <text x="60" y="584.0" class="dg-label" font-size="14" font-weight="500">魚座</text>
+  <text x="60" y="600.0" class="dg-mono">紀元前210年 – 西暦1950年</text>
+  <text x="340" y="583.0" text-anchor="end" class="dg-label--muted" font-size="11.5">キリスト教</text>
+  <text x="340" y="597.0" text-anchor="end" class="dg-label--muted" font-size="11.5">イスラム</text>
+  <rect x="10" y="614" width="340" height="48" rx="8" class="dg-age dg-age-11 dg-age--now"/>
+  <rect x="10" y="614" width="4" height="48" rx="2" class="dg-bar-11"/>
+  <use href="#tbn-z-aquarius" x="26" y="627.0" width="22" height="22" class="dg-glyph dg-ink-11"/>
+  <text x="60" y="636.0" class="dg-label dg-label--now" font-size="14" font-weight="600">みずがめ座</text>
+  <text x="60" y="652.0" class="dg-mono">西暦1950年 – 西暦約4110年</text>
+  <text x="340" y="642.0" text-anchor="end" class="dg-label--muted" font-size="11.5">現在の時代</text>
+  <text x="16" y="696" class="dg-mono dg-mono--now">現在 · 西暦1950年</text>
+</svg>
