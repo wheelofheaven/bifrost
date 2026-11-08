@@ -2,6 +2,7 @@
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/dispatch.html" as dispatch %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {% include "partials/schema/news-article.html" %}
@@ -51,7 +52,7 @@
                         <a href="{{ item.url | escape_xml | safe }}" class="dispatch__link">{{ item.title }}</a>
                         {% else %}
                         {% set item_path = item.path | trim_start_matches(pat="/") %}
-                        <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="dispatch__link">{{ item.title }}</a>
+                        <a href="{{ i18n_url::content(path=item_path, lang=detected_lang) | safe }}" class="dispatch__link">{{ item.title }}</a>
                         {% endif %}
                         {% if item.description %}
                         <span class="dispatch__link-description">— {{ item.description }}</span>

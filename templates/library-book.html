@@ -4,6 +4,7 @@
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/section-icons.html" as section_icons %}
 {% import "macros/cite.html" as cite %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {% set book_slug = page.slug %}
@@ -318,7 +319,7 @@
                             {% set related_title = related.slug | replace(from="-", to=" ") | title %}
                         {% endif %}
                         <li class="library-book__link-item">
-                            <a href="{{ get_url(path='library/' ~ related.slug, lang=detected_lang, trailing_slash=true) }}" class="library-book__link">{{ related_title }}</a>
+                            <a href="{{ i18n_url::content(path='library/' ~ related.slug, lang=detected_lang) | safe }}" class="library-book__link">{{ related_title }}</a>
                             <span class="library-book__link-meta">
                                 {% if related.code %}{{ related.code }}{% endif %}
                                 {% if related.chapters %} · {{ related.chapters }} ch{% endif %}
@@ -639,7 +640,7 @@
                             <dt class="library-book__provenance-term">Source record</dt>
                             <dd class="library-book__provenance-description">
                                 {% if source_record_matches | length > 0 %}
-                                <a href="{{ get_url(path='library/' ~ version_provenance.sourceRecordId, lang=detected_lang, trailing_slash=true) }}"><code>{{ version_provenance.sourceRecordId }}</code></a>
+                                <a href="{{ i18n_url::content(path='library/' ~ version_provenance.sourceRecordId, lang=detected_lang) | safe }}"><code>{{ version_provenance.sourceRecordId }}</code></a>
                                 {% else %}
                                 <code>{{ version_provenance.sourceRecordId }}</code>
                                 {% endif %}

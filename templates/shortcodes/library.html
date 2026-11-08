@@ -1,3 +1,4 @@
+{%- import "macros/i18n-url.html" as i18n_url -%}
 {# Library quote shortcode.
 
    Paired-tag form, body is the quoted text:
@@ -56,7 +57,7 @@
     {%- elif _chapter -%}
         {%- set _anchor = "#chapter-" ~ _chapter -%}
     {%- endif -%}
-    {%- set _resolved_path = get_url(path=_book_path, lang=_detected, trailing_slash=true) ~ _anchor -%}
+    {%- set _resolved_path = i18n_url::content(path=_book_path ~ _anchor, lang=_detected) -%}
 {%- endif -%}
 
 {# Manual `path` and `title` win over resolved values. #}

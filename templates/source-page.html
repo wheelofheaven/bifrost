@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/section-icons.html" as section_icons %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {% set source_id = page.extra.source_id | default(value=page.slug) %}
@@ -96,7 +97,7 @@
                         {% for cite in backlinks %}
                         <li class="source-page__source-item">
                             {% set cite_path = cite.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=cite_path, lang=detected_lang, trailing_slash=true) }}" class="source-page__source-link">
+                            <a href="{{ i18n_url::content(path=cite_path, lang=detected_lang) | safe }}" class="source-page__source-link">
                                 <span class="source-page__source-title">{{ cite.title }}</span>
                                 <span class="source-page__source-family">{{ cite.section }}</span>
                             </a>

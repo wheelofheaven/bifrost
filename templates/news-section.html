@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% import "macros/dispatch.html" as dispatch %}
 {% import "macros/section-icons.html" as section_icons %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {# When the section is paginated, `all_pages` is replaced by the
@@ -134,7 +135,7 @@
                                frontmatter (e.g. "/wiki/elohim/"); strip the
                                leading slash and route via get_url for i18n. #}
                             {% set item_path = item.path | trim_start_matches(pat="/") %}
-                            <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="newsroom__canon-list-link">{{ item.title }}</a>
+                            <a href="{{ i18n_url::content(path=item_path, lang=detected_lang) | safe }}" class="newsroom__canon-list-link">{{ item.title }}</a>
                         </li>
                         {% endfor %}
                     </ul>

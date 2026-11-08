@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {% set map_ages = load_data(path="data/map/ages.json") %}
@@ -146,7 +147,7 @@
                             {% set node_label = map_copy.earthNodes[node.id] %}
                             <a
                                 class="map-earth-node map-earth-node--{{ cluster.color }} map-earth-node--{{ node.emphasis | default(value='normal') }}"
-                                href="{{ get_url(path=node.href, lang=detected_lang, trailing_slash=true) }}"
+                                href="{{ i18n_url::content(path=node.href, lang=detected_lang) | safe }}"
                                 data-earth-node-id="{{ node.id }}"
                                 data-earth-node-ages="{{ node.ages | join(sep=',') }}"
                                 data-earth-node-x="{{ node.x }}"
@@ -352,7 +353,7 @@
                         {% endif %}
                         <a
                             class="map-node map-node--{{ node.type }} map-node--priority-{{ node.priority }}{% if node.age == 'age-of-aquarius' or node.age == 'core' %} is-related{% endif %}"
-                            href="{{ get_url(path=node.href, lang=detected_lang, trailing_slash=true) }}"
+                            href="{{ i18n_url::content(path=node.href, lang=detected_lang) | safe }}"
                             data-node-id="{{ node.id }}"
                             data-node-age="{{ node.age }}"
                             data-node-type="{{ node.type }}"

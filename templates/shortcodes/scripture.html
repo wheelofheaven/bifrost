@@ -1,3 +1,4 @@
+{%- import "macros/i18n-url.html" as i18n_url -%}
 {# Scripture quote shortcode.
 
    Pulls one verse, or a verse range, from a hosted book in /library/
@@ -82,7 +83,7 @@
 {%- endif -%}
 
 {%- set _anchor = "#c" ~ _chapter ~ "p" ~ _verse -%}
-{%- set _book_url = get_url(path="library/" ~ _book, lang=_detected, trailing_slash=true) -%}
+{%- set _book_url = i18n_url::content(path="library/" ~ _book, lang=_detected) -%}
 {%- set _verse_ref = _book_title ~ " " ~ _chapter ~ ":" ~ _verse -%}
 {%- if _to_verse != _verse -%}{%- set _verse_ref = _verse_ref ~ "-" ~ _to_verse -%}{%- endif -%}
 

@@ -1,3 +1,4 @@
+{%- import "macros/i18n-url.html" as i18n_url -%}
 {# Library inline-reference shortcode.
 
    Paired-tag form, body is the visible label:
@@ -50,5 +51,5 @@
 {%- elif _p is starting_with("/he/") -%}{%- set _detected = "he" -%}
 {%- endif -%}
 
-{%- set _href = get_url(path="library/" ~ _book, lang=_detected, trailing_slash=true) ~ _anchor -%}
+{%- set _href = i18n_url::content(path="library/" ~ _book ~ _anchor, lang=_detected) -%}
 <a class="libref" href="{{ _href | safe }}">{{ _label | markdown(inline=true) | safe }}</a>

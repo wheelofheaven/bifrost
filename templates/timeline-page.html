@@ -3,6 +3,7 @@
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/zodiac.html" as zodiac %}
 {% import "macros/cite.html" as cite %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 <!-- Event Schema for Timeline Pages -->
@@ -104,7 +105,7 @@
                                    the leading slash and route via get_url so internal reference links land in the
                                    current language. #}
                                 {% set ref_path = ref.path | trim_start_matches(pat="/") %}
-                                <a href="{{ get_url(path=ref_path, lang=detected_lang, trailing_slash=true) }}" class="wiki__reference-link">{{ ref.title }}</a>
+                                <a href="{{ i18n_url::content(path=ref_path, lang=detected_lang) | safe }}" class="wiki__reference-link">{{ ref.title }}</a>
                                 {% else %}
                                 <span class="wiki__reference-title">{{ ref.title }}</span>
                                 {% endif %}
@@ -206,7 +207,7 @@
                            page object is fetched without a lang prefix above).
                            Rebuild the href so it lands on the same-language
                            chapter when one exists. #}
-                        {% set rel_href = get_url(path='timeline/' ~ related.slug, lang=detected_lang, trailing_slash=true) %}
+                        {% set rel_href = i18n_url::content(path='timeline/' ~ related.slug, lang=detected_lang) %}
                         <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>
@@ -271,7 +272,7 @@
                            stays in the current language; related.components
                            gives us ["wiki", "<slug>"]. #}
                         {% set rel_section = related.components | first %}
-                        {% set rel_href = get_url(path=rel_section ~ '/' ~ related.slug, lang=detected_lang, trailing_slash=true) %}
+                        {% set rel_href = i18n_url::content(path=rel_section ~ '/' ~ related.slug, lang=detected_lang) %}
                         <a href="{{ rel_href | escape_xml | safe }}" class="related-content__card">
                             {% if related.extra.category %}
                             <span class="related-content__card-category">{{ related.extra.category }}</span>

@@ -10,6 +10,7 @@
    See .claude/rules/content-editing.md ("Newsroom Dispatches"). #}
 
 {% import "macros/section-icons.html" as section_icons %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {# Chip — small pill labeling the page as a Newsroom dispatch.
    Optionally tinted by event_type and stamped with the matching glyph. #}
@@ -59,7 +60,7 @@
            (e.g. "/wiki/elohim/"); strip the leading slash and route via
            get_url so the pill links to the same-language entry. #}
         {% set item_path = item.path | trim_start_matches(pat="/") %}
-        <a class="dispatch-card__canon-pill" href="{{ get_url(path=item_path, lang=lang, trailing_slash=true) }}">{{ item.title }}</a>
+        <a class="dispatch-card__canon-pill" href="{{ i18n_url::content(path=item_path, lang=lang) | safe }}">{{ item.title }}</a>
         {% endfor %}
         {% if canon | length > 4 %}
         <span class="dispatch-card__attribution-overflow">+{{ canon | length - 4 }} {{ trans(key="wikiCardMore", lang=lang) }}</span>

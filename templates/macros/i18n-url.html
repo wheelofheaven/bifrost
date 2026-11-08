@@ -1,0 +1,65 @@
+{#- Language-aware content URL with an English fallback.
+
+    Usage:
+        {% import "macros/i18n-url.html" as i18n_url %}
+        {% set href = i18n_url::content(path="wiki/elohim", lang=detected_lang) %}
+
+    `path` is a content path as it appears in frontmatter (see_also,
+    canon_links, map nodes) or in a shortcode: "wiki/elohim",
+    "/wiki/elohim/", "library/genesis-woh#c1p1". Leading/trailing
+    slashes and an optional #anchor are handled.
+
+    Why: get_url(path, lang) always builds the translated address, even
+    when no translation of the target exists, so readers of a locale
+    landed on a 404 (e.g. /de/wiki/graham-hancock/). The project rule is
+    "link to same-language content when available, fall back to
+    English". Tera has no page-exists test, so existence is checked with
+    load_data(required=false) on the content file (cached per path).
+
+    Resolution for a non-default language:
+      1. content/<lang>/<path>.md, …/_index.md or …/index.md exists → translated URL
+      2. else content/<path>.md or …/_index.md exists   → English URL
+      3. else (file name differs from slug, e.g. council-of-eternals.md
+         with slug "council-of-the-eternals")             → translated URL,
+         i.e. the previous behaviour.
+
+    Macros cannot see `config`, so the default language is the literal
+    "en" (config.default_language). -#}
+{%- macro content(path, lang="en") -%}
+{%- set raw = path | trim -%}
+{%- set anchor = "" -%}
+{%- if "#" in raw -%}
+    {%- set parts = raw | split(pat="#") -%}
+    {%- set raw = parts | first -%}
+    {%- set frag = parts | last -%}
+    {%- set anchor = "#" ~ frag -%}
+{%- endif -%}
+{%- set p = raw | trim_start_matches(pat="/") | trim_end_matches(pat="/") -%}
+{%- if lang == "en" -%}
+{{- get_url(path=p, trailing_slash=true) ~ anchor -}}
+{%- else -%}
+    {%- set loc = load_data(path="content/" ~ lang ~ "/" ~ p ~ ".md", format="plain", required=false) -%}
+    {%- if not loc -%}
+        {%- set loc = load_data(path="content/" ~ lang ~ "/" ~ p ~ "/_index.md", format="plain", required=false) -%}
+    {%- endif -%}
+    {%- if not loc -%}
+        {%- set loc = load_data(path="content/" ~ lang ~ "/" ~ p ~ "/index.md", format="plain", required=false) -%}
+    {%- endif -%}
+    {%- if loc -%}
+{{- get_url(path=p, lang=lang, trailing_slash=true) ~ anchor -}}
+    {%- else -%}
+        {%- set en = load_data(path="content/" ~ p ~ ".md", format="plain", required=false) -%}
+        {%- if not en -%}
+            {%- set en = load_data(path="content/" ~ p ~ "/_index.md", format="plain", required=false) -%}
+        {%- endif -%}
+        {%- if not en -%}
+            {%- set en = load_data(path="content/" ~ p ~ "/index.md", format="plain", required=false) -%}
+        {%- endif -%}
+        {%- if en -%}
+{{- get_url(path=p, trailing_slash=true) ~ anchor -}}
+        {%- else -%}
+{{- get_url(path=p, lang=lang, trailing_slash=true) ~ anchor -}}
+        {%- endif -%}
+    {%- endif -%}
+{%- endif -%}
+{%- endmacro content -%}

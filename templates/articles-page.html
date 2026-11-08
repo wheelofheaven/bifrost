@@ -4,6 +4,7 @@
 {% import "macros/article.html" as article %}
 {% import "macros/relatedness-graph.html" as relatedness_graph %}
 {% import "macros/cite.html" as cite %}
+{% import "macros/i18n-url.html" as i18n_url %}
 
 {% block content %}
 {% include "partials/schema/scholarly-article.html" %}
@@ -99,7 +100,7 @@
                         <a href="{{ item.url | escape_xml | safe }}" class="article__link">{{ item.title }}</a>
                         {% else %}
                         {% set item_path = item.path | trim_start_matches(pat="/") %}
-                        <a href="{{ get_url(path=item_path, lang=detected_lang, trailing_slash=true) }}" class="article__link">{{ item.title }}</a>
+                        <a href="{{ i18n_url::content(path=item_path, lang=detected_lang) | safe }}" class="article__link">{{ item.title }}</a>
                         {% endif %}
                         {% if item.description %}
                         <span class="article__link-description">— {{ item.description }}</span>
