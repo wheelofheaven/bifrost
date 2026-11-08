@@ -4,20 +4,27 @@
     {{ topics::chips(path=page.path, lang=detected_lang, block="wiki") }}
 
     Reads data/graph/topics.json (written by scripts/build_graph.py): `by_page`
-    maps an English page path to the topics it is filed under. Topic names and
-    pages are English only for now, so the chips render on English pages only. -#}
+    maps an English page path to the topics it is filed under. Each language reads its own
+    data/graph/topics.{lang}.json (English: topics.json); keys are English paths. -#}
 {% macro chips(path, lang="en", block="wiki") %}
-{%- if lang == "en" -%}
-{%- set _t = load_data(path="data/graph/topics.json", required=false) -%}
-{%- if _t and _t.by_page[path] -%}
+{%- if lang == "en" -%}{%- set _dp = "data/graph/topics.json" -%}{%- set _key = path -%}
+{%- else -%}{%- set _dp = "data/graph/topics." ~ lang ~ ".json" -%}{%- set _key = path | trim_start_matches(pat="/" ~ lang) -%}{%- endif -%}
+{%- set _t = load_data(path=_dp, required=false) -%}
+{%- if _t and _t.by_page[_key] -%}
 <div class="{{ block }}__meta-row">
-    <span class="{{ block }}__meta-label">Topics:</span>
+    <span class="{{ block }}__meta-label">{{ trans(key="topicsChipsLabel", lang=lang) }}</span>
     <span class="{{ block }}__meta-value topic-chips">
-        {%- for slug in _t.by_page[path] | slice(end=6) %}
-        <a class="topic-chip" href="{{ get_url(path='topics/' ~ slug, trailing_slash=true) }}">{{ _t.topics[slug].name }}</a>
+        {%- for slug in _t.by_page[_key] | slice(end=6) %}
+        <a class="topic-chip" href="{{ get_url(path='topics/' ~ slug, lang=lang, trailing_slash=true) }}">{{ _t.topics[slug].name }}</a>
         {%- endfor %}
     </span>
 </div>
 {%- endif -%}
-{%- endif -%}
 {% endmacro chips %}
+
+{#- Count noun in the page language (Russian has a separate 2–4 form). -#}
+{%- macro plural(n, one, few, many, lang) -%}
+{%- if n == 1 or (lang == "ru" and n % 10 == 1 and n % 100 != 11) -%}{{ one }}
+{%- elif lang == "ru" and n % 10 >= 2 and n % 10 <= 4 and (n % 100 < 12 or n % 100 > 14) -%}{{ few }}
+{%- else -%}{{ many }}{%- endif -%}
+{%- endmacro plural -%}

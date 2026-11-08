@@ -3,38 +3,40 @@
 {#- /topics/{slug}/ — one topic of the knowledge graph: what it gathers, its broader
     and narrower topics, and every page filed under it, by section. -#}
 {% block content %}
-{% set data = load_data(path="data/graph/topics.json") %}
+{% if detected_lang == "en" %}{% set data_path = "data/graph/topics.json" %}{% else %}{% set data_path = "data/graph/topics." ~ detected_lang ~ ".json" %}{% endif %}
+{% set data = load_data(path=data_path, required=false) %}
+{% if not data %}{% set data = load_data(path="data/graph/topics.json") %}{% endif %}
 {% set slug = page.extra.topic %}
 {% set t = data.topics[slug] %}
-{% set kind_names = ["Theme", "Tradition", "Figure", "Method", "Science", "What comes next"] %}
+{% set kind_keys = ["topicKindTheme", "topicKindTradition", "topicKindFigure", "topicKindMethod", "topicKindScience", "topicKindFuture"] %}
 {% set kind_index = 0 %}
 {% for k in data.kinds %}{% if k == t.kind %}{% set_global kind_index = loop.index0 %}{% endif %}{% endfor %}
 {% set sections = ["wiki", "article", "timeline", "news", "book", "dataset"] %}
-{% set section_titles = ["Wiki entries", "Articles", "Timeline", "Dispatches", "Library", "Datasets"] %}
+{% set section_keys = ["topicSectionWiki", "topicSectionArticles", "topicSectionTimeline", "topicSectionNews", "topicSectionLibrary", "topicSectionDatasets"] %}
 <div class="section-page section-page--topic">
     <div class="section-page__container">
         <header class="section-page__header">
-            <p class="topics__eyebrow"><a href="{{ get_url(path='topics/', trailing_slash=true) }}">Topics</a> · {{ kind_names | nth(n=kind_index) }}</p>
+            <p class="topics__eyebrow"><a href="{{ get_url(path='topics/', lang=detected_lang, trailing_slash=true) }}">{{ trans(key="navbarTopics", lang=detected_lang) }}</a> · {{ trans(key=kind_keys | nth(n=kind_index), lang=detected_lang) }}</p>
             <h1 class="section-page__title" id="page-title">{{ t.name }}</h1>
             <p class="section-page__description" data-ai-summary="true">{{ t.description }}</p>
             <p class="topics__lede-links">
-                {% if t.page %}<a class="topic-chip" href="{{ get_url(path=t.page | trim_start_matches(pat='/'), trailing_slash=true) }}">Read the entry: {{ t.page_label }}</a>{% endif %}
-                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}#node=topic:{{ slug }}">Open on the graph</a>
+                {% if t.page %}<a class="topic-chip" href="{{ get_url(path=t.page | trim_start_matches(pat='/'), trailing_slash=true) }}">{{ trans(key="topicReadEntry", lang=detected_lang) }} {{ t.page_label }}</a>{% endif %}
+                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}#node=topic:{{ slug }}">{{ trans(key="topicOpenGraph", lang=detected_lang) }}</a>
             </p>
         </header>
 
         {% if t.broader or t.narrower %}
-        <nav class="topics__related" aria-label="Related topics">
+        <nav class="topics__related" aria-label="{{ trans(key='topicPartOf', lang=detected_lang) }}">
             {% if t.broader %}
             <div class="topics__related-row">
-                <span class="topics__related-label">Part of</span>
-                {% for b in t.broader %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ b.slug, trailing_slash=true) }}">{{ b.name }}</a>{% endfor %}
+                <span class="topics__related-label">{{ trans(key="topicPartOf", lang=detected_lang) }}</span>
+                {% for b in t.broader %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ b.slug, lang=detected_lang, trailing_slash=true) }}">{{ b.name }}</a>{% endfor %}
             </div>
             {% endif %}
             {% if t.narrower %}
             <div class="topics__related-row">
-                <span class="topics__related-label">Includes</span>
-                {% for n in t.narrower %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ n.slug, trailing_slash=true) }}">{{ n.name }}</a>{% endfor %}
+                <span class="topics__related-label">{{ trans(key="topicIncludes", lang=detected_lang) }}</span>
+                {% for n in t.narrower %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ n.slug, lang=detected_lang, trailing_slash=true) }}">{{ n.name }}</a>{% endfor %}
             </div>
             {% endif %}
         </nav>
@@ -44,12 +46,12 @@
         {% set cards = t.members[kind] | default(value=[]) %}
         {% if cards %}
         <section class="topics__group" aria-labelledby="members-{{ kind }}">
-            <h2 class="topics__group-title" id="members-{{ kind }}">{{ section_titles | nth(n=loop.index0) }} <span class="topics__group-count">{{ cards | length }}</span></h2>
+            <h2 class="topics__group-title" id="members-{{ kind }}">{{ trans(key=section_keys | nth(n=loop.index0), lang=detected_lang) }} <span class="topics__group-count">{{ cards | length }}</span></h2>
             <ul class="topics__members">
                 {% for c in cards %}
                 <li class="topics__member">
                     <a class="topics__member-link" href="{{ get_url(path=c.url | trim_start_matches(pat='/'), trailing_slash=true) }}">
-                        <span class="topics__member-title">{{ c.label }}</span>
+                        <span class="topics__member-title">{{ c.label }}{% if c.en %} <span class="topics__member-lang" title="English">EN</span>{% endif %}</span>
                         {% if c.meta %}<span class="topics__member-meta">{{ c.meta }}</span>{% endif %}
                         {% if c.desc %}<span class="topics__member-desc">{{ c.desc }}</span>{% endif %}
                     </a>
@@ -62,7 +64,7 @@
 
         {% if t.source_count %}
         <section class="topics__group" aria-labelledby="members-sources">
-            <h2 class="topics__group-title" id="members-sources">Most-cited sources <span class="topics__group-count">{{ t.source_count }}</span></h2>
+            <h2 class="topics__group-title" id="members-sources">{{ trans(key="topicSources", lang=detected_lang) }} <span class="topics__group-count">{{ t.source_count }}</span></h2>
             <ul class="topics__sources">
                 {% for s in t.sources %}
                 <li><a href="{{ get_url(path=s.url | trim_start_matches(pat='/'), trailing_slash=true) }}">{{ s.label }}</a></li>

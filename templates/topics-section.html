@@ -1,11 +1,14 @@
 {% extends "base.html" %}
+{% import "macros/topics.html" as topics %}
 
 {#- /topics/ — every topic of the knowledge graph, grouped by kind.
     Data: data/graph/topics.json (scripts/build_graph.py); the section's pages are
     the generated stubs in content/topics/, one per topic. -#}
 {% block content %}
-{% set data = load_data(path="data/graph/topics.json") %}
-{% set kind_titles = ["Themes", "Traditions", "Figures", "Methods", "Sciences", "What comes next"] %}
+{% if detected_lang == "en" %}{% set data_path = "data/graph/topics.json" %}{% else %}{% set data_path = "data/graph/topics." ~ detected_lang ~ ".json" %}{% endif %}
+{% set data = load_data(path=data_path, required=false) %}
+{% if not data %}{% set data = load_data(path="data/graph/topics.json") %}{% endif %}
+{% set kind_keys = ["topicsKindThemes", "topicsKindTraditions", "topicsKindFigures", "topicsKindMethods", "topicsKindSciences", "topicsKindFuture"] %}
 <div class="section-page section-page--topics">
     <div class="section-page__container">
         <header class="section-page__header">
@@ -14,12 +17,12 @@
             <p class="section-page__description" data-ai-summary="true">{{ section.description }}</p>
             {% endif %}
             <p class="topics__lede-links">
-                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}">See them on the knowledge graph</a>
+                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}">{{ trans(key="topicsSeeGraph", lang=detected_lang) }}</a>
             </p>
         </header>
 
         {% for kind in data.kinds %}
-        {% set kind_title = kind_titles | nth(n=loop.index0) %}
+        {% set kind_title = trans(key=kind_keys | nth(n=loop.index0), lang=detected_lang) %}
         <section class="topics__group" aria-labelledby="topics-{{ kind }}">
             <h2 class="topics__group-title" id="topics-{{ kind }}">{{ kind_title }}</h2>
             <ul class="topics__grid">
@@ -30,7 +33,7 @@
                     <a class="topics__card-link" href="{{ p.permalink | escape_xml | safe }}">
                         <span class="topics__card-title">{{ t.name }}</span>
                         <span class="topics__card-desc">{{ t.description }}</span>
-                        <span class="topics__card-count">{{ t.count }} page{% if t.count != 1 %}s{% endif %}{% if t.source_count %} · {{ t.source_count }} source{% if t.source_count != 1 %}s{% endif %}{% endif %}</span>
+                        <span class="topics__card-count">{{ t.count }} {{ topics::plural(n=t.count, one=trans(key="topicPagesOne", lang=detected_lang), few=trans(key="topicPagesFew", lang=detected_lang), many=trans(key="topicPagesMany", lang=detected_lang), lang=detected_lang) }}{% if t.source_count %} · {{ t.source_count }} {{ topics::plural(n=t.source_count, one=trans(key="topicSourcesOne", lang=detected_lang), few=trans(key="topicSourcesFew", lang=detected_lang), many=trans(key="topicSourcesMany", lang=detected_lang), lang=detected_lang) }}{% endif %}</span>
                     </a>
                 </li>
                 {% endif %}

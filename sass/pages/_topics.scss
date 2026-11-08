@@ -187,3 +187,17 @@
         font-size: v.$font-size-xs;
     }
 }
+
+// Member that exists only in English on a translated topic page.
+.topics__member-lang {
+    margin-left: 0.3rem;
+    padding: 0 0.35rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: v.$border-radius-full;
+    font-family: var(--font-family-tech), ui-monospace, monospace;
+    font-size: 0.65rem;
+    font-weight: 400;
+    letter-spacing: 0.06em;
+    color: var(--color-text-muted);
+    vertical-align: 0.15em;
+}
