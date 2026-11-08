@@ -42,6 +42,37 @@
         </nav>
         {% endif %}
 
+
+        {% if t.orbit and t.orbit.n %}
+        {#- Neighbourhood figure: the wiki mini-graph's frame and classes, with
+            positions precomputed by build_graph.py (Tera has no trig). -#}
+        <div class="relatedness-graph topics__orbit">
+        <figure class="relatedness-graph__figure" aria-hidden="true">
+          <svg class="relatedness-graph__svg" viewBox="0 0 480 340" xmlns="http://www.w3.org/2000/svg" role="presentation" focusable="false">
+            <g class="relatedness-graph__edges">
+              {% for e in t.orbit.e %}
+              <line class="relatedness-graph__edge relatedness-graph__edge--{% if e[4] == 0 %}spoke{% else %}chord{% endif %}" x1="{{ e[0] }}" y1="{{ e[1] }}" x2="{{ e[2] }}" y2="{{ e[3] }}"></line>
+              {% endfor %}
+            </g>
+            <g class="relatedness-graph__nodes">
+              {% for nd in t.orbit.n %}
+              {% if nd[4] == "topic" %}{% set href = get_url(path=nd[3], lang=detected_lang, trailing_slash=true) %}{% else %}{% set href = get_url(path=nd[3] | trim_start_matches(pat='/'), trailing_slash=true) %}{% endif %}
+              <a class="relatedness-graph__node topics__orbit-node--{{ nd[4] }}" href="{{ href | escape_xml | safe }}" tabindex="-1">
+                <title>{{ nd[2] }}</title>
+                <circle class="relatedness-graph__dot" cx="{{ nd[0] }}" cy="{{ nd[1] }}" r="{% if nd[4] == 'topic' %}7.5{% else %}5.5{% endif %}"></circle>
+                <text class="relatedness-graph__label" text-anchor="middle" x="{{ nd[0] }}" y="{% if nd[1] < 170 %}{{ nd[1] - 12 }}{% else %}{{ nd[1] + 17 }}{% endif %}">{{ nd[2] | truncate(length=16) }}</text>
+              </a>
+              {% endfor %}
+            </g>
+            <g class="relatedness-graph__center">
+              <circle class="relatedness-graph__dot relatedness-graph__dot--center" cx="{{ t.orbit.c[0] }}" cy="{{ t.orbit.c[1] }}" r="11"></circle>
+              <text class="relatedness-graph__label relatedness-graph__label--center" text-anchor="middle" x="{{ t.orbit.c[0] }}" y="{{ t.orbit.c[1] + 26 }}">{{ t.name | truncate(length=20) }}</text>
+            </g>
+          </svg>
+        </figure>
+        </div>
+        {% endif %}
+
         {% for kind in sections %}
         {% set cards = t.members[kind] | default(value=[]) %}
         {% if cards %}

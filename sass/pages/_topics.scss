@@ -201,3 +201,17 @@
     color: var(--color-text-muted);
     vertical-align: 0.15em;
 }
+
+// Neighbourhood figure on a topic page: the wiki mini-graph component, set
+// between the related-topic rows and the member lists. Neighbouring topics
+// read as topics (accent ring); pages as the mini-graph's plain dots.
+.topics__orbit {
+    margin: v.$spacing-lg 0 v.$spacing-md;
+    max-width: 40rem;
+
+    .topics__orbit-node--topic .relatedness-graph__dot {
+        fill: var(--color-background);
+        stroke: var(--color-accent-primary);
+        stroke-width: 2;
+    }
+}
