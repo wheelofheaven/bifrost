@@ -1,8 +1,10 @@
+@use "../abstracts/colors" as c;
 @use "../base/typography" as typo;
 @use "grammar";
 
 // Reading grammar — a dataset page (/datasets/{slug}/). Headline, lede and
-// the dash; the figures as a mono strip between hairlines; downloads as
+// the dash; the figures as a strip between hairlines (counts in the display
+// face, each under a rainbow segment); downloads as
 // hairline rows; the citation as the same faint panel the cite widget
 // uses. Everything is scoped to the article, so the /datasets/ index
 // (.dataset--index), which was already quiet, stays as it is.
@@ -56,11 +58,29 @@
         border-bottom: 1px solid var(--color-hairline);
     }
 
+    // Each figure sits under a short segment of the rainbow, in order, so the
+    // strip reads as one band broken into its numbers.
     .dataset__stat {
-        padding: 0.9rem 0;
+        position: relative;
+        padding: 1.1rem 0 1rem;
         border: 0;
         border-radius: 0;
         background: transparent;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: -1px;
+            left: 0;
+            width: 2.5rem;
+            height: 3px;
+            border-radius: 2px;
+            background: c.$pink-300;
+        }
+
+        &:nth-child(4n + 2)::before { background: c.$mauve-300; }
+        &:nth-child(4n + 3)::before { background: c.$cyan-300; }
+        &:nth-child(4n + 4)::before { background: c.$mint-300; }
     }
 
     .dataset__stat-label {
@@ -68,11 +88,21 @@
     }
 
     .dataset__stat-value {
-        margin-top: 0.3rem;
+        margin-top: 0.45rem;
         font-family: typo.$font-family-tech;
         font-size: 1.125rem;
         font-weight: 500;
         color: var(--color-text);
+
+        // Counts are the point of the strip: set them in the display face.
+        &--figure {
+            margin-top: 0.2rem;
+            font-family: var(--font-family-lead);
+            font-size: clamp(2rem, 4vw, 2.75rem);
+            line-height: 1.05;
+            letter-spacing: -0.02em;
+            font-variant-numeric: tabular-nums;
+        }
     }
 
     // Downloads: hairline rows, the format as a pill, the note beside it.

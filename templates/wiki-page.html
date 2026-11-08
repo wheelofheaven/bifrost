@@ -5,6 +5,7 @@
 {% import "macros/relatedness-graph.html" as relatedness_graph %}
 {% import "macros/cite.html" as cite %}
 {% import "macros/i18n-url.html" as i18n_url %}
+{% import "macros/topics.html" as topics %}
 
 {% block content %}
 <!-- DefinedTerm Schema for Wiki Pages -->
@@ -329,6 +330,7 @@
                         </span>
                     </div>
                     {% endif %}
+                    {{ topics::chips(path=page.path, lang=detected_lang, block="wiki") }}
                 </div>
 
                 <!-- Share -->

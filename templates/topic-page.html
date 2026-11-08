@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{#- /topics/{slug}/ — one topic of the knowledge graph: what it gathers, its broader
+    and narrower topics, and every page filed under it, by section. -#}
+{% block content %}
+{% set data = load_data(path="data/graph/topics.json") %}
+{% set slug = page.extra.topic %}
+{% set t = data.topics[slug] %}
+{% set kind_names = ["Theme", "Tradition", "Figure", "Method", "Science", "What comes next"] %}
+{% set kind_index = 0 %}
+{% for k in data.kinds %}{% if k == t.kind %}{% set_global kind_index = loop.index0 %}{% endif %}{% endfor %}
+{% set sections = ["wiki", "article", "timeline", "news", "book", "dataset"] %}
+{% set section_titles = ["Wiki entries", "Articles", "Timeline", "Dispatches", "Library", "Datasets"] %}
+<div class="section-page section-page--topic">
+    <div class="section-page__container">
+        <header class="section-page__header">
+            <p class="topics__eyebrow"><a href="{{ get_url(path='topics/', trailing_slash=true) }}">Topics</a> · {{ kind_names | nth(n=kind_index) }}</p>
+            <h1 class="section-page__title" id="page-title">{{ t.name }}</h1>
+            <p class="section-page__description" data-ai-summary="true">{{ t.description }}</p>
+            <p class="topics__lede-links">
+                {% if t.page %}<a class="topic-chip" href="{{ get_url(path=t.page | trim_start_matches(pat='/'), trailing_slash=true) }}">Read the entry: {{ t.page_label }}</a>{% endif %}
+                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}#node=topic:{{ slug }}">Open on the graph</a>
+            </p>
+        </header>
+
+        {% if t.broader or t.narrower %}
+        <nav class="topics__related" aria-label="Related topics">
+            {% if t.broader %}
+            <div class="topics__related-row">
+                <span class="topics__related-label">Part of</span>
+                {% for b in t.broader %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ b.slug, trailing_slash=true) }}">{{ b.name }}</a>{% endfor %}
+            </div>
+            {% endif %}
+            {% if t.narrower %}
+            <div class="topics__related-row">
+                <span class="topics__related-label">Includes</span>
+                {% for n in t.narrower %}<a class="topic-chip" href="{{ get_url(path='topics/' ~ n.slug, trailing_slash=true) }}">{{ n.name }}</a>{% endfor %}
+            </div>
+            {% endif %}
+        </nav>
+        {% endif %}
+
+        {% for kind in sections %}
+        {% set cards = t.members[kind] | default(value=[]) %}
+        {% if cards %}
+        <section class="topics__group" aria-labelledby="members-{{ kind }}">
+            <h2 class="topics__group-title" id="members-{{ kind }}">{{ section_titles | nth(n=loop.index0) }} <span class="topics__group-count">{{ cards | length }}</span></h2>
+            <ul class="topics__members">
+                {% for c in cards %}
+                <li class="topics__member">
+                    <a class="topics__member-link" href="{{ get_url(path=c.url | trim_start_matches(pat='/'), trailing_slash=true) }}">
+                        <span class="topics__member-title">{{ c.label }}</span>
+                        {% if c.meta %}<span class="topics__member-meta">{{ c.meta }}</span>{% endif %}
+                        {% if c.desc %}<span class="topics__member-desc">{{ c.desc }}</span>{% endif %}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+        {% endfor %}
+
+        {% if t.source_count %}
+        <section class="topics__group" aria-labelledby="members-sources">
+            <h2 class="topics__group-title" id="members-sources">Most-cited sources <span class="topics__group-count">{{ t.source_count }}</span></h2>
+            <ul class="topics__sources">
+                {% for s in t.sources %}
+                <li><a href="{{ get_url(path=s.url | trim_start_matches(pat='/'), trailing_slash=true) }}">{{ s.label }}</a></li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+    </div>
+</div>
+{% endblock content %}

@@ -4,6 +4,7 @@
 {% import "macros/zodiac.html" as zodiac %}
 {% import "macros/cite.html" as cite %}
 {% import "macros/i18n-url.html" as i18n_url %}
+{% import "macros/topics.html" as topics %}
 
 {% block content %}
 <!-- Event Schema for Timeline Pages -->
@@ -391,6 +392,7 @@
                                title="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">{{ trans(key="timelineGreatYear", lang=detected_lang) }}</a>
                         </span>
                     </div>
+                    {{ topics::chips(path=page.path, lang=detected_lang, block="timeline-page") }}
                 </div>
 
                 {% include "partials/cite-this.html" %}

@@ -240,31 +240,6 @@ def precession(S):
     o.append('</svg>')
     return "\n".join(o) + "\n"
 
-# ---------------------------------------------------------------- epistemic pyramid (unchanged geometry, themed colours)
-def pyramid(S):
-    e=S["ep"]; cx=310.0; yA,yB=34.0,392.0; hwB=250.0
-    def hw(y): return hwB*(y-yA)/(yB-yA)
-    bands=[yA+(yB-yA)*k/4 for k in range(5)]
-    tiers=e["tiers"]; tier_cls=[None, "dg-tier-3", "dg-tier-2", "dg-tier-1"]
-    o=[f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 620 430" role="img" aria-labelledby="ep-t ep-d" class="dg dg--pyramid">',
-       f'  <title id="ep-t">{esc(e["title"])}</title>', f'  <desc id="ep-d">{esc(e["desc"])}</desc>']
-    for k,tier in enumerate(tiers):
-        yt=bands[k]; yb=bands[k+1]; wt=hw(yt); wb=hw(yb)
-        if k==0:
-            o.append(f'  <polygon points="{f(cx)},{f(yt)} {f(cx+wb)},{f(yb)} {f(cx-wb)},{f(yb)}" fill="none" class="dg-muted-line" stroke-dasharray="5 4"/>')
-            o.append(f'  <text x="{f(cx)}" y="{f(yb-10)}" text-anchor="middle" class="dg-label" font-size="13" font-weight="600">{esc(tier["name"])}</text>')
-        else:
-            o.append(f'  <polygon points="{f(cx-wt)},{f(yt)} {f(cx+wt)},{f(yt)} {f(cx+wb)},{f(yb)} {f(cx-wb)},{f(yb)}" class="dg-tier {tier_cls[k]}"/>')
-            ym=(yt+yb)/2
-            o.append(f'  <text x="{f(cx)}" y="{f(ym-4)}" text-anchor="middle" class="dg-label" font-size="14" font-weight="600">{esc(tier["name"])}</text>')
-            o.append(f'  <text x="{f(cx)}" y="{f(ym+15)}" text-anchor="middle" class="dg-label--muted" font-size="11.5">{esc(tier["gloss"])}</text>')
-    o.append(f'  <line x1="54" y1="{f(yB)}" x2="54" y2="{f(yA+6)}" class="dg-muted-line"/>')
-    o.append(f'  <path d="M 50 {f(yA+14)} L 54 {f(yA+5)} L 58 {f(yA+14)} Z" class="dg-now"/>')
-    o.append(f'  <text x="62" y="{f(yB)}" text-anchor="start" class="dg-mono">{esc(e["axis_bottom"])}</text>')
-    o.append(f'  <text x="62" y="{f(yA+18)}" text-anchor="start" class="dg-mono">{esc(e["axis_top"])}</text>')
-    o.append('</svg>')
-    return "\n".join(o)+"\n"
-
 # ---------------------------------------------------------------- world-ages timeline
 def age_bounds(S):
     """Start/end label for each age in CHRON order, from the wheel's rim years."""
@@ -335,7 +310,7 @@ def timeline_narrow(S):
     return "\n".join(o) + "\n"
 
 BUILDERS = {"precession": precession, "great-year": great_year, "wheel-of-heaven": wheel,
-            "epistemic-tiers": pyramid, "world-ages-timeline": timeline,
+            "world-ages-timeline": timeline,
             "world-ages-timeline-narrow": timeline_narrow}
 
 def main():

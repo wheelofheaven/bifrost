@@ -36,17 +36,6 @@
     "years":{"15":"19.7k BCE","45":"17.5k BCE","75":"15.3k BCE","105":"13.2k BCE","135":"11.0k BCE","165":"8.85k BCE","195":"6.69k BCE","225":"4.53k BCE","255":"2.37k BCE","285":"210 BCE"},
     "wrap":["21.8k BCE","/ 4110 CE"]
   },
-  "ep": {
-    "title":"The four-tier epistemic distinction",
-    "desc":"A pyramid of four content tiers the corpus keeps separate: direct source claims at the firm base, then comparative observations, then Wheel of Heaven interpretation, with open questions at the interpretive capstone.",
-    "tiers":[
-      {"name":"Open questions","gloss":null},
-      {"name":"Wheel of Heaven interpretation","gloss":"corpus-level synthesis, marked as such"},
-      {"name":"Comparative observations","gloss":"patterns noted across traditions"},
-      {"name":"Direct source claims","gloss":"what a source itself asserts"}
-    ],
-    "axis_bottom":"firmest","axis_top":"most interpretive"
-  },
   "tb": {
     "title":"The precessional-age framework as a timeline",
     "desc":"Twelve contiguous ~2,160-year precessional ages from the Age of Capricorn (~21,810 BCE, project opening) to the Age of Aquarius (from 1950 CE, the current age), each marked with its zodiac glyph.",

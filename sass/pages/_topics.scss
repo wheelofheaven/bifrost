@@ -1,0 +1,189 @@
+@use "../abstracts/variables" as v;
+
+// /topics/ and /topics/{slug}/ — the knowledge graph's topic vocabulary as pages.
+// Both use the generic section-page shell (frame + grammar already cover it);
+// this sheet adds the topic chip, the index grid and the member lists.
+
+// One pill, the grammar's control shape: used on topic pages and as the
+// "Topics:" chips in reading-page sidebars.
+.topic-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+}
+
+.topic-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.7rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: v.$border-radius-full;
+    font-size: v.$font-size-sm;
+    line-height: 1.5;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color v.$transition-base, color v.$transition-base;
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--color-accent-primary);
+        color: var(--color-accent-primary);
+    }
+
+    &--quiet { color: var(--color-text-muted); }
+}
+
+.topics {
+    &__eyebrow {
+        margin: 0 0 v.$spacing-sm;
+        font-family: var(--font-family-tech), ui-monospace, monospace;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+
+        a { color: inherit; text-decoration: none; }
+        a:hover { color: var(--color-accent-primary); }
+    }
+
+    &__lede-links {
+        display: flex;
+        flex-wrap: wrap;
+        gap: v.$spacing-xs;
+        margin-top: v.$spacing-md;
+    }
+
+    &__related {
+        display: grid;
+        gap: v.$spacing-xs;
+        margin: v.$spacing-lg 0 v.$spacing-xl;
+    }
+
+    &__related-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    &__related-label {
+        min-width: 5.5rem;
+        font-family: var(--font-family-tech), ui-monospace, monospace;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    &__group { margin-top: v.$spacing-2xl; }
+
+    &__group-title {
+        display: flex;
+        align-items: baseline;
+        gap: v.$spacing-xs;
+        margin: 0 0 v.$spacing-md;
+        font-size: v.$font-size-xl;
+    }
+
+    &__group-count {
+        font-family: var(--font-family-tech), ui-monospace, monospace;
+        font-size: v.$font-size-xs;
+        font-weight: 400;
+        color: var(--color-text-muted);
+    }
+
+    // Index: topic cards in an even grid.
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+        gap: v.$spacing-md;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__card-link {
+        display: flex;
+        flex-direction: column;
+        gap: 0.35rem;
+        height: 100%;
+        padding: v.$spacing-md v.$spacing-lg;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-lg;
+        color: inherit;
+        text-decoration: none;
+        transition: border-color v.$transition-base;
+
+        &:hover,
+        &:focus-visible { border-color: var(--color-accent-primary); }
+    }
+
+    &__card-title { font-weight: 600; }
+
+    &__card-desc {
+        flex: 1;
+        font-size: v.$font-size-sm;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+    }
+
+    &__card-count,
+    &__member-meta {
+        font-family: var(--font-family-tech), ui-monospace, monospace;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.04em;
+        color: var(--color-text-muted);
+    }
+
+    // Topic page: members as a two-column list of entries.
+    &__members {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+        gap: 0 v.$spacing-xl;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__member-link {
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        padding: v.$spacing-sm 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        color: inherit;
+        text-decoration: none;
+
+        &:hover .topics__member-title,
+        &:focus-visible .topics__member-title { color: var(--color-accent-primary); }
+    }
+
+    &__member-title { font-weight: 500; }
+
+    &__member-desc {
+        font-size: v.$font-size-sm;
+        line-height: 1.45;
+        color: var(--color-text-muted);
+    }
+
+    &__sources {
+        margin: 0;
+        padding-left: 1.1rem;
+        columns: 2 18rem;
+        font-size: v.$font-size-sm;
+
+        li { margin-bottom: 0.35rem; break-inside: avoid; }
+    }
+}
+
+// In the reading pages' "At a glance" panel the chips are metadata: smaller,
+// in the panel's own voice.
+.wiki__meta-value.topic-chips,
+.timeline-page__meta-value.topic-chips {
+    margin-top: 0.35rem;
+
+    .topic-chip {
+        padding: 0.1rem 0.55rem;
+        font-size: v.$font-size-xs;
+    }
+}

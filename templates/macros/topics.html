@@ -1,0 +1,23 @@
+{#- Topic chips for a reading page's sidebar ("At a glance").
+
+    {% import "macros/topics.html" as topics %}
+    {{ topics::chips(path=page.path, lang=detected_lang, block="wiki") }}
+
+    Reads data/graph/topics.json (written by scripts/build_graph.py): `by_page`
+    maps an English page path to the topics it is filed under. Topic names and
+    pages are English only for now, so the chips render on English pages only. -#}
+{% macro chips(path, lang="en", block="wiki") %}
+{%- if lang == "en" -%}
+{%- set _t = load_data(path="data/graph/topics.json", required=false) -%}
+{%- if _t and _t.by_page[path] -%}
+<div class="{{ block }}__meta-row">
+    <span class="{{ block }}__meta-label">Topics:</span>
+    <span class="{{ block }}__meta-value topic-chips">
+        {%- for slug in _t.by_page[path] | slice(end=6) %}
+        <a class="topic-chip" href="{{ get_url(path='topics/' ~ slug, trailing_slash=true) }}">{{ _t.topics[slug].name }}</a>
+        {%- endfor %}
+    </span>
+</div>
+{%- endif -%}
+{%- endif -%}
+{% endmacro chips %}

@@ -94,7 +94,6 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
     }
 
     &--precession .diagram__canvas { max-width: 36rem; }
-    &--epistemic-tiers .diagram__canvas { max-width: 34rem; }
 
     // Wide figures with a phone variant: swap at the small breakpoint.
     &__canvas--narrow { display: none; max-width: 24rem; }
@@ -249,15 +248,6 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
 
         &--now { fill: var(--dg-now); }
     }
-
-    // Epistemic pyramid tiers, base → top.
-    .dg-tier {
-        stroke-width: 1.5;
-        fill-opacity: 0.16;
-    }
-    .dg-tier-1 { fill: var(--dg-age-7); stroke: var(--dg-age-7); }
-    .dg-tier-2 { fill: var(--dg-age-3); stroke: var(--dg-age-3); }
-    .dg-tier-3 { fill: var(--dg-age-1); stroke: var(--dg-age-1); }
 }
 
 [data-theme="light"] .diagram {

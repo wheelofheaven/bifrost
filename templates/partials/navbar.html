@@ -76,6 +76,7 @@
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
                     <a href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="map">{{ trans(key="navbarMap", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='graph', trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="graph">{{ trans(key="navbarGraph", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='topics', trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="topics">{{ trans(key="navbarTopics", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="timeline">{{ trans(key="navbarTimeline", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
                     <a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
@@ -751,6 +752,18 @@
                                 <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
                             </div>
                             <div class="navbar-dropdown__link-description" data-navbar-key="graphDesc">{{ trans(key="navbarGraphDesc", lang=detected_lang) }}</div>
+                        </div>
+                    </a>
+                    <a href="{{ get_url(path='topics', trailing_slash=true) }}" class="navbar-dropdown__link">
+                        <span class="navbar-dropdown__link-icon">
+                            {% include "partials/icons/lucide-tags.html" %}
+                        </span>
+                        <div>
+                            <div class="navbar-dropdown__link-title">
+                                <span data-navbar-key="topics">{{ trans(key="navbarTopics", lang=detected_lang) }}</span>
+                                <span class="navbar-dropdown__link-arrow">{% include "partials/icons/arrow-right.html" %}</span>
+                            </div>
+                            <div class="navbar-dropdown__link-description" data-navbar-key="topicsDesc">{{ trans(key="navbarTopicsDesc", lang=detected_lang) }}</div>
                         </div>
                     </a>
                     <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}" class="navbar-dropdown__link">

@@ -22,7 +22,7 @@
             {% for s in page.extra.stats %}
             <div class="dataset__stat">
                 <dt class="dataset__stat-label">{{ s.label }}</dt>
-                <dd class="dataset__stat-value">{{ s.value }}</dd>
+                <dd class="dataset__stat-value{% if s.value is matching("^[0-9][0-9,.\s]*\+?$") %} dataset__stat-value--figure{% endif %}">{{ s.value }}</dd>
             </div>
             {% endfor %}
         </dl>

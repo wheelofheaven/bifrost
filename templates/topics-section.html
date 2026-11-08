@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{#- /topics/ — every topic of the knowledge graph, grouped by kind.
+    Data: data/graph/topics.json (scripts/build_graph.py); the section's pages are
+    the generated stubs in content/topics/, one per topic. -#}
+{% block content %}
+{% set data = load_data(path="data/graph/topics.json") %}
+{% set kind_titles = ["Themes", "Traditions", "Figures", "Methods", "Sciences", "What comes next"] %}
+<div class="section-page section-page--topics">
+    <div class="section-page__container">
+        <header class="section-page__header">
+            <h1 class="section-page__title" id="page-title">{{ section.title }}</h1>
+            {% if section.description %}
+            <p class="section-page__description" data-ai-summary="true">{{ section.description }}</p>
+            {% endif %}
+            <p class="topics__lede-links">
+                <a class="topic-chip topic-chip--quiet" href="{{ get_url(path='graph/', trailing_slash=true) }}">See them on the knowledge graph</a>
+            </p>
+        </header>
+
+        {% for kind in data.kinds %}
+        {% set kind_title = kind_titles | nth(n=loop.index0) %}
+        <section class="topics__group" aria-labelledby="topics-{{ kind }}">
+            <h2 class="topics__group-title" id="topics-{{ kind }}">{{ kind_title }}</h2>
+            <ul class="topics__grid">
+                {% for p in section.pages %}
+                {% set t = data.topics[p.extra.topic] %}
+                {% if t and t.kind == kind %}
+                <li class="topics__card">
+                    <a class="topics__card-link" href="{{ p.permalink | escape_xml | safe }}">
+                        <span class="topics__card-title">{{ t.name }}</span>
+                        <span class="topics__card-desc">{{ t.description }}</span>
+                        <span class="topics__card-count">{{ t.count }} page{% if t.count != 1 %}s{% endif %}{% if t.source_count %} · {{ t.source_count }} source{% if t.source_count != 1 %}s{% endif %}{% endif %}</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% endfor %}
+            </ul>
+        </section>
+        {% endfor %}
+    </div>
+</div>
+{% endblock content %}
