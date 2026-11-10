@@ -3,6 +3,7 @@
 {% import "macros/claim-badge.html" as claim_badge %}
 {% import "macros/dispatch.html" as dispatch %}
 {% import "macros/i18n-url.html" as i18n_url %}
+{% import "macros/translation-badge.html" as translation_badge %}
 
 {% block content %}
 {% include "partials/schema/news-article.html" %}
@@ -26,6 +27,7 @@
                     {% if page.extra.event_date %}<span class="dispatch__byline-event">{{ trans(key="dispatchEvent", lang=detected_lang) }} <time datetime="{{ page.extra.event_date | date(format='%Y-%m-%d') }}">{{ page.extra.event_date | date(format="%B %d, %Y") }}</time></span>{% endif %}
                     {% if page.date %}{% if page.extra.event_date %}<span class="dispatch__byline-sep" aria-hidden="true">·</span>{% endif %}<time class="dispatch__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ trans(key="pagePublished", lang=detected_lang) }} {{ page.date | date(format="%b %d, %Y") }}</time>{% endif %}
                     {% if page.reading_time %}{% if page.extra.event_date or page.date %}<span class="dispatch__byline-sep" aria-hidden="true">·</span>{% endif %}<span class="dispatch__byline-readtime">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>{% endif %}
+                    {% if detected_lang != "en" and page.extra.translation_status %}<span class="dispatch__byline-sep" aria-hidden="true">·</span>{{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang, updated=page.extra.translation_updated | default(value=""), source=page.extra.source_updated | default(value=""), stale=page.extra.translation_stale | default(value=false), sync=page.extra.translation_sync | default(value=100)) }}{% endif %}
                 </p>
 
                 {% if page.extra.summary or page.description %}

@@ -1,7 +1,6 @@
 {# translation-badge macro
 
-   Surfaces the per-entry `[extra].translation_status` field as a small
-   pill in the wiki sidebar. Renders only when:
+   Surfaces a translated page's status as a small pill. Renders only when:
 
      - the page is being viewed in a non-English language, AND
      - `translation_status` is set to a known value
@@ -9,14 +8,27 @@
    Values map to:
      - "metadata_only" → yellow pill (title/description only)
      - "machine"       → mauve pill  (auto-translated body)
+     - "ai_reviewed"   → teal pill   (AI-translated, then independently reviewed)
      - "human"         → mint pill   (fully translated)
      - "en_only"       → grey pill   (English fallback)
 
+   Optional freshness data, written into [extra] by scripts/translation_audit.py:
+     updated  — `translation_updated`, the translation's last real change (YYYY-MM-DD)
+     source   — `source_updated`, the English page's last real change
+     stale    — `translation_stale`, the English changed after the translation
+     sync     — `translation_sync`, structural parity with the English, 0–100
+
+   The pill is marked "may lag" (dashed border, amber dot ring) when the English
+   changed after the translation or structural parity is below 80. The dates go
+   in the tooltip; the percentage stays in the data.
+
    Usage:
      {% import "macros/translation-badge.html" as translation_badge %}
-     {{ translation_badge::render(status=page.extra.translation_status | default(value=""), lang=detected_lang) }}
+     {{ translation_badge::render(status=page.extra.translation_status | default(value=""), lang=detected_lang,
+          updated=page.extra.translation_updated | default(value=""), source=page.extra.source_updated | default(value=""),
+          stale=page.extra.translation_stale | default(value=false), sync=page.extra.translation_sync | default(value=100)) }}
 #}
-{% macro render(status="", lang="en") %}
+{% macro render(status="", lang="en", updated="", source="", stale=false, sync=100) %}
 {% if lang != "en" and status %}
     {% set label = "" %}
     {% set desc = "" %}
@@ -26,6 +38,9 @@
     {% elif status == "machine" %}
         {% set label = trans(key="translationStatusMachine", lang=lang) %}
         {% set desc = trans(key="translationStatusMachineDesc", lang=lang) %}
+    {% elif status == "ai_reviewed" %}
+        {% set label = trans(key="translationStatusAiReviewed", lang=lang) %}
+        {% set desc = trans(key="translationStatusAiReviewedDesc", lang=lang) %}
     {% elif status == "human" %}
         {% set label = trans(key="translationStatusHuman", lang=lang) %}
         {% set desc = trans(key="translationStatusHumanDesc", lang=lang) %}
@@ -33,13 +48,23 @@
         {% set label = trans(key="translationStatusEnOnly", lang=lang) %}
         {% set desc = trans(key="translationStatusEnOnlyDesc", lang=lang) %}
     {% endif %}
+    {% set lagging = stale or sync < 80 %}
     {% if label %}
-    <span class="translation-badge translation-badge--{{ status | replace(from='_', to='-') }}"
+    {% set tip = desc %}
+    {% if updated %}{% set tip = tip ~ " " ~ trans(key="translationUpdatedLabel", lang=lang) ~ ": " ~ updated ~ "." %}{% endif %}
+    {% if source %}{% set tip = tip ~ " " ~ trans(key="translationSourceUpdatedLabel", lang=lang) ~ ": " ~ source ~ "." %}{% endif %}
+    {% if lagging %}{% set tip = tip ~ " " ~ trans(key="translationLaggingDesc", lang=lang) %}{% endif %}
+    <span class="translation-badge translation-badge--{{ status | replace(from='_', to='-') }}{% if lagging %} translation-badge--lagging{% endif %}"
           role="status"
-          aria-label="{{ trans(key='translationStatusLabel', lang=lang) }}: {{ label }}"
-          title="{{ desc }}">
+          tabindex="0"
+          aria-label="{{ trans(key='translationStatusLabel', lang=lang) }}: {{ label }}{% if lagging %}, {{ trans(key='translationLagging', lang=lang) }}{% endif %}. {{ tip }}"
+          title="{{ tip }}"
+          {% if updated %}data-translation-updated="{{ updated }}"{% endif %}
+          {% if source %}data-source-updated="{{ source }}"{% endif %}
+          data-translation-sync="{{ sync }}">
         <span class="translation-badge__dot" aria-hidden="true"></span>
         <span class="translation-badge__label">{{ label }}</span>
+        {% if lagging %}<span class="translation-badge__lag">· {{ trans(key="translationLagging", lang=lang) }}</span>{% endif %}
     </span>
     {% endif %}
 {% endif %}

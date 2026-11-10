@@ -5,6 +5,7 @@
 {% import "macros/relatedness-graph.html" as relatedness_graph %}
 {% import "macros/cite.html" as cite %}
 {% import "macros/i18n-url.html" as i18n_url %}
+{% import "macros/translation-badge.html" as translation_badge %}
 
 {% block content %}
 {% include "partials/schema/scholarly-article.html" %}
@@ -36,6 +37,7 @@
                     {% if byline_slug %}<a class="article__byline-link" href="{{ get_url(path='author/' ~ byline_slug, trailing_slash=true) }}" rel="author">{{ byline_name }}</a>{% else %}<span class="article__byline-name">{{ byline_name }}</span>{% endif %}
                     {% if page.date %}<span class="article__byline-sep" aria-hidden="true">·</span><time class="article__byline-date" datetime="{{ page.date | date(format='%Y-%m-%d') }}">{{ page.date | date(format="%b %d, %Y") }}</time>{% endif %}
                     {% if page.reading_time %}<span class="article__byline-sep" aria-hidden="true">·</span><span class="article__byline-readtime">{{ page.reading_time }} {{ trans(key="readingTimeUnit", lang=detected_lang) }}</span>{% endif %}
+                    {% if detected_lang != "en" and page.extra.translation_status %}<span class="article__byline-sep" aria-hidden="true">·</span>{{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang, updated=page.extra.translation_updated | default(value=""), source=page.extra.source_updated | default(value=""), stale=page.extra.translation_stale | default(value=false), sync=page.extra.translation_sync | default(value=100)) }}{% endif %}
                 </p>
 
                 {% set summary_text = page.extra.summary | default(value=page.extra.tldr | default(value=page.description | default(value=""))) %}

@@ -5,6 +5,7 @@
 {% import "macros/cite.html" as cite %}
 {% import "macros/i18n-url.html" as i18n_url %}
 {% import "macros/topics.html" as topics %}
+{% import "macros/translation-badge.html" as translation_badge %}
 
 {% block content %}
 <!-- Event Schema for Timeline Pages -->
@@ -376,6 +377,13 @@
                         {% endif %}
 
                     </div>
+
+                    {% if detected_lang != "en" and page.extra.translation_status %}
+                    <div class="timeline-page__meta-row">
+                        <span class="timeline-page__meta-label">{{ trans(key="translationStatusLabel", lang=detected_lang) }}</span>
+                        <span class="timeline-page__meta-value">{{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang, updated=page.extra.translation_updated | default(value=""), source=page.extra.source_updated | default(value=""), stale=page.extra.translation_stale | default(value=false), sync=page.extra.translation_sync | default(value=100)) }}</span>
+                    </div>
+                    {% endif %}
 
                     {% if page.date %}
                     <div class="timeline-page__meta-row">

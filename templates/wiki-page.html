@@ -279,7 +279,7 @@
                 {% if detected_lang != "en" and page.extra.translation_status %}
                 <div class="wiki__claim-section wiki__translation-section">
                     <div class="wiki__claim-label">{{ trans(key="translationStatusLabel", lang=detected_lang) }}</div>
-                    {{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang) }}
+                    {{ translation_badge::render(status=page.extra.translation_status, lang=detected_lang, updated=page.extra.translation_updated | default(value=""), source=page.extra.source_updated | default(value=""), stale=page.extra.translation_stale | default(value=false), sync=page.extra.translation_sync | default(value=100)) }}
                 </div>
                 {% endif %}
 

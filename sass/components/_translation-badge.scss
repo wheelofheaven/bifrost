@@ -7,8 +7,11 @@
 // Color maps to status:
 //   --metadata-only → yellow (partial)
 //   --machine       → mauve  (auto-translated body)
+//   --ai-reviewed   → teal   (AI-translated, independently reviewed)
 //   --human         → mint   (full human translation)
 //   --en-only       → muted  (English fallback)
+//   --lagging       → dashed border + amber ring: the English changed after
+//                     the translation, or structural parity is below 80
 
 @use "../abstracts/colors" as c;
 @use "../abstracts/variables" as v;
@@ -80,6 +83,42 @@
         .translation-badge__dot {
             background-color: c.$mint-500;
         }
+    }
+
+    &--ai-reviewed {
+        border-color: color-mix(in srgb, #{c.$teal-500} 55%, transparent);
+        color: c.$teal-700;
+
+        [data-theme="dark"] & {
+            color: c.$teal-400;
+        }
+
+        .translation-badge__dot {
+            background-color: c.$teal-500;
+        }
+    }
+
+    // May lag behind the English: dashed border and an amber ring around
+    // the dot; the status colour itself is kept.
+    &--lagging {
+        border-style: dashed;
+
+        .translation-badge__dot {
+            box-shadow: 0 0 0 2px color-mix(in srgb, #{c.$yellow-500} 70%, transparent);
+        }
+    }
+
+    &__lag {
+        color: c.$yellow-700;
+
+        [data-theme="dark"] & {
+            color: c.$yellow-400;
+        }
+    }
+
+    &:focus-visible {
+        outline: 2px solid var(--color-focus, currentColor);
+        outline-offset: 2px;
     }
 
     &--en-only {
