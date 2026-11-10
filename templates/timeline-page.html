@@ -342,6 +342,11 @@
             <header class="timeline-page__header">
                 {% if age_matches | length > 0 %}
                 {% set age_data = age_matches[0] %}
+                {# Card text comes from ages.i18n.json so translated chapters show
+                   their own language; English (ages.json) is the fallback. #}
+                {% set ages_i18n = load_data(path="data/ages.i18n.json") %}
+                {% set ages_strings = ages_i18n[detected_lang] | default(value=ages_i18n.en) %}
+                {% set age_event = ages_strings[page.slug].event | default(value=age_data.event) %}
                 <a class="timeline-page__earth-link" href="{{ get_url(path='timeline/chronology', lang='en', trailing_slash=true) }}" aria-label="{{ trans(key='timelineGreatYearBrowse', lang=detected_lang) }}">
                     <figure class="timeline-page__earth-figure">
                         <img class="timeline-page__earth-image"
@@ -352,8 +357,8 @@
                         <figcaption class="timeline-page__earth-caption">
                             <span class="timeline-page__earth-label">{{ trans(key="timelineGreatYearBrowse", lang=detected_lang) }}</span>
                             <strong class="timeline-page__earth-title">{{ page.title }}</strong>
-                            {% if age_data.event %}
-                            <span class="timeline-page__earth-summary">{{ age_data.event }}</span>
+                            {% if age_event %}
+                            <span class="timeline-page__earth-summary">{{ age_event }}</span>
                             {% endif %}
                         </figcaption>
                     </figure>
