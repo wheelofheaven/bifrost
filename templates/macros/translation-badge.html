@@ -19,7 +19,7 @@
      sync     — `translation_sync`, structural parity with the English, 0–100
 
    The pill is marked "may lag" (dashed border, amber dot ring) when the English
-   changed after the translation or structural parity is below 80. The dates go
+   changed after the translation or structural parity is below 95. The dates go
    in the tooltip; the percentage stays in the data.
 
    Usage:
@@ -48,7 +48,7 @@
         {% set label = trans(key="translationStatusEnOnly", lang=lang) %}
         {% set desc = trans(key="translationStatusEnOnlyDesc", lang=lang) %}
     {% endif %}
-    {% set lagging = stale or sync < 80 %}
+    {% set lagging = stale or sync < 95 %}
     {% if label %}
     {% set tip = desc %}
     {% if updated %}{% set tip = tip ~ " " ~ trans(key="translationUpdatedLabel", lang=lang) ~ ": " ~ updated ~ "." %}{% endif %}
