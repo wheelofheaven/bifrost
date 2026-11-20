@@ -10,6 +10,7 @@
   "license": {{ page.extra.license_url | default(value='https://creativecommons.org/publicdomain/zero/1.0/') | json_encode | safe }},
   "isAccessibleForFree": true,
   "inLanguage": "en",
+  {% if page.extra.dataset_version %}"version": {{ page.extra.dataset_version | json_encode | safe }},{% endif %}
   {% if page.extra.keywords %}"keywords": [{% for k in page.extra.keywords %}{{ k | json_encode | safe }}{% if not loop.last %}, {% endif %}{% endfor %}],{% endif %}
   {% if page.extra.updated %}"datePublished": {{ page.extra.updated | json_encode | safe }},{% endif %}
   "creator": {
@@ -25,7 +26,7 @@
     {% for d in page.extra.downloads %}{
       "@type": "DataDownload",
       "encodingFormat": {{ d.format | default(value='application/json') | json_encode | safe }},
-      "contentUrl": {{ d.url | json_encode | safe }}
+      "contentUrl": {% if d.url is starting_with("/") %}{{ get_url(path=d.url) | json_encode | safe }}{% else %}{{ d.url | json_encode | safe }}{% endif %}
     }{% if not loop.last %},{% endif %}
     {% endfor %}
   ]{% endif %}
