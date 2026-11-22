@@ -1253,7 +1253,10 @@ html:has(body.mobile-nav-open) {
                 }
 
                 // The ring: the band at full strength, drawn by a mask so
-                // it can follow the rounded corners.
+                // it can follow the rounded corners. It is the same eight
+                // stops as the wash, tiled and animated the same way, so at
+                // every point the border is the fill's own hue and the two
+                // drift as one.
                 &::before {
                     content: "";
                     position: absolute;
@@ -1261,6 +1264,8 @@ html:has(body.mobile-nav-open) {
                     padding: 1px;
                     border-radius: inherit;
                     background: var(--accent-rainbow);
+                    background-size: 200% 100%;
+                    animation: navbar-start-drift 16s linear infinite;
                     -webkit-mask:
                         linear-gradient(#000 0 0) content-box,
                         linear-gradient(#000 0 0);
@@ -1279,7 +1284,10 @@ html:has(body.mobile-nav-open) {
                 }
 
                 @media (prefers-reduced-motion: reduce) {
-                    animation: none;
+                    &,
+                    &::before {
+                        animation: none;
+                    }
                 }
             }
 
