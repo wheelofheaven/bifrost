@@ -135,7 +135,8 @@
     // box edge, which is already the text edge.
     &__navigation {
         margin-top: 0;
-        padding-top: 0;
+        // Room for the end-matter dash; at 0 it sat on the "Previous" label.
+        padding-top: 2.75rem;
         border-top: 0;
 
         &::before {
