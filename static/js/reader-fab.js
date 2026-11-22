@@ -119,6 +119,11 @@
             if (sunIcon) sunIcon.hidden = !isLight;
         }
         syncThemeIcon();
+        // Also follows system-driven changes made by theme-init.html.
+        new MutationObserver(syncThemeIcon).observe(document.documentElement, {
+            attributes: true,
+            attributeFilter: ["data-theme"],
+        });
 
         if (themeBtn) {
             themeBtn.addEventListener("click", function () {
