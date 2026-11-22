@@ -459,3 +459,50 @@
         transform: translate(0.075em, -0.075em);
     }
 }
+
+// Phones: link groups fold under their headings (static/js/footer-fold.js
+// sets .footer--folds and the aria state). Eight open lists made the footer
+// more than four screens tall.
+.footer--folds {
+    .footer__col-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 44px;
+        margin: 0;
+        padding: 0.25rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+        cursor: pointer;
+
+        &::after {
+            content: "";
+            flex: 0 0 auto;
+            width: 0.5rem;
+            height: 0.5rem;
+            margin-inline-end: 0.25rem;
+            border-inline-end: 1.5px solid currentColor;
+            border-block-end: 1.5px solid currentColor;
+            opacity: 0.6;
+            rotate: 45deg;
+            transition: rotate 0.2s ease;
+        }
+
+        &[aria-expanded="true"]::after {
+            rotate: -135deg;
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: 2px;
+        }
+    }
+
+    .footer__col-title + ul {
+        display: none;
+        padding-block: 0.75rem 0.25rem;
+    }
+
+    .footer__col-title[aria-expanded="true"] + ul {
+        display: block;
+    }
+}

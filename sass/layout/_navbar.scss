@@ -334,6 +334,11 @@ html:has(body.mobile-nav-open) {
         display: none;
     }
 
+    // Likewise the one-line descriptions under the top-level items.
+    &__item-desc {
+        display: none;
+    }
+
     &__dropdown-trigger {
         display: flex;
         align-items: center;
@@ -1289,6 +1294,22 @@ html:has(body.mobile-nav-open) {
                         animation: none;
                     }
                 }
+            }
+
+            // Top-level items say what they are: label, then one quiet line.
+            .navbar__item-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .navbar__item-desc {
+                display: block;
+                margin-top: 0.1rem;
+                font-size: 0.75rem;
+                font-weight: 400;
+                line-height: 1.3;
+                color: var(--color-text-muted);
             }
 
             // Search row: a plain item like the section links below it.

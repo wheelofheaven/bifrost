@@ -16,6 +16,7 @@
     // Alias kept for the page styles that ask for a link colour.
     --color-link: var(--color-accent-primary);
     --accent-rainbow: linear-gradient(90deg, #{colors.$pink-500}, #{colors.$lavender-500}, #{colors.$mauve-500}, #{colors.$blue-500}, #{colors.$cyan-500}, #{colors.$mint-500}, #{colors.$green-500}, #{colors.$pink-500});
+    --accent-rainbow-wash: linear-gradient(90deg, #{rgba(colors.$pink-500, 0.26)}, #{rgba(colors.$lavender-500, 0.26)}, #{rgba(colors.$mauve-500, 0.26)}, #{rgba(colors.$blue-500, 0.26)}, #{rgba(colors.$cyan-500, 0.26)}, #{rgba(colors.$mint-500, 0.26)}, #{rgba(colors.$green-500, 0.26)}, #{rgba(colors.$pink-500, 0.26)});
     --color-accent-secondary: #{colors.$blue-500};
     --color-hairline: #{colors.$gray-300};
     --color-hairline-subtle: #{colors.$gray-200};

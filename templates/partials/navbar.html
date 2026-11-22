@@ -56,7 +56,10 @@
                 {% if nav_path is starting_with('/read') %}aria-current="true"{% endif %}
             >
                 <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/book.html" %}</span>
-                {{ trans(key="navbarRead", lang=detected_lang) }}
+                <span class="navbar__item-text">
+                    <span>{{ trans(key="navbarRead", lang=detected_lang) }}</span>
+                    <span class="navbar__item-desc">{{ trans(key="navbarReadBook", lang=detected_lang) }} · {{ trans(key="navbarReadWiki", lang=detected_lang) }} · {{ trans(key="navbarReadSources", lang=detected_lang) }}</span>
+                </span>
             </a>
 
             <a
@@ -66,7 +69,10 @@
                 {% if nav_path is starting_with('/articles') %}aria-current="true"{% endif %}
             >
                 <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-dna2.html" %}</span>
-                {{ trans(key="navbarArticles", lang=detected_lang) }}
+                <span class="navbar__item-text">
+                    <span>{{ trans(key="navbarArticles", lang=detected_lang) }}</span>
+                    <span class="navbar__item-desc">{{ trans(key="navbarArticlesDesc", lang=detected_lang) }}</span>
+                </span>
             </a>
             <a
                 href="{{ get_url(path='news', lang=detected_lang, trailing_slash=true) }}"
@@ -75,7 +81,10 @@
                 {% if nav_path is starting_with('/news') %}aria-current="true"{% endif %}
             >
                 <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-satellite.html" %}</span>
-                {{ trans(key="navbarNews", lang=detected_lang) }}
+                <span class="navbar__item-text">
+                    <span>{{ trans(key="navbarNews", lang=detected_lang) }}</span>
+                    <span class="navbar__item-desc">{{ trans(key="navbarNewsDesc", lang=detected_lang) }}</span>
+                </span>
             </a>
             <!-- Knowledge Dropdown Trigger -->
             <div class="navbar__dropdown" data-dropdown="knowledge" role="navigation" aria-label="{{ trans(key='navbarKnowledgeSection', lang=detected_lang) }}">
