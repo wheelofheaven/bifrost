@@ -1204,6 +1204,7 @@ html:has(body.mobile-nav-open) {
             // the only bordered item and carries the rainbow rule, which
             // sets it apart from the section links below.
             .navbar__menu-start {
+                position: relative;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
@@ -1213,30 +1214,72 @@ html:has(body.mobile-nav-open) {
                 margin-bottom: 0.5rem;
                 padding: 0.75rem 1rem;
                 color: var(--color-text);
-                background-color: var(--color-hover);
-                border: 1px solid var(--color-border);
+                border: 0;
                 border-radius: 0.75rem;
                 font-family: var(--font-family-body);
                 font-size: 1rem;
                 font-weight: 600;
                 text-decoration: none;
-                position: relative;
-                overflow: hidden;
-                transition: border-color 0.2s ease;
+                // The accent as a wash that drifts slowly across the item.
+                // The band is laid out twice over (first and last stop are
+                // the same hue), so a shift of one full tile loops without
+                // a seam. Pastel 300 band on dark, 500 band on white.
+                background-image: linear-gradient(
+                    90deg,
+                    #{rgba(colors.$pink-300, 0.3)},
+                    #{rgba(colors.$lavender-300, 0.3)},
+                    #{rgba(colors.$mauve-300, 0.3)},
+                    #{rgba(colors.$blue-300, 0.3)},
+                    #{rgba(colors.$cyan-300, 0.3)},
+                    #{rgba(colors.$mint-300, 0.3)},
+                    #{rgba(colors.$green-300, 0.3)},
+                    #{rgba(colors.$pink-300, 0.3)}
+                );
+                background-size: 200% 100%;
+                animation: navbar-start-drift 16s linear infinite;
 
-                // The accent: a rainbow rule along the foot of the item.
-                &::after {
-                    content: "";
-                    position: absolute;
-                    inset: auto 0 0;
-                    height: 2px;
-                    background: var(--accent-rainbow);
+                [data-theme="light"] & {
+                    background-image: linear-gradient(
+                        90deg,
+                        #{rgba(colors.$pink-500, 0.26)},
+                        #{rgba(colors.$lavender-500, 0.26)},
+                        #{rgba(colors.$mauve-500, 0.26)},
+                        #{rgba(colors.$blue-500, 0.26)},
+                        #{rgba(colors.$cyan-500, 0.26)},
+                        #{rgba(colors.$mint-500, 0.26)},
+                        #{rgba(colors.$green-500, 0.26)},
+                        #{rgba(colors.$pink-500, 0.26)}
+                    );
                 }
 
-                &:hover,
-                &:focus-visible,
-                &--active {
-                    border-color: var(--color-text);
+                // The ring: the band at full strength, drawn by a mask so
+                // it can follow the rounded corners.
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    padding: 1px;
+                    border-radius: inherit;
+                    background: var(--accent-rainbow);
+                    -webkit-mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    -webkit-mask-composite: xor;
+                    mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    mask-composite: exclude;
+                    pointer-events: none;
+                }
+
+                &:hover::before,
+                &:focus-visible::before,
+                &--active::before {
+                    padding: 2px;
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    animation: none;
                 }
             }
 
@@ -1607,6 +1650,25 @@ html:has(body.mobile-nav-open) {
                     transform: translateX(-50%);
                 }
 
+                // The pane that is not showing is parked beside the other,
+                // and the scroll box is wider than a pane by its own side
+                // padding, so a sliver of the parked pane showed at the
+                // edge (the selected language's highlight, the Back arrow).
+                // Hide it outright; `visibility` also takes its controls
+                // out of the tab order. The delay lets the slide finish
+                // before the outgoing pane disappears.
+                .navbar__pane--lang,
+                &.navbar__content--lang-open .navbar__pane--main {
+                    visibility: hidden;
+                    transition: visibility 0s linear 0.3s;
+                }
+
+                .navbar__pane--main,
+                &.navbar__content--lang-open .navbar__pane--lang {
+                    visibility: visible;
+                    transition: visibility 0s;
+                }
+
                 // Language picker pane: back affordance + title row, then
                 // a flat list of all nine languages styled to match the
                 // burger menu's harmonized entry layout (44px hit area,
@@ -1895,4 +1957,10 @@ body.timeline-space-overlay {
 @keyframes navbar-search-cycle-hint {
     0%, 78%, 100% { opacity: 0; }
     84%, 94%      { opacity: 1; }
+}
+
+// One tile of the Start-here wash (its background is 200% wide).
+@keyframes navbar-start-drift {
+    from { background-position: 0% 50%; }
+    to   { background-position: -200% 50%; }
 }
