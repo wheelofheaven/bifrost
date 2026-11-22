@@ -15,6 +15,8 @@
     // accent is the rainbow, drawn wherever a line can carry it (link
     // underlines, rules, borders) through --accent-rainbow.
     --color-accent-primary: #{colors.$gray-100};
+    // Alias kept for the page styles that ask for a link colour.
+    --color-link: var(--color-accent-primary);
     --accent-rainbow: linear-gradient(90deg, #{colors.$pink-300}, #{colors.$lavender-300}, #{colors.$mauve-300}, #{colors.$blue-300}, #{colors.$cyan-300}, #{colors.$mint-300}, #{colors.$green-300}, #{colors.$pink-300});
     --color-accent-secondary: #{colors.$blue};
     --color-hairline: #{colors.$gray-800};

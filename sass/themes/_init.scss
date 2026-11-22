@@ -25,6 +25,7 @@
     // accent is the rainbow, drawn wherever a line can carry it (link
     // underlines, rules, borders) through --accent-rainbow.
     --color-accent-primary: #{colors.$gray-100};
+    --color-link: var(--color-accent-primary);
     --accent-rainbow: linear-gradient(90deg, #{colors.$pink-300}, #{colors.$lavender-300}, #{colors.$mauve-300}, #{colors.$blue-300}, #{colors.$cyan-300}, #{colors.$mint-300}, #{colors.$green-300}, #{colors.$pink-300});
     --color-accent-secondary: #{colors.$blue};
     --color-hairline: #{colors.$gray-800};
@@ -96,6 +97,7 @@
         // The accent is ink, as in the dark theme. On white the rainbow uses
         // the 500 band: the pastel 300 band all but disappears as a 1-2px line.
         --color-accent-primary: #{colors.$gray-900};
+        --color-link: var(--color-accent-primary);
         --accent-rainbow: linear-gradient(90deg, #{colors.$pink-500}, #{colors.$lavender-500}, #{colors.$mauve-500}, #{colors.$blue-500}, #{colors.$cyan-500}, #{colors.$mint-500}, #{colors.$green-500}, #{colors.$pink-500});
         --color-accent-secondary: #{colors.$blue-500};
         --color-hairline: #{colors.$gray-300};

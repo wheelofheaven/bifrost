@@ -151,7 +151,7 @@
         }
 
         p {
-            font-size: 1.375rem;
+            font-size: var(--grammar-lede-size, 1.375rem);
             line-height: 1.45;
             font-weight: 400;
             color: var(--color-text);
@@ -209,7 +209,7 @@
 
     // ---- Reading column -------------------------------------------------
     &__content {
-        font-size: 1.0625rem;
+        font-size: var(--grammar-body-size, 1.0625rem);
         line-height: 1.72;
 
         > p {

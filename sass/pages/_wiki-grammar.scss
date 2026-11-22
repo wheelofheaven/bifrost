@@ -73,7 +73,7 @@
 
         p {
             max-width: 44rem;
-            font-size: 1.375rem;
+            font-size: var(--grammar-lede-size, 1.375rem);
             line-height: 1.45;
             color: var(--color-text);
             opacity: 0.88;
@@ -83,7 +83,7 @@
     // ---- Reading column -------------------------------------------------
     &__content {
         padding-top: 0.5rem;
-        font-size: 1.0625rem;
+        font-size: var(--grammar-body-size, 1.0625rem);
         line-height: 1.72;
 
         > p {

@@ -40,6 +40,17 @@ $grammar-rainbow: (
     @include grammar-rainbow;
 }
 
+// Phones: the rem base is already raised there (19px, see base/_reset.scss),
+// and the reading column then scaled its body and lede up again, which put
+// body text at 20px and ledes at 26px on a 390px screen. On phones the
+// column reads at the base size and the lede one step above it.
+@media (max-width: 768px) {
+    :root {
+        --grammar-body-size: 1rem;
+        --grammar-lede-size: 1.1875rem;
+    }
+}
+
 // A text link in the accent: ink for the words, the rainbow for the line.
 // A background, not a text-decoration, because an underline takes one
 // colour only; it spans the link's own width, so every link shows the
