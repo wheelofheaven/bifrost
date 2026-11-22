@@ -263,6 +263,30 @@
             min-width: 250px;
             max-width: 350px;
         }
+
+        // Ten entries with descriptions: as one column the panel was
+        // taller than a laptop screen and the last entries sat below the
+        // fold (the container scrolls, but nothing shows that it does).
+        // Two columns, filled top to bottom, fit without scrolling.
+        @media (min-width: 769px) {
+            width: min(40rem, calc(100vw - 40px));
+
+            .navbar-dropdown__container {
+                max-width: none;
+            }
+
+            // `display: block`: a flex container ignores column-count.
+            .navbar-dropdown__links {
+                display: block;
+                column-count: 2;
+                column-gap: 0.5rem;
+            }
+
+            .navbar-dropdown__link {
+                break-inside: avoid;
+                margin-bottom: 0.25rem;
+            }
+        }
     }
 
     // Resources dropdown specific styling

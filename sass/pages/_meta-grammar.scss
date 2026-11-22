@@ -337,7 +337,9 @@
 .info-page__content,
 .faq__content,
 .faq__answer {
-    :is(p, li, td, dd) a {
+    // Plain anchors and the prose-link shortcodes only: a component link
+    // (the route steps, a pill) keeps its own treatment.
+    :is(p, li, td, dd) :is(a:not([class]), a.wikilink, a.glossary-term, a.libref) {
         @include grammar.grammar-rainbow-link;
     }
 }

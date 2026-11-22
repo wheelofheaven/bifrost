@@ -173,11 +173,12 @@ html:has(body.mobile-nav-open) {
     }
 
     // Read split-button CtA: glassmorphic primary action + chevron toggle.
-    // Same gradient in both themes — mint (dark accent) → mauve (light
-    // accent) — so the CtA reads as a single brand mark across modes.
-    // The body is a single translucent gradient layer (so backdrop-filter
-    // composites cleanly) and a `::before` ring draws the gradient border
-    // independently via a mask trick.
+    // The CtA wears the accent: the rainbow band, as a translucent wash on
+    // the body and at full strength on the ring. The body is a single
+    // translucent gradient layer (so backdrop-filter composites cleanly)
+    // and a `::before` ring draws the gradient border independently via a
+    // mask trick. The wash uses the pastel 300 band on dark and the 500
+    // band on white, like --accent-rainbow.
     &__cta-split {
         position: relative;
         display: inline-flex;
@@ -187,10 +188,29 @@ html:has(body.mobile-nav-open) {
         border-radius: 0.5rem;
         overflow: hidden;
         background-image: linear-gradient(
-            135deg,
-            #{rgba(colors.$mint, 0.25)},
-            #{rgba(colors.$mauve-500, 0.25)}
+            90deg,
+            #{rgba(colors.$pink-300, 0.3)},
+            #{rgba(colors.$lavender-300, 0.3)},
+            #{rgba(colors.$mauve-300, 0.3)},
+            #{rgba(colors.$blue-300, 0.3)},
+            #{rgba(colors.$cyan-300, 0.3)},
+            #{rgba(colors.$mint-300, 0.3)},
+            #{rgba(colors.$green-300, 0.3)}
         );
+
+        [data-theme="light"] & {
+            background-image: linear-gradient(
+                90deg,
+                #{rgba(colors.$pink-500, 0.28)},
+                #{rgba(colors.$lavender-500, 0.28)},
+                #{rgba(colors.$mauve-500, 0.28)},
+                #{rgba(colors.$blue-500, 0.28)},
+                #{rgba(colors.$cyan-500, 0.28)},
+                #{rgba(colors.$mint-500, 0.28)},
+                #{rgba(colors.$green-500, 0.28)}
+            );
+        }
+
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
@@ -206,11 +226,7 @@ html:has(body.mobile-nav-open) {
             inset: 0;
             border-radius: inherit;
             padding: 1px;
-            background: linear-gradient(
-                135deg,
-                #{rgba(colors.$mint, 0.6)},
-                #{rgba(colors.$mauve-500, 0.6)}
-            );
+            background: var(--accent-rainbow);
             -webkit-mask:
                 linear-gradient(#000 0 0) content-box,
                 linear-gradient(#000 0 0);
@@ -1499,9 +1515,18 @@ html:has(body.mobile-nav-open) {
                             }
                         }
 
+                        // Two columns, filled top to bottom: Knowledge has
+                        // ten links, and as one column they ran past the
+                        // bottom of the screen.
                         &.navbar__dropdown--mobile-open {
                             .navbar__dropdown-inline {
-                                display: flex;
+                                display: block;
+                                column-count: 2;
+                                column-gap: 0.25rem;
+                            }
+
+                            .navbar__dropdown-inline-link {
+                                break-inside: avoid;
                             }
 
                             .navbar__dropdown-trigger__caret {
