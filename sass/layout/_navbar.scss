@@ -329,6 +329,11 @@ html:has(body.mobile-nav-open) {
         display: none;
     }
 
+    // Item icons belong to the phone menu only; the desktop bar is text.
+    &__item-icon {
+        display: none;
+    }
+
     &__dropdown-trigger {
         display: flex;
         align-items: center;
@@ -1235,6 +1240,49 @@ html:has(body.mobile-nav-open) {
                 }
             }
 
+            // One icon in front of every item and sub-item: the same marks
+            // the desktop dropdowns and the section pages use, so a section
+            // is recognisable before its label is read.
+            .navbar__item-icon {
+                display: inline-flex;
+                flex-shrink: 0;
+                align-items: center;
+                justify-content: center;
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-inline-end: 0.75rem;
+                color: var(--color-text-muted);
+                line-height: 0;
+
+                svg {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            // A group header is icon, label, caret: the caret keeps the far
+            // edge, the icon and label sit together at the start.
+            .navbar__dropdown-trigger {
+                justify-content: flex-start;
+                // The icon brings its own spacing; a flex gap on top of it
+                // would push these labels right of the plain items'.
+                gap: 0;
+
+                .navbar__dropdown-trigger__caret {
+                    margin-inline-start: auto;
+                }
+            }
+
+            // Sub-items sit two to a row, so their icons and indents are
+            // tighter: "Code of Conduct" has to fit half the menu's width.
+            .navbar__dropdown-inline {
+                .navbar__item-icon {
+                    width: 1.1rem;
+                    height: 1.1rem;
+                    margin-inline-end: 0.5rem;
+                }
+            }
+
             // In-menu Read CTA — rendered as a regular nav item alongside
             // Timeline, Newsroom, etc.
             .navbar__menu-read {
@@ -1523,10 +1571,14 @@ html:has(body.mobile-nav-open) {
                                 display: block;
                                 column-count: 2;
                                 column-gap: 0.25rem;
+                                margin-left: 0.5rem;
+                                padding-left: 0.25rem;
                             }
 
                             .navbar__dropdown-inline-link {
                                 break-inside: avoid;
+                                padding-inline: 0.5rem;
+                                font-size: 0.9rem;
                             }
 
                             .navbar__dropdown-trigger__caret {

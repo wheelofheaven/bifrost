@@ -48,6 +48,7 @@
                 data-navbar-key="read"
                 {% if nav_path is starting_with('/read') %}aria-current="true"{% endif %}
             >
+                <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/book.html" %}</span>
                 {{ trans(key="navbarRead", lang=detected_lang) }}
             </a>
 
@@ -57,6 +58,7 @@
                 data-navbar-key="articles"
                 {% if nav_path is starting_with('/articles') %}aria-current="true"{% endif %}
             >
+                <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-dna2.html" %}</span>
                 {{ trans(key="navbarArticles", lang=detected_lang) }}
             </a>
             <a
@@ -65,6 +67,7 @@
                 data-navbar-key="news"
                 {% if nav_path is starting_with('/news') %}aria-current="true"{% endif %}
             >
+                <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-satellite.html" %}</span>
                 {{ trans(key="navbarNews", lang=detected_lang) }}
             </a>
             <!-- Knowledge Dropdown Trigger -->
@@ -75,6 +78,7 @@
                     aria-haspopup="true"
                     aria-controls="knowledge-dropdown"
                 >
+                    <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/book-open.html" %}</span>
                     <span data-navbar-key="knowledge"
                         >{{ trans(key="navbarKnowledge", lang=detected_lang) }}</span
                     >
@@ -85,16 +89,16 @@
                 <!-- Mobile inline links (visible only in mobile expanded menu) -->
                 <div class="navbar__dropdown-inline" id="knowledge-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="knowledge">{{ trans(key="navbarKnowledge", lang=detected_lang) }}</h3>
-                    <a href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="map">{{ trans(key="navbarMap", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='graph', trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="graph">{{ trans(key="navbarGraph", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='topics', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="topics">{{ trans(key="navbarTopics", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="timeline">{{ trans(key="navbarTimeline", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="library">{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki">{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='sources', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav">{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='datasets', lang='en', trailing_slash=true) }}" class="navbar__dropdown-inline-link">{{ trans(key="navbarDatasets", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='gallery', lang='en', trailing_slash=true) }}" class="navbar__dropdown-inline-link">{{ trans(key="footerGallery", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='listen', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link">{{ trans(key="navbarListen", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='map', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="map"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/gis-time-map.html" %}</span>{{ trans(key="navbarMap", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='graph', trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="graph"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/lucide-waypoints.html" %}</span>{{ trans(key="navbarGraph", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='topics', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="topics"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/lucide-tags.html" %}</span>{{ trans(key="navbarTopics", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='timeline', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="timeline"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-star-cycle.html" %}</span>{{ trans(key="navbarTimeline", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='library', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="library"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-wax-tablet.html" %}</span>{{ trans(key="navbarLibrary", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='wiki', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="wiki"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-dragon-balls.html" %}</span>{{ trans(key="navbarWiki", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='sources', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="resourcesNav"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-fossil.html" %}</span>{{ trans(key="navbarResourcesNav", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='datasets', lang='en', trailing_slash=true) }}" class="navbar__dropdown-inline-link"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/feather-archive.html" %}</span>{{ trans(key="navbarDatasets", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='gallery', lang='en', trailing_slash=true) }}" class="navbar__dropdown-inline-link"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/feather-image.html" %}</span>{{ trans(key="footerGallery", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='listen', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-lyre.html" %}</span>{{ trans(key="navbarListen", lang=detected_lang) }}</a>
                 </div>
             </div>
 
@@ -106,6 +110,7 @@
                     aria-haspopup="true"
                     aria-controls="community-dropdown"
                 >
+                    <span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/fluent-building-bank.html" %}</span>
                     <span data-navbar-key="community"
                         >{{ trans(key="navbarCommunity", lang=detected_lang) }}</span
                     >
@@ -116,15 +121,15 @@
                 <!-- Mobile inline links (visible only in mobile expanded menu) -->
                 <div class="navbar__dropdown-inline" id="community-inline">
                     <h3 class="navbar__dropdown-inline-title" data-navbar-key="community">{{ trans(key="navbarCommunity", lang=detected_lang) }}</h3>
-                    <a href="{{ get_url(path='about', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="about">{{ trans(key="navbarAbout", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="method">{{ trans(key="navbarMethod", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='press', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="press">{{ trans(key="navbarPress", lang=detected_lang) }}</a>
-                    <a href="https://docs.wheelofheaven.world" class="navbar__dropdown-inline-link" rel="noopener" data-navbar-key="docs">{{ trans(key="navbarDocs", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='code-of-conduct', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="codeOfConduct">{{ trans(key="navbarCodeOfConduct", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='contributing', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="contributing">{{ trans(key="navbarContributing", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='forums', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="forums">{{ trans(key="navbarForums", lang=detected_lang) }}</a>
-                    <a href="{{ get_url(path='faq', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="faq">{{ trans(key="navbarFAQ", lang=detected_lang) }}</a>
-                    <a href="https://x.com/wheelofheaven" class="navbar__dropdown-inline-link" target="_blank" rel="noopener noreferrer" data-navbar-key="followX">{{ trans(key="navbarFollowX", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='about', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="about"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/famicons-telescope-outline.html" %}</span>{{ trans(key="navbarAbout", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='method', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="method"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/game-scales.html" %}</span>{{ trans(key="navbarMethod", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='press', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="press"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/feather-newspaper.html" %}</span>{{ trans(key="navbarPress", lang=detected_lang) }}</a>
+                    <a href="https://docs.wheelofheaven.world" class="navbar__dropdown-inline-link" rel="noopener" data-navbar-key="docs"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/book-marked.html" %}</span>{{ trans(key="navbarDocs", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='code-of-conduct', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="codeOfConduct"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/octicon-code-of-conduct.html" %}</span>{{ trans(key="navbarCodeOfConduct", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='contributing', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="contributing"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/user-plus.html" %}</span>{{ trans(key="navbarContributing", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='forums', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="forums"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/message-square.html" %}</span>{{ trans(key="navbarForums", lang=detected_lang) }}</a>
+                    <a href="{{ get_url(path='faq', lang=detected_lang, trailing_slash=true) }}" class="navbar__dropdown-inline-link" data-navbar-key="faq"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/tdesign-questionnaire-double.html" %}</span>{{ trans(key="navbarFAQ", lang=detected_lang) }}</a>
+                    <a href="https://x.com/wheelofheaven" class="navbar__dropdown-inline-link" target="_blank" rel="noopener noreferrer" data-navbar-key="followX"><span class="navbar__item-icon" aria-hidden="true">{% include "partials/icons/x-logo.html" %}</span>{{ trans(key="navbarFollowX", lang=detected_lang) }}</a>
                 </div>
             </div>
         </div>
