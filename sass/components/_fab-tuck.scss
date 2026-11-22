@@ -1,0 +1,16 @@
+// Floating buttons step aside while the reader scrolls down (see
+// static/js/fab-tuck.js). Opacity only: these are glass surfaces, and a
+// transform on them risks WebKit dropping their backdrop-filter. An open
+// reader panel is never hidden.
+body.fabs-tucked {
+    .search-fab,
+    .to-top,
+    .reader-fab:not([data-state="expanded"]) {
+        opacity: 0;
+        pointer-events: none;
+    }
+}
+
+.reader-fab {
+    transition: opacity 0.2s ease;
+}

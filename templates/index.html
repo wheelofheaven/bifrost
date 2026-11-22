@@ -100,6 +100,18 @@
         </a>
     </section>
 
+    {# A way forward on every screen after the first. The hero has the
+       Start-here button; the sections that follow argue the premise and,
+       until the reading paths further down, link nowhere. This rail has no
+       height of its own and sticks near the foot of the viewport for the
+       rest of the page, so the link is always one tap away. #}
+    <div class="landing__start-rail">
+        <a class="landing__start-chip" href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}">
+            <span>{{ trans(key="startHereLink", lang=detected_lang) }}</span>
+            <span aria-hidden="true">&rarr;</span>
+        </a>
+    </div>
+
     {# §2 — The Working Hypothesis #}
     <section id="section-2" class="landing-section landing-section--hypothesis landing-section--video" data-section="2">
         <div class="landing-section__media" aria-hidden="true">

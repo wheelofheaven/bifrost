@@ -46,6 +46,8 @@ const bundles = {
     'pwa.js',
     'toc-scroll-spy.js',
     'to-top.js',
+    // Hides the floating buttons while the page scrolls down.
+    'fab-tuck.js',
     'reader-fab.js',
     'back-fab.js',
     'prefetch.js',

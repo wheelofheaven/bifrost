@@ -303,6 +303,12 @@ document.addEventListener("DOMContentLoaded", () => {
     mobileContentEl.querySelector('a[href], button')?.focus({ preventScroll: true });
   }
 
+  // The in-menu search row opens the search modal (bound in navbar.html);
+  // the menu gets out of its way first.
+  document.querySelectorAll(".navbar__menu-search").forEach((button) => {
+    button.addEventListener("click", () => closeMobileNav());
+  });
+
   function closeMobileNav(restoreFocus = false) {
     isMobileNavExpanded = false;
     if (navbar) {

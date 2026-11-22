@@ -1291,6 +1291,59 @@ html:has(body.mobile-nav-open) {
                 }
             }
 
+            // Search row: a plain item like the section links below it.
+            .navbar__menu-search {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                border: 0;
+                border-radius: 0.5rem;
+                background: transparent;
+                color: var(--color-text);
+                font-family: var(--font-family-body);
+                font-size: 1rem;
+                font-weight: 500;
+                text-align: start;
+                cursor: pointer;
+
+                &:hover,
+                &:focus-visible {
+                    background-color: var(--color-hover);
+                }
+            }
+
+            // "You are here": the current item, and the group that holds
+            // it, carry a short rainbow dash at the start of the row and a
+            // heavier label. The accent is the text ink, so a colour change
+            // alone would not show.
+            // (The long ancestor chain is deliberate: it has to outrank the
+            // per-item rules further down, which set the resting weight.)
+            .navbar__content .navbar__panes .navbar__pane .navbar__links :is(.navbar__menu-read--active, .navbar__link--active, .navbar__dropdown-trigger--active, .navbar__dropdown-inline-link--active) {
+                position: relative;
+                font-weight: 700;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset-inline-start: 0.1rem;
+                    top: 50%;
+                    width: 0.55rem;
+                    height: 3px;
+                    margin-top: -1.5px;
+                    border-radius: 2px;
+                    background: var(--accent-rainbow);
+                }
+            }
+
+            // Sub-items have less padding: the dash sits just outside it.
+            // (Same ancestor chain as above, so it outranks that rule.)
+            .navbar__content .navbar__panes .navbar__pane .navbar__links .navbar__dropdown-inline-link--active::before {
+                inset-inline-start: -0.45rem;
+                width: 0.4rem;
+            }
+
             // One icon in front of every item and sub-item: the same marks
             // the desktop dropdowns and the section pages use, so a section
             // is recognisable before its label is read.
@@ -1632,6 +1685,15 @@ html:has(body.mobile-nav-open) {
                                 font-size: 0.9rem;
                             }
 
+                            // Knowledge: four titled groups, two to a row.
+                            .navbar__dropdown-inline--grouped {
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 0.15rem 0.25rem;
+                                column-count: auto;
+                                padding-block: 0.25rem;
+                            }
+
                             .navbar__dropdown-trigger__caret {
                                 transform: rotate(180deg);
                             }
@@ -1971,4 +2033,28 @@ body.timeline-space-overlay {
 @keyframes navbar-start-drift {
     from { background-position: 0% 50%; }
     to   { background-position: -200% 50%; }
+}
+
+// Group titles inside the phone menu's sub-lists (hidden with the list on
+// desktop, where the dropdown panel has its own).
+.navbar__dropdown-group-title {
+    display: block;
+    padding: 0.35rem 0.5rem 0.15rem;
+    font-family: typo.$font-family-tech;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+// Desktop bar: the current section wears the rainbow as an underline.
+@media (min-width: 769px) {
+    .navbar__link--active,
+    .navbar__dropdown-trigger--active {
+        background-image: var(--accent-rainbow);
+        background-repeat: no-repeat;
+        background-size: calc(100% - 1.5rem) 2px;
+        background-position: 50% calc(100% - 0.15rem);
+    }
 }

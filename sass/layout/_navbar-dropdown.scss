@@ -275,16 +275,27 @@
                 max-width: none;
             }
 
-            // `display: block`: a flex container ignores column-count.
-            .navbar-dropdown__links {
-                display: block;
-                column-count: 2;
-                column-gap: 0.5rem;
+            // Four titled groups, two to a row.
+            .navbar-dropdown__links--grouped {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem 0.5rem;
+                align-items: start;
             }
 
-            .navbar-dropdown__link {
-                break-inside: avoid;
-                margin-bottom: 0.25rem;
+            .navbar-dropdown__group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .navbar-dropdown__group-title {
+                padding: 0.25rem 0.5rem 0;
+                font-family: typo.$font-family-tech;
+                font-size: 0.625rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-text-muted);
             }
         }
     }
