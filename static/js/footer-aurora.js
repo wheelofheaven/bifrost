@@ -78,7 +78,9 @@
         }
 
         void main() {
-            vec2 p = gl_FragCoord.xy / uUnit;
+            // Drawn larger than the strip it grew out of: broad folds and
+            // tall hems read as weather; small ones read as a pattern.
+            vec2 p = gl_FragCoord.xy / (uUnit * vec2(1.8, 1.4));
             float rise = gl_FragCoord.y / uSize.y;
             float hue = p.x * 0.21 + uTime * 0.02 + 0.06 * sin(p.x * 0.9 + uTime * 0.09);
 
