@@ -1,0 +1,37 @@
+{#- interlinear — a short passage set word by word: the original script,
+    a transliteration, a gloss and a grammatical note under each word, so a
+    reader without the language can see what the argument points at.
+
+    Usage (one word per line: original | transliteration | gloss | note | *):
+
+        {% interlinear(lang="he", dir="rtl", caption="Genesis 1:26, opening words") %}
+        וַיֹּאמֶר | vayyomer | and said | verb, singular
+        אֱלֹהִים | Elohim | Elohim | noun, plural in form | *
+        {% end %}
+
+    lang     BCP 47 code of the original script (required)
+    dir      "rtl" lays the words out right to left (default "ltr")
+    caption  optional line under the strip (inline markdown)
+
+    A trailing `*` column marks the words the surrounding prose is about;
+    they take the accent. -#}
+{%- set _dir = dir | default(value="ltr") -%}
+{%- set _lines = body | trim | split(pat="
+") -%}
+<figure class="aid-words">
+    <ol class="aid-words__list" dir="{{ _dir }}">
+        {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 3 %}
+        <li class="aid-words__word{% if c | length >= 5 %} aid-words__word--marked{% endif %}">
+            <span class="aid-words__orig" lang="{{ lang }}">{{ c.0 | trim }}</span>
+            <span class="aid-words__translit" dir="ltr">{{ c.1 | trim }}</span>
+            <span class="aid-words__gloss" dir="ltr">{{ c.2 | trim }}</span>
+            {%- if c | length >= 4 %}{% set _note = c.3 | trim %}{% if _note %}
+            <span class="aid-words__note" dir="ltr">{{ _note }}</span>
+            {%- endif %}{% endif %}
+        </li>
+        {%- endif %}{% endfor %}
+    </ol>
+    {%- if caption %}
+    <figcaption class="aid-words__caption">{{ caption | markdown(inline=true) | safe }}</figcaption>
+    {%- endif %}
+</figure>

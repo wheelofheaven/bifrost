@@ -1,0 +1,75 @@
+{#- rows — a short list of labelled statements on hairlines: facts at a
+    glance, a set of alternatives, or a list of ways onward. Not a card.
+
+    Usage (one row per line: label | text | tag | icon):
+
+        {% rows() %}
+        A royal "we" | A plural of majesty.
+        A council | God addresses attendant beings. | Most scholars today
+        Plural makers | A group speaks as a group. | !Wheel of Heaven
+        {% end %}
+
+        {% rows() %}
+        Follow the story | The [timeline](/timeline/) tells it in twelve chapters. | | timeline
+        {% end %}
+
+    label  short lead, set in the display face
+    text   the statement (inline markdown, so links work)
+    tag    optional small pill; a leading `!` sets it in the accent
+    icon   optional section mark: timeline, wiki, library, articles, map,
+           news, sources, datasets
+
+    A label of the form `claim:direct` (or framework, inferred,
+    speculative) prints that claim badge in place of text. -#}
+{#- Zola's bare `lang` reports the site default inside shortcode context, so
+    detect the page language from its path, as claim_badge.html does. -#}
+{%- set _p = page.path | default(value=section.path | default(value="/")) -%}
+{%- set _lang = "en" -%}
+{%- if _p is starting_with("/zh-Hant/") -%}{%- set _lang = "zh-Hant" -%}
+{%- elif _p is starting_with("/zh/") -%}{%- set _lang = "zh" -%}
+{%- elif _p is starting_with("/de/") -%}{%- set _lang = "de" -%}
+{%- elif _p is starting_with("/fr/") -%}{%- set _lang = "fr" -%}
+{%- elif _p is starting_with("/es/") -%}{%- set _lang = "es" -%}
+{%- elif _p is starting_with("/ru/") -%}{%- set _lang = "ru" -%}
+{%- elif _p is starting_with("/ja/") -%}{%- set _lang = "ja" -%}
+{%- elif _p is starting_with("/ko/") -%}{%- set _lang = "ko" -%}
+{%- elif _p is starting_with("/he/") -%}{%- set _lang = "he" -%}
+{%- endif -%}
+{%- set _lines = body | trim | split(pat="
+") -%}
+<dl class="aid-rows">
+    {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 2 %}
+    {%- set _tag = "" %}{% if c | length >= 3 %}{% set _tag = c.2 | trim %}{% endif %}
+    {%- set _icon = "" %}{% if c | length >= 4 %}{% set _icon = c.3 | trim %}{% endif %}
+    <div class="aid-rows__row{% if _icon %} aid-rows__row--icon{% endif %}">
+        {%- if _icon %}
+        <span class="aid-rows__icon section-mark" aria-hidden="true">
+            {%- if _icon == "timeline" %}{% include "partials/icons/game-star-cycle.html" %}
+            {%- elif _icon == "wiki" %}{% include "partials/icons/game-dragon-balls.html" %}
+            {%- elif _icon == "library" %}{% include "partials/icons/game-wax-tablet.html" %}
+            {%- elif _icon == "articles" %}{% include "partials/icons/game-dna2.html" %}
+            {%- elif _icon == "map" %}{% include "partials/icons/gis-time-map.html" %}
+            {%- elif _icon == "news" %}{% include "partials/icons/game-satellite.html" %}
+            {%- elif _icon == "sources" %}{% include "partials/icons/game-fossil.html" %}
+            {%- elif _icon == "datasets" %}{% include "partials/icons/feather-archive.html" %}
+            {%- endif %}
+        </span>
+        {%- endif %}
+        {%- set _label = c.0 | trim %}
+        {%- if _label is starting_with("claim:") %}
+        {%- set _type = _label | trim_start_matches(pat="claim:") %}{% set _t = _type | capitalize %}
+        <dt class="aid-rows__label"><span class="claim-badge claim-badge--{{ _type }} claim-badge--active" role="img" aria-label="{{ trans(key='claimType' ~ _t, lang=_lang) }}"><span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key='claimBadge' ~ _t ~ 'Char', lang=_lang) }}</span><span class="claim-badge__rest">{{ trans(key='claimBadge' ~ _t ~ 'Rest', lang=_lang) }}</span></span></span></dt>
+        {%- else %}
+        <dt class="aid-rows__label">{{ _label | markdown(inline=true) | safe }}</dt>
+        {%- endif %}
+        <dd class="aid-rows__text">
+            {{ c.1 | trim | markdown(inline=true) | safe }}
+            {%- if _tag is starting_with("!") %}
+            <span class="aid-rows__tag aid-rows__tag--accent">{{ _tag | trim_start_matches(pat="!") }}</span>
+            {%- elif _tag %}
+            <span class="aid-rows__tag">{{ _tag }}</span>
+            {%- endif %}
+        </dd>
+    </div>
+    {%- endif %}{% endfor %}
+</dl>
