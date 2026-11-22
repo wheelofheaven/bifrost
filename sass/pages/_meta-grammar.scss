@@ -325,3 +325,26 @@
         }
     }
 }
+
+// Links in the meta pages' prose. The page stylesheets colour them with
+// `var(--color-link)`, a token no theme defines, so they rendered in the
+// text colour with no underline: on a phone (no hover) the "Where to go
+// next" list on /start/ read as plain text. They take the accent and a
+// hairline underline, like the wiki's and the library's prose links.
+// `text-decoration-line` (not the shorthand) leaves the dotted style of
+// `.glossary-term` intact.
+.about__content,
+.info-page__content,
+.faq__content,
+.faq__answer {
+    :is(p, li, td, dd) a {
+        color: var(--color-accent-primary);
+        text-decoration-line: underline;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.18em;
+
+        &:hover {
+            text-decoration-thickness: 2px;
+        }
+    }
+}

@@ -1178,6 +1178,37 @@ html:has(body.mobile-nav-open) {
                 border-bottom-right-radius: 0;
             }
 
+            // In-menu "Start here" entry — the first thing in the burger
+            // menu, so a newcomer on any page has one obvious way in. It is
+            // the only bordered item, which sets it apart from the section
+            // links below without adding a second accent colour.
+            .navbar__menu-start {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                width: 100%;
+                min-height: 48px;
+                margin-bottom: 0.5rem;
+                padding: 0.75rem 1rem;
+                color: var(--color-text);
+                background-color: var(--color-hover);
+                border: 1px solid var(--color-border);
+                border-radius: 0.75rem;
+                font-family: var(--font-family-body);
+                font-size: 1rem;
+                font-weight: 600;
+                text-decoration: none;
+                transition: border-color 0.2s ease, color 0.2s ease;
+
+                &:hover,
+                &:focus-visible,
+                &--active {
+                    color: var(--color-accent-primary);
+                    border-color: var(--color-accent-primary);
+                }
+            }
+
             // In-menu Read CTA — rendered as a regular nav item alongside
             // Timeline, Newsroom, etc.
             .navbar__menu-read {

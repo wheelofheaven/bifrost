@@ -30,6 +30,17 @@
         <div class="navbar__panes">
         <div class="navbar__pane navbar__pane--main">
         <div class="navbar__links">
+            <!-- Mobile-only "Start here" entry: the first item in the burger
+                 menu, so a newcomer has one obvious way in from any page. -->
+            <a
+                href="{{ get_url(path='start', lang=detected_lang, trailing_slash=true) }}"
+                class="navbar__menu-start mobile-only{% if nav_path is starting_with('/start') %} navbar__menu-start--active{% endif %}"
+                {% if nav_path is starting_with('/start') %}aria-current="page"{% endif %}
+            >
+                <span>{{ trans(key="startHereLink", lang=detected_lang) }}</span>
+                <span aria-hidden="true">&rarr;</span>
+            </a>
+
             <!-- Mobile-only Read CTA inside the burger menu -->
             <a
                 href="{{ get_url(path='read', lang=detected_lang, trailing_slash=true) }}"
