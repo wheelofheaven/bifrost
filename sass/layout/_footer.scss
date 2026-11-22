@@ -196,12 +196,13 @@
             color: var(--color-accent-primary);
             text-decoration: none;
             transition: all 0.3s ease;
-            border-bottom: 1px solid transparent;
+            // The accent: ink text on the rainbow rule (see --accent-rainbow).
+            padding-bottom: 0.1em;
+            background: var(--accent-rainbow) no-repeat 0 100% / 100% 2px;
 
             &:hover {
                 color: var(--color-accent-secondary);
                 text-decoration: none;
-                border-bottom-color: currentColor;
             }
 
             &:focus {
@@ -215,7 +216,7 @@
         [data-theme="light"] & {
             a,
             .link {
-                color: #{colors.$mauve-600};
+                color: var(--color-accent-primary);
 
                 &:hover {
                     color: #{colors.$blue-600};
@@ -228,7 +229,7 @@
         [data-theme="dark"] & {
             a,
             .link {
-                color: #{colors.$mint};
+                color: var(--color-accent-primary);
 
                 &:hover {
                     color: #{colors.$blue};

@@ -40,6 +40,30 @@ $grammar-rainbow: (
     @include grammar-rainbow;
 }
 
+// A text link in the accent: ink for the words, the rainbow for the line.
+// A background, not a text-decoration, because an underline takes one
+// colour only; it spans the link's own width, so every link shows the
+// whole band.
+@mixin grammar-rainbow-link {
+    color: var(--color-text);
+    text-decoration: none;
+    padding-bottom: 0.1em;
+    background-image: var(--accent-rainbow);
+    background-repeat: no-repeat;
+    background-position: 0 100%;
+    background-size: 100% 2px;
+
+    &:hover,
+    &:focus-visible {
+        background-size: 100% 3px;
+    }
+}
+
+// The accent as a rule on one edge of a box (the box sets the width).
+@mixin grammar-rainbow-rule {
+    border-image: var(--accent-rainbow) 1;
+}
+
 // Index headline: the display face at weight 500, set tight.
 @mixin grammar-headline {
     font-family: var(--font-family-lead);
@@ -571,6 +595,18 @@ $grammar-rainbow: (
     a {
         text-decoration-thickness: 1px;
         text-underline-offset: 0.18em;
+    }
+
+    // Links in running text take the accent: ink on the rainbow rule.
+    // Only plain anchors and the three prose-link shortcodes; reference
+    // markers, pills, buttons and cards keep their own treatment.
+    :is(p, li, td, dd, blockquote, figcaption) {
+        a:not([class]),
+        a.wikilink,
+        a.glossary-term,
+        a.libref {
+            @include grammar-rainbow-link;
+        }
     }
 }
 

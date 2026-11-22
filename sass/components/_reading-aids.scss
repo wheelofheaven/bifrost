@@ -92,7 +92,9 @@
 
         &:hover .aid-route__title,
         &:focus-visible .aid-route__title {
-            color: var(--color-accent-primary);
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.18em;
         }
     }
 
@@ -139,7 +141,7 @@
         border-top: 2px solid var(--color-hairline);
 
         &--marked {
-            border-top-color: var(--color-accent-primary);
+            @include grammar.grammar-rainbow-rule;
         }
     }
 
@@ -171,7 +173,7 @@
     }
 
     &__word--marked &__note {
-        color: var(--color-accent-primary);
+        color: var(--color-text);
     }
 
     &__caption {
@@ -230,7 +232,7 @@
         width: 1.6rem;
         height: 1.6rem;
         margin-top: 0.1rem;
-        color: var(--color-accent-primary);
+        color: var(--color-text);
 
         @media (min-width: v.$breakpoint-md) {
             grid-row: 1;
@@ -251,10 +253,7 @@
         color: var(--color-text-secondary, var(--color-text));
 
         a {
-            color: var(--color-accent-primary);
-            text-decoration-line: underline;
-            text-decoration-thickness: 1px;
-            text-underline-offset: 0.18em;
+            @include grammar.grammar-rainbow-link;
         }
     }
 
@@ -270,9 +269,14 @@
         vertical-align: 0.1em;
         white-space: nowrap;
 
+        // A rounded border cannot take a border-image, so the band is
+        // painted under a transparent border and masked by the fill.
         &--accent {
-            border-color: var(--color-accent-primary);
-            color: var(--color-accent-primary);
+            border-color: transparent;
+            background:
+                linear-gradient(var(--color-background), var(--color-background)) padding-box,
+                var(--accent-rainbow) border-box;
+            color: var(--color-text);
         }
     }
 }
@@ -305,7 +309,7 @@
 
     &--accent-right &__name--right,
     &--accent-left &__name--left {
-        border-top-color: var(--color-accent-primary);
+        @include grammar.grammar-rainbow-rule;
     }
 
     &__row {

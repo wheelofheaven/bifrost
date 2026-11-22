@@ -1180,8 +1180,8 @@ html:has(body.mobile-nav-open) {
 
             // In-menu "Start here" entry — the first thing in the burger
             // menu, so a newcomer on any page has one obvious way in. It is
-            // the only bordered item, which sets it apart from the section
-            // links below without adding a second accent colour.
+            // the only bordered item and carries the rainbow rule, which
+            // sets it apart from the section links below.
             .navbar__menu-start {
                 display: flex;
                 align-items: center;
@@ -1199,13 +1199,23 @@ html:has(body.mobile-nav-open) {
                 font-size: 1rem;
                 font-weight: 600;
                 text-decoration: none;
-                transition: border-color 0.2s ease, color 0.2s ease;
+                position: relative;
+                overflow: hidden;
+                transition: border-color 0.2s ease;
+
+                // The accent: a rainbow rule along the foot of the item.
+                &::after {
+                    content: "";
+                    position: absolute;
+                    inset: auto 0 0;
+                    height: 2px;
+                    background: var(--accent-rainbow);
+                }
 
                 &:hover,
                 &:focus-visible,
                 &--active {
-                    color: var(--color-accent-primary);
-                    border-color: var(--color-accent-primary);
+                    border-color: var(--color-text);
                 }
             }
 

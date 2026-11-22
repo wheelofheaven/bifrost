@@ -10,11 +10,10 @@
     --color-background: #{colors.$white};
     --color-background-secondary: #{colors.$gray-100};
     --color-background-tertiary: #{colors.$gray-200};
-    // mauve-700, not the palette's mid mauve-500: the accent is the link
-    // colour on white, and mauve-500 measures 3.2:1 there (WCAG AA wants
-    // 4.5:1 for body text). mauve-700 gives 6.8:1 on white and 6.2:1 on
-    // the secondary surface, and white text on accent fills rises with it.
-    --color-accent-primary: #{colors.$mauve-700};
+    // The accent is ink, as in the dark theme. On white the rainbow uses
+    // the 500 band: the pastel 300 band all but disappears as a 1-2px line.
+    --color-accent-primary: #{colors.$gray-900};
+    --accent-rainbow: linear-gradient(90deg, #{colors.$pink-500}, #{colors.$lavender-500}, #{colors.$mauve-500}, #{colors.$blue-500}, #{colors.$cyan-500}, #{colors.$mint-500}, #{colors.$green-500}, #{colors.$pink-500});
     --color-accent-secondary: #{colors.$blue-500};
     --color-hairline: #{colors.$gray-300};
     --color-hairline-subtle: #{colors.$gray-200};
@@ -22,7 +21,7 @@
     // Interactive states
     --color-hover: rgba(0, 0, 0, 0.1);
     --color-active: rgba(0, 0, 0, 0.2);
-    --color-focus: #{colors.$mauve-700};
+    --color-focus: #{colors.$gray-900};
 
     // Notification colors
     --color-success: #{colors.$green-500};
@@ -51,7 +50,7 @@
     // gone, so this value is now what actually reaches the screen.)
     --color-navbar-bg: rgba(255, 255, 255, 0.65);
     --color-menu-bg: rgba(255, 255, 255, 0.96);
-    --color-badge-bg: #{colors.$mauve-700};
+    --color-badge-bg: #{colors.$gray-900};
     --color-badge-text: #{colors.$white};
     --color-footer-bg: #{colors.$gray-100};
     --color-card-bg: #{colors.$white};
