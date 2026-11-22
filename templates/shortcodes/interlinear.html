@@ -24,9 +24,9 @@
         <li class="aid-words__word{% if c | length >= 5 %} aid-words__word--marked{% endif %}">
             <span class="aid-words__orig" lang="{{ lang }}">{{ c.0 | trim }}</span>
             <span class="aid-words__translit" dir="ltr">{{ c.1 | trim }}</span>
-            <span class="aid-words__gloss" dir="ltr">{{ c.2 | trim }}</span>
+            <span class="aid-words__gloss" dir="auto">{{ c.2 | trim }}</span>
             {%- if c | length >= 4 %}{% set _note = c.3 | trim %}{% if _note %}
-            <span class="aid-words__note" dir="ltr">{{ _note }}</span>
+            <span class="aid-words__note" dir="auto">{{ _note }}</span>
             {%- endif %}{% endif %}
         </li>
         {%- endif %}{% endfor %}
