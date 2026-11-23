@@ -201,42 +201,29 @@
             border-bottom-color: var(--color-hairline);
         }
 
+        // The icon lives inside the <dt> (a <dl> group may hold only
+        // <dt> and <dd>) and is placed in the row's leading pad.
         &--icon {
-            grid-template-columns: 2rem 1fr;
-
-            .aid-rows__label,
-            .aid-rows__text {
-                grid-column: 2;
-            }
+            position: relative;
+            padding-inline-start: 3rem;
         }
 
         @media (min-width: v.$breakpoint-md) {
             grid-template-columns: 11rem 1fr;
 
             &--icon {
-                grid-template-columns: 2rem 9rem 1fr;
-
-                .aid-rows__label {
-                    grid-column: 2;
-                }
-
-                .aid-rows__text {
-                    grid-column: 3;
-                }
+                grid-template-columns: 9rem 1fr;
             }
         }
     }
 
     &__icon {
-        grid-row: 1 / span 2;
+        position: absolute;
+        inset-inline-start: 0;
+        top: 1rem;
         width: 1.6rem;
         height: 1.6rem;
-        margin-top: 0.1rem;
         color: var(--color-text);
-
-        @media (min-width: v.$breakpoint-md) {
-            grid-row: 1;
-        }
     }
 
     &__label {

@@ -479,8 +479,10 @@
             width: 0.5rem;
             height: 0.5rem;
             margin-inline-end: 0.25rem;
-            border-inline-end: 1.5px solid currentColor;
-            border-block-end: 1.5px solid currentColor;
+            // Physical sides on purpose: with logical ones the arrow
+            // turned sideways on right-to-left pages.
+            border-right: 1.5px solid currentColor;
+            border-bottom: 1.5px solid currentColor;
             opacity: 0.6;
             rotate: 45deg;
             transition: rotate 0.2s ease;
@@ -508,7 +510,7 @@
 
 // The project description is long; on phones it shows three lines and
 // opens on tap. The whole text stays in the markup.
-.footer--folds .footer__muted[aria-expanded="false"] {
+.footer--folds .footer__muted:not(.footer__muted--open) {
     display: -webkit-box;
     overflow: hidden;
     cursor: pointer;

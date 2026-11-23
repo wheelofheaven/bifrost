@@ -2079,3 +2079,15 @@ body.timeline-space-overlay {
         background-position: 50% calc(100% - 0.15rem);
     }
 }
+
+// "Onward" arrows follow the reading direction.
+[dir="rtl"] .navbar__menu-start > span[aria-hidden="true"],
+[dir="rtl"] .landing__start-chip > span[aria-hidden="true"] {
+    display: inline-block;
+    transform: scaleX(-1);
+}
+
+// The arrow half of the Read split button measured 21px wide.
+.navbar__cta-split__chevron {
+    min-width: 1.5rem;
+}

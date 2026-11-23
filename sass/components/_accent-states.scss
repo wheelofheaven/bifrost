@@ -62,3 +62,24 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 0.18em;
 }
+
+// Translation badges: the tier colour stays on the border and the dot; on
+// the light theme the label itself reads in the muted ink (the tier hues
+// measured 2.4-3.9:1 as text on white).
+[data-theme="light"] .translation-badge__label {
+    color: var(--color-text-muted);
+}
+
+// Controls that a flex row had squeezed below their declared size.
+.wiki-filters__expand-toggle,
+.wiki-view-toggle__btn {
+    flex-shrink: 0;
+    min-width: 2rem;
+}
+
+// The "read in English" link in the compact translation strip.
+.notification-card--translation .notification-card__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+}

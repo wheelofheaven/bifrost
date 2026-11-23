@@ -4,12 +4,14 @@
 
     Usage (one word per line: original | transliteration | gloss | note | *):
 
-        {% interlinear(lang="he", dir="rtl", caption="Genesis 1:26, opening words") %}
+        {% interlinear(script="he", dir="rtl", caption="Genesis 1:26, opening words") %}
         וַיֹּאמֶר | vayyomer | and said | verb, singular
         אֱלֹהִים | Elohim | Elohim | noun, plural in form | *
         {% end %}
 
-    lang     BCP 47 code of the original script (required)
+    script   BCP 47 code of the original words, e.g. "he" (required). Not
+             named `lang`: Zola defines `lang` itself inside a shortcode
+             and it would shadow the argument.
     dir      "rtl" lays the words out right to left (default "ltr")
     caption  optional line under the strip (inline markdown)
 
@@ -22,7 +24,7 @@
     <ol class="aid-words__list" dir="{{ _dir }}">
         {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 3 %}
         <li class="aid-words__word{% if c | length >= 5 %} aid-words__word--marked{% endif %}">
-            <span class="aid-words__orig" lang="{{ lang }}">{{ c.0 | trim }}</span>
+            <span class="aid-words__orig" lang="{{ script }}">{{ c.0 | trim }}</span>
             <span class="aid-words__translit" dir="ltr">{{ c.1 | trim }}</span>
             <span class="aid-words__gloss" dir="auto">{{ c.2 | trim }}</span>
             {%- if c | length >= 4 %}{% set _note = c.3 | trim %}{% if _note %}

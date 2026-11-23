@@ -33,20 +33,18 @@
         toggle(event.currentTarget);
     }
 
+    function openIntro() {
+        intro.classList.toggle("footer__muted--open");
+    }
+
     function apply() {
         footer.classList.toggle("footer--folds", phone.matches);
+        // The description gets no role: as a button its spoken name would
+        // be the whole paragraph. The clamp is visual only, so assistive
+        // technology reads the full text either way.
         if (intro) {
-            if (phone.matches) {
-                intro.setAttribute("role", "button");
-                intro.setAttribute("tabindex", "0");
-                if (!intro.hasAttribute("aria-expanded")) intro.setAttribute("aria-expanded", "false");
-                intro.addEventListener("click", onClick);
-                intro.addEventListener("keydown", onKey);
-            } else {
-                ["role", "tabindex", "aria-expanded"].forEach((name) => intro.removeAttribute(name));
-                intro.removeEventListener("click", onClick);
-                intro.removeEventListener("keydown", onKey);
-            }
+            if (phone.matches) intro.addEventListener("click", openIntro);
+            else intro.removeEventListener("click", openIntro);
         }
         titles.forEach((title, index) => {
             if (phone.matches) {

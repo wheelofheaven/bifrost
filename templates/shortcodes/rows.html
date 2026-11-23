@@ -42,8 +42,12 @@
     {%- set _tag = "" %}{% if c | length >= 3 %}{% set _tag = c.2 | trim %}{% endif %}
     {%- set _icon = "" %}{% if c | length >= 4 %}{% set _icon = c.3 | trim %}{% endif %}
     <div class="aid-rows__row{% if _icon %} aid-rows__row--icon{% endif %}">
-        {%- if _icon %}
-        <span class="aid-rows__icon section-mark" aria-hidden="true">
+        {%- set _label = c.0 | trim %}
+        {%- if _label is starting_with("claim:") %}
+        {%- set _type = _label | trim_start_matches(pat="claim:") %}{% set _t = _type | capitalize %}
+        <dt class="aid-rows__label"><span class="claim-badge claim-badge--{{ _type }} claim-badge--active" role="img" aria-label="{{ trans(key='claimType' ~ _t, lang=_lang) }}"><span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key='claimBadge' ~ _t ~ 'Char', lang=_lang) }}</span><span class="claim-badge__rest">{{ trans(key='claimBadge' ~ _t ~ 'Rest', lang=_lang) }}</span></span></span></dt>
+        {%- else %}
+        <dt class="aid-rows__label">{% if _icon %}<span class="aid-rows__icon section-mark" aria-hidden="true">
             {%- if _icon == "timeline" %}{% include "partials/icons/game-star-cycle.html" %}
             {%- elif _icon == "wiki" %}{% include "partials/icons/game-dragon-balls.html" %}
             {%- elif _icon == "library" %}{% include "partials/icons/game-wax-tablet.html" %}
@@ -53,14 +57,7 @@
             {%- elif _icon == "sources" %}{% include "partials/icons/game-fossil.html" %}
             {%- elif _icon == "datasets" %}{% include "partials/icons/feather-archive.html" %}
             {%- endif %}
-        </span>
-        {%- endif %}
-        {%- set _label = c.0 | trim %}
-        {%- if _label is starting_with("claim:") %}
-        {%- set _type = _label | trim_start_matches(pat="claim:") %}{% set _t = _type | capitalize %}
-        <dt class="aid-rows__label"><span class="claim-badge claim-badge--{{ _type }} claim-badge--active" role="img" aria-label="{{ trans(key='claimType' ~ _t, lang=_lang) }}"><span class="claim-badge__label" aria-hidden="true"><span class="claim-badge__char">{{ trans(key='claimBadge' ~ _t ~ 'Char', lang=_lang) }}</span><span class="claim-badge__rest">{{ trans(key='claimBadge' ~ _t ~ 'Rest', lang=_lang) }}</span></span></span></dt>
-        {%- else %}
-        <dt class="aid-rows__label">{{ _label | markdown(inline=true) | safe }}</dt>
+        </span>{% endif %}{{ _label | markdown(inline=true) | safe }}</dt>
         {%- endif %}
         <dd class="aid-rows__text">
             {{ c.1 | trim | markdown(inline=true) | safe }}
