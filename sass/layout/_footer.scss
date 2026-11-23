@@ -186,7 +186,6 @@
 
         small {
             font-size: 0.75rem;
-            opacity: 0.8;
             color: var(--color-text-subtle);
         }
 
@@ -506,3 +505,15 @@
         display: block;
     }
 }
+
+// The project description is long; on phones it shows three lines and
+// opens on tap. The whole text stays in the markup.
+.footer--folds .footer__muted[aria-expanded="false"] {
+    display: -webkit-box;
+    overflow: hidden;
+    cursor: pointer;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+}
+

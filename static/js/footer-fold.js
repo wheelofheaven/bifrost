@@ -4,7 +4,8 @@
  * The footer stacks eight link lists under their headings; on a phone that
  * is more than four screens. Up to 768px each heading becomes a toggle and
  * its list starts closed (styled in sass/layout/_footer.scss under
- * .footer--folds). Without this script every list stays open.
+ * .footer--folds). The project description above them is clamped to three
+ * lines and opens the same way. Without this script everything stays open.
  */
 (() => {
     const footer = document.querySelector(".footer");
@@ -13,6 +14,7 @@
         (title) => title.nextElementSibling && title.nextElementSibling.tagName === "UL",
     );
     if (!titles.length) return;
+    const intro = footer.querySelector(".footer__col--brand .footer__muted");
 
     const phone = window.matchMedia("(max-width: 768px)");
 
@@ -33,6 +35,19 @@
 
     function apply() {
         footer.classList.toggle("footer--folds", phone.matches);
+        if (intro) {
+            if (phone.matches) {
+                intro.setAttribute("role", "button");
+                intro.setAttribute("tabindex", "0");
+                if (!intro.hasAttribute("aria-expanded")) intro.setAttribute("aria-expanded", "false");
+                intro.addEventListener("click", onClick);
+                intro.addEventListener("keydown", onKey);
+            } else {
+                ["role", "tabindex", "aria-expanded"].forEach((name) => intro.removeAttribute(name));
+                intro.removeEventListener("click", onClick);
+                intro.removeEventListener("keydown", onKey);
+            }
+        }
         titles.forEach((title, index) => {
             if (phone.matches) {
                 const list = title.nextElementSibling;

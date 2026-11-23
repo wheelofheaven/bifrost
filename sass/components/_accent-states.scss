@@ -34,3 +34,31 @@
     text-decoration-thickness: 1px;
     text-underline-offset: 0.18em;
 }
+
+// Small return links in note and reference lists measured 15-20px wide.
+// 24px is the minimum target size for a standalone control.
+.wiki__footnote-backlink,
+.wiki__reference-backlink,
+.article__footnote-backlink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+}
+
+// Grid/list toggle on the index pages measured 19px wide on phones.
+.wiki-view-toggle__btn {
+    min-width: 2rem;
+}
+
+
+// Links written inside a wiki card's summary had no rule at all and showed
+// in the browser's default blue (1.8:1 on the dark theme). They read as
+// text with a hairline underline, like a card title on hover.
+.wiki-card__summary a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}

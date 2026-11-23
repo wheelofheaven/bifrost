@@ -2,6 +2,7 @@
 //
 // This file sets up default theme values and ensures proper CSS custom property fallbacks
 
+@use "sass:color";
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
@@ -90,8 +91,12 @@
     :root:not([data-theme]) {
         // Core colors
         --color-text: #{colors.$gray-900};
-        --color-text-muted: #{colors.$gray-600};
-        --color-text-subtle: #{colors.$gray-500};
+        // Greys for secondary text on white. gray-500 measured 2.07:1 and
+        // gray-600 3.95:1 on the tinted surfaces, against a 4.5:1 minimum;
+        // these two steps towards gray-700 pass on white, gray-100 and (muted)
+        // gray-200 while keeping muted and subtle distinct.
+        --color-text-muted: #{color.mix(colors.$gray-700, colors.$gray-600, 30%)};
+        --color-text-subtle: #{color.mix(colors.$gray-700, colors.$gray-600, 10%)};
         --color-background: #{colors.$white};
         --color-background-secondary: #{colors.$gray-100};
         --color-background-tertiary: #{colors.$gray-200};
