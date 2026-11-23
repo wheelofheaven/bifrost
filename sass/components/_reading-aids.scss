@@ -1,0 +1,329 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "../pages/grammar";
+
+// Reading aids — small visual figures a guided page sets between its
+// paragraphs so a newcomer can see the shape of the argument before
+// reading it: a timed route (`route`), a passage word by word
+// (`interlinear`), labelled statements on hairlines (`rows`) and two
+// readings side by side (`compare`). They speak the reading grammar:
+// hairlines, the eyebrow voice, the prism dash and the one accent. None
+// of them is a card.
+
+// Shared reset: the aids sit inside prose containers that style lists,
+// definition lists and links for running text.
+.aid-route,
+.aid-words,
+.aid-rows,
+.aid-compare {
+    margin: 2rem 0 2.5rem;
+    font-family: var(--font-family-body);
+
+    ol,
+    li,
+    dt,
+    dd {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+}
+
+// ---- route: a timed table of contents ----------------------------------
+.aid-route {
+    counter-reset: aid-route;
+
+    &__bar {
+        display: flex;
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+        @include grammar.grammar-rainbow;
+    }
+
+    // Each segment is a window on the bar's gradient; the gap between
+    // two steps is a hairline of page background.
+    &__seg {
+        flex: 1 1 0;
+        border-inline-end: 3px solid var(--color-background);
+
+        &:last-child {
+            border-inline-end: 0;
+        }
+
+        @for $units from 1 through 6 {
+            &--#{$units} {
+                flex-grow: $units;
+            }
+        }
+    }
+
+    & &__steps {
+        margin-top: 0.5rem;
+    }
+
+    &__step {
+        counter-increment: aid-route;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+
+        &:last-child {
+            border-bottom: 0;
+        }
+    }
+
+    // Qualified by the block so it outranks the prose containers' link
+    // rules (`.info-page__content :is(p, li) a`).
+    & &__link {
+        display: grid;
+        grid-template-columns: 1.75rem 1fr auto;
+        align-items: baseline;
+        gap: 0.5rem;
+        min-height: 44px;
+        padding: 0.7rem 0;
+        color: var(--color-text);
+        text-decoration: none;
+
+        &::before {
+            content: counter(aid-route);
+            font-family: typo.$font-family-tech;
+            font-size: 0.8125rem;
+            color: var(--color-text-muted);
+        }
+
+        &:hover .aid-route__title,
+        &:focus-visible .aid-route__title {
+            text-decoration: underline;
+            text-decoration-thickness: 1px;
+            text-underline-offset: 0.18em;
+        }
+    }
+
+    &__title {
+        font-family: var(--font-family-lead);
+        font-size: 1rem;
+        font-weight: 500;
+        line-height: 1.3;
+        transition: color v.$transition-base ease;
+    }
+
+    &__time {
+        @include grammar.grammar-eyebrow;
+        white-space: nowrap;
+    }
+}
+
+// ---- interlinear: a passage word by word -------------------------------
+.aid-words {
+    // Qualified by the block so the padding survives the shared list
+    // reset above. Each word's own rule is the strip's top edge.
+    & &__list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.25rem 0.75rem;
+        padding-bottom: 1.1rem;
+        border-bottom: 1px solid var(--color-hairline);
+    }
+
+    // The transliteration and gloss are left-to-right text inside a
+    // right-to-left strip: they keep their own direction but align to
+    // the same edge as the word they explain.
+    &__list[dir="rtl"] &__word > span {
+        text-align: right;
+    }
+
+    &__word {
+        display: flex;
+        flex: 1 1 5.5rem;
+        flex-direction: column;
+        gap: 0.2rem;
+        min-width: 0;
+        padding-top: 0.55rem;
+        border-top: 2px solid var(--color-hairline);
+
+        &--marked {
+            @include grammar.grammar-rainbow-rule;
+        }
+    }
+
+    &__orig {
+        font-size: 1.6rem;
+        line-height: 1.5;
+        color: var(--color-text);
+    }
+
+    &__translit {
+        font-style: italic;
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        color: var(--color-text-muted);
+    }
+
+    &__gloss {
+        font-size: 0.875rem;
+        font-weight: 500;
+        line-height: 1.3;
+        color: var(--color-text);
+    }
+
+    &__note {
+        @include grammar.grammar-eyebrow;
+        font-size: 0.625rem;
+        line-height: 1.4;
+        letter-spacing: 0.06em;
+    }
+
+    &__word--marked &__note {
+        color: var(--color-text);
+    }
+
+    &__caption {
+        margin-top: 0.6rem;
+        font-family: typo.$font-family-tech;
+        font-size: 0.75rem;
+        letter-spacing: 0.02em;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+    }
+}
+
+// ---- rows: labelled statements on hairlines ----------------------------
+.aid-rows {
+    border-top: 1px solid var(--color-hairline);
+
+    &__row {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 0.25rem 1rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid var(--color-hairline-subtle);
+
+        &:last-child {
+            border-bottom-color: var(--color-hairline);
+        }
+
+        // The icon lives inside the <dt> (a <dl> group may hold only
+        // <dt> and <dd>) and is placed in the row's leading pad.
+        &--icon {
+            position: relative;
+            padding-inline-start: 3rem;
+        }
+
+        @media (min-width: v.$breakpoint-md) {
+            grid-template-columns: 11rem 1fr;
+
+            &--icon {
+                grid-template-columns: 9rem 1fr;
+            }
+        }
+    }
+
+    &__icon {
+        position: absolute;
+        inset-inline-start: 0;
+        top: 1rem;
+        width: 1.6rem;
+        height: 1.6rem;
+        color: var(--color-text);
+    }
+
+    &__label {
+        font-family: var(--font-family-lead);
+        font-size: 1rem;
+        font-weight: 600;
+        line-height: 1.35;
+        color: var(--color-text);
+    }
+
+    &__text {
+        font-size: 0.9375rem;
+        line-height: 1.55;
+        color: var(--color-text-secondary, var(--color-text));
+
+        a {
+            @include grammar.grammar-rainbow-link;
+        }
+    }
+
+    &__tag {
+        @include grammar.grammar-eyebrow;
+        display: inline-block;
+        margin-inline-start: 0.35rem;
+        padding: 0.15rem 0.55rem;
+        border: 1px solid var(--color-hairline);
+        border-radius: 999px;
+        font-size: 0.625rem;
+        letter-spacing: 0.06em;
+        vertical-align: 0.1em;
+        white-space: nowrap;
+
+        // A rounded border cannot take a border-image, so the band is
+        // painted under a transparent border and masked by the fill.
+        &--accent {
+            border-color: transparent;
+            background:
+                linear-gradient(var(--color-background), var(--color-background)) padding-box,
+                var(--accent-rainbow) border-box;
+            color: var(--color-text);
+        }
+    }
+}
+
+// ---- compare: two readings side by side --------------------------------
+.aid-compare {
+    border-top: 1px solid var(--color-hairline);
+    border-bottom: 1px solid var(--color-hairline);
+
+    &__head,
+    &__row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        column-gap: 1rem;
+    }
+
+    &__head {
+        padding: 0.8rem 0 0.7rem;
+    }
+
+    &__name {
+        padding-top: 0.5rem;
+        border-top: 2px solid var(--color-hairline);
+        font-family: var(--font-family-lead);
+        font-size: 0.9375rem;
+        font-weight: 600;
+        line-height: 1.3;
+        color: var(--color-text);
+    }
+
+    &--accent-right &__name--right,
+    &--accent-left &__name--left {
+        @include grammar.grammar-rainbow-rule;
+    }
+
+    &__row {
+        padding: 0.75rem 0;
+        border-top: 1px solid var(--color-hairline-subtle);
+    }
+
+    &__question {
+        @include grammar.grammar-eyebrow;
+        grid-column: 1 / -1;
+        margin-bottom: 0.3rem;
+    }
+
+    &__cell {
+        font-size: 0.9375rem;
+        line-height: 1.45;
+        color: var(--color-text);
+    }
+
+    &__shared {
+        margin: 0;
+        padding: 0.8rem 0;
+        border-top: 1px solid var(--color-hairline-subtle);
+        font-size: 0.9375rem;
+        font-style: italic;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+        text-align: center;
+    }
+}

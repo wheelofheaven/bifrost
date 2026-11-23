@@ -191,10 +191,7 @@
         text-transform: uppercase;
         letter-spacing: 0.08em;
         color: var(--color-text);
-        background-image: linear-gradient(135deg,
-            #{rgba(c.$mint, 0.45)},
-            #{rgba(c.$mauve-500, 0.45)}
-        );
+        background-image: var(--accent-rainbow-wash);
         box-shadow: inset 0 0 0 1px rgb(255 255 255 / 18%);
         white-space: nowrap;
     }

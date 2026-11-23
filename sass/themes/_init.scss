@@ -2,6 +2,7 @@
 //
 // This file sets up default theme values and ensures proper CSS custom property fallbacks
 
+@use "sass:color";
 @use "../abstracts/colors" as colors;
 @use "../base/typography" as typo;
 
@@ -20,7 +21,14 @@
     --color-background: #{colors.$gray-950};
     --color-background-secondary: #{colors.$gray-900};
     --color-background-tertiary: #{colors.$gray-800};
-    --color-accent-primary: #{colors.$mint};
+    // The accent is ink, not a hue: the same colour as the text, so an
+    // accent never reads as "the cyan" or "the purple". What marks an
+    // accent is the rainbow, drawn wherever a line can carry it (link
+    // underlines, rules, borders) through --accent-rainbow.
+    --color-accent-primary: #{colors.$gray-100};
+    --color-link: var(--color-accent-primary);
+    --accent-rainbow: linear-gradient(90deg, #{colors.$pink-300}, #{colors.$lavender-300}, #{colors.$mauve-300}, #{colors.$blue-300}, #{colors.$cyan-300}, #{colors.$mint-300}, #{colors.$green-300}, #{colors.$pink-300});
+    --accent-rainbow-wash: linear-gradient(90deg, #{rgba(colors.$pink-300, 0.3)}, #{rgba(colors.$lavender-300, 0.3)}, #{rgba(colors.$mauve-300, 0.3)}, #{rgba(colors.$blue-300, 0.3)}, #{rgba(colors.$cyan-300, 0.3)}, #{rgba(colors.$mint-300, 0.3)}, #{rgba(colors.$green-300, 0.3)}, #{rgba(colors.$pink-300, 0.3)});
     --color-accent-secondary: #{colors.$blue};
     --color-hairline: #{colors.$gray-800};
     --color-hairline-subtle: #{colors.$gray-900};
@@ -28,7 +36,7 @@
     // Interactive states
     --color-hover: rgba(255, 255, 255, 0.1);
     --color-active: rgba(255, 255, 255, 0.2);
-    --color-focus: #{colors.$mint};
+    --color-focus: #{colors.$gray-100};
 
     // Component-specific colors
     //
@@ -40,8 +48,8 @@
     --color-landing-backdrop: #0a0a0a;
     --color-navbar-bg: rgba(27, 31, 34, 0.1);
     --color-menu-bg: rgba(27, 31, 34, 0.94);
-    --color-badge-bg: #{colors.$mint-300};
-    --color-badge-text: #{colors.$mint-900};
+    --color-badge-bg: #{colors.$gray-100};
+    --color-badge-text: #{colors.$gray-950};
     --color-footer-bg: #{colors.$gray-950};
     --color-card-bg: #{colors.$gray-900};
     --color-border: rgba(255, 255, 255, 0.01);
@@ -83,13 +91,21 @@
     :root:not([data-theme]) {
         // Core colors
         --color-text: #{colors.$gray-900};
-        --color-text-muted: #{colors.$gray-600};
-        --color-text-subtle: #{colors.$gray-500};
+        // Greys for secondary text on white. gray-500 measured 2.07:1 and
+        // gray-600 3.95:1 on the tinted surfaces, against a 4.5:1 minimum;
+        // these two steps towards gray-700 pass on white, gray-100 and (muted)
+        // gray-200 while keeping muted and subtle distinct.
+        --color-text-muted: #{color.mix(colors.$gray-700, colors.$gray-600, 30%)};
+        --color-text-subtle: #{color.mix(colors.$gray-700, colors.$gray-600, 10%)};
         --color-background: #{colors.$white};
         --color-background-secondary: #{colors.$gray-100};
         --color-background-tertiary: #{colors.$gray-200};
-        // Mirrors [data-theme="light"] — see the contrast note there.
-        --color-accent-primary: #{colors.$mauve-700};
+        // The accent is ink, as in the dark theme. On white the rainbow uses
+        // the 500 band: the pastel 300 band all but disappears as a 1-2px line.
+        --color-accent-primary: #{colors.$gray-900};
+        --color-link: var(--color-accent-primary);
+        --accent-rainbow: linear-gradient(90deg, #{colors.$pink-500}, #{colors.$lavender-500}, #{colors.$mauve-500}, #{colors.$blue-500}, #{colors.$cyan-500}, #{colors.$mint-500}, #{colors.$green-500}, #{colors.$pink-500});
+        --accent-rainbow-wash: linear-gradient(90deg, #{rgba(colors.$pink-500, 0.26)}, #{rgba(colors.$lavender-500, 0.26)}, #{rgba(colors.$mauve-500, 0.26)}, #{rgba(colors.$blue-500, 0.26)}, #{rgba(colors.$cyan-500, 0.26)}, #{rgba(colors.$mint-500, 0.26)}, #{rgba(colors.$green-500, 0.26)}, #{rgba(colors.$pink-500, 0.26)});
         --color-accent-secondary: #{colors.$blue-500};
         --color-hairline: #{colors.$gray-300};
         --color-hairline-subtle: #{colors.$gray-200};
@@ -97,13 +113,13 @@
         // Interactive states
         --color-hover: rgba(0, 0, 0, 0.1);
         --color-active: rgba(0, 0, 0, 0.2);
-        --color-focus: #{colors.$mauve-700};
+        --color-focus: #{colors.$gray-900};
 
         // Component-specific colors
         --color-landing-backdrop: #{colors.$white};
         --color-navbar-bg: rgba(255, 255, 255, 0.1);
         --color-menu-bg: rgba(255, 255, 255, 0.96);
-        --color-badge-bg: #{colors.$mauve-700};
+        --color-badge-bg: #{colors.$gray-900};
         --color-badge-text: #{colors.$white};
         --color-footer-bg: #{colors.$gray-100};
         --color-card-bg: #{colors.$white};

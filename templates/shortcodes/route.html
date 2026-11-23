@@ -1,0 +1,33 @@
+{#- route — a timed table of contents for a guided page: a bar divided in
+    proportion to each step's length, then the steps as numbered jump links.
+
+    Usage (one step per line: anchor | title | units, units 1–6):
+
+        {% route(label="Ten minutes, five steps", unit="min") %}
+        1-the-premise | The premise, and who is making it | 1
+        2-the-labels  | How to tell a source from an interpretation | 2
+        {% end %}
+
+    label  accessible name of the navigation (required)
+    unit   short unit printed after each number, e.g. "min"
+
+    The anchors are the page's own heading ids, so translated pages pass
+    their own. -#}
+{%- set _unit = unit | default(value="") -%}
+{%- set _lines = body | trim | split(pat="
+") -%}
+<nav class="aid-route" aria-label="{{ label }}">
+    <div class="aid-route__bar" aria-hidden="true">
+        {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 3 %}<span class="aid-route__seg aid-route__seg--{{ c.2 | trim }}"></span>{% endif %}{% endfor -%}
+    </div>
+    <ol class="aid-route__steps">
+        {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 3 %}
+        <li class="aid-route__step">
+            <a class="aid-route__link" href="#{{ c.0 | trim }}">
+                <span class="aid-route__title">{{ c.1 | trim | markdown(inline=true) | safe }}</span>
+                <span class="aid-route__time">{{ c.2 | trim }}{% if _unit %} {{ _unit }}{% endif %}</span>
+            </a>
+        </li>
+        {%- endif %}{% endfor %}
+    </ol>
+</nav>

@@ -173,11 +173,12 @@ html:has(body.mobile-nav-open) {
     }
 
     // Read split-button CtA: glassmorphic primary action + chevron toggle.
-    // Same gradient in both themes — mint (dark accent) → mauve (light
-    // accent) — so the CtA reads as a single brand mark across modes.
-    // The body is a single translucent gradient layer (so backdrop-filter
-    // composites cleanly) and a `::before` ring draws the gradient border
-    // independently via a mask trick.
+    // The CtA wears the accent: the rainbow band, as a translucent wash on
+    // the body and at full strength on the ring. The body is a single
+    // translucent gradient layer (so backdrop-filter composites cleanly)
+    // and a `::before` ring draws the gradient border independently via a
+    // mask trick. The wash uses the pastel 300 band on dark and the 500
+    // band on white, like --accent-rainbow.
     &__cta-split {
         position: relative;
         display: inline-flex;
@@ -187,10 +188,29 @@ html:has(body.mobile-nav-open) {
         border-radius: 0.5rem;
         overflow: hidden;
         background-image: linear-gradient(
-            135deg,
-            #{rgba(colors.$mint, 0.25)},
-            #{rgba(colors.$mauve-500, 0.25)}
+            90deg,
+            #{rgba(colors.$pink-300, 0.3)},
+            #{rgba(colors.$lavender-300, 0.3)},
+            #{rgba(colors.$mauve-300, 0.3)},
+            #{rgba(colors.$blue-300, 0.3)},
+            #{rgba(colors.$cyan-300, 0.3)},
+            #{rgba(colors.$mint-300, 0.3)},
+            #{rgba(colors.$green-300, 0.3)}
         );
+
+        [data-theme="light"] & {
+            background-image: linear-gradient(
+                90deg,
+                #{rgba(colors.$pink-500, 0.28)},
+                #{rgba(colors.$lavender-500, 0.28)},
+                #{rgba(colors.$mauve-500, 0.28)},
+                #{rgba(colors.$blue-500, 0.28)},
+                #{rgba(colors.$cyan-500, 0.28)},
+                #{rgba(colors.$mint-500, 0.28)},
+                #{rgba(colors.$green-500, 0.28)}
+            );
+        }
+
         backdrop-filter: blur(20px) saturate(180%);
         -webkit-backdrop-filter: blur(20px) saturate(180%);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
@@ -206,11 +226,7 @@ html:has(body.mobile-nav-open) {
             inset: 0;
             border-radius: inherit;
             padding: 1px;
-            background: linear-gradient(
-                135deg,
-                #{rgba(colors.$mint, 0.6)},
-                #{rgba(colors.$mauve-500, 0.6)}
-            );
+            background: var(--accent-rainbow);
             -webkit-mask:
                 linear-gradient(#000 0 0) content-box,
                 linear-gradient(#000 0 0);
@@ -310,6 +326,16 @@ html:has(body.mobile-nav-open) {
 
     // Mobile inline dropdown links - hidden on desktop
     &__dropdown-inline {
+        display: none;
+    }
+
+    // Item icons belong to the phone menu only; the desktop bar is text.
+    &__item-icon {
+        display: none;
+    }
+
+    // Likewise the one-line descriptions under the top-level items.
+    &__item-desc {
         display: none;
     }
 
@@ -1178,6 +1204,210 @@ html:has(body.mobile-nav-open) {
                 border-bottom-right-radius: 0;
             }
 
+            // In-menu "Start here" entry — the first thing in the burger
+            // menu, so a newcomer on any page has one obvious way in. It is
+            // the only bordered item and carries the rainbow rule, which
+            // sets it apart from the section links below.
+            .navbar__menu-start {
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                width: 100%;
+                min-height: 48px;
+                margin-bottom: 0.5rem;
+                padding: 0.75rem 1rem;
+                color: var(--color-text);
+                border: 0;
+                border-radius: 0.75rem;
+                font-family: var(--font-family-body);
+                font-size: 1rem;
+                font-weight: 600;
+                text-decoration: none;
+                // The accent as a wash that drifts slowly across the item.
+                // The band is laid out twice over (first and last stop are
+                // the same hue), so a shift of one full tile loops without
+                // a seam. Pastel 300 band on dark, 500 band on white.
+                background-image: linear-gradient(
+                    90deg,
+                    #{rgba(colors.$pink-300, 0.3)},
+                    #{rgba(colors.$lavender-300, 0.3)},
+                    #{rgba(colors.$mauve-300, 0.3)},
+                    #{rgba(colors.$blue-300, 0.3)},
+                    #{rgba(colors.$cyan-300, 0.3)},
+                    #{rgba(colors.$mint-300, 0.3)},
+                    #{rgba(colors.$green-300, 0.3)},
+                    #{rgba(colors.$pink-300, 0.3)}
+                );
+                background-size: 200% 100%;
+                animation: navbar-start-drift 16s linear infinite;
+
+                [data-theme="light"] & {
+                    background-image: linear-gradient(
+                        90deg,
+                        #{rgba(colors.$pink-500, 0.26)},
+                        #{rgba(colors.$lavender-500, 0.26)},
+                        #{rgba(colors.$mauve-500, 0.26)},
+                        #{rgba(colors.$blue-500, 0.26)},
+                        #{rgba(colors.$cyan-500, 0.26)},
+                        #{rgba(colors.$mint-500, 0.26)},
+                        #{rgba(colors.$green-500, 0.26)},
+                        #{rgba(colors.$pink-500, 0.26)}
+                    );
+                }
+
+                // The ring: the band at full strength, drawn by a mask so
+                // it can follow the rounded corners. It is the same eight
+                // stops as the wash, tiled and animated the same way, so at
+                // every point the border is the fill's own hue and the two
+                // drift as one.
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset: 0;
+                    padding: 1px;
+                    border-radius: inherit;
+                    background: var(--accent-rainbow);
+                    background-size: 200% 100%;
+                    animation: navbar-start-drift 16s linear infinite;
+                    -webkit-mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    -webkit-mask-composite: xor;
+                    mask:
+                        linear-gradient(#000 0 0) content-box,
+                        linear-gradient(#000 0 0);
+                    mask-composite: exclude;
+                    pointer-events: none;
+                }
+
+                &:hover::before,
+                &:focus-visible::before,
+                &--active::before {
+                    padding: 2px;
+                }
+
+                @media (prefers-reduced-motion: reduce) {
+                    &,
+                    &::before {
+                        animation: none;
+                    }
+                }
+            }
+
+            // Top-level items say what they are: label, then one quiet line.
+            .navbar__item-text {
+                display: flex;
+                flex-direction: column;
+                min-width: 0;
+            }
+
+            .navbar__item-desc {
+                display: block;
+                margin-top: 0.1rem;
+                font-size: 0.75rem;
+                font-weight: 400;
+                line-height: 1.3;
+                color: var(--color-text-muted);
+            }
+
+            // Search row: a plain item like the section links below it.
+            .navbar__menu-search {
+                display: flex;
+                align-items: center;
+                width: 100%;
+                min-height: 44px;
+                padding: 0.75rem 1rem;
+                border: 0;
+                border-radius: 0.5rem;
+                background: transparent;
+                color: var(--color-text);
+                font-family: var(--font-family-body);
+                font-size: 1rem;
+                font-weight: 500;
+                text-align: start;
+                cursor: pointer;
+
+                &:hover,
+                &:focus-visible {
+                    background-color: var(--color-hover);
+                }
+            }
+
+            // "You are here": the current item, and the group that holds
+            // it, carry a short rainbow dash at the start of the row and a
+            // heavier label. The accent is the text ink, so a colour change
+            // alone would not show.
+            // (The long ancestor chain is deliberate: it has to outrank the
+            // per-item rules further down, which set the resting weight.)
+            .navbar__content .navbar__panes .navbar__pane .navbar__links :is(.navbar__menu-read--active, .navbar__link--active, .navbar__dropdown-trigger--active, .navbar__dropdown-inline-link--active) {
+                position: relative;
+                font-weight: 700;
+
+                &::before {
+                    content: "";
+                    position: absolute;
+                    inset-inline-start: 0.1rem;
+                    top: 50%;
+                    width: 0.55rem;
+                    height: 3px;
+                    margin-top: -1.5px;
+                    border-radius: 2px;
+                    background: var(--accent-rainbow);
+                }
+            }
+
+            // Sub-items have less padding: the dash sits just outside it.
+            // (Same ancestor chain as above, so it outranks that rule.)
+            .navbar__content .navbar__panes .navbar__pane .navbar__links .navbar__dropdown-inline-link--active::before {
+                inset-inline-start: -0.45rem;
+                width: 0.4rem;
+            }
+
+            // One icon in front of every item and sub-item: the same marks
+            // the desktop dropdowns and the section pages use, so a section
+            // is recognisable before its label is read.
+            .navbar__item-icon {
+                display: inline-flex;
+                flex-shrink: 0;
+                align-items: center;
+                justify-content: center;
+                width: 1.25rem;
+                height: 1.25rem;
+                margin-inline-end: 0.75rem;
+                color: var(--color-text-muted);
+                line-height: 0;
+
+                svg {
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+
+            // A group header is icon, label, caret: the caret keeps the far
+            // edge, the icon and label sit together at the start.
+            .navbar__dropdown-trigger {
+                justify-content: flex-start;
+                // The icon brings its own spacing; a flex gap on top of it
+                // would push these labels right of the plain items'.
+                gap: 0;
+
+                .navbar__dropdown-trigger__caret {
+                    margin-inline-start: auto;
+                }
+            }
+
+            // Sub-items sit two to a row, so their icons and indents are
+            // tighter: "Code of Conduct" has to fit half the menu's width.
+            .navbar__dropdown-inline {
+                .navbar__item-icon {
+                    width: 1.1rem;
+                    height: 1.1rem;
+                    margin-inline-end: 0.5rem;
+                }
+            }
+
             // In-menu Read CTA — rendered as a regular nav item alongside
             // Timeline, Newsroom, etc.
             .navbar__menu-read {
@@ -1458,9 +1688,31 @@ html:has(body.mobile-nav-open) {
                             }
                         }
 
+                        // Two columns, filled top to bottom: Knowledge has
+                        // ten links, and as one column they ran past the
+                        // bottom of the screen.
                         &.navbar__dropdown--mobile-open {
                             .navbar__dropdown-inline {
-                                display: flex;
+                                display: block;
+                                column-count: 2;
+                                column-gap: 0.25rem;
+                                margin-left: 0.5rem;
+                                padding-left: 0.25rem;
+                            }
+
+                            .navbar__dropdown-inline-link {
+                                break-inside: avoid;
+                                padding-inline: 0.5rem;
+                                font-size: 0.9rem;
+                            }
+
+                            // Knowledge: four titled groups, two to a row.
+                            .navbar__dropdown-inline--grouped {
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 0.15rem 0.25rem;
+                                column-count: auto;
+                                padding-block: 0.25rem;
                             }
 
                             .navbar__dropdown-trigger__caret {
@@ -1487,6 +1739,25 @@ html:has(body.mobile-nav-open) {
 
                 &.navbar__content--lang-open .navbar__panes {
                     transform: translateX(-50%);
+                }
+
+                // The pane that is not showing is parked beside the other,
+                // and the scroll box is wider than a pane by its own side
+                // padding, so a sliver of the parked pane showed at the
+                // edge (the selected language's highlight, the Back arrow).
+                // Hide it outright; `visibility` also takes its controls
+                // out of the tab order. The delay lets the slide finish
+                // before the outgoing pane disappears.
+                .navbar__pane--lang,
+                &.navbar__content--lang-open .navbar__pane--main {
+                    visibility: hidden;
+                    transition: visibility 0s linear 0.3s;
+                }
+
+                .navbar__pane--main,
+                &.navbar__content--lang-open .navbar__pane--lang {
+                    visibility: visible;
+                    transition: visibility 0s;
                 }
 
                 // Language picker pane: back affordance + title row, then
@@ -1777,4 +2048,46 @@ body.timeline-space-overlay {
 @keyframes navbar-search-cycle-hint {
     0%, 78%, 100% { opacity: 0; }
     84%, 94%      { opacity: 1; }
+}
+
+// One tile of the Start-here wash (its background is 200% wide).
+@keyframes navbar-start-drift {
+    from { background-position: 0% 50%; }
+    to   { background-position: -200% 50%; }
+}
+
+// Group titles inside the phone menu's sub-lists (hidden with the list on
+// desktop, where the dropdown panel has its own).
+.navbar__dropdown-group-title {
+    display: block;
+    padding: 0.35rem 0.5rem 0.15rem;
+    font-family: typo.$font-family-tech;
+    font-size: 0.625rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+}
+
+// Desktop bar: the current section wears the rainbow as an underline.
+@media (min-width: 769px) {
+    .navbar__link--active,
+    .navbar__dropdown-trigger--active {
+        background-image: var(--accent-rainbow);
+        background-repeat: no-repeat;
+        background-size: calc(100% - 1.5rem) 2px;
+        background-position: 50% calc(100% - 0.15rem);
+    }
+}
+
+// "Onward" arrows follow the reading direction.
+[dir="rtl"] .navbar__menu-start > span[aria-hidden="true"],
+[dir="rtl"] .landing__start-chip > span[aria-hidden="true"] {
+    display: inline-block;
+    transform: scaleX(-1);
+}
+
+// The arrow half of the Read split button measured 21px wide.
+.navbar__cta-split__chevron {
+    min-width: 1.5rem;
 }

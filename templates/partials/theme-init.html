@@ -1,13 +1,33 @@
 <script>
-    // Theme initialization — runs immediately to prevent flash of incorrect
-    // theme. Dark is the project's canonical default; the OS
-    // `prefers-color-scheme` hint is intentionally ignored on first visit.
-    // Users who toggle to light get their choice persisted in localStorage
-    // and respected on return.
+    // Theme initialization — runs immediately to prevent a flash of the
+    // wrong theme. A choice made with the theme toggle is stored in
+    // localStorage and always wins. Without one, the site follows the
+    // operating system (`prefers-color-scheme`), on first paint and live
+    // when the system switches (for example at sunset on iOS).
     (function () {
         const html = document.documentElement;
-        const savedTheme = localStorage.getItem("theme");
-        const effectiveTheme = savedTheme === "light" ? "light" : "dark";
-        html.setAttribute("data-theme", effectiveTheme);
+        const systemLight = window.matchMedia("(prefers-color-scheme: light)");
+
+        function savedTheme() {
+            try {
+                const saved = localStorage.getItem("theme");
+                return saved === "light" || saved === "dark" ? saved : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        function apply() {
+            html.setAttribute(
+                "data-theme",
+                savedTheme() || (systemLight.matches ? "light" : "dark"),
+            );
+        }
+
+        apply();
+
+        if (systemLight.addEventListener) {
+            systemLight.addEventListener("change", apply);
+        }
     })();
 </script>

@@ -1,0 +1,85 @@
+// Hover and focus states that only changed colour to the accent.
+//
+// The accent is the text ink (see themes/_dark.scss), so a rule that merely
+// set `color: var(--color-accent-primary)` on hover no longer shows
+// anything. These are the titles and links that had no second cue; they
+// take a hairline underline instead. When you write a new hover state, give
+// it its own cue (underline, background, border) and do not add it here.
+:is(
+    .audio-player__meta:hover .audio-player__title-text,
+    .continue-module__link:hover .continue-module__item-title,
+    .library-book__link:hover,
+    .library-section .book-card__link:hover,
+    .listen__card-main:hover .listen__card-title,
+    .listen__card-main:focus-visible .listen__card-title,
+    .offline-page__cached-list a:hover,
+    .read__featured-list a:hover .read__featured-item-title,
+    .read__featured-list a:focus .read__featured-item-title,
+    .read__path-main:hover .read__path-title,
+    .read__path-main:focus-visible .read__path-title,
+    .reading-list-panel__link:hover .reading-list-panel__item-title,
+    .related-content__card:hover .related-content__card-link,
+    .search-result:hover .search-result__title,
+    .section-page__link:hover .section-page__item-title,
+    .source-card__cites-list a:hover,
+    .source-page__source-link:hover .source-page__source-title,
+    .source-page__source-link:focus .source-page__source-title,
+    .study-panel__secondary-link:hover,
+    .topics__eyebrow a:hover,
+    .topics__member-link:hover .topics__member-title,
+    .topics__member-link:focus-visible .topics__member-title,
+    .wiki-card__link:hover
+) {
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}
+
+// Small return links in note and reference lists measured 15-20px wide.
+// 24px is the minimum target size for a standalone control.
+.wiki__footnote-backlink,
+.wiki__reference-backlink,
+.article__footnote-backlink {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 1.5rem;
+    min-height: 1.5rem;
+}
+
+// Grid/list toggle on the index pages measured 19px wide on phones.
+.wiki-view-toggle__btn {
+    min-width: 2rem;
+}
+
+
+// Links written inside a wiki card's summary had no rule at all and showed
+// in the browser's default blue (1.8:1 on the dark theme). They read as
+// text with a hairline underline, like a card title on hover.
+.wiki-card__summary a {
+    color: inherit;
+    text-decoration-line: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.18em;
+}
+
+// Translation badges: the tier colour stays on the border and the dot; on
+// the light theme the label itself reads in the muted ink (the tier hues
+// measured 2.4-3.9:1 as text on white).
+[data-theme="light"] .translation-badge__label {
+    color: var(--color-text-muted);
+}
+
+// Controls that a flex row had squeezed below their declared size.
+.wiki-filters__expand-toggle,
+.wiki-view-toggle__btn {
+    flex-shrink: 0;
+    min-width: 2rem;
+}
+
+// The "read in English" link in the compact translation strip.
+.notification-card--translation .notification-card__link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 1.5rem;
+}

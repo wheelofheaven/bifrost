@@ -1,0 +1,32 @@
+{#- compare — two readings of the same evidence set side by side, question
+    by question, with an optional line for what they share.
+
+    Usage (one question per line: question | left answer | right answer):
+
+        {% compare(left="The council reading", right="The plural-makers reading", shared="Both take the plural seriously.") %}
+        Who says "us"? | One God, to attendant beings | The makers, to each other
+        {% end %}
+
+    left, right  the two column heads (required)
+    accent       "left" or "right": which column is the page's own reading
+                 (default "right")
+    shared       optional closing line across both columns (inline markdown) -#}
+{%- set _accent = accent | default(value="right") -%}
+{%- set _lines = body | trim | split(pat="
+") -%}
+<div class="aid-compare aid-compare--accent-{{ _accent }}" role="table">
+    <div class="aid-compare__head" role="row">
+        <span class="aid-compare__name aid-compare__name--left" role="columnheader">{{ left }}</span>
+        <span class="aid-compare__name aid-compare__name--right" role="columnheader">{{ right }}</span>
+    </div>
+    {%- for line in _lines %}{% set c = line | split(pat="|") %}{% if c | length >= 3 %}
+    <div class="aid-compare__row" role="row">
+        <span class="aid-compare__question" role="rowheader">{{ c.0 | trim | markdown(inline=true) | safe }}</span>
+        <span class="aid-compare__cell aid-compare__cell--left" role="cell">{{ c.1 | trim | markdown(inline=true) | safe }}</span>
+        <span class="aid-compare__cell aid-compare__cell--right" role="cell">{{ c.2 | trim | markdown(inline=true) | safe }}</span>
+    </div>
+    {%- endif %}{% endfor %}
+    {%- if shared %}
+    <p class="aid-compare__shared">{{ shared | markdown(inline=true) | safe }}</p>
+    {%- endif %}
+</div>

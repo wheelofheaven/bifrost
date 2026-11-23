@@ -268,3 +268,61 @@
     color: inherit;
     border-color: rgba(255, 255, 255, 0.35);
 }
+
+// ---- Start-here rail ----------------------------------------------------
+// A zero-height sticky rail placed after the hero: once the second section
+// arrives it holds a small "Start here" chip above the scroll hint for the
+// rest of the page. Glass like the navbar, with the accent as its ring.
+.landing__start-rail {
+    position: sticky;
+    top: calc(100dvh - 7.25rem);
+    z-index: 4;
+    display: flex;
+    justify-content: center;
+    height: 0;
+    pointer-events: none;
+}
+
+.landing__start-chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    height: 2.25rem;
+    padding: 0 0.95rem;
+    border-radius: 999px;
+    background-color: var(--color-navbar-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    color: var(--color-text);
+    font-family: var(--font-family-tech);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    pointer-events: auto;
+
+    &::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        padding: 1px;
+        border-radius: inherit;
+        background: var(--accent-rainbow);
+        -webkit-mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask:
+            linear-gradient(#000 0 0) content-box,
+            linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        pointer-events: none;
+    }
+
+    &:hover::before,
+    &:focus-visible::before {
+        padding: 2px;
+    }
+}

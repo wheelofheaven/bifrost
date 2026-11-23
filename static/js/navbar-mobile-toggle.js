@@ -164,6 +164,17 @@ document.addEventListener("DOMContentLoaded", () => {
     document.documentElement.getAttribute("data-theme") || "dark";
   updateThemeIcons(currentTheme === "light");
 
+  // The theme can also change without a click: theme-init.html follows the
+  // operating system while the visitor has not chosen one.
+  new MutationObserver(() => {
+    updateThemeIcons(
+      document.documentElement.getAttribute("data-theme") === "light",
+    );
+  }).observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+
   // Search shortcuts are handled by search-loader.js, including the first
   // interaction before the lazy bundle is available.
 
@@ -291,6 +302,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.addEventListener("touchmove", preventBodyScroll, { passive: false });
     mobileContentEl.querySelector('a[href], button')?.focus({ preventScroll: true });
   }
+
+  // The in-menu search row opens the search modal (bound in navbar.html);
+  // the menu gets out of its way first.
+  document.querySelectorAll(".navbar__menu-search").forEach((button) => {
+    button.addEventListener("click", () => closeMobileNav());
+  });
 
   function closeMobileNav(restoreFocus = false) {
     isMobileNavExpanded = false;

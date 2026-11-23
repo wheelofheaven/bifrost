@@ -263,6 +263,41 @@
             min-width: 250px;
             max-width: 350px;
         }
+
+        // Ten entries with descriptions: as one column the panel was
+        // taller than a laptop screen and the last entries sat below the
+        // fold (the container scrolls, but nothing shows that it does).
+        // Two columns, filled top to bottom, fit without scrolling.
+        @media (min-width: 769px) {
+            width: min(40rem, calc(100vw - 40px));
+
+            .navbar-dropdown__container {
+                max-width: none;
+            }
+
+            // Four titled groups, two to a row.
+            .navbar-dropdown__links--grouped {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem 0.5rem;
+                align-items: start;
+            }
+
+            .navbar-dropdown__group {
+                display: flex;
+                flex-direction: column;
+                gap: 0.25rem;
+            }
+
+            .navbar-dropdown__group-title {
+                padding: 0.25rem 0.5rem 0;
+                font-family: typo.$font-family-tech;
+                font-size: 0.625rem;
+                letter-spacing: 0.1em;
+                text-transform: uppercase;
+                color: var(--color-text-muted);
+            }
+        }
     }
 
     // Resources dropdown specific styling
