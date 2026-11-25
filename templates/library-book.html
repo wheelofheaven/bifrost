@@ -235,9 +235,11 @@
                             {# Chapter shape can be `paragraphs` (verse books like Genesis),
                                `lines` (Sumerian compositions like Enki and Ninmah), or
                                `segments` (fragmentary tablets like the Sumerian Flood Story,
-                               where preserved line-blocks are interleaved with lacunae). #}
-                            {% if chapter.segments %}
-                                {% for segment in chapter.segments %}
+                               where preserved line-blocks are interleaved with lacunae).
+                               `tablets` (Gilgamesh XI) is the same shape without
+                               segment ids or lacunae. #}
+                            {% if chapter.segments or chapter.tablets %}
+                                {% for segment in chapter.segments | default(value=chapter.tablets) %}
                                     {% if segment.preceding_lacuna %}
                                     <div class="library-book__lacuna" role="note" aria-label="Lacuna in the source text">
                                         {% if segment.preceding_lacuna.i18n and segment.preceding_lacuna.i18n[detected_lang] %}{{ segment.preceding_lacuna.i18n[detected_lang] }}{% else %}{{ segment.preceding_lacuna.text }}{% endif %}
@@ -787,8 +789,14 @@
                         {% set_global interlinear_original_label = "Sumerian" %}
                     {% elif original_lang == "uga" %}
                         {% set_global interlinear_original_label = "Ugaritic" %}
-                    {% elif original_lang == "ar" %}
+                    {% elif original_lang == "ar" or original_lang == "arb" %}
                         {% set_global interlinear_original_label = "Arabic" %}
+                    {% elif original_lang == "cop" %}
+                        {% set_global interlinear_original_label = "Coptic" %}
+                    {% elif original_lang == "ave" %}
+                        {% set_global interlinear_original_label = "Avestan" %}
+                    {% elif original_lang == "gez" %}
+                        {% set_global interlinear_original_label = "Geʿez" %}
                     {% elif original_lang == "arc" %}
                         {% set_global interlinear_original_label = "Aramaic" %}
                     {% elif original_lang == "fa" or original_lang == "fas" %}

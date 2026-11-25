@@ -432,3 +432,42 @@
     src: url("fonts/vendor/noto-sans-ipa/noto-sans-ipa.woff2") format("woff2");
     unicode-range: U+0250-02AF, U+02B0-02FF, U+1D00-1DBF;
 }
+
+// ─── Coptic, Avestan, Ethiopic (self-hosted) ──────────────────────
+//
+// Original-script faces for the library interlinear: Sahidic Coptic
+// (Gospel of Thomas), Avestan (Vendidad) and Ge'ez (1 Enoch, Jubilees).
+// Few systems ship these scripts, so without the faces the originals
+// render as boxes. Each face is bounded to its script block, so it
+// loads only where that script appears. Google Fonts subsets, OFL;
+// provenance in each folder's README.
+
+@font-face {
+    font-family: "Noto Sans Coptic";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-sans-coptic/noto-sans-coptic-regular.woff2")
+        format("woff2");
+    unicode-range: U+2C80-2CFF, U+03E2-03EF;
+}
+
+@font-face {
+    font-family: "Noto Sans Avestan";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-sans-avestan/noto-sans-avestan-regular.woff2")
+        format("woff2");
+    unicode-range: U+10B00-10B3F;
+}
+
+@font-face {
+    font-family: "Noto Serif Ethiopic";
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url("fonts/vendor/noto-serif-ethiopic/noto-serif-ethiopic-regular.woff2")
+        format("woff2");
+    unicode-range: U+1200-139F, U+2D80-2DDF, U+AB00-AB2F;
+}

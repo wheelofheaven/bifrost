@@ -295,6 +295,11 @@ $font-family-citation:
     "GFS Didot",
     "Noto Sans IPA",
     "Noto Naskh Arabic",
+    // Original scripts of the library interlinear, each bounded by
+    // unicode-range in _fonts.scss (Coptic, Avestan, Ge'ez).
+    "Noto Sans Coptic",
+    "Noto Sans Avestan",
+    "Noto Serif Ethiopic",
     // CJK serif for scriptural / classical passages
     "Noto Serif JP",
     "Hiragino Mincho ProN",

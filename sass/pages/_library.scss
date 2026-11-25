@@ -5330,11 +5330,23 @@
     }
 }
 
-// The interlinear-cun span is cuneiform-styled by default. For the
-// non-cuneiform originals now routed through the word-pair / whole-line
-// branches (Arabic, Persian, Japanese) render in the reader's citation
-// font at reading size rather than the cuneiform stack.
+// The interlinear-cun span is cuneiform-styled by default. Every
+// non-cuneiform original routed through the word-pair / whole-line
+// branches (Hebrew, Aramaic, Greek, Ge'ez, Coptic, Avestan, Arabic,
+// Persian, Japanese, …) renders in the reader's citation font at reading
+// size; that stack carries the script faces (Frank Ruhl Libre, GFS Didot,
+// Noto Serif Ethiopic, Noto Sans Coptic, Noto Sans Avestan, …).
 .library-book__interlinear-cun {
+    &:lang(he),
+    &:lang(hbo),
+    &:lang(arc),
+    &:lang(grc),
+    &:lang(el),
+    &:lang(gez),
+    &:lang(cop),
+    &:lang(ave),
+    &:lang(syr),
+    &:lang(vi),
     &:lang(ar),
     &:lang(ara),
     &:lang(arb),
