@@ -597,6 +597,19 @@
                             </dd>
                         </div>
                         {% endif %}
+                        {# Public-domain editions carry the original-language text for the
+                           interlinear separately (`originalText` in _meta); SBLGNT's
+                           CC BY 4.0 requires this credit. #}
+                        {% if book_data.originalText %}
+                        {% set ot = book_data.originalText %}
+                        <div class="library-book__licensing-item">
+                            <dt class="library-book__provenance-term">Original text (interlinear)</dt>
+                            <dd class="library-book__licensing-value">
+                                {{ library_macros::license_badge(label=ot.license, url=ot.licenseUrl | default(value="")) }}
+                                <span class="library-book__license-attribution">{% if ot.url %}<a href="{{ ot.url | safe }}" target="_blank" rel="noopener noreferrer">{{ ot.edition }}</a>{% else %}{{ ot.edition }}{% endif %}</span>
+                            </dd>
+                        </div>
+                        {% endif %}
                     </dl>
                     {% if lic and lic.note %}
                     <details class="library-book__licensing-note">
