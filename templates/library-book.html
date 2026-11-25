@@ -96,6 +96,12 @@
 {% set book_version_title = library_macros::get_book_version_title(book_data=book_data, lang=detected_lang) | trim %}
 {% set book_short_version_title = library_macros::get_book_short_version_title(book_data=book_data, lang=detected_lang) | trim %}
 {% set original_lang = book_data.originalLang | default(value=book_data.primaryLang) %}
+{# `text` holds the original only when the book's primary language is its
+   original language. Public-domain editions (ASV Genesis: primaryLang en,
+   originalLang he) carry a translation in `text`, which must never be shown
+   in the interlinear as the original. #}
+{% set primary_lang = book_data.primaryLang | default(value=original_lang) %}
+{% set text_is_original = primary_lang == original_lang %}
 {% set audio_hold = book_data.audioHold[detected_lang] | default(value="") %}
 {% set original_title_differs = original_lang != detected_lang and book_data.titles and book_data.titles[original_lang] %}
 
@@ -249,7 +255,7 @@
                                     <div class="library-book__segment-label" aria-label="Segment {{ segment.id }}">Segment {{ segment.id }}</div>
                                     {% endif %}
                                     {% for verse in segment.lines %}
-                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
+                                        {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text="", portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations, text_is_original=text_is_original) }}
                                     {% endfor %}
                                 {% endfor %}
                             {% else %}
@@ -284,7 +290,7 @@
                                             {% set ref_paragraph_text = first_match.text | default(value="") %}
                                         {% endif %}
                                     {% endif %}
-                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, ref_label=ref_verse_label, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations) }}
+                                    {{ library_macros::render_verse(verse=verse, chapter_n=chapter.n, lang=detected_lang, original_lang=original_lang, ref_paragraph_text=ref_paragraph_text, ref_label=ref_verse_label, portrait_registry=portrait_registry, preserve_paragraph_breaks=book_data.preserveParagraphBreaks[detected_lang] | default(value=false), citations=canon_citations, text_is_original=text_is_original) }}
                                     {% if continues and not loop.first and not next_continues %}
                                     </div>
                                     {% endif %}

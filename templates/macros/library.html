@@ -154,7 +154,7 @@
    Supports both `paragraphs`-shape chapters (source in `verse.text`) and
    `lines`-shape chapters (source in `verse.translit`). The caller computes
    `ref_paragraph_text` for the parallel-reference display. #}
-{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, ref_label="", portrait_registry=false, preserve_paragraph_breaks=false, citations=false) %}
+{% macro render_verse(verse, chapter_n, lang, original_lang, ref_paragraph_text, ref_label="", portrait_registry=false, preserve_paragraph_breaks=false, citations=false, text_is_original=true) %}
     {# Notes model: verse.notes.official is the WoH-sanctioned commentary
        (markdown); verse.notes.community is an array of contributed notes
        (empty for now). has_notes drives the actions-gutter trigger and the
@@ -171,7 +171,13 @@
     {% endif %}
     {% set community_notes = verse.notes.community | default(value=[]) %}
     {% set has_notes = official_note | trim != "" or community_notes | length > 0 %}
+    {% if text_is_original %}
     {% set source_text = verse.text | default(value=verse.he | default(value=verse.translit | default(value=""))) %}
+    {% else %}
+    {# `text` is a translation (public-domain edition): only dedicated
+       original-script fields may feed the interlinear. #}
+    {% set source_text = verse.he | default(value="") %}
+    {% endif %}
     {% set has_translation = verse.i18n and verse.i18n[lang] %}
     {# Scripture citations in the canon books, linked to the cited verse
        of the Wheel of Heaven translation (data/canon_citations/). #}
@@ -188,8 +194,8 @@
        alignment used for Greek/Arabic/Hebrew doesn't apply — render the whole
        original line with any transliteration beneath it instead. #}
     {% set is_cjk = original_lang == "ja" or original_lang == "zh" or original_lang == "zh-Hant" or original_lang == "ko" %}
-    {% set has_cjk_pair = is_cjk and verse.text | default(value="") | trim != "" %}
-    {% set has_text_translit_pair = not is_cjk and verse.text | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
+    {% set has_cjk_pair = text_is_original and is_cjk and verse.text | default(value="") | trim != "" %}
+    {% set has_text_translit_pair = text_is_original and not is_cjk and verse.text | default(value="") | trim != "" and verse.translit | default(value="") | trim != "" %}
     {% set cuneiform_confidence = verse.cuneiform_confidence | default(value="") %}
     {# The line's own language. Books that mix witnesses (1 Enoch: Aramaic,
        Greek, Ge'ez; Jubilees: Hebrew, Ge'ez, Greek; Daniel: Hebrew, Aramaic)

@@ -5594,3 +5594,10 @@
         }
     }
 }
+
+// Books with no original-script layer on this page (public-domain English
+// editions, or a page in the book's own original language) render no
+// `__para-original` blocks; the interlinear control would do nothing there.
+.library-book:not(:has(.library-book__para-original)) .library-book__interlinear {
+    display: none;
+}
