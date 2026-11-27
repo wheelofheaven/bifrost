@@ -1,0 +1,16 @@
+{#- Inline claim marker — the epistemic label on ONE assertion.
+
+    Shared by shortcodes/claim.html (`{% claim(type=…) %}` in content) and the
+    Genesis reader (macros/genesis.html, claim-labelled segments), so both
+    print the same markup and claim-notes.js / _claim-inline.scss serve both.
+
+    type  direct | framework | inferred | speculative
+    text  the assertion, ALREADY rendered HTML (the caller runs
+          `markdown(inline=true)`; this macro prints it as-is)
+    lang  page language (labels and the method link)
+    id    optional core claim record, e.g. "woh-claim-0073"
+
+    The output is a single line with no surrounding whitespace: the shortcode
+    used to print it inline in running prose, and a stray space or newline
+    would show between a claim and the punctuation after it. -#}
+{% macro inline(type, text, lang="en", id="") %}{%- set t = type | capitalize -%}{%- set _label = trans(key='claimType' ~ t, lang=lang) -%}<span class="claim claim--{{ type }}"><span class="claim__text">{{ text | safe }}</span><button type="button" class="claim__marker" data-claim-type="{{ type }}" data-claim-label="{{ _label }}" data-claim-desc="{{ trans(key='claimBadge' ~ t ~ 'Desc', lang=lang) }}" data-claim-method="{{ get_url(path='method/', lang=lang, trailing_slash=true) }}" data-claim-method-label="{{ trans(key='navbarMethod', lang=lang) }}"{% if id %} data-claim-id="{{ id }}"{% endif %} aria-haspopup="dialog" title="{{ _label }}"><span class="visually-hidden">{{ _label }}</span></button></span>{% endmacro inline %}

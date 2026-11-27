@@ -309,15 +309,127 @@ def timeline_narrow(S):
     o.append('</svg>')
     return "\n".join(o) + "\n"
 
+# ---------------------------------------------------------------- creation week (Genesis 1)
+# The six "days" of Genesis 1 as working stages, for the /genesis/ reader
+# (lens 4, passage 1:1–5). The days are a sequence, not ages: they take their
+# own six-step rainbow (dg-day-0…5), so no day reads as a named precessional
+# age. The canon's figure (TBWTT 2:10, ≈ 2,000 years a day) is the scale; the
+# Wheel of Heaven model length (claim 0059, ≈ 2,160) is a dashed, framework-
+# coloured footnote under it. No dates, no totals.
+DAY_ICONS = [
+ # 1 · the survey and the light: the sun
+ '<circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2.4M12 18.1v2.4M3.5 12h2.4M18.1 12h2.4M6 6l1.7 1.7M16.3 16.3 18 18M6 18l1.7-1.7M16.3 7.7 18 6"/>',
+ # 2 · the waters and the clouds: a cloud above the sea
+ '<path d="M6.5 10.5H17a2.7 2.7 0 0 0-.5-5.4A4 4 0 0 0 9 4.6a3 3 0 0 0-2.5 5.9Z"/><path d="M3 16q2.25-2 4.5 0t4.5 0 4.5 0 4.5 0M3 20q2.25-2 4.5 0t4.5 0 4.5 0 4.5 0"/>',
+ # 3 · one continent and the first plants: raised land, a sprout
+ '<path d="M2.5 20.5h19M4 20.5Q8 14.5 12 15t8 5.5"/><path d="M12 15V9.5M12 12Q8.2 12 8.2 8.2 12 8.2 12 12M12 10.5q3.8 0 3.8-3.8-3.8 0-3.8 3.8"/>',
+ # 4 · reading the sky: moon and star
+ '<path d="M15 4.5a7.5 7.5 0 1 0 5 11 6 6 0 0 1-5-11Z"/><path d="M6 3.5v4M4 5.5h4"/>',
+ # 5 · life in the seas and the air: a fish, a bird
+ '<path d="M3 17q5-5 10 0-5 5-10 0Z"/><path d="m13 17 3.5-3v6Z"/><path d="M9.5 7.5q2.5-3 4.75 0 2.25-3 4.75 0"/>',
+ # 6 · land animals and humankind: a quadruped, a person
+ '<path d="M3 12.5h7.5l1.5-2.5M4 12.5V19M9.5 12.5V19"/><circle cx="17.5" cy="5.2" r="1.9"/><path d="M17.5 7.6v6.4M17.5 14l-2.6 5.5M17.5 14l2.6 5.5M14.6 10.2h5.8"/>',
+]
+
+def wrap_n(s, max_w, size, lines=3):
+    """Greedy word wrap into at most `lines` lines (the last line takes the rest)."""
+    out, cur = [], ""
+    for w in s.split(" "):
+        t = (cur + " " + w).strip()
+        if cur and text_w(t, size) > max_w and len(out) < lines - 1:
+            out.append(cur); cur = w
+        else:
+            cur = t
+    return out + [cur]
+
+def day_defs(prefix):
+    o = ['  <defs>']
+    for i, paths in enumerate(DAY_ICONS):
+        o.append(f'    <symbol id="{prefix}-{i}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">{paths}</symbol>')
+    o.append('  </defs>')
+    return o
+
+def creation_week(S):
+    C = S["cw"]; W, H = 720, 300
+    x0, x1 = 12.0, 708.0; cw = (x1 - x0) / 6; top, bot = 14.0, 164.0; gs = 34.0
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" role="img" aria-labelledby="cw-t cw-d" class="dg dg--creation-week">',
+         f'  <title id="cw-t">{esc(C["title"])}</title>', f'  <desc id="cw-d">{esc(C["desc"])}</desc>']
+    o += day_defs("cw-i")
+    for i, d in enumerate(C["days"]):
+        cx0 = x0 + i*cw; tx = cx0 + cw/2
+        o.append(f'  <rect x="{f(cx0+3)}" y="{f(top)}" width="{f(cw-6)}" height="{f(bot-top)}" rx="8" class="dg-tile dg-day-{i}"/>')
+        o.append(f'  <rect x="{f(cx0+3)}" y="{f(top)}" width="{f(cw-6)}" height="4" rx="2" class="dg-day-bar-{i}"/>')
+        o.append(f'  <text x="{f(tx)}" y="{f(top+24)}" text-anchor="middle" class="dg-mono">{esc(C["day"])} {i+1} · {esc(d["range"])}</text>')
+        o.append(f'  <use href="#cw-i-{i}" x="{f(tx-gs/2)}" y="{f(top+36)}" width="{gs}" height="{gs}" class="dg-glyph dg-day-ink-{i}"/>')
+        for j, l in enumerate(wrap_n(d["label"], cw - 16, 13)):
+            o.append(f'  <text x="{f(tx)}" y="{f(top+96+16*j)}" text-anchor="middle" class="dg-label" font-size="13">{esc(l)}</text>')
+    # the canon's scale: six equal spans on one ruler
+    ry = bot + 18
+    o.append(f'  <line x1="{f(x0+3)}" y1="{f(ry)}" x2="{f(x1-3)}" y2="{f(ry)}" class="dg-ruler"/>')
+    for i in range(7):
+        x = min(max(x0 + i*cw, x0 + 3), x1 - 3)
+        o.append(f'  <line x1="{f(x)}" y1="{f(ry-5)}" x2="{f(x)}" y2="{f(ry+5)}" class="dg-ruler"/>')
+    for i in range(6):
+        o.append(f'  <text x="{f(x0 + i*cw + cw/2)}" y="{f(ry+18)}" text-anchor="middle" class="dg-mono dg-mono--ink">{esc(C["span"])}</text>')
+    o.append(f'  <text x="{f(W/2)}" y="{f(ry+46)}" text-anchor="middle" class="dg-label" font-size="13" font-weight="600">{esc(C["canon"])} <tspan class="dg-mono" font-weight="400">· {esc(C["canon_ref"])}</tspan></text>')
+    o.append(f'  <text x="{f(W/2)}" y="{f(ry+64)}" text-anchor="middle" class="dg-label--muted" font-size="12">{esc(C["canon_def"])}</text>')
+    # the Wheel of Heaven model, secondary and marked
+    fy = ry + 92
+    o.append(f'  <line x1="{f(x0+3)}" y1="{f(fy)}" x2="{f(x0+40)}" y2="{f(fy)}" class="dg-framework-line"/>')
+    o.append(f'  <text x="{f(x0+48)}" y="{f(fy+4)}" class="dg-framework-text" font-size="11.5">{esc(C["model"])}</text>')
+    o.append('</svg>')
+    return "\n".join(o) + "\n"
+
+def creation_week_narrow(S):
+    """Phone variant: the six days as a vertical list, the scale under it."""
+    C = S["cw"]; W = 360; row = 66; top = 8
+    canon = wrap_n(C["canon"], W - 32 - 70, 12.5, 2)
+    cdef = wrap_n(C["canon_def"], W - 32, 11.5, 2)
+    model = wrap_n(C["model"], W - 60, 11.5, 2)
+    H = top + 6*row + 18 + 16*len(canon) + 15*len(cdef) + 16 + 15*len(model) + 8
+    o = [f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 {W} {H}" role="img" aria-labelledby="cwn-t cwn-d" class="dg dg--creation-week-narrow">',
+         f'  <title id="cwn-t">{esc(C["title"])}</title>', f'  <desc id="cwn-d">{esc(C["desc"])}</desc>']
+    o += day_defs("cwn-i")
+    for i, d in enumerate(C["days"]):
+        y = top + i*row
+        o.append(f'  <rect x="10" y="{y+3}" width="{W-20}" height="{row-6}" rx="8" class="dg-tile dg-day-{i}"/>')
+        o.append(f'  <rect x="10" y="{y+3}" width="4" height="{row-6}" rx="2" class="dg-day-bar-{i}"/>')
+        o.append(f'  <use href="#cwn-i-{i}" x="26" y="{y+row/2-13}" width="26" height="26" class="dg-glyph dg-day-ink-{i}"/>')
+        o.append(f'  <text x="66" y="{y+22}" class="dg-mono">{esc(C["day"])} {i+1} · {esc(d["range"])}</text>')
+        o.append(f'  <text x="{W-22}" y="{y+22}" text-anchor="end" class="dg-mono dg-mono--ink">{esc(C["span"])}</text>')
+        for j, l in enumerate(wrap_n(d["label"], W - 66 - 22, 13.5, 2)):
+            o.append(f'  <text x="66" y="{y+41+16*j}" class="dg-label" font-size="13.5">{esc(l)}</text>')
+    y = top + 6*row + 18
+    for j, l in enumerate(canon):
+        o.append(f'  <text x="16" y="{y+16*j}" class="dg-label" font-size="12.5" font-weight="600">{esc(l)}</text>')
+    o.append(f'  <text x="{W-16}" y="{y}" text-anchor="end" class="dg-mono">{esc(C["canon_ref"])}</text>')
+    y += 16*len(canon)
+    for j, l in enumerate(cdef):
+        o.append(f'  <text x="16" y="{y+15*j}" class="dg-label--muted" font-size="11.5">{esc(l)}</text>')
+    y += 15*len(cdef) + 12
+    o.append(f'  <line x1="16" y1="{y}" x2="42" y2="{y}" class="dg-framework-line"/>')
+    for j, l in enumerate(model):
+        o.append(f'  <text x="50" y="{y+4+15*j}" class="dg-framework-text" font-size="11.5">{esc(l)}</text>')
+    o.append('</svg>')
+    return "\n".join(o) + "\n"
+
 BUILDERS = {"precession": precession, "great-year": great_year, "wheel-of-heaven": wheel,
             "world-ages-timeline": timeline,
-            "world-ages-timeline-narrow": timeline_narrow}
+            "world-ages-timeline-narrow": timeline_narrow,
+            "creation-week": creation_week,
+            "creation-week-narrow": creation_week_narrow}
+
+# Figures whose strings exist only in some languages (the /genesis/ reader is
+# English-only for now): built where the string block is present.
+NEEDS = {"creation-week": "cw", "creation-week-narrow": "cw"}
 
 def main():
     for path in sorted(glob.glob(os.path.join(STR_DIR, "*.json"))):
         S = json.load(open(path))
         lang = S["lang"]
         for name, fn in BUILDERS.items():
+            if NEEDS.get(name) and NEEDS[name] not in S:
+                continue
             suffix = ".svg" if lang == "en" else f".{lang}.svg"
             with open(os.path.join(OUT, name + suffix), "w") as fh:
                 fh.write(fn(S))

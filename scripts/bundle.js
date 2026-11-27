@@ -75,6 +75,11 @@ const bundles = {
   'webmcp.bundle.js': [
     'webmcp.js',
   ],
+  // Genesis four-lens reader (/genesis/N/) only — loaded by
+  // templates/genesis-chapter.html.
+  'genesis.bundle.js': [
+    'genesis-lens.js',
+  ],
   'library.bundle.js': [
     'library-storage.js',
     'library-reader.js',

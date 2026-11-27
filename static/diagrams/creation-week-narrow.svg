@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 522" role="img" aria-labelledby="cwn-t cwn-d" class="dg dg--creation-week-narrow">
+  <title id="cwn-t">The six creation days of Genesis 1</title>
+  <desc id="cwn-d">Diagram of the six creation days as successive working stages of about two thousand years each: the survey of the planet and its light; the work beneath the clouds; the single continent and the first plants; the study of the sky; life in the seas and the air; land animals and humankind.</desc>
+  <defs>
+    <symbol id="cwn-i-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3.6"/><path d="M12 3.5v2.4M12 18.1v2.4M3.5 12h2.4M18.1 12h2.4M6 6l1.7 1.7M16.3 16.3 18 18M6 18l1.7-1.7M16.3 7.7 18 6"/></symbol>
+    <symbol id="cwn-i-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6.5 10.5H17a2.7 2.7 0 0 0-.5-5.4A4 4 0 0 0 9 4.6a3 3 0 0 0-2.5 5.9Z"/><path d="M3 16q2.25-2 4.5 0t4.5 0 4.5 0 4.5 0M3 20q2.25-2 4.5 0t4.5 0 4.5 0 4.5 0"/></symbol>
+    <symbol id="cwn-i-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 20.5h19M4 20.5Q8 14.5 12 15t8 5.5"/><path d="M12 15V9.5M12 12Q8.2 12 8.2 8.2 12 8.2 12 12M12 10.5q3.8 0 3.8-3.8-3.8 0-3.8 3.8"/></symbol>
+    <symbol id="cwn-i-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4.5a7.5 7.5 0 1 0 5 11 6 6 0 0 1-5-11Z"/><path d="M6 3.5v4M4 5.5h4"/></symbol>
+    <symbol id="cwn-i-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 17q5-5 10 0-5 5-10 0Z"/><path d="m13 17 3.5-3v6Z"/><path d="M9.5 7.5q2.5-3 4.75 0 2.25-3 4.75 0"/></symbol>
+    <symbol id="cwn-i-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12.5h7.5l1.5-2.5M4 12.5V19M9.5 12.5V19"/><circle cx="17.5" cy="5.2" r="1.9"/><path d="M17.5 7.6v6.4M17.5 14l-2.6 5.5M17.5 14l2.6 5.5M14.6 10.2h5.8"/></symbol>
+  </defs>
+  <rect x="10" y="11" width="340" height="60" rx="8" class="dg-tile dg-day-0"/>
+  <rect x="10" y="11" width="4" height="60" rx="2" class="dg-day-bar-0"/>
+  <use href="#cwn-i-0" x="26" y="28.0" width="26" height="26" class="dg-glyph dg-day-ink-0"/>
+  <text x="66" y="30" class="dg-mono">Day 1 · 1:1–5</text>
+  <text x="338" y="30" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="49" class="dg-label" font-size="13.5">The survey and the light</text>
+  <rect x="10" y="77" width="340" height="60" rx="8" class="dg-tile dg-day-1"/>
+  <rect x="10" y="77" width="4" height="60" rx="2" class="dg-day-bar-1"/>
+  <use href="#cwn-i-1" x="26" y="94.0" width="26" height="26" class="dg-glyph dg-day-ink-1"/>
+  <text x="66" y="96" class="dg-mono">Day 2 · 1:6–8</text>
+  <text x="338" y="96" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="115" class="dg-label" font-size="13.5">The waters and the clouds</text>
+  <rect x="10" y="143" width="340" height="60" rx="8" class="dg-tile dg-day-2"/>
+  <rect x="10" y="143" width="4" height="60" rx="2" class="dg-day-bar-2"/>
+  <use href="#cwn-i-2" x="26" y="160.0" width="26" height="26" class="dg-glyph dg-day-ink-2"/>
+  <text x="66" y="162" class="dg-mono">Day 3 · 1:9–13</text>
+  <text x="338" y="162" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="181" class="dg-label" font-size="13.5">One continent and the first plants</text>
+  <rect x="10" y="209" width="340" height="60" rx="8" class="dg-tile dg-day-3"/>
+  <rect x="10" y="209" width="4" height="60" rx="2" class="dg-day-bar-3"/>
+  <use href="#cwn-i-3" x="26" y="226.0" width="26" height="26" class="dg-glyph dg-day-ink-3"/>
+  <text x="66" y="228" class="dg-mono">Day 4 · 1:14–19</text>
+  <text x="338" y="228" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="247" class="dg-label" font-size="13.5">Reading the sky</text>
+  <rect x="10" y="275" width="340" height="60" rx="8" class="dg-tile dg-day-4"/>
+  <rect x="10" y="275" width="4" height="60" rx="2" class="dg-day-bar-4"/>
+  <use href="#cwn-i-4" x="26" y="292.0" width="26" height="26" class="dg-glyph dg-day-ink-4"/>
+  <text x="66" y="294" class="dg-mono">Day 5 · 1:20–23</text>
+  <text x="338" y="294" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="313" class="dg-label" font-size="13.5">Life in the seas and the air</text>
+  <rect x="10" y="341" width="340" height="60" rx="8" class="dg-tile dg-day-5"/>
+  <rect x="10" y="341" width="4" height="60" rx="2" class="dg-day-bar-5"/>
+  <use href="#cwn-i-5" x="26" y="358.0" width="26" height="26" class="dg-glyph dg-day-ink-5"/>
+  <text x="66" y="360" class="dg-mono">Day 6 · 1:24–31</text>
+  <text x="338" y="360" text-anchor="end" class="dg-mono dg-mono--ink">≈ 2,000 yrs</text>
+  <text x="66" y="379" class="dg-label" font-size="13.5">Land animals and humankind</text>
+  <text x="16" y="422" class="dg-label" font-size="12.5" font-weight="600">Canon: each day ≈ 2,000 Earth years</text>
+  <text x="344" y="422" text-anchor="end" class="dg-mono">TBWTT 2:10</text>
+  <text x="16" y="438" class="dg-label--muted" font-size="11.5">A “day”: the sun rises under the same sign at the</text>
+  <text x="16" y="453" class="dg-label--muted" font-size="11.5">spring equinox</text>
+  <line x1="16" y1="480" x2="42" y2="480" class="dg-framework-line"/>
+  <text x="50" y="484" class="dg-framework-text" font-size="11.5">Wheel of Heaven model (framework, claim 0059):</text>
+  <text x="50" y="499" class="dg-framework-text" font-size="11.5">≈ 2,160 years per day</text>
+</svg>

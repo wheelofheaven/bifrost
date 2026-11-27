@@ -1,0 +1,31 @@
+<!-- Schema.org Chapter - Genesis four-lens reader chapter (/genesis/N/) -->
+{# Expects `n` (chapter number) from genesis-chapter.html. The chapter is
+   part of the Wheel of Heaven literal translation of Genesis, whose library
+   page is the Book entity. base_url concatenations are hoisted into set. #}
+{% set organization_id = config.extra.organization_id | default(value=config.base_url ~ '/#organization') %}
+{% set book_url = get_url(path='library/genesis-woh/', trailing_slash=true) %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Chapter",
+  "@id": "{{ current_url | safe }}",
+  "name": {{ page.title | json_encode | safe }},
+  "alternativeHeadline": {{ page.extra.chapter_title | default(value='') | json_encode | safe }},
+  "description": {{ page.description | default(value='') | json_encode | safe }},
+  "url": "{{ current_url | safe }}",
+  "position": {{ n }},
+  "inLanguage": ["en", "he"],
+  "isAccessibleForFree": true,
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "isPartOf": {
+    "@type": "Book",
+    "@id": {{ book_url | json_encode | safe }},
+    "name": "Genesis (Wheel of Heaven literal translation)",
+    "url": {{ book_url | json_encode | safe }}
+  },
+  "publisher": {
+    "@type": "Organization",
+    "@id": {{ organization_id | json_encode | safe }}
+  }
+}
+</script>

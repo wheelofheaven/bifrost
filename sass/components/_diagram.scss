@@ -32,8 +32,18 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
     }
 }
 
+// The six days of Genesis 1 (creation-week): a sequence of their own, the
+// same band in six even steps, so no day borrows a named age's hue.
+@mixin _day-hues($stops) {
+    @for $i from 0 through 5 {
+        --dg-day-#{$i}: #{_band($stops, math.div($i, 6))};
+    }
+}
+
 @mixin _light-tokens {
     @include _age-hues($_stops-light);
+    @include _day-hues($_stops-light);
+    --dg-framework: #{c.$mauve-600};
     --dg-hairline: #{rgba(c.$gray-500, 0.35)};
     --dg-tint: 0.07;
     --dg-tint-now: 0.2;
@@ -44,6 +54,9 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
 // Dark is the site default; light comes from the toggle or the system.
 .diagram {
     @include _age-hues($_stops-dark);
+    @include _day-hues($_stops-dark);
+    // Framework claims wear the claim-label mauve (_claim-inline.scss).
+    --dg-framework: #{c.$mauve-300};
     --dg-ink: var(--color-text);
     --dg-ink-muted: var(--color-text-muted);
     --dg-hairline: #{rgba(255, 255, 255, 0.12)};
@@ -94,6 +107,8 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
     }
 
     &--precession .diagram__canvas { max-width: 36rem; }
+
+    &--creation-week .diagram__canvas--narrow { max-width: 26rem; }
 
     // Wide figures with a phone variant: swap at the small breakpoint.
     &__canvas--narrow { display: none; max-width: 24rem; }
@@ -150,6 +165,34 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
         .dg-bar-#{$i} { fill: var(--dg-age-#{$i}); }
         .dg-ink-#{$i} { color: var(--dg-age-#{$i}); }
     }
+
+    @for $i from 0 through 5 {
+        .dg-day-#{$i} { --h: var(--dg-day-#{$i}); }
+        .dg-day-bar-#{$i} { fill: var(--dg-day-#{$i}); }
+        .dg-day-ink-#{$i} { color: var(--dg-day-#{$i}); }
+    }
+
+    .dg-tile {
+        fill: var(--h);
+        fill-opacity: var(--dg-tint-now);
+        stroke: none;
+    }
+
+    .dg-ruler {
+        stroke: var(--dg-ink-muted);
+        stroke-width: 1.3;
+        stroke-linecap: round;
+    }
+
+    // Secondary, model-only figures (claim_type framework): dashed + mauve.
+    .dg-framework-line {
+        stroke: var(--dg-framework);
+        stroke-width: 1.6;
+        stroke-dasharray: 5 4;
+        fill: none;
+    }
+
+    .dg-framework-text { fill: var(--dg-framework); }
 
     .dg-age {
         fill: var(--h);
@@ -247,6 +290,7 @@ $_stops-light: (c.$pink-600, c.$lavender-600, c.$mauve-600, c.$blue-600, c.$cyan
         text-transform: uppercase;
 
         &--now { fill: var(--dg-now); }
+        &--ink { fill: var(--dg-ink); }
     }
 }
 

@@ -16,13 +16,13 @@
 
 @use "grammar";
 
-$frame-containers: ".about__container, .info-page__container, .faq__container, .author__container, .contributors, .contributor, .articles-feed__container, .newsroom__container, .wiki-section__container, .sources__container, .source-page__container, .section-page__container, .tradition-hub__container, .dataset, .read, .listen, .gallery, .contact-hero, .contact-container, .offline-page__container, .not-found";
+$frame-containers: ".about__container, .info-page__container, .faq__container, .author__container, .contributors, .contributor, .articles-feed__container, .newsroom__container, .wiki-section__container, .sources__container, .source-page__container, .section-page__container, .tradition-hub__container, .dataset, .read, .listen, .gallery, .contact-hero, .contact-container, .offline-page__container, .not-found, .genesis__container";
 
 // Text-only pages: the reading measure, on the frame's left edge.
 $frame-measured: ".about__article, .info-page__article, .faq__article, .author__article, .contributor__article, .contributors > *, .dataset > *, .contact-container > *, .contact-hero__content, .offline-page__container > *, .not-found > *";
 
 // Every page title, one headline.
-$frame-titles: ".about__title, .info-page__title, .faq__title, .contact-hero__title, .author__title, .contributors__title, .contributor__name, .articles-feed__title, .newsroom__title, .article__title, .dispatch__title, .wiki-header__title, .wiki__title, .library-book__title, .timeline-page__title, .sources__title, .source-page__title, .section-page__title, .tradition-hub__title, .dataset > .dataset__header .dataset__title, .dataset__article .dataset__title, .read__title, .listen__title, .gallery__title, .offline-page__title, .not-found__title";
+$frame-titles: ".about__title, .info-page__title, .faq__title, .contact-hero__title, .author__title, .contributors__title, .contributor__name, .articles-feed__title, .newsroom__title, .article__title, .dispatch__title, .wiki-header__title, .wiki__title, .library-book__title, .timeline-page__title, .sources__title, .source-page__title, .section-page__title, .tradition-hub__title, .dataset > .dataset__header .dataset__title, .dataset__article .dataset__title, .read__title, .listen__title, .gallery__title, .offline-page__title, .not-found__title, .genesis__title";
 
 @media (min-width: 1025px) {
     #{$frame-containers} {

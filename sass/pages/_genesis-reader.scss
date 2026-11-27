@@ -1,0 +1,1021 @@
+@use "../abstracts/variables" as v;
+@use "../abstracts/colors" as c;
+@use "../base/typography" as typo;
+@use "grammar";
+
+// Genesis four-lens reader — templates/genesis-section.html,
+// genesis-chapter.html, macros/genesis.html, static/js/genesis-lens.js.
+//
+// One sticky slider of four stops sets the page lens; every verse card
+// shows the pane for that lens (1 Hebrew, 2 Literal, 3 Reading) and in lens 4
+// the cards fold away and each passage shows its Meaning. A card can be
+// stepped on its own ([data-lens] on the card).
+//
+// The state machine is pure CSS, so the reader works without JS: the page
+// lens is read from the checked radio through :has(), with [data-page-lens]
+// on the root (set by the JS) as the route for browsers without :has().
+// It lives under @media screen only — in print every pane is open, so a
+// printed chapter carries all four lenses.
+//
+// Panes open and close on grid-template-rows 0fr ↔ 1fr. They animate only
+// when the JS has switched motion on (.genesis--motion, never under
+// prefers-reduced-motion) and only on cards near the viewport (.is-near);
+// everything else switches at once.
+
+$genesis-measure: 44rem;
+$genesis-ease: cubic-bezier(0.4, 0, 0.2, 1);
+$genesis-duration: 0.32s;
+$genesis-gutter: 2.75rem;
+
+// Rules for "the page lens is k". Emits the :has() rule and the
+// [data-page-lens] twin separately: one selector list holding an
+// unsupported :has() would drop the whole rule.
+@mixin when-page-lens($k) {
+    .genesis:has(.genesis-lens__input[value="#{$k}"]:checked) & {
+        @content;
+    }
+
+    .genesis[data-page-lens="#{$k}"] & {
+        @content;
+    }
+}
+
+@mixin pane-open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    opacity: 1;
+}
+
+@mixin pane-closed {
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    opacity: 0;
+}
+
+// ---- Page ---------------------------------------------------------------
+.genesis {
+    @include grammar.grammar-prism;
+    padding-bottom: v.$spacing-3xl;
+
+    > * {
+        position: relative;
+        z-index: 1;
+    }
+
+    &__header {
+        display: flex;
+        flex-direction: column;
+        padding-top: 2.25rem;
+        margin-bottom: v.$spacing-lg;
+        max-width: $genesis-measure;
+    }
+
+    &__header--index {
+        @include grammar.grammar-index-header;
+        margin-bottom: v.$spacing-xl;
+    }
+
+    &__eyebrow {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 v.$spacing-sm;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+
+            &:hover,
+            &:focus-visible {
+                color: var(--color-text);
+            }
+        }
+    }
+
+    &__title {
+        @include grammar.grammar-headline;
+        margin: 0;
+        color: var(--color-text);
+    }
+
+    &__lede {
+        margin: v.$spacing-sm 0 0;
+        font-size: var(--grammar-lede-size, 1.375rem);
+        line-height: 1.4;
+        color: var(--color-text);
+        opacity: 0.88;
+    }
+
+    &__meta {
+        margin: v.$spacing-md 0 0;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+
+    &__draft {
+        margin: v.$spacing-md 0 0;
+        padding: v.$spacing-sm v.$spacing-md;
+        border: 1px dashed var(--color-hairline);
+        border-left: 3px solid c.$yellow-400;
+        border-radius: v.$border-radius-sm;
+        font-size: v.$font-size-sm;
+        line-height: 1.5;
+        color: var(--color-text);
+    }
+
+    &__intro {
+        max-width: $genesis-measure;
+        font-size: var(--grammar-body-size, 1.0625rem);
+        line-height: 1.7;
+        color: var(--color-text);
+    }
+
+    &__pager {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: center;
+        gap: v.$spacing-sm;
+        max-width: $genesis-measure;
+        margin-top: v.$spacing-2xl;
+        padding-top: v.$spacing-lg;
+        border-top: 1px solid var(--color-hairline);
+    }
+
+    &__pager-link {
+        @include grammar.grammar-pill;
+        justify-self: start;
+        min-height: 44px;
+        white-space: nowrap;
+
+        &--index {
+            justify-self: center;
+        }
+
+        &--next {
+            justify-self: end;
+        }
+    }
+}
+
+// ---- Lens slider --------------------------------------------------------
+// Sticky under the navbar. On phones the navbar slides away on scroll down
+// (.navbar--hidden), and the slider moves up into its place; `top`, not a
+// transform, so no glass surface ever sits under a transformed ancestor.
+.genesis-lens {
+    --lens-i: 1;
+    position: sticky;
+    top: 5.25rem;
+    z-index: 40;
+    max-width: $genesis-measure;
+    margin: 0;
+    transition: top v.$transition-slow ease;
+
+    @media (max-width: 1024px) {
+        top: 4.5rem;
+
+        body:has(.navbar--hidden) & {
+            top: 0.75rem;
+        }
+    }
+
+    @include when-page-lens(1) { --lens-i: 0; }
+    @include when-page-lens(3) { --lens-i: 2; }
+    @include when-page-lens(4) { --lens-i: 3; }
+
+    &__set {
+        min-width: 0;
+        margin: 0;
+        padding: 0;
+        border: 0;
+    }
+
+    &__legend {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        white-space: nowrap;
+    }
+
+    &__track {
+        position: relative;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        padding: 4px;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-full;
+        background: color-mix(in srgb, var(--color-background) 80%, transparent);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.35);
+    }
+
+    // The radios stay in the accessibility tree and the tab order; the
+    // labels are what you see and click.
+    &__input {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        margin: 0;
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &__stop {
+        position: relative;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.4rem;
+        min-height: 44px;
+        padding: 0 v.$spacing-xs;
+        border-radius: v.$border-radius-full;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        user-select: none;
+        transition: color v.$transition-base ease;
+
+        &:hover {
+            color: var(--color-text);
+        }
+
+        &--off {
+            opacity: 0.45;
+            cursor: not-allowed;
+
+            &:hover {
+                color: var(--color-text-muted);
+            }
+        }
+    }
+
+    &__input:checked + &__stop {
+        color: var(--color-background);
+    }
+
+    &__input:focus-visible + &__stop {
+        outline: 2px solid var(--color-focus);
+        outline-offset: 2px;
+    }
+
+    &__num {
+        font-size: 0.625rem;
+        opacity: 0.7;
+
+        @media (max-width: 480px) {
+            display: none;
+        }
+    }
+
+    // Ink pill under the checked stop. A self-transform only (allowed under
+    // the glass invariant: nothing glass sits inside it).
+    &__thumb {
+        position: absolute;
+        top: 4px;
+        bottom: 4px;
+        left: 4px;
+        width: calc((100% - 8px) / 4);
+        border-radius: v.$border-radius-full;
+        background: var(--color-text);
+        transform: translateX(calc(var(--lens-i) * 100%));
+        transition: transform v.$transition-slow $genesis-ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    &__hint {
+        max-width: $genesis-measure;
+        margin: v.$spacing-xs 0 v.$spacing-xl;
+        padding-inline: v.$spacing-md;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+    }
+
+    &__keys {
+        @media (hover: none) {
+            display: none;
+        }
+    }
+}
+
+// ---- Passages -----------------------------------------------------------
+.genesis-reader {
+    max-width: $genesis-measure;
+}
+
+.genesis-passage {
+    margin: 0 0 v.$spacing-xl;
+    content-visibility: auto;
+    contain-intrinsic-size: auto 40rem;
+
+    &__header {
+        margin: 0 0 v.$spacing-xs;
+    }
+
+    &__range {
+        @include grammar.grammar-eyebrow;
+        margin: 0;
+    }
+
+    // The title is interpretation (layer 3-4 content): only in Reading and
+    // Meaning, so lenses 1-2 stay the text alone.
+    &__title {
+        display: none;
+        margin: v.$spacing-2xs 0 0;
+        font-family: var(--font-family-lead);
+        font-size: v.$font-size-xl;
+        font-weight: 500;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+        color: var(--color-text);
+
+        @include when-page-lens(3) { display: block; }
+        @include when-page-lens(4) { display: block; }
+    }
+
+    &__cards {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+}
+
+// ---- Cards --------------------------------------------------------------
+.genesis-card {
+    display: grid;
+    grid-template-rows: 1fr;
+    scroll-margin-top: 9.5rem;
+    border-top: 1px solid var(--color-hairline-subtle);
+
+    &:first-child {
+        border-top-color: var(--color-hairline);
+    }
+
+    // Grid gutter (verse number, step, reset) + panes. Padding lives on the
+    // inner box so a folded card (lens 4) takes no room at all.
+    &__inner {
+        display: grid;
+        grid-template-columns: $genesis-gutter minmax(0, 1fr);
+        column-gap: v.$spacing-sm;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    &__bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: v.$spacing-2xs;
+        padding: 0.85rem 0 v.$spacing-sm;
+    }
+
+    &__ref {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.02em;
+        line-height: 1.6;
+        color: var(--color-text-muted);
+        text-decoration: none;
+        white-space: nowrap;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+        }
+    }
+
+    &__anchor {
+        display: block;
+        scroll-margin-top: 9.5rem;
+    }
+
+    &__step,
+    &__reset {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 44px;
+        height: 44px;
+        padding: 0;
+        border: 0;
+        border-radius: 50%;
+        background: transparent;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        transition: color v.$transition-base ease, background-color v.$transition-base ease;
+
+        // The visible ring is smaller than the 44px hit area.
+        svg {
+            box-sizing: content-box;
+            padding: 6px;
+            border: 1px solid var(--color-hairline);
+            border-radius: 50%;
+        }
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+
+            svg {
+                border-color: var(--color-text);
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid var(--color-focus);
+            outline-offset: -2px;
+        }
+
+        &[hidden] {
+            display: none;
+        }
+    }
+
+    // A stepped card says which lens it is in (the pane label) and wears a
+    // hairline in the accent.
+    &[data-lens] &__inner {
+        box-shadow: inset 2px 0 0 0 var(--color-text-muted);
+    }
+
+    &.is-target &__ref {
+        color: var(--color-text);
+        font-weight: 600;
+    }
+
+    &__panes {
+        display: grid;
+        min-width: 0;
+    }
+}
+
+// ---- Panes --------------------------------------------------------------
+.genesis-pane {
+    display: grid;
+    grid-template-rows: 1fr;
+
+    &__clip {
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    &__body {
+        padding: 0.75rem 0 v.$spacing-md;
+    }
+
+    // Lens names inside panes: hidden while a card follows the page (the
+    // slider already says it), shown when a card is stepped and in print.
+    &__label {
+        display: none;
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 v.$spacing-xs;
+
+        .genesis-card[data-lens] & {
+            display: block;
+        }
+    }
+}
+
+// Lens 1: Hebrew over transliteration, word by word, right to left.
+.genesis-verse {
+    & + & {
+        margin-top: v.$spacing-md;
+    }
+
+    &__n {
+        display: none;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        color: var(--color-text-muted);
+        vertical-align: 0.35em;
+
+        .genesis-card--multi & {
+            display: inline;
+        }
+    }
+
+    // In a multi-verse card the number opens each Hebrew row (on its
+    // right, the start of the line).
+    &--original &__n {
+        align-self: flex-start;
+        padding-top: 0.35rem;
+        vertical-align: baseline;
+    }
+
+    &__row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 0.5rem 0.85rem;
+    }
+
+    &__word {
+        display: inline-flex;
+        flex-direction: column;
+        align-items: center;
+        white-space: nowrap;
+        line-height: 1;
+    }
+
+    &__heb {
+        font-family: typo.$font-family-hebrew;
+        font-size: 1.625rem;
+
+        @media (max-width: 600px) {
+            font-size: 1.4375rem;
+        }
+
+        line-height: 1.45;
+        color: var(--color-text);
+    }
+
+    &__translit {
+        margin-top: 0.15rem;
+        font-family: typo.$font-family-sans;
+        font-size: 0.8125rem;
+        line-height: 1.3;
+        color: var(--color-text-muted);
+        font-feature-settings: "kern" 1, "liga" 0;
+    }
+
+    // Lens 2: the literal translation in the reader's citation face, as in
+    // the library.
+    &__text {
+        margin: 0;
+        font-family: var(--font-family-citation);
+        font-size: 1.25rem;
+        line-height: 1.7;
+
+        // The root is 19px on phones (17px on desktop): step down so the
+        // line holds about the same number of words.
+        @media (max-width: 600px) {
+            font-size: 1.0625rem;
+            line-height: 1.65;
+        }
+
+        color: var(--color-text);
+        hyphens: auto;
+        -webkit-hyphens: auto;
+    }
+}
+
+.genesis-note {
+    margin-top: v.$spacing-xs;
+
+    &__summary {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        letter-spacing: 0.04em;
+        color: var(--color-text-muted);
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::before {
+            content: "+";
+            display: inline-block;
+            width: 1em;
+        }
+
+        &:hover {
+            color: var(--color-text);
+        }
+    }
+
+    &[open] &__summary::before {
+        content: "−";
+    }
+
+    &__body {
+        padding: v.$spacing-xs 0 v.$spacing-sm v.$spacing-md;
+        border-left: 2px solid var(--color-hairline);
+        font-size: v.$font-size-sm;
+        line-height: 1.6;
+        color: var(--color-text);
+
+        p {
+            margin: 0 0 v.$spacing-xs;
+        }
+    }
+}
+
+// Lens 3: the reading, in the body face.
+.genesis-reading {
+    &__basis {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 v.$spacing-xs;
+
+        &--canon::before {
+            content: "";
+            display: inline-block;
+            width: 0.45rem;
+            height: 0.45rem;
+            margin-right: 0.4rem;
+            border-radius: 50%;
+            background: currentColor;
+            vertical-align: 0.05em;
+        }
+    }
+
+    &__text {
+        margin: 0;
+        font-size: 1.1875rem;
+        line-height: 1.65;
+        color: var(--color-text);
+
+        @media (max-width: 600px) {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    }
+}
+
+// Lens 4: the passage explanation.
+.genesis-explanation {
+    scroll-margin-top: 9.5rem;
+
+    .genesis-pane__body {
+        padding: v.$spacing-sm 0 v.$spacing-lg;
+    }
+
+    &__para {
+        margin: 0 0 v.$spacing-md;
+        font-size: var(--grammar-body-size, 1.0625rem);
+        line-height: 1.75;
+        color: var(--color-text);
+
+        @media (max-width: 600px) {
+            font-size: 1rem;
+            line-height: 1.65;
+        }
+    }
+}
+
+// Canon coverage: what the Messages say about the passage, first.
+.genesis-coverage {
+    margin: 0 0 v.$spacing-md;
+    padding-left: v.$spacing-sm;
+    border-left: 2px solid var(--color-hairline);
+    font-family: typo.$font-family-tech;
+    font-size: v.$font-size-xs;
+    line-height: 1.55;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+
+    &--silent {
+        border-left-color: c.$lavender-400;
+        color: var(--color-text);
+    }
+}
+
+// A canon reference: a quiet mono chip into the library reader.
+.genesis-chips {
+    white-space: normal;
+}
+
+.genesis-chip {
+    display: inline-block;
+    padding: 0.05rem 0.45rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: v.$border-radius-full;
+    font-family: typo.$font-family-tech;
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    white-space: nowrap;
+    vertical-align: 0.15em;
+    transition: color v.$transition-base ease, border-color v.$transition-base ease;
+
+    &:hover,
+    &:focus-visible {
+        color: var(--color-text);
+        border-color: var(--color-text);
+    }
+
+    &--opinion {
+        border-style: dashed;
+    }
+}
+
+.genesis-figure {
+    margin: v.$spacing-lg 0 0;
+
+    &__pending {
+        display: grid;
+        place-items: center;
+        min-height: 9rem;
+        padding: v.$spacing-md;
+        border: 1px dashed var(--color-hairline);
+        border-radius: v.$border-radius-lg;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+        text-align: center;
+    }
+}
+
+// Claim labels in the reader: the dot always, the underline only on
+// hover / keyboard focus, or while the claim's note is open (claim--active,
+// set by claim-notes.js — the touch path). Scoped to the reader; the shared
+// component (_claim-inline.scss) and the {% claim %} shortcode are untouched.
+.genesis-reader .claim {
+    .claim__text {
+        text-decoration-color: transparent;
+        transition: text-decoration-color v.$transition-base ease, background-color v.$transition-base ease;
+    }
+
+    &:hover .claim__text,
+    &:focus-within .claim__text,
+    &.claim--active .claim__text {
+        text-decoration-color: color-mix(in srgb, var(--claim-hue) 55%, transparent);
+    }
+}
+
+// Lens 4: the passage's literal lines, folded under the explanation.
+.genesis-text {
+    margin-top: v.$spacing-md;
+    border-top: 1px solid var(--color-hairline-subtle);
+
+    &__summary {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.02em;
+        color: var(--color-text);
+        cursor: pointer;
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        &::before {
+            content: "+";
+            display: inline-block;
+            width: 1.1em;
+            color: var(--color-text-muted);
+        }
+    }
+
+    &[open] &__summary::before {
+        content: "−";
+    }
+
+    &__hint {
+        margin-left: 0.4em;
+        color: var(--color-text-muted);
+    }
+
+    &__lines {
+        margin: 0 0 v.$spacing-sm;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__line {
+        margin: 0 0 v.$spacing-xs;
+        font-family: var(--font-family-citation);
+        font-size: v.$font-size-base;
+        line-height: 1.6;
+        color: var(--color-text);
+    }
+
+    &__n {
+        font-family: typo.$font-family-tech;
+        font-size: 0.6875rem;
+        color: var(--color-text-muted);
+        vertical-align: 0.3em;
+    }
+}
+
+// ---- The lens state machine (screen only) -------------------------------
+@media screen {
+    .genesis-pane {
+        @include pane-closed;
+    }
+
+    // Page lens 2 is the default (the radio checked in the HTML).
+    .genesis-card:not([data-lens]) .genesis-pane--2 {
+        @include pane-open;
+    }
+
+    @each $k in 1, 3, 4 {
+        .genesis-card:not([data-lens]) .genesis-pane--2 {
+            @include when-page-lens($k) {
+                @include pane-closed;
+            }
+        }
+    }
+
+    @each $k in 1, 3 {
+        .genesis-card:not([data-lens]) .genesis-pane--#{$k} {
+            @include when-page-lens($k) {
+                @include pane-open;
+            }
+        }
+    }
+
+    // A stepped card shows its own lens whatever the page shows.
+    @each $k in 1, 2, 3 {
+        .genesis-card[data-lens="#{$k}"] .genesis-pane--#{$k} {
+            @include pane-open;
+        }
+    }
+
+    // Lens 4: the cards fold away, the passage's Meaning opens. A stepped
+    // card cannot exist here (moving the slider resets every card).
+    .genesis-card:not([data-lens]) {
+        @include when-page-lens(4) {
+            grid-template-rows: 0fr;
+            visibility: hidden;
+            border-top-color: transparent;
+        }
+    }
+
+    .genesis-explanation {
+        @include when-page-lens(4) {
+            @include pane-open;
+        }
+    }
+
+    // Motion: near the viewport only. visibility interpolates as "visible"
+    // whenever either end is visible, so a closing pane stays visible until
+    // it has shrunk and an opening one is visible at once.
+    .genesis--motion {
+        .genesis-card.is-near,
+        .genesis-card.is-near .genesis-pane,
+        .genesis-explanation.is-near {
+            transition:
+                grid-template-rows $genesis-duration $genesis-ease,
+                opacity $genesis-duration ease,
+                visibility $genesis-duration linear;
+        }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .genesis--motion .genesis-card,
+        .genesis--motion .genesis-pane {
+            transition: none;
+        }
+    }
+}
+
+// A deep-linked card: a brief wash so the eye finds it.
+@keyframes genesis-target {
+    from {
+        background-color: color-mix(in srgb, var(--color-text) 8%, transparent);
+    }
+
+    to {
+        background-color: transparent;
+    }
+}
+
+.genesis-card.is-target,
+.genesis-passage.is-target {
+    animation: genesis-target 1.6s ease-out;
+
+    @media (prefers-reduced-motion: reduce) {
+        animation: none;
+    }
+}
+
+// ---- Print: every lens, labelled ----------------------------------------
+@media print {
+    .genesis-lens,
+    .genesis-lens__hint,
+    .genesis-card__step,
+    .genesis-card__reset,
+    .genesis__pager {
+        display: none;
+    }
+
+    .genesis-pane__label,
+    .genesis-passage__title {
+        display: block;
+    }
+
+    .genesis-passage {
+        content-visibility: visible;
+    }
+
+    .genesis-card {
+        break-inside: avoid;
+    }
+
+    // Translator's notes stay in the library edition.
+    .genesis-note {
+        display: none;
+    }
+}
+
+// ---- Index (/genesis/) --------------------------------------------------
+.genesis-index {
+    margin-top: v.$spacing-2xl;
+
+    &__title {
+        @include grammar.grammar-section-title;
+        margin-top: 0;
+    }
+
+    &__group {
+        margin-top: v.$spacing-xl;
+    }
+
+    &__group-title {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 v.$spacing-sm;
+        color: var(--color-text);
+    }
+
+    &__group-range {
+        margin-left: 0.4rem;
+        color: var(--color-text-muted);
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+        gap: v.$spacing-xs;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+}
+
+.genesis-tile {
+    display: grid;
+    grid-template-columns: 2.25rem 1fr;
+    grid-template-rows: auto auto;
+    column-gap: v.$spacing-xs;
+    row-gap: 0.15rem;
+    height: 100%;
+    padding: v.$spacing-sm v.$spacing-md v.$spacing-sm v.$spacing-sm;
+    border: 1px solid var(--color-hairline);
+    border-radius: v.$border-radius-lg;
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color v.$transition-base ease;
+
+    &:hover,
+    &:focus-visible {
+        border-color: var(--color-text);
+    }
+
+    &__n {
+        grid-row: 1 / span 2;
+        font-family: var(--font-family-lead);
+        font-size: 1.5rem;
+        font-weight: 500;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+    }
+
+    &__title {
+        font-size: v.$font-size-sm;
+        line-height: 1.35;
+    }
+
+    &__tag {
+        font-family: typo.$font-family-tech;
+        font-size: 0.625rem;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: var(--color-text-muted);
+    }
+
+    // Chapters with all four lenses carry the rainbow on the left edge.
+    &--four {
+        position: relative;
+
+        &::before {
+            content: "";
+            position: absolute;
+            top: v.$spacing-sm;
+            bottom: v.$spacing-sm;
+            left: -1px;
+            width: 3px;
+            border-radius: 2px;
+            @include grammar.grammar-rainbow(180deg);
+        }
+    }
+}

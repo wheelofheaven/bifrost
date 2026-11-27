@@ -43,5 +43,23 @@
     "now":"now · 1950 CE",
     "start":"~21,810 BCE · project opening",
     "end":"~4110 CE"
+  },
+  "cw": {
+    "title":"The six creation days of Genesis 1",
+    "desc":"Diagram of the six creation days as successive working stages of about two thousand years each: the survey of the planet and its light; the work beneath the clouds; the single continent and the first plants; the study of the sky; life in the seas and the air; land animals and humankind.",
+    "day":"Day",
+    "days":[
+      {"range":"1:1–5","label":"The survey and the light"},
+      {"range":"1:6–8","label":"The waters and the clouds"},
+      {"range":"1:9–13","label":"One continent and the first plants"},
+      {"range":"1:14–19","label":"Reading the sky"},
+      {"range":"1:20–23","label":"Life in the seas and the air"},
+      {"range":"1:24–31","label":"Land animals and humankind"}
+    ],
+    "span":"≈ 2,000 yrs",
+    "canon":"Canon: each day ≈ 2,000 Earth years",
+    "canon_def":"A “day”: the sun rises under the same sign at the spring equinox",
+    "canon_ref":"TBWTT 2:10",
+    "model":"Wheel of Heaven model (framework, claim 0059): ≈ 2,160 years per day"
   }
 }

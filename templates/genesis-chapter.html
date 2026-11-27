@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% import "macros/genesis.html" as genesis %}
+{% import "macros/breadcrumbs.html" as breadcrumbs %}
+
+{# Genesis four-lens reader, one chapter (/genesis/N/).
+
+   Stub pages come from scripts/build_genesis_pages.py; everything on the
+   page is rendered from data:
+     data/library/genesis-woh/chapter-N.json          lenses 1-2 (always)
+     data/library/genesis-woh/lenses/chapter-N.json   lenses 3-4 (optional)
+
+   A lens file renders only when its status is "stable", or on the dev
+   server, where scripts/build_dev_config.py sets
+   config.extra.genesis_show_drafts. Production config.toml never sets it. #}
+
+{% block content %}
+{% set n = page.extra.chapter %}
+{% set chapter = load_data(path="data/library/genesis-woh/chapter-" ~ n ~ ".json") %}
+{% set verses = chapter.paragraphs %}
+{% set lensfile = load_data(path="data/library/genesis-woh/lenses/chapter-" ~ n ~ ".json", required=false) %}
+{% set show_drafts = config.extra.genesis_show_drafts | default(value=false) %}
+{% set lens_status = "" %}
+{% if lensfile %}{% set lens_status = lensfile.lens.status | default(value="draft") %}{% endif %}
+{% set has_lenses = lensfile and (lens_status == "stable" or show_drafts) %}
+{% set is_draft = has_lenses and lens_status != "stable" %}
+
+{% include "partials/schema/genesis-chapter.html" %}
+
+<div class="genesis genesis--chapter" data-chapter="{{ n }}" data-page-lens="2">
+    <div class="genesis__container">
+        <header class="genesis__header">
+            <p class="genesis__eyebrow">
+                <a href="{{ get_url(path='genesis/', lang=detected_lang, trailing_slash=true) }}">Genesis</a>
+                <span aria-hidden="true">·</span> {{ page.extra.group_name | default(value="") }}
+            </p>
+            <h1 class="genesis__title" id="page-title">{{ page.title }}</h1>
+            <p class="genesis__lede">{{ page.extra.chapter_title | default(value="") }}</p>
+            <p class="genesis__meta">
+                {{ verses | length }} verses
+                <span aria-hidden="true">·</span>
+                Literal translation {{ chapter.translation.version | default(value="") }}, reviewed
+                {% if has_lenses %}<span aria-hidden="true">·</span> Reading and Meaning {{ lensfile.lens.version }}{% endif %}
+            </p>
+            {% if is_draft %}
+            <p class="genesis__draft" role="note">
+                <strong>Draft preview.</strong> Reading and Meaning for this chapter are
+                {% if lens_status == "reviewer-approved" or lens_status == "awaiting-human" %}reviewed, awaiting the founder's sign-off,
+                {% elif lens_status == "editor-review" %}in editorial review, not yet reviewed,
+                {% else %}a draft, not yet reviewed,{% endif %}
+                and show only on the local dev server.
+            </p>
+            {% endif %}
+        </header>
+
+        {{ genesis::lens_slider(has_lenses=has_lenses, chapter=n) }}
+
+        <div class="genesis-reader{% if has_lenses %} genesis-reader--lensed{% endif %}">
+            {% if has_lenses %}
+            {% for passage in lensfile.passages %}
+            {{ genesis::passage(passage=passage, verses=verses, chapter=n, lang=detected_lang, has_lenses=true) }}
+            {% endfor %}
+            {% else %}
+            {{ genesis::passage(passage=false, verses=verses, chapter=n, lang=detected_lang, has_lenses=false) }}
+            {% endif %}
+        </div>
+
+        {# One polite live region for every lens change, page or card. #}
+        <p class="visually-hidden" id="genesis-live" aria-live="polite" aria-atomic="true"></p>
+
+        <nav class="genesis__pager" aria-label="Chapters">
+            {% if page.lower %}
+            <a class="genesis__pager-link genesis__pager-link--prev" href="{{ page.lower.permalink | safe }}" rel="prev"><span aria-hidden="true">←</span> {{ page.lower.title }}</a>
+            {% else %}<span></span>{% endif %}
+            <a class="genesis__pager-link genesis__pager-link--index" href="{{ get_url(path='genesis/', lang=detected_lang, trailing_slash=true) }}">All chapters</a>
+            {% if page.higher %}
+            <a class="genesis__pager-link genesis__pager-link--next" href="{{ page.higher.permalink | safe }}" rel="next">{{ page.higher.title }} <span aria-hidden="true">→</span></a>
+            {% else %}<span></span>{% endif %}
+        </nav>
+    </div>
+</div>
+
+<script src="{{ get_url(path='js/dist/genesis.bundle.js', cachebust=true) | safe }}" defer></script>
+{% endblock content %}
+
+{% block trail %}
+{% set_global page_trail = breadcrumbs::generic_page(title=page.title, parent_title="Genesis", parent_path="genesis/", lang=detected_lang) %}
+{% endblock trail %}
