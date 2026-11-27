@@ -2,7 +2,7 @@
 {% import "macros/genesis.html" as genesis %}
 {% import "macros/breadcrumbs.html" as breadcrumbs %}
 
-{# Genesis four-lens reader, one chapter (/genesis/N/).
+{# Genesis four-lens reader, one chapter (/library/genesis-woh/lenses/N/).
 
    Stub pages come from scripts/build_genesis_pages.py; everything on the
    page is rendered from data:
@@ -30,7 +30,7 @@
     <div class="genesis__container">
         <header class="genesis__header">
             <p class="genesis__eyebrow">
-                <a href="{{ get_url(path='genesis/', lang=detected_lang, trailing_slash=true) }}">Genesis</a>
+                <a href="{{ get_url(path='library/genesis-woh/lenses/', lang=detected_lang, trailing_slash=true) }}">Genesis</a>
                 <span aria-hidden="true">·</span> {{ page.extra.group_name | default(value="") }}
             </p>
             <h1 class="genesis__title" id="page-title">{{ page.title }}</h1>
@@ -71,7 +71,7 @@
             {% if page.lower %}
             <a class="genesis__pager-link genesis__pager-link--prev" href="{{ page.lower.permalink | safe }}" rel="prev"><span aria-hidden="true">←</span> {{ page.lower.title }}</a>
             {% else %}<span></span>{% endif %}
-            <a class="genesis__pager-link genesis__pager-link--index" href="{{ get_url(path='genesis/', lang=detected_lang, trailing_slash=true) }}">All chapters</a>
+            <a class="genesis__pager-link genesis__pager-link--index" href="{{ get_url(path='library/genesis-woh/lenses/', lang=detected_lang, trailing_slash=true) }}">All chapters</a>
             {% if page.higher %}
             <a class="genesis__pager-link genesis__pager-link--next" href="{{ page.higher.permalink | safe }}" rel="next">{{ page.higher.title }} <span aria-hidden="true">→</span></a>
             {% else %}<span></span>{% endif %}
@@ -83,5 +83,5 @@
 {% endblock content %}
 
 {% block trail %}
-{% set_global page_trail = breadcrumbs::generic_page(title=page.title, parent_title="Genesis", parent_path="genesis/", lang=detected_lang) %}
+{% set_global page_trail = breadcrumbs::generic_page(title=page.title, parent_title="Genesis in Four Lenses", parent_path="library/genesis-woh/lenses/", lang=detected_lang) %}
 {% endblock trail %}
