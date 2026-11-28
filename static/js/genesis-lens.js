@@ -7,15 +7,17 @@
  *
  *   - keys 1–4 for the page lens (not while typing or with a modifier);
  *   - per-card stepping: the arrow on a card cycles that card through the
- *     lenses a card can show (1–3, or 1–2 without a lens file); "Page lens"
+ *     lenses a card can show (1–4, or 1–2 without a lens file); "Page lens"
  *     puts it back; moving the page slider resets every card;
+ *   - notes: the library's note icon (.genesis-note-link) opens and closes
+ *     its inline fold (aria-expanded, aria-controls); without this file the
+ *     folds are open and the icons hidden; Escape in an open note closes it;
  *   - ?lens=N in the URL (replaceState, the #vN hash kept) and the choice
  *     remembered in localStorage;
  *   - data-page-lens on the root, so browsers without :has() still switch;
  *   - motion only for cards on screen, none under prefers-reduced-motion,
  *     and the scroll position held on the card at the top of the viewport;
- *   - #vN deep links: in lens 4 the verse's card is folded, so the link
- *     lands on its passage's Meaning instead;
+ *   - #vN deep links land on the verse's card in every lens;
  *   - one polite live region announcing every change;
  *   - .genesis-lens--stuck on the slider while it is stuck, which shows
  *     the opaque band behind it;
@@ -36,6 +38,9 @@
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const enabled = inputs.filter((i) => !i.disabled).map((i) => Number(i.value));
+
+    // Folds (.genesis-fold) close from here on; print still opens them.
+    root.classList.add('genesis--js');
 
     function store(key, value) {
         try {
@@ -75,7 +80,7 @@
                 e.target.classList.toggle('is-near', e.isIntersecting);
             });
         }, { rootMargin: '0px' });
-        root.querySelectorAll('.genesis-card, .genesis-explanation').forEach((el) => io.observe(el));
+        root.querySelectorAll('.genesis-card, .genesis-passage-note').forEach((el) => io.observe(el));
     }
 
     function setMotion() {
@@ -86,7 +91,7 @@
     // that reaches below the sticky slider.
     function anchorEl() {
         const top = lensBar ? lensBar.getBoundingClientRect().bottom : 0;
-        const els = root.querySelectorAll('.genesis-card, .genesis-explanation');
+        const els = root.querySelectorAll('.genesis-card, .genesis-passage-note');
         for (const el of els) {
             const r = el.getBoundingClientRect();
             if (r.height > 0 && r.bottom > top) return el;
@@ -156,7 +161,6 @@
             step.addEventListener('click', () => {
                 const list = cardLenses(card);
                 const cur = cardLens(card);
-                // In lens 4 the cards are folded; a card is never stepped from there.
                 const i = list.indexOf(cur);
                 setCardLens(card, list[(i + 1) % list.length]);
             });
@@ -168,6 +172,41 @@
             });
         }
         paintCard(card);
+    });
+
+    // ---- Notes ------------------------------------------------------------
+    // The icon is the library reader's marker; here it opens an inline fold.
+    // The fold sits right under its line, so opening it moves nothing above.
+    function setNote(btn, panel, open) {
+        panel.classList.toggle('is-open', open);
+        btn.setAttribute('aria-expanded', String(open));
+        btn.setAttribute('aria-label', (open ? 'Close ' : 'Open ') + (btn.dataset.label || 'note'));
+    }
+
+    root.querySelectorAll('.genesis-note-link').forEach((btn) => {
+        const panel = document.getElementById(btn.getAttribute('aria-controls') || '');
+        if (!panel) return;
+        btn.hidden = false;
+        setNote(btn, panel, false);
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            setNote(btn, panel, btn.getAttribute('aria-expanded') !== 'true');
+        });
+        panel.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape' || !panel.classList.contains('is-open')) return;
+            e.stopPropagation();
+            setNote(btn, panel, false);
+            btn.focus();
+        });
+        // The passage note's bar: its words open it too (pointer only; the
+        // icon is the keyboard and screen-reader control).
+        const bar = btn.closest('.genesis-passage-note__bar');
+        if (bar) {
+            bar.addEventListener('click', (e) => {
+                if (e.target.closest('a, button')) return;
+                setNote(btn, panel, btn.getAttribute('aria-expanded') !== 'true');
+            });
+        }
     });
 
     // ---- Page lens --------------------------------------------------------
@@ -225,11 +264,7 @@
         const el = document.getElementById(id);
         if (!el) return;
         const card = el.closest('.genesis-card');
-        let target = card || el;
-        if (pageLens() === 4 && card) {
-            const meaning = card.closest('.genesis-passage');
-            if (meaning) target = meaning;
-        }
+        const target = card || el;
         target.classList.remove('is-target');
         void target.offsetWidth;
         target.classList.add('is-target');

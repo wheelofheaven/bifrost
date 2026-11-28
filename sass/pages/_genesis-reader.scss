@@ -7,9 +7,15 @@
 // genesis-chapter.html, macros/genesis.html, static/js/genesis-lens.js.
 //
 // One sticky slider of four stops sets the page lens; every verse card
-// shows the pane for that lens (1 Hebrew, 2 Literal, 3 Reading) and in lens 4
-// the cards fold away and each passage shows its Meaning. A card can be
-// stepped on its own ([data-lens] on the card).
+// shows the pane for that lens (1 Hebrew, 2 Literal, 3 Reading = the decoded
+// translation, 4 Meaning), and in lens 4 each passage adds its note, folded
+// behind the library's note icon. A card can be stepped on its own
+// ([data-lens] on the card).
+//
+// Notes (the translator's note in lens 2, the passage note in lens 4) are
+// inline folds (.genesis-fold) opened by the library reader's bracketed
+// note icon (.library-book__commentary-link, styled in _library.scss).
+// Without JS they are open; .genesis--js folds them; print opens them.
 //
 // The state machine is pure CSS, so the reader works without JS: the page
 // lens is read from the checked radio through :has(), with [data-page-lens]
@@ -858,42 +864,36 @@ $genesis-band-fade: v.$spacing-lg;
     }
 }
 
+.genesis-note-link {
+    // The library marker sits at the end of the translated line, in the
+    // line's own colour; here the line is the citation face at 1.25rem, so
+    // the marker keeps its em-relative size from the library rule.
+    &[hidden] {
+        display: none;
+    }
+}
+
+// An inline note, opened by the note icon. A hairline on the start edge
+// ties it to the line above it, as the library popover's surface does.
+.genesis-fold {
+    margin: v.$spacing-xs 0 0;
+    padding: v.$spacing-2xs 0 v.$spacing-2xs v.$spacing-md;
+    border-left: 2px solid var(--color-hairline);
+
+    &__label {
+        @include grammar.grammar-eyebrow;
+        margin: 0 0 v.$spacing-2xs;
+    }
+}
+
+@media screen {
+    .genesis--js .genesis-fold:not(.is-open) {
+        display: none;
+    }
+}
+
 .genesis-note {
-    margin-top: v.$spacing-xs;
-
-    &__summary {
-        display: inline-flex;
-        align-items: center;
-        min-height: 44px;
-        font-family: typo.$font-family-tech;
-        font-size: 0.6875rem;
-        letter-spacing: 0.04em;
-        color: var(--color-text-muted);
-        cursor: pointer;
-        list-style: none;
-
-        &::-webkit-details-marker {
-            display: none;
-        }
-
-        &::before {
-            content: "+";
-            display: inline-block;
-            width: 1em;
-        }
-
-        &:hover {
-            color: var(--color-text);
-        }
-    }
-
-    &[open] &__summary::before {
-        content: "−";
-    }
-
     &__body {
-        padding: v.$spacing-xs 0 v.$spacing-sm v.$spacing-md;
-        border-left: 2px solid var(--color-hairline);
         font-size: v.$font-size-sm;
         line-height: 1.6;
         color: var(--color-text);
@@ -901,10 +901,46 @@ $genesis-band-fade: v.$spacing-lg;
         p {
             margin: 0 0 v.$spacing-xs;
         }
+
+        p:last-child {
+            margin-bottom: 0;
+        }
     }
 }
 
-// Lens 3: the reading, in the body face.
+// Lens 3 while it is being written: one line per card, quiet, and a
+// chapter-level note above the cards (lens 3 only) that says why.
+.genesis-pending {
+    margin: 0;
+    font-family: typo.$font-family-tech;
+    font-size: v.$font-size-xs;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+
+    &::before {
+        content: "";
+        display: inline-block;
+        width: 1.25rem;
+        margin-right: 0.5rem;
+        border-top: 1px dashed currentColor;
+        vertical-align: 0.3em;
+    }
+}
+
+.genesis-reader__pending {
+    display: none;
+    margin: 0 0 v.$spacing-lg;
+    padding: v.$spacing-sm v.$spacing-md;
+    border: 1px dashed var(--color-hairline);
+    border-radius: v.$border-radius-md;
+    font-size: v.$font-size-sm;
+    line-height: 1.6;
+    color: var(--color-text);
+
+    @include when-page-lens(3) { display: block; }
+}
+
+// Lens 4: the Meaning sentence, in the body face.
 .genesis-reading {
     &__basis {
         @include grammar.grammar-eyebrow;
@@ -935,12 +971,50 @@ $genesis-band-fade: v.$spacing-lg;
     }
 }
 
-// Lens 4: the passage explanation.
-.genesis-explanation {
+// Lens 4: the passage note, under the cards. The bar ("Note on this
+// passage" and the icon) is always there in lens 4; the body folds.
+.genesis-passage-note {
     scroll-margin-top: 10.5rem;
 
+    // Desktop: in the cards' text column. Phone: the full measure, so the
+    // note does not read in a narrow strip.
     .genesis-pane__body {
-        padding: v.$spacing-sm 0 v.$spacing-lg;
+        padding: v.$spacing-xs 0 v.$spacing-md calc(#{$genesis-gutter} + #{v.$spacing-sm});
+        border-top: 1px solid var(--color-hairline-subtle);
+
+        @media (max-width: 600px) {
+            padding-left: 0;
+        }
+    }
+
+    &__bar {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-2xs;
+        min-height: 44px;
+        margin: 0;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+
+        .genesis--js & {
+            cursor: pointer;
+        }
+
+        // The icon at the bar's size: the library sets it in em.
+        .genesis-note-link {
+            font-size: v.$font-size-base;
+        }
+    }
+
+    &__body {
+        margin: 0 0 v.$spacing-sm;
+        padding-top: v.$spacing-sm;
+
+        @media (max-width: 600px) {
+            padding-left: v.$spacing-sm;
+        }
     }
 
     &__para {
@@ -957,9 +1031,11 @@ $genesis-band-fade: v.$spacing-lg;
     }
 }
 
-// Canon coverage: what the Messages say about the passage, first.
+// Canon coverage: what the Messages say about the passage, first (lens 4,
+// in the passage header, above the cards it qualifies).
 .genesis-coverage {
-    margin: 0 0 v.$spacing-md;
+    display: none;
+    margin: v.$spacing-sm 0 v.$spacing-xs;
     padding-left: v.$spacing-sm;
     border-left: 2px solid var(--color-hairline);
     font-family: typo.$font-family-tech;
@@ -972,6 +1048,8 @@ $genesis-band-fade: v.$spacing-lg;
         border-left-color: c.$lavender-400;
         color: var(--color-text);
     }
+
+    @include when-page-lens(4) { display: block; }
 }
 
 // Canon references: one quiet mono run after the sentence they support
@@ -1050,7 +1128,7 @@ $genesis-band-fade: v.$spacing-lg;
     }
 }
 
-// Lens 4: the passage's literal lines, folded under the explanation.
+// The passage's literal lines, folded inside the passage note.
 .genesis-text {
     margin-top: v.$spacing-md;
     border-top: 1px solid var(--color-hairline-subtle);
@@ -1128,7 +1206,7 @@ $genesis-band-fade: v.$spacing-lg;
         }
     }
 
-    @each $k in 1, 3 {
+    @each $k in 1, 3, 4 {
         .genesis-card:not([data-lens]) .genesis-pane--#{$k} {
             @include when-page-lens($k) {
                 @include pane-open;
@@ -1137,23 +1215,14 @@ $genesis-band-fade: v.$spacing-lg;
     }
 
     // A stepped card shows its own lens whatever the page shows.
-    @each $k in 1, 2, 3 {
+    @each $k in 1, 2, 3, 4 {
         .genesis-card[data-lens="#{$k}"] .genesis-pane--#{$k} {
             @include pane-open;
         }
     }
 
-    // Lens 4: the cards fold away, the passage's Meaning opens. A stepped
-    // card cannot exist here (moving the slider resets every card).
-    .genesis-card:not([data-lens]) {
-        @include when-page-lens(4) {
-            grid-template-rows: 0fr;
-            visibility: hidden;
-            border-top-color: transparent;
-        }
-    }
-
-    .genesis-explanation {
+    // Lens 4: the passage note's bar opens under the cards.
+    .genesis-passage-note {
         @include when-page-lens(4) {
             @include pane-open;
         }
@@ -1165,7 +1234,7 @@ $genesis-band-fade: v.$spacing-lg;
     .genesis--motion {
         .genesis-card.is-near,
         .genesis-card.is-near .genesis-pane,
-        .genesis-explanation.is-near {
+        .genesis-passage-note.is-near {
             transition:
                 grid-template-rows $genesis-duration $genesis-ease,
                 opacity $genesis-duration ease,
@@ -1213,8 +1282,22 @@ $genesis-band-fade: v.$spacing-lg;
     }
 
     .genesis-pane__label,
-    .genesis-passage__title {
+    .genesis-passage__title,
+    .genesis-coverage {
         display: block;
+    }
+
+    // The passage note prints open, without its icon; lens 3 prints only
+    // once it is written.
+    .genesis-note-link,
+    .genesis-reader__pending,
+    .genesis-pane--pending {
+        display: none;
+    }
+
+    .genesis-passage-note__bar {
+        @include grammar.grammar-eyebrow;
+        min-height: 0;
     }
 
     .genesis-passage {
@@ -1226,7 +1309,7 @@ $genesis-band-fade: v.$spacing-lg;
     }
 
     // Translator's notes stay in the library edition.
-    .genesis-note {
+    .genesis-fold.genesis-note {
         display: none;
     }
 }

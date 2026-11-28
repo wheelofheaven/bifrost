@@ -3,14 +3,23 @@
 
    One chapter, four lenses on every verse:
      1 Hebrew   the Masoretic text with a transliteration under each word
-     2 Literal  the Wheel of Heaven literal translation (genesis-woh, layer 2)
-     3 Reading  the passage retold through the Messages (lens file, layer 3)
-     4 Meaning  a plain explanation of the whole passage (lens file, layer 4)
+     2 Literal  the Wheel of Heaven literal translation (genesis-woh, layer 2);
+                its translator's note opens from the note icon
+     3 Reading  the literal sentence with the canon-decoded words swapped in
+                (lens file `decoded`; "Reading in preparation" until written)
+     4 Meaning  the verse retold through the Messages (lens file `meaning`),
+                and under each passage's cards a folded note (`note`)
 
-   Layers 1-2 come from data/library/genesis-woh/chapter-N.json, layers 3-4
-   from data/library/genesis-woh/lenses/chapter-N.json. A card is one reading
-   unit: the verses one lens-3 sentence covers (usually one verse). Without a
-   lens file each verse is its own card and only lenses 1-2 exist.
+   Lenses 1-2 come from data/library/genesis-woh/chapter-N.json, lenses 3-4
+   from data/library/genesis-woh/lenses/chapter-N.json (schemaVersion 2). A
+   card is one Meaning unit: the verses one lens-4 sentence covers (usually
+   one verse). Without a lens file each verse is its own card and only
+   lenses 1-2 exist.
+
+   Notes (verse and passage) open from the library reader's note icon (the
+   bracketed speech bubble, .library-book__commentary-link) as an inline
+   fold. Without JS the folds are simply open and the icon is not shown;
+   genesis-lens.js hides them and wires the icon (aria-expanded/controls).
 
    Which pane shows is decided in CSS (sass/pages/_genesis-reader.scss) from
    the checked slider radio, so the reader works without JS; genesis-lens.js
@@ -27,7 +36,7 @@
    reads `:checked` through `:has()`) and arrow keys move between stops. #}
 {% macro lens_slider(has_lenses, chapter) %}
 {% set names = ["Hebrew", "Literal", "Reading", "Meaning"] %}
-{% set hints = ["The Hebrew text with a transliteration", "The Wheel of Heaven literal translation", "The passage as the Messages read it", "A plain explanation of each passage"] %}
+{% set hints = ["The Hebrew text with a transliteration", "The Wheel of Heaven literal translation", "The literal text with the words the Messages decode", "What each verse means, through the Messages"] %}
 <form class="genesis-lens" aria-label="Lens" onsubmit="return false">
     <fieldset class="genesis-lens__set" role="radiogroup" aria-describedby="genesis-lens-hint">
         <legend class="genesis-lens__legend">Lens</legend>
@@ -89,6 +98,7 @@
    becomes a card). #}
 {% macro passage(passage, verses, chapter, lang, has_lenses) %}
 {% if passage %}
+{% set decoded = passage.decoded | default(value=[]) %}
 {% set first = passage.range | first %}
 {% set last = passage.range | last %}
 {% set first_n = first | split(pat=":") | last %}
@@ -97,19 +107,20 @@
     <header class="genesis-passage__header">
         <p class="genesis-passage__range">Genesis {{ chapter }}:{{ first_n }}{% if last_n != first_n %}–{{ last_n }}{% endif %}</p>
         <h2 class="genesis-passage__title" id="{{ passage.id }}-title">{{ passage.title[lang] | default(value=passage.title.en) }}</h2>
+        {{ self::coverage(passage=passage) }}
     </header>
     <ol class="genesis-passage__cards" role="list">
-        {% for reading in passage.readings %}
-        {{ self::lens_card(reading=reading, refs=reading.refs, verses=verses, chapter=chapter, lang=lang, has_lenses=true) }}
+        {% for unit in passage.meaning %}
+        {{ self::lens_card(reading=unit, refs=unit.refs, verses=verses, chapter=chapter, lang=lang, has_lenses=true, decoded=decoded) }}
         {% endfor %}
     </ol>
-    {{ self::explanation(passage=passage, verses=verses, chapter=chapter, lang=lang) }}
+    {{ self::passage_note(passage=passage, verses=verses, chapter=chapter, lang=lang) }}
 </section>
 {% else %}
 <section class="genesis-passage" id="genesis-{{ chapter }}" aria-label="Genesis {{ chapter }}">
     <ol class="genesis-passage__cards" role="list">
         {% for verse in verses %}
-        {{ self::lens_card(reading=false, refs=[chapter ~ ":" ~ verse.n], verses=verses, chapter=chapter, lang=lang, has_lenses=false) }}
+        {{ self::lens_card(reading=false, refs=[chapter ~ ":" ~ verse.n], verses=verses, chapter=chapter, lang=lang, has_lenses=false, decoded=[]) }}
         {% endfor %}
     </ol>
 </section>
@@ -120,7 +131,7 @@
    step and reset controls) stays put; the panes below it open and close.
    The verse anchors (#v1 …) sit at the top of the card. The bar is the
    card's gutter: verse number, step arrow, and the reset when stepped. #}
-{% macro lens_card(reading, refs, verses, chapter, lang, has_lenses) %}
+{% macro lens_card(reading, refs, verses, chapter, lang, has_lenses, decoded) %}
 {# refs are "C:V" or "C:V-W" (lens schema): expand to verse numbers, and
    keep only verses the chapter has, so a bad ref can never index outside
    the verse list. #}
@@ -141,7 +152,7 @@
 {% set short = first_n %}
 {% if last_n != first_n %}{% set short = first_n ~ "–" ~ last_n %}{% endif %}
 {% set label = chapter ~ ":" ~ short %}
-<li class="genesis-card{% if ns | length > 1 %} genesis-card--multi{% endif %}" id="v{{ first_n }}" data-first="{{ first_n }}" data-label="{{ label }}"{% if has_lenses %} data-lenses="123"{% else %} data-lenses="12"{% endif %}>
+<li class="genesis-card{% if ns | length > 1 %} genesis-card--multi{% endif %}" id="v{{ first_n }}" data-first="{{ first_n }}" data-label="{{ label }}"{% if has_lenses %} data-lenses="1234"{% else %} data-lenses="12"{% endif %}>
     <div class="genesis-card__inner">
         <div class="genesis-card__bar">
             {% for v in ns %}{% if not loop.first %}<span class="genesis-card__anchor" id="v{{ v }}"></span>{% endif %}{% endfor %}
@@ -160,7 +171,10 @@
         <div class="genesis-card__panes">
             {{ self::pane_original(ns=ns, verses=verses) }}
             {{ self::pane_literal(ns=ns, verses=verses) }}
-            {% if reading %}{{ self::pane_reading(reading=reading, lang=lang) }}{% endif %}
+            {% if reading %}
+            {{ self::pane_decoded(ns=ns, decoded=decoded, lang=lang) }}
+            {{ self::pane_meaning(reading=reading, lang=lang) }}
+            {% endif %}
         </div>
     </div>
 </li>
@@ -210,13 +224,14 @@
             {% set verse = verses | nth(n=i) %}
             {% set note = verse.notes.official | default(value="") %}
             {% if note is object %}{% set note = note.en | default(value="") %}{% endif %}
+            {% set has_note = note | trim != "" %}
             <div class="genesis-verse genesis-verse--literal">
-                <p class="genesis-verse__text"><span class="genesis-verse__n">{{ n }}</span> {{ verse.i18n.en | default(value="") | markdown(inline=true) | safe }}</p>
-                {% if note | trim %}
-                <details class="genesis-note">
-                    <summary class="genesis-note__summary">Translation note<span class="visually-hidden"> on verse {{ n }}</span></summary>
+                <p class="genesis-verse__text"><span class="genesis-verse__n">{{ n }}</span> {{ verse.i18n.en | default(value="") | markdown(inline=true) | safe }}{% if has_note %} {{ self::note_icon(target="genesis-note-v" ~ n, label="the translation note on verse " ~ n, title="Translation note") }}{% endif %}</p>
+                {% if has_note %}
+                <div class="genesis-fold genesis-note" id="genesis-note-v{{ n }}" role="region" aria-label="Translation note on verse {{ n }}">
+                    <p class="genesis-fold__label">Translation note</p>
                     <div class="genesis-note__body">{{ note | markdown | safe }}</div>
-                </details>
+                </div>
                 {% endif %}
             </div>
             {% endfor %}
@@ -225,62 +240,108 @@
 </div>
 {% endmacro pane_literal %}
 
-{# Lens 3. One sentence or short paragraph for the whole card, its claim
-   label, and the canon paragraphs it rests on. #}
-{% macro pane_reading(reading, lang) %}
-{% set text = reading.text[lang] | default(value=reading.text.en) %}
-<div class="genesis-pane genesis-pane--3" data-pane="3">
+{# The library reader's note icon (macros/library.html, the bracketed
+   `.library-book__commentary-link` marker): the same SVG, classes and
+   label pattern, opening an inline fold instead of the library's popover.
+   `hidden` until genesis-lens.js wires it; without JS the fold is open. #}
+{% macro note_icon(target, label, title) %}<button class="library-book__commentary-link genesis-note-link" type="button" aria-controls="{{ target }}" aria-expanded="false" aria-label="Open {{ label }}" data-label="{{ label }}" title="{{ title }}" hidden><svg class="library-book__commentary-link-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></button>{% endmacro note_icon %}
+
+{# Lens 3. The decoded translation: the literal sentence with the
+   canon-decoded words swapped in, unmarked. A decoded unit shows in the
+   card of its first verse (the validator warns when one reaches into the
+   next card). No unit yet: the "in preparation" state. #}
+{% macro pane_decoded(ns, decoded, lang) %}
+{% set_global genesis_decoded = [] %}
+{% for unit in decoded %}
+    {% set part = unit.refs | first | split(pat=":") | last %}
+    {% set lo = part | split(pat="-") | first | int %}
+    {% if lo in ns %}{% set_global genesis_decoded = genesis_decoded | concat(with=unit) %}{% endif %}
+{% endfor %}
+<div class="genesis-pane genesis-pane--3{% if genesis_decoded | length == 0 %} genesis-pane--pending{% endif %}" data-pane="3">
     <div class="genesis-pane__clip">
         <div class="genesis-pane__body">
             <p class="genesis-pane__label">Reading</p>
+            {% if genesis_decoded | length > 0 %}
+            {% for unit in genesis_decoded %}
+            {% set first_ref = unit.refs | first | split(pat=":") | last %}
+            {% set last_ref = unit.refs | last | split(pat=":") | last %}
+            {% set lo = first_ref | split(pat="-") | first %}
+            {% set hi = last_ref | split(pat="-") | last %}
+            <div class="genesis-verse genesis-verse--decoded">
+                <p class="genesis-verse__text"><span class="genesis-verse__n">{{ lo }}{% if hi != lo %}–{{ hi }}{% endif %}</span> {{ unit.text[lang] | default(value=unit.text.en) | markdown(inline=true) | safe }}</p>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="genesis-pending">Reading in preparation</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endmacro pane_decoded %}
+
+{# Lens 4. One sentence or short paragraph for the whole card, its claim
+   label, and the canon paragraphs it rests on. #}
+{% macro pane_meaning(reading, lang) %}
+{% set text = reading.text[lang] | default(value=reading.text.en) %}
+<div class="genesis-pane genesis-pane--4" data-pane="4">
+    <div class="genesis-pane__clip">
+        <div class="genesis-pane__body">
+            <p class="genesis-pane__label">Meaning</p>
             <p class="genesis-reading__basis genesis-reading__basis--{{ reading.basis | default(value='synthesis') }}">{% if reading.basis | default(value="") == "canon" %}From the Messages{% else %}A Wheel of Heaven reading{% endif %}</p>
             <p class="genesis-reading__text">{{ self::segment(text=text, claim=reading.claim | default(value=""), core=reading.coreClaim | default(value=""), canon=reading.canon | default(value=[]), lang=lang) }}</p>
         </div>
     </div>
 </div>
-{% endmacro pane_reading %}
+{% endmacro pane_meaning %}
 
-{# Lens 4, at passage level: the canon-coverage marker, the paragraphs of
-   labelled segments, and an optional figure. #}
-{% macro explanation(passage, verses, chapter, lang) %}
-{% set ex = passage.explanation | default(value=false) %}
-<div class="genesis-explanation genesis-pane genesis-pane--4" data-pane="4" id="{{ passage.id }}-meaning">
+{# Lens 4, in the passage header: what the Messages say about the passage,
+   before the cards it qualifies. #}
+{% macro coverage(passage) %}
+{% set coverage = passage.canonCoverage | default(value="silent") %}
+<p class="genesis-coverage genesis-coverage--{{ coverage }}">
+    {% if coverage == "quotes" %}The Messages quote this passage and explain it.
+    {% elif coverage == "comments" %}The Messages comment on this passage.
+    {% elif coverage == "alludes" %}The Messages allude to this passage.
+    {% else %}The Messages do not comment on this passage; what follows is a Wheel of Heaven reading.{% endif %}
+</p>
+{% endmacro coverage %}
+
+{# Lens 4, under the passage's cards: the passage note, folded behind the
+   note icon. The paragraphs of labelled segments, an optional figure, and
+   the passage's literal lines (layer 2), themselves folded. #}
+{% macro passage_note(passage, verses, chapter, lang) %}
+{% set ex = passage.note | default(value=false) %}
+{% set lo = passage.range | first | split(pat=":") | last | int %}
+{% set hi = passage.range | last | split(pat=":") | last | int %}
+{% set where = "Genesis " ~ chapter ~ ":" ~ lo %}{% if hi != lo %}{% set where = where ~ "–" ~ hi %}{% endif %}
+{% if ex %}
+<div class="genesis-passage-note genesis-pane genesis-pane--4" data-pane="4" id="{{ passage.id }}-meaning">
     <div class="genesis-pane__clip">
         <div class="genesis-pane__body">
-            <p class="genesis-pane__label">Meaning</p>
-            {% set coverage = passage.canonCoverage | default(value="silent") %}
-            <p class="genesis-coverage genesis-coverage--{{ coverage }}">
-                {% if coverage == "quotes" %}The Messages quote this passage and explain it.
-                {% elif coverage == "comments" %}The Messages comment on this passage.
-                {% elif coverage == "alludes" %}The Messages allude to this passage.
-                {% else %}The Messages do not comment on this passage; what follows is a Wheel of Heaven reading.{% endif %}
-            </p>
-            {% if ex %}
-            {% for para in ex.paragraphs | default(value=[]) %}
-            <p class="genesis-explanation__para">{% for seg in para %}{% if not loop.first %} {% endif %}{{ self::segment(text=seg.text[lang] | default(value=seg.text.en), claim=seg.claim | default(value=""), core=seg.coreClaim | default(value=""), canon=seg.canon | default(value=[]), lang=lang) }}{% endfor %}</p>
-            {% endfor %}
-            {% if ex.visual %}{{ self::visual(visual=ex.visual, lang=lang) }}{% endif %}
-            {% endif %}
-            {# The passage's own words, folded: the literal lines (layer 2) the
-               explanation is about, closed by default. #}
-            {% set lo = passage.range | first | split(pat=":") | last | int %}
-            {% set hi = passage.range | last | split(pat=":") | last | int %}
-            <details class="genesis-text">
-                <summary class="genesis-text__summary">Genesis {{ chapter }}:{{ lo }}{% if hi != lo %}–{{ hi }}{% endif %}<span class="genesis-text__hint">· the literal text</span></summary>
-                <ol class="genesis-text__lines" role="list">
-                    {% for n in range(start=lo, end=hi + 1) %}
-                    {% if n >= 1 and n <= verses | length %}
-                    {% set i = n - 1 %}
-                    {% set verse = verses | nth(n=i) %}
-                    <li class="genesis-text__line"><span class="genesis-text__n">{{ n }}</span> {{ verse.i18n.en | default(value="") | markdown(inline=true) | safe }}</li>
-                    {% endif %}
-                    {% endfor %}
-                </ol>
-            </details>
+            <p class="genesis-passage-note__bar"><span class="genesis-passage-note__name">Note on this passage</span> {{ self::note_icon(target=passage.id ~ "-note", label="the note on " ~ where, title="Note on this passage") }}</p>
+            <div class="genesis-fold genesis-passage-note__body" id="{{ passage.id }}-note" role="region" aria-label="Note on {{ where }}">
+                {% for para in ex.paragraphs | default(value=[]) %}
+                <p class="genesis-passage-note__para">{% for seg in para %}{% if not loop.first %} {% endif %}{{ self::segment(text=seg.text[lang] | default(value=seg.text.en), claim=seg.claim | default(value=""), core=seg.coreClaim | default(value=""), canon=seg.canon | default(value=[]), lang=lang) }}{% endfor %}</p>
+                {% endfor %}
+                {% if ex.visual %}{{ self::visual(visual=ex.visual, lang=lang) }}{% endif %}
+                <details class="genesis-text">
+                    <summary class="genesis-text__summary">{{ where }}<span class="genesis-text__hint">· the literal text</span></summary>
+                    <ol class="genesis-text__lines" role="list">
+                        {% for n in range(start=lo, end=hi + 1) %}
+                        {% if n >= 1 and n <= verses | length %}
+                        {% set i = n - 1 %}
+                        {% set verse = verses | nth(n=i) %}
+                        <li class="genesis-text__line"><span class="genesis-text__n">{{ n }}</span> {{ verse.i18n.en | default(value="") | markdown(inline=true) | safe }}</li>
+                        {% endif %}
+                        {% endfor %}
+                    </ol>
+                </details>
+            </div>
         </div>
     </div>
 </div>
-{% endmacro explanation %}
+{% endif %}
+{% endmacro passage_note %}
 
 {# One labelled assertion: the claim marker (macros/claim.html — the same
    markup as the {% claim %} shortcode) followed by its canon chips. #}
@@ -337,7 +398,7 @@
 {%- endif -%}
 {% endmacro canon_chip %}
 
-{# Lens 3-4 figure. A diagram from the gen_diagrams.py family when its SVG
+{# Passage-note figure. A diagram from the gen_diagrams.py family when its SVG
    exists (static/diagrams/{ref}.svg); otherwise a labelled empty plate, so
    a missing drawing is visible on the dev server rather than silent. #}
 {% macro visual(visual, lang) %}
