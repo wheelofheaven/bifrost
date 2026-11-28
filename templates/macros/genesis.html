@@ -47,9 +47,41 @@
     </fieldset>
 </form>
 <p class="genesis-lens__hint" id="genesis-lens-hint">
-    {% if has_lenses %}<span class="genesis-lens__keys">Keys 1–4 switch the lens. </span>The arrow beside a verse steps that verse alone.{% else %}Reading and Meaning are coming for Genesis {{ chapter }}. They are written for chapters 1–11 first.{% endif %}
+    {% if has_lenses %}The slider turns every verse. To turn one verse alone, press the lens name under its number.<span class="genesis-lens__keys"> Keys 1–4 move the slider.</span>{% else %}Reading and Meaning are coming for Genesis {{ chapter }}. They are written for chapters 1–11 first.{% endif %}
 </p>
 {% endmacro lens_slider %}
+
+{# Chapter switcher, under the chapter header: previous and next chapter,
+   and a disclosure with every chapter (a <details>, so it opens without
+   JS; genesis-lens.js closes it on Escape and on a click outside).
+   Chapters with all four lenses carry a dot, as on the index. #}
+{% macro chapter_nav(page, chapter, lang, show_drafts) %}
+{% set index = get_section(path="library/genesis-woh/lenses/_index.md") %}
+<nav class="genesis-jump" aria-label="Chapter">
+    {% if page.lower %}
+    <a class="genesis-jump__step" href="{{ page.lower.permalink | safe }}" rel="prev" aria-label="Previous chapter: {{ page.lower.title }}"><span aria-hidden="true">←</span> {{ page.lower.extra.chapter }}</a>
+    {% endif %}
+    <details class="genesis-jump__menu">
+        <summary class="genesis-jump__summary">Chapter {{ chapter }} <span class="genesis-jump__of">of {{ index.pages | length }}</span></summary>
+        <div class="genesis-jump__panel">
+            <ol class="genesis-jump__grid" role="list">
+                {% for p in index.pages %}
+                {% set c = p.extra.chapter | default(value=0) %}
+                {% set lensfile = load_data(path="data/library/genesis-woh/lenses/chapter-" ~ c ~ ".json", required=false) %}
+                {% set four = lensfile and (lensfile.lens.status | default(value="draft") == "stable" or show_drafts) %}
+                <li>
+                    <a class="genesis-jump__chapter{% if four %} genesis-jump__chapter--four{% endif %}" href="{{ p.permalink | safe }}"{% if c == chapter %} aria-current="page"{% endif %} title="{{ p.extra.chapter_title | default(value=p.title) }}{% if four %} · four lenses{% endif %}" aria-label="Genesis {{ c }}, {{ p.extra.chapter_title | default(value='') }}{% if four %}, four lenses{% endif %}">{{ c }}</a>
+                </li>
+                {% endfor %}
+            </ol>
+            <p class="genesis-jump__legend"><span class="genesis-jump__dot" aria-hidden="true"></span> Four lenses <span aria-hidden="true">·</span> <a href="{{ get_url(path='library/genesis-woh/lenses/', lang=lang, trailing_slash=true) }}">All chapters</a></p>
+        </div>
+    </details>
+    {% if page.higher %}
+    <a class="genesis-jump__step" href="{{ page.higher.permalink | safe }}" rel="next" aria-label="Next chapter: {{ page.higher.title }}">{{ page.higher.extra.chapter }} <span aria-hidden="true">→</span></a>
+    {% endif %}
+</nav>
+{% endmacro chapter_nav %}
 
 {# One passage: an optional header (range; title only in lenses 3-4), its
    cards, and the Meaning pane. `passage` is a lens-file passage, or false for
@@ -114,8 +146,12 @@
         <div class="genesis-card__bar">
             {% for v in ns %}{% if not loop.first %}<span class="genesis-card__anchor" id="v{{ v }}"></span>{% endif %}{% endfor %}
             <a class="genesis-card__ref" href="#v{{ first_n }}" aria-label="Genesis {{ label }}, link to this verse">{{ short }}</a>
-            <button type="button" class="genesis-card__step" aria-label="Show {{ label }} in the next lens" hidden>
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+            {# The step names the lens it leads to; genesis-lens.js keeps the
+               name, the tooltip and the accessible label current. #}
+            {% if has_lenses %}{% set next_name = "Reading" %}{% else %}{% set next_name = "Hebrew" %}{% endif %}
+            <button type="button" class="genesis-card__step" aria-label="Show {{ label }} in the {{ next_name }} lens" title="Show this verse in {{ next_name }}" hidden>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M5 12h14"/><path d="M13 6l6 6-6 6"/></svg>
+                <span class="genesis-card__step-name" aria-hidden="true">{{ next_name }}</span>
             </button>
             <button type="button" class="genesis-card__reset" aria-label="Show {{ label }} in the page lens again" title="Back to the page lens" hidden>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>
@@ -251,13 +287,34 @@
 {% macro segment(text, claim, core, canon, lang) %}
 {%- set html = text | markdown(inline=true) -%}
 {%- if claim -%}{{ claim_macros::inline(type=claim, text=html, lang=lang, id=core) }}{%- else -%}{{ html | safe }}{%- endif -%}
-{%- if canon | length > 0 %}<span class="genesis-chips">{% for ref in canon %} {{ self::canon_chip(ref=ref) }}{% endfor %}</span>{%- endif -%}
+{%- if canon | length > 0 %} {{ self::canon_refs(canon=canon) }}{%- endif -%}
 {% endmacro segment %}
+
+{# The canon references of one segment as a single quiet run, consecutive
+   paragraphs of one book merged: "TBWTT 2:28, 2:30 · LWTE 3:4". Each
+   paragraph stays its own link (full book name in its aria-label, the
+   paragraph's opening words in its title). #}
+{% macro canon_refs(canon) %}
+{%- set_global genesis_ref_book = "" -%}
+<span class="genesis-refs">
+{%- for ref in canon -%}
+{%- if ref is object -%}{%- set r = ref.ref -%}{%- else -%}{%- set r = ref -%}{%- endif -%}
+{%- set code = r | split(pat="-") | first -%}
+{%- if not loop.first -%}{%- if code == genesis_ref_book -%}<span class="genesis-refs__sep">, </span>{%- else -%}<span class="genesis-refs__sep genesis-refs__sep--book"> · </span>{%- endif -%}{%- endif -%}
+{%- set same_book = code == genesis_ref_book -%}
+{#- "opinion" is written once, after the last paragraph of a run -#}
+{%- set last_of_book = true -%}
+{%- if not loop.last -%}{%- set nxt = canon | nth(n=loop.index) -%}{%- if nxt is object -%}{%- set nxt = nxt.ref -%}{%- endif -%}{%- if nxt | split(pat="-") | first == code -%}{%- set last_of_book = false -%}{%- endif -%}{%- endif -%}
+{{ self::canon_chip(ref=ref, short=same_book, note=last_of_book) }}
+{%- set_global genesis_ref_book = code -%}
+{%- endfor -%}
+</span>
+{%- endmacro canon_refs %}
 
 {# A canon reference as a small link into the library reader. `ref` is
    "TBWTT-2:5", or {ref, standing} where standing "author-opinion" marks
    Raël's own commentary (LWTE), which is cited as opinion, never as canon. #}
-{% macro canon_chip(ref) %}
+{% macro canon_chip(ref, short=false, note=true) %}
 {%- if ref is object -%}{%- set r = ref.ref -%}{%- set standing = ref.standing | default(value="") -%}{%- else -%}{%- set r = ref -%}{%- set standing = "" -%}{%- endif -%}
 {%- set code = r | split(pat="-") | first -%}
 {%- set loc = r | split(pat="-") | last -%}
@@ -274,7 +331,7 @@
 {%- if chapter_data -%}{%- for p in chapter_data.paragraphs -%}{%- if p.refId == r -%}{%- set_global genesis_chip_quote = p.i18n.en | default(value="") -%}{%- endif -%}{%- endfor -%}{%- endif -%}
 {%- endif -%}
 {%- if slug -%}
-<a class="genesis-chip{% if standing == 'author-opinion' %} genesis-chip--opinion{% endif %}" href="{{ get_url(path='library/' ~ slug ~ '/', trailing_slash=true) }}#c{{ ch }}p{{ para }}" aria-label="{{ book }}, {{ ch }}:{{ para }}{% if standing == 'author-opinion' %}, Raël's opinion{% endif %}"{% if genesis_chip_quote %} title="{{ genesis_chip_quote | truncate(length=180) }}"{% endif %}>{{ code }} {{ ch }}:{{ para }}{% if standing == 'author-opinion' %} · opinion{% endif %}</a>
+<a class="genesis-chip{% if standing == 'author-opinion' %} genesis-chip--opinion{% endif %}" href="{{ get_url(path='library/' ~ slug ~ '/', trailing_slash=true) }}#c{{ ch }}p{{ para }}" aria-label="{{ book }}, {{ ch }}:{{ para }}{% if standing == 'author-opinion' %}, Raël's opinion{% endif %}"{% if genesis_chip_quote %} title="{{ genesis_chip_quote | truncate(length=180) }}"{% endif %}>{% if not short %}{{ code }} {% endif %}{{ ch }}:{{ para }}{% if standing == 'author-opinion' and note %}<span class="genesis-chip__note"> opinion</span>{% endif %}</a>
 {%- else -%}
 <span class="genesis-chip">{{ r }}</span>
 {%- endif -%}

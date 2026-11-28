@@ -72,7 +72,56 @@ $genesis-gutter: 2.75rem;
 
     &__header--index {
         @include grammar.grammar-index-header;
-        margin-bottom: v.$spacing-xl;
+        margin-bottom: 0;
+
+        .genesis__lede {
+            @media (max-width: 600px) {
+                font-size: v.$font-size-lg;
+            }
+        }
+    }
+
+    // Index call to action: the one filled pill on the page, and a quiet
+    // jump to the explanation below the chapters.
+    &__actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: v.$spacing-xs v.$spacing-md;
+        margin: v.$spacing-lg 0 0;
+    }
+
+    &__start {
+        @include grammar.grammar-pill;
+        min-height: 44px;
+        padding-inline: v.$spacing-md;
+        border-color: var(--color-text);
+        background: var(--color-text);
+        color: var(--color-background);
+        font-size: v.$font-size-sm;
+
+        &:hover,
+        &:focus-visible {
+            background: transparent;
+            color: var(--color-text);
+        }
+    }
+
+    &__about-link {
+        display: inline-flex;
+        align-items: center;
+        gap: v.$spacing-2xs;
+        min-height: 44px;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        letter-spacing: 0.02em;
+        color: var(--color-text-muted);
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+        }
     }
 
     &__eyebrow {
@@ -125,6 +174,8 @@ $genesis-gutter: 2.75rem;
 
     &__intro {
         max-width: $genesis-measure;
+        margin-top: v.$spacing-2xl;
+        scroll-margin-top: 6rem;
         font-size: var(--grammar-body-size, 1.0625rem);
         line-height: 1.7;
         color: var(--color-text);
@@ -157,25 +208,241 @@ $genesis-gutter: 2.75rem;
     }
 }
 
+// ---- Colophon: versions and review, at the foot of the chapter -----------
+.genesis__colophon {
+    max-width: $genesis-measure;
+    margin-top: v.$spacing-2xl;
+    padding-top: v.$spacing-md;
+    border-top: 1px solid var(--color-hairline-subtle);
+    font-family: typo.$font-family-tech;
+    font-size: v.$font-size-xs;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
+
+    a {
+        color: inherit;
+        text-underline-offset: 0.2em;
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+        }
+    }
+}
+
+.genesis__colophon-line {
+    margin: 0 0 v.$spacing-2xs;
+}
+
+.genesis__colophon + .genesis__pager {
+    margin-top: v.$spacing-lg;
+}
+
+// ---- Chapter switcher (header) ------------------------------------------
+// Previous, "Chapter N of 50" (a disclosure with every chapter), next.
+.genesis-jump {
+    position: relative;
+    z-index: 45; // over the sticky lens bar (40) while the menu is open
+    display: flex;
+    align-items: center;
+    gap: v.$spacing-xs;
+    margin-top: v.$spacing-md;
+
+    &__step,
+    &__summary {
+        @include grammar.grammar-pill;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        white-space: nowrap;
+    }
+
+    &__menu {
+        position: static;
+    }
+
+    &__summary {
+        list-style: none;
+
+        &::-webkit-details-marker {
+            display: none;
+        }
+
+        // Chevron, drawn in CSS so it turns with the state.
+        &::after {
+            content: "";
+            width: 0.4rem;
+            height: 0.4rem;
+            margin-left: v.$spacing-2xs;
+            border-right: 1px solid currentColor;
+            border-bottom: 1px solid currentColor;
+            transform: translateY(-0.12rem) rotate(45deg);
+            transition: transform v.$transition-base ease;
+        }
+    }
+
+    &__menu[open] &__summary {
+        border-color: var(--color-text);
+
+        &::after {
+            transform: translateY(0.12rem) rotate(-135deg);
+        }
+    }
+
+    &__of {
+        color: var(--color-text-muted);
+    }
+
+    &__panel {
+        position: absolute;
+        top: calc(100% + #{v.$spacing-xs});
+        left: 0;
+        right: 0;
+        padding: v.$spacing-sm;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-lg;
+        background: var(--color-background);
+        box-shadow: 0 18px 48px -24px rgba(0, 0, 0, 0.55);
+    }
+
+    &__grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(44px, 1fr));
+        gap: v.$spacing-2xs;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__chapter {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        border: 1px solid transparent;
+        border-radius: v.$border-radius-sm;
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-sm;
+        font-variant-numeric: tabular-nums;
+        color: var(--color-text);
+        text-decoration: none;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-text);
+        }
+
+        &--four::after {
+            content: "";
+            position: absolute;
+            bottom: 0.45rem;
+            left: 50%;
+            width: 0.875rem;
+            height: 2px;
+            margin-left: -0.4375rem;
+            border-radius: 1px;
+            @include grammar.grammar-rainbow;
+        }
+
+        &[aria-current="page"] {
+            background: var(--color-text);
+            color: var(--color-background);
+        }
+    }
+
+    &__legend {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: v.$spacing-xs;
+        margin: v.$spacing-sm 0 0;
+        padding-top: v.$spacing-xs;
+        border-top: 1px solid var(--color-hairline-subtle);
+        font-family: typo.$font-family-tech;
+        font-size: v.$font-size-xs;
+        color: var(--color-text-muted);
+
+        a {
+            color: var(--color-text);
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+        }
+    }
+
+    &__dot {
+        width: 0.875rem;
+        height: 2px;
+        border-radius: 1px;
+        @include grammar.grammar-rainbow;
+    }
+}
+
 // ---- Lens slider --------------------------------------------------------
 // Sticky under the navbar. On phones the navbar slides away on scroll down
 // (.navbar--hidden), and the slider moves up into its place; `top`, not a
 // transform, so no glass surface ever sits under a transformed ancestor.
+//
+// Once stuck (.genesis-lens--stuck, set by genesis-lens.js) the slider sits
+// on a band of page background that reaches from the top of the viewport to
+// just below the pill and fades out there, so the text scrolls away under
+// it instead of showing through. The band is a pseudo-element: it takes no
+// room, so sticking causes no layout shift; it is opaque, so it adds no
+// backdrop-filter layer, and the navbar's own glass sits over it exactly as
+// it sits over the top of the page.
+$genesis-band-fade: v.$spacing-lg;
+
 .genesis-lens {
     --lens-i: 1;
+    --genesis-lens-top: 5.75rem;
     position: sticky;
-    top: 5.25rem;
+    top: var(--genesis-lens-top);
     z-index: 40;
     max-width: $genesis-measure;
     margin: 0;
     transition: top v.$transition-slow ease;
 
     @media (max-width: 1024px) {
-        top: 4.5rem;
+        --genesis-lens-top: 4.75rem;
 
         body:has(.navbar--hidden) & {
-            top: 0.75rem;
+            --genesis-lens-top: #{v.$spacing-xs};
         }
+    }
+
+    // Full-bleed sideways: html clips horizontal overflow (base/_reset.scss),
+    // so the overhang never scrolls.
+    &::before {
+        content: "";
+        position: absolute;
+        top: calc(-1 * var(--genesis-lens-top));
+        bottom: calc(-1 * #{$genesis-band-fade});
+        left: -100vw;
+        right: -100vw;
+        z-index: -1;
+        background: linear-gradient(
+            to bottom,
+            var(--color-background) calc(100% - #{$genesis-band-fade}),
+            transparent
+        );
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity v.$transition-base ease;
+
+        @media (prefers-reduced-motion: reduce) {
+            transition: none;
+        }
+    }
+
+    &--stuck::before {
+        opacity: 1;
+    }
+
+    // The band carries the pill: it needs neither its own blur nor a shadow.
+    &--stuck &__track {
+        box-shadow: none;
     }
 
     @include when-page-lens(1) { --lens-i: 0; }
@@ -205,10 +472,9 @@ $genesis-gutter: 2.75rem;
         padding: 4px;
         border: 1px solid var(--color-hairline);
         border-radius: v.$border-radius-full;
-        background: color-mix(in srgb, var(--color-background) 80%, transparent);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
+        background: var(--color-background);
         box-shadow: 0 6px 24px -12px rgba(0, 0, 0, 0.35);
+        transition: box-shadow v.$transition-base ease;
     }
 
     // The radios stay in the accessibility tree and the tab order; the
@@ -353,7 +619,7 @@ $genesis-gutter: 2.75rem;
 .genesis-card {
     display: grid;
     grid-template-rows: 1fr;
-    scroll-margin-top: 9.5rem;
+    scroll-margin-top: 10.5rem;
     border-top: 1px solid var(--color-hairline-subtle);
 
     &:first-child {
@@ -395,7 +661,7 @@ $genesis-gutter: 2.75rem;
 
     &__anchor {
         display: block;
-        scroll-margin-top: 9.5rem;
+        scroll-margin-top: 10.5rem;
     }
 
     &__step,
@@ -438,6 +704,31 @@ $genesis-gutter: 2.75rem;
         &[hidden] {
             display: none;
         }
+    }
+
+    // The step names where it goes: a ring with the arrow, and under it the
+    // next lens ("Reading"). The whole stack is the target, at least 44px.
+    &__step {
+        flex-direction: column;
+        gap: 0.15rem;
+        width: auto;
+        min-width: 44px;
+        height: auto;
+        min-height: 44px;
+        padding: v.$spacing-2xs 0;
+        border-radius: v.$border-radius-md;
+
+        svg {
+            padding: 5px;
+        }
+    }
+
+    &__step-name {
+        font-family: typo.$font-family-tech;
+        font-size: 0.5625rem;
+        letter-spacing: 0.02em;
+        line-height: 1.2;
+        white-space: nowrap;
     }
 
     // A stepped card says which lens it is in (the pane label) and wears a
@@ -646,14 +937,15 @@ $genesis-gutter: 2.75rem;
 
 // Lens 4: the passage explanation.
 .genesis-explanation {
-    scroll-margin-top: 9.5rem;
+    scroll-margin-top: 10.5rem;
 
     .genesis-pane__body {
         padding: v.$spacing-sm 0 v.$spacing-lg;
     }
 
     &__para {
-        margin: 0 0 v.$spacing-md;
+        max-width: 68ch;
+        margin: 0 0 v.$spacing-lg;
         font-size: var(--grammar-body-size, 1.0625rem);
         line-height: 1.75;
         color: var(--color-text);
@@ -682,34 +974,45 @@ $genesis-gutter: 2.75rem;
     }
 }
 
-// A canon reference: a quiet mono chip into the library reader.
-.genesis-chips {
+// Canon references: one quiet mono run after the sentence they support
+// ("TBWTT 2:28, 2:30"), no borders, so the prose reads through them. Each
+// paragraph is its own link into the library reader; the underline shows
+// on hover and focus. Raël's own commentary is cited as opinion: a dashed
+// underline that stays visible, and the word "opinion".
+.genesis-refs {
+    font-family: typo.$font-family-tech;
+    font-size: 0.72em;
+    letter-spacing: 0.02em;
+    color: var(--color-text-muted);
     white-space: normal;
+
+    &__sep {
+        opacity: 0.7;
+    }
 }
 
 .genesis-chip {
-    display: inline-block;
-    padding: 0.05rem 0.45rem;
-    border: 1px solid var(--color-hairline);
-    border-radius: v.$border-radius-full;
-    font-family: typo.$font-family-tech;
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-    line-height: 1.5;
-    color: var(--color-text-muted);
-    text-decoration: none;
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: transparent;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
     white-space: nowrap;
-    vertical-align: 0.15em;
-    transition: color v.$transition-base ease, border-color v.$transition-base ease;
+    transition: color v.$transition-base ease, text-decoration-color v.$transition-base ease;
 
     &:hover,
     &:focus-visible {
         color: var(--color-text);
-        border-color: var(--color-text);
+        text-decoration-color: currentColor;
     }
 
     &--opinion {
-        border-style: dashed;
+        text-decoration-style: dashed;
+        text-decoration-color: currentColor;
+    }
+
+    &__note {
+        font-style: italic;
     }
 }
 
@@ -902,6 +1205,7 @@ $genesis-gutter: 2.75rem;
 @media print {
     .genesis-lens,
     .genesis-lens__hint,
+    .genesis-jump,
     .genesis-card__step,
     .genesis-card__reset,
     .genesis__pager {
@@ -929,11 +1233,32 @@ $genesis-gutter: 2.75rem;
 
 // ---- Index (/genesis/) --------------------------------------------------
 .genesis-index {
-    margin-top: v.$spacing-2xl;
+    margin-top: v.$spacing-lg;
 
     &__title {
         @include grammar.grammar-section-title;
         margin-top: 0;
+    }
+
+    &__legend {
+        display: flex;
+        align-items: baseline;
+        gap: v.$spacing-xs;
+        max-width: $genesis-measure;
+        margin: 0;
+        font-size: v.$font-size-sm;
+        line-height: 1.5;
+        color: var(--color-text-muted);
+    }
+
+    // The same rainbow edge the four-lens tiles carry.
+    &__mark {
+        flex: none;
+        width: 3px;
+        height: 1em;
+        border-radius: 2px;
+        transform: translateY(0.15em);
+        @include grammar.grammar-rainbow(180deg);
     }
 
     &__group {
@@ -954,6 +1279,13 @@ $genesis-gutter: 2.75rem;
     &__grid {
         display: grid;
         grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+
+        // Two compact columns on phones, so the fifty chapters are a few
+        // screens, not a dozen.
+        @media (max-width: 600px) {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
         gap: v.$spacing-xs;
         margin: 0;
         padding: 0;
@@ -965,6 +1297,7 @@ $genesis-gutter: 2.75rem;
     display: grid;
     grid-template-columns: 2.25rem 1fr;
     grid-template-rows: auto auto;
+    align-content: start;
     column-gap: v.$spacing-xs;
     row-gap: 0.15rem;
     height: 100%;
@@ -990,7 +1323,14 @@ $genesis-gutter: 2.75rem;
         font-variant-numeric: tabular-nums;
     }
 
+    // Later chapter titles run to a sentence: two lines, the rest in the
+    // tooltip and on the chapter page.
     &__title {
+        display: -webkit-box;
+        overflow: hidden;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
         font-size: v.$font-size-sm;
         line-height: 1.35;
     }
@@ -1004,6 +1344,18 @@ $genesis-gutter: 2.75rem;
     }
 
     // Chapters with all four lenses carry the rainbow on the left edge.
+    // Phones: two narrow columns, so the number sits above the title and
+    // the title keeps the tile's full width.
+    @media (max-width: 600px) {
+        grid-template-columns: minmax(0, 1fr);
+        padding: v.$spacing-xs v.$spacing-sm;
+
+        &__n {
+            grid-row: auto;
+            font-size: v.$font-size-lg;
+        }
+    }
+
     &--four {
         position: relative;
 

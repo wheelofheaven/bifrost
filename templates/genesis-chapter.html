@@ -35,12 +35,14 @@
             </p>
             <h1 class="genesis__title" id="page-title">{{ page.title }}</h1>
             <p class="genesis__lede">{{ page.extra.chapter_title | default(value="") }}</p>
+            {# Reader-facing: what this chapter offers. Versions and review
+               state are in the colophon at the foot of the page. #}
             <p class="genesis__meta">
                 {{ verses | length }} verses
                 <span aria-hidden="true">·</span>
-                Literal translation {{ chapter.translation.version | default(value="") }}, reviewed
-                {% if has_lenses %}<span aria-hidden="true">·</span> Reading and Meaning {{ lensfile.lens.version }}{% endif %}
+                {% if has_lenses %}Four lenses{% else %}Hebrew and literal for now{% endif %}
             </p>
+            {{ genesis::chapter_nav(page=page, chapter=n, lang=detected_lang, show_drafts=show_drafts) }}
             {% if is_draft %}
             <p class="genesis__draft" role="note">
                 <strong>Draft preview.</strong> Reading and Meaning for this chapter are
@@ -66,6 +68,17 @@
 
         {# One polite live region for every lens change, page or card. #}
         <p class="visually-hidden" id="genesis-live" aria-live="polite" aria-atomic="true"></p>
+
+        <footer class="genesis__colophon">
+            <p class="genesis__colophon-line">
+                Literal translation: <a href="{{ get_url(path='library/genesis-woh/', lang=detected_lang, trailing_slash=true) }}">Genesis, Wheel of Heaven translation</a>, version {{ chapter.translation.version | default(value="") }}, reviewed{% if chapter.translation.signedOffAt | default(value="") %} and signed off {{ chapter.translation.signedOffAt | date(format="%Y-%m-%d") }}{% endif %}.
+            </p>
+            {% if has_lenses %}
+            <p class="genesis__colophon-line">
+                Reading and Meaning: version {{ lensfile.lens.version }}{% if lens_status == "stable" %}, reviewed{% if lensfile.lens.signedOffAt %} and signed off {{ lensfile.lens.signedOffAt | date(format="%Y-%m-%d") }}{% endif %}{% else %}, {{ lens_status }}{% endif %}.
+            </p>
+            {% endif %}
+        </footer>
 
         <nav class="genesis__pager" aria-label="Chapters">
             {% if page.lower %}

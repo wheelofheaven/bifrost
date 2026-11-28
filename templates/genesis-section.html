@@ -3,9 +3,11 @@
 
 {# Genesis four-lens reader — the index (/library/genesis-woh/lenses/).
 
-   Header, the hand-written intro (content/library/genesis-woh/lenses/_index.md: the four
-   lenses, canon first, claim labels), then the fifty chapters in the four
-   narrative groups. Each tile says whether the chapter has all four lenses
+   Header with the lede and a "Start with Genesis 1" call to action, then
+   the fifty chapters in the four narrative groups, then the hand-written
+   intro (content/library/genesis-woh/lenses/_index.md: the four lenses,
+   canon first, claim labels) below the chapters, so a phone reaches the
+   chapters without scrolling through the explanation. Each tile says whether the chapter has all four lenses
    or Hebrew + literal only; a draft lens file counts only on the dev server
    (config.extra.genesis_show_drafts), exactly as on the chapter page. #}
 
@@ -22,16 +24,16 @@
         <header class="genesis__header genesis__header--index">
             <h1 class="genesis__title" id="page-title">{{ section.title }}</h1>
             {% if section.extra.lede %}<p class="genesis__lede" data-ai-summary="true">{{ section.extra.lede }}</p>{% endif %}
+            {% set first_page = section.pages | first %}
+            <p class="genesis__actions">
+                <a class="genesis__start" href="{{ first_page.permalink | safe }}">Start with Genesis 1 <span aria-hidden="true">→</span></a>
+                {% if section.content %}<a class="genesis__about-link" href="#genesis-about">How the lenses work <span aria-hidden="true">↓</span></a>{% endif %}
+            </p>
         </header>
-
-        {% if section.content %}
-        <div class="genesis__intro">
-            {{ section.content | safe }}
-        </div>
-        {% endif %}
 
         <section class="genesis-index" aria-labelledby="genesis-chapters-title">
             <h2 class="genesis-index__title" id="genesis-chapters-title">Chapters</h2>
+            <p class="genesis-index__legend"><span class="genesis-index__mark" aria-hidden="true"></span> Four lenses. The other chapters show the Hebrew and the literal translation for now.</p>
             {% for gkey in group_keys %}
             {% set gi = loop.index0 %}
             {% set lo = group_from | nth(n=gi) %}
@@ -49,7 +51,7 @@
                     <li class="genesis-index__item">
                         <a class="genesis-tile{% if four %} genesis-tile--four{% endif %}" href="{{ p.permalink | safe }}">
                             <span class="genesis-tile__n">{{ c }}</span>
-                            <span class="genesis-tile__title">{{ p.extra.chapter_title | default(value=p.title) }}</span>
+                            <span class="genesis-tile__title" title="{{ p.extra.chapter_title | default(value=p.title) }}">{{ p.extra.chapter_title | default(value=p.title) }}</span>
                             <span class="genesis-tile__tag">{% if four %}Four lenses{% if status != "stable" %} · draft{% endif %}{% else %}Hebrew + literal{% endif %}</span>
                         </a>
                     </li>
@@ -59,6 +61,12 @@
             </section>
             {% endfor %}
         </section>
+
+        {% if section.content %}
+        <section class="genesis__intro" id="genesis-about" aria-label="How the lenses work">
+            {{ section.content | safe }}
+        </section>
+        {% endif %}
     </div>
 </div>
 {% endblock content %}

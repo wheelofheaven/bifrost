@@ -16,7 +16,10 @@
  *     and the scroll position held on the card at the top of the viewport;
  *   - #vN deep links: in lens 4 the verse's card is folded, so the link
  *     lands on its passage's Meaning instead;
- *   - one polite live region announcing every change.
+ *   - one polite live region announcing every change;
+ *   - .genesis-lens--stuck on the slider while it is stuck, which shows
+ *     the opaque band behind it;
+ *   - the chapter switcher closes on Escape and on a click outside.
  */
 (function () {
     'use strict';
@@ -130,7 +133,9 @@
             const cur = cardLens(card);
             const next = list[(list.indexOf(cur) + 1) % list.length] || list[0];
             step.setAttribute('aria-label', 'Show ' + label + ' in the ' + NAMES[next] + ' lens');
-            step.title = NAMES[next];
+            step.title = 'Show this verse in ' + NAMES[next];
+            const name = step.querySelector('.genesis-card__step-name');
+            if (name) name.textContent = NAMES[next];
         }
     }
 
@@ -247,12 +252,47 @@
     // until it sits just under the slider.
     function settle(target, frame) {
         if (userMoved) return;
-        const want = (lensBar ? lensBar.offsetHeight : 0) + 96;
+        // Just below the stuck slider and its band's fade edge.
+        const want = lensBar
+            ? (parseFloat(getComputedStyle(lensBar).top) || 0) + lensBar.offsetHeight + 40
+            : 96;
         const off = target.getBoundingClientRect().top - want;
         if (Math.abs(off) > 2) window.scrollBy(0, off);
         if (frame < 20 && (Math.abs(off) > 2 || frame < 4)) {
             window.requestAnimationFrame(() => settle(target, frame + 1));
         }
+    }
+
+    // ---- Sticky band ------------------------------------------------------
+    let bandQueued = false;
+    function paintBand() {
+        bandQueued = false;
+        if (lensBar) lensBar.classList.toggle('genesis-lens--stuck', stuck() && window.scrollY > 0);
+    }
+    function queueBand() {
+        if (bandQueued) return;
+        bandQueued = true;
+        window.requestAnimationFrame(paintBand);
+    }
+    if (lensBar) {
+        window.addEventListener('scroll', queueBand, { passive: true });
+        window.addEventListener('resize', queueBand, { passive: true });
+        // The slider's `top` follows the navbar on phones (a transition).
+        lensBar.addEventListener('transitionend', queueBand);
+    }
+
+    // ---- Chapter switcher -------------------------------------------------
+    const jump = root.querySelector('.genesis-jump__menu');
+    if (jump) {
+        document.addEventListener('click', (e) => {
+            if (jump.open && !jump.contains(e.target)) jump.open = false;
+        });
+        jump.addEventListener('keydown', (e) => {
+            if (e.key !== 'Escape' || !jump.open) return;
+            jump.open = false;
+            const summary = jump.querySelector('summary');
+            if (summary) summary.focus();
+        });
     }
 
     // ---- Start ------------------------------------------------------------
@@ -271,6 +311,7 @@
     // Motion only after the starting lens is painted, so the page does not
     // animate into place on load.
     window.requestAnimationFrame(() => window.requestAnimationFrame(setMotion));
+    queueBand();
     if (reduced.addEventListener) reduced.addEventListener('change', setMotion);
 
     // Print shows all four lenses; nothing to do here — the CSS opens every
