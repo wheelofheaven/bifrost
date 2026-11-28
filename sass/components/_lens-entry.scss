@@ -1,0 +1,188 @@
+@use "../abstracts/variables" as v;
+@use "../base/typography" as typo;
+@use "../pages/grammar";
+
+// Four-lens reader entry points — the links into library/{slug}/lenses/
+// from the library book page (header, sidebar actions, each lensed
+// chapter head), the /library/ index (the "Read in four lenses" row and
+// the card badges) and the navbar Read menu. Shown only for books with a
+// data/library/{slug}/lenses/_lenses.json and only for its stable chapters.
+//
+// The mark is the reader's own: the short vertical rainbow bar the lens
+// index puts beside chapters that have all four lenses (.genesis-index__mark).
+
+.lens-mark {
+    flex: none;
+    display: inline-block;
+    width: 3px;
+    height: 0.95em;
+    border-radius: 2px;
+    @include grammar.grammar-rainbow(180deg);
+}
+
+// Pill link: header action and chapter-head link on the book page.
+.lens-entry {
+    @include grammar.grammar-pill;
+    gap: v.$spacing-xs;
+
+    &__arrow {
+        display: inline-flex;
+        color: var(--color-text-muted);
+        transition: transform v.$transition-base ease, color v.$transition-base ease;
+
+        svg {
+            width: 0.8rem;
+            height: 0.8rem;
+        }
+    }
+
+    &:hover &__arrow,
+    &:focus-visible &__arrow {
+        transform: translateX(2px);
+        color: var(--color-text);
+    }
+
+    &--small {
+        padding: 0.2rem 0.7rem;
+        font-size: 0.6875rem;
+        color: var(--color-text-muted);
+
+        &:hover,
+        &:focus-visible {
+            color: var(--color-text);
+        }
+    }
+}
+
+.library-book__lenses {
+    margin: v.$spacing-2xs 0 0;
+}
+
+.library-book__chapter-lenses {
+    margin-top: v.$spacing-sm;
+}
+
+// Sidebar action: an <a> in the button family, so drop link chrome.
+.library-book__lenses-btn {
+    text-decoration: none;
+
+    .lens-mark {
+        height: 1.1em;
+    }
+}
+
+// Card badge on /library/ (featured card and catalog card).
+.lens-badge {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.4rem;
+    padding: 0.15rem 0.6rem 0.15rem 0.5rem;
+    border: 1px solid var(--color-hairline);
+    border-radius: v.$border-radius-full;
+    font-family: typo.$font-family-tech;
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    text-decoration: none;
+    width: fit-content;
+
+    &--link {
+        margin: 0.35rem 0 0.75rem;
+
+        // Under the program chip, share its bottom margin.
+        .wiki-card__program-chip + & {
+            margin-top: -0.25rem;
+        }
+
+        transition: border-color v.$transition-base ease, color v.$transition-base ease;
+
+        &:hover,
+        &:focus-visible {
+            border-color: var(--color-text);
+            color: var(--color-text);
+        }
+    }
+}
+
+// List view keeps every row one line, like the program chip.
+.wiki-section__grid[data-view="list"] .lens-badge {
+    display: none;
+}
+
+// "Read in four lenses" row near the top of /library/.
+.library-lenses {
+    margin: v.$spacing-lg 0 v.$spacing-xl;
+
+    &__title {
+        display: flex;
+        align-items: center;
+        gap: v.$spacing-xs;
+        margin: 0 0 v.$spacing-sm;
+        @include grammar.grammar-eyebrow;
+        font-weight: 600;
+    }
+
+    &__list {
+        display: grid;
+        gap: v.$spacing-xs;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+    }
+
+    &__link {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: v.$spacing-md;
+        padding: v.$spacing-sm v.$spacing-md;
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--color-hairline);
+        border-radius: v.$border-radius-md;
+        color: var(--color-text-muted);
+        font-size: v.$font-size-sm;
+        line-height: 1.45;
+        text-decoration: none;
+        transition: background-color v.$transition-base ease, color v.$transition-base ease;
+
+        // The reader's mark, full height on the row's leading edge.
+        &::before {
+            content: "";
+            position: absolute;
+            inset-block: 0;
+            inset-inline-start: 0;
+            width: 3px;
+            @include grammar.grammar-rainbow(180deg);
+        }
+
+        &:hover,
+        &:focus-visible {
+            background-color: var(--color-hover);
+            color: var(--color-text);
+        }
+    }
+
+    &__name {
+        font-family: var(--font-family-lead);
+        font-size: v.$font-size-base;
+        font-weight: 600;
+        color: var(--color-text);
+    }
+
+    &__arrow {
+        display: inline-flex;
+        flex: none;
+        color: var(--color-text-muted);
+        transition: transform v.$transition-base ease;
+    }
+
+    &__link:hover &__arrow,
+    &__link:focus-visible &__arrow {
+        transform: translateX(3px);
+        color: var(--color-text);
+    }
+}

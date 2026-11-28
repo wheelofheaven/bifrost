@@ -14,6 +14,21 @@
    Wheel of Heaven translations (scripts/build_canon_citations.py). #}
 {% set canon_citations = load_data(path="data/canon_citations/" ~ book_slug ~ ".json", required=false) %}
 
+{# Four-lens reader entry points. A book has one when
+   data/library/{slug}/lenses/_lenses.json exists; only chapters whose row
+   there is `stable` get a link, and the reader lives at
+   library/{slug}/lenses/ (English, so other locales fall back to it). #}
+{% set lens_index = load_data(path="data/library/" ~ book_slug ~ "/lenses/_lenses.json", required=false) %}
+{% set_global lens_chapters = [] %}
+{% if lens_index and lens_index.chapters %}
+    {% set_global lens_chapters = lens_index.chapters | filter(attribute="status", value="stable") | map(attribute="chapter") %}
+{% endif %}
+{% set has_lenses = lens_chapters | length > 0 %}
+{% set_global lens_url = "" %}
+{% if has_lenses %}
+    {% set_global lens_url = i18n_url::content(path="library/" ~ book_slug ~ "/lenses", lang=detected_lang) %}
+{% endif %}
+
 {# Try split format first (directory with _meta.json), fall back to single file #}
 {% set book_meta = load_data(path="data/library/" ~ book_slug ~ "/_meta.json", required=false) %}
 {% if book_meta %}
@@ -159,6 +174,15 @@
                     {% if book_subtitle %}
                     <p class="library-book__subtitle">{{ book_subtitle }}</p>
                     {% endif %}
+                    {% if has_lenses %}
+                    <p class="library-book__lenses">
+                        <a class="lens-entry" href="{{ lens_url | safe }}">
+                            <span class="lens-mark" aria-hidden="true"></span>
+                            <span>{{ trans(key="libraryLensesRead", lang=detected_lang) }}</span>
+                            <span class="lens-entry__arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                        </a>
+                    </p>
+                    {% endif %}
                 </header>
 
                 {# Lede paragraph — localized description from _meta.json. Always
@@ -234,6 +258,14 @@
                             {% endif %}
                             {% if show_chap_title %}
                             <h2 class="library-book__chapter-title">{{ chap_title }}</h2>
+                            {% endif %}
+                            {% if has_lenses and chapter.n in lens_chapters %}
+                            {% set lens_chapter_n = chapter.n | as_str %}
+                            <a class="lens-entry lens-entry--small library-book__chapter-lenses" href="{{ i18n_url::content(path='library/' ~ book_slug ~ '/lenses/' ~ chapter.n, lang=detected_lang) | safe }}">
+                                <span class="lens-mark" aria-hidden="true"></span>
+                                <span>{{ trans(key="libraryLensesChapter", lang=detected_lang) | replace(from="%n%", to=lens_chapter_n) }}</span>
+                                <span class="lens-entry__arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                            </a>
                             {% endif %}
                         </header>
 
@@ -863,6 +895,12 @@
                             </ul>
                             {% endif %}
                         </div>
+                        {% if has_lenses %}
+                        <a href="{{ lens_url | safe }}" class="library-book__btn library-book__btn--secondary library-book__lenses-btn">
+                            <span class="lens-mark" aria-hidden="true"></span>
+                            <span>{{ trans(key="libraryLensesRead", lang=detected_lang) }}</span>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
 

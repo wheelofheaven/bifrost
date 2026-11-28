@@ -1,4 +1,7 @@
 {% import "macros/link.html" as link_macros %}
+{% import "macros/i18n-url.html" as i18n_url %}
+{# i18n_url above serves partials/navbar.html (Read menu): an include
+   resolves macros against this template, not its own imports. #}
 {% set detected_lang = "en" %}
 {#- 404.html renders without current_path / current_url; give the partials the 404's own address. -#}
 {% if current_path is not defined %}{% set_global current_path = "/404.html" %}{% endif %}

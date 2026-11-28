@@ -35,6 +35,24 @@
     {% endif %}
 {% endfor %}
 
+{# Books with a four-lens reader: data/library/{slug}/lenses/_lenses.json
+   with at least one `stable` chapter. Drives the "Read in four lenses" row
+   and the card badges; the reader lives at library/{slug}/lenses/. #}
+{% set_global lensed_books = [] %}
+{% set_global lensed_slugs = [] %}
+{% for book_entry in sorted_catalog %}
+    {% if book_entry.status == "complete" or book_entry.status == "partial" %}
+        {% set lens_index = load_data(path="data/library/" ~ book_entry.slug ~ "/lenses/_lenses.json", required=false) %}
+        {% if lens_index and lens_index.chapters %}
+            {% set lens_stable = lens_index.chapters | filter(attribute="status", value="stable") %}
+            {% if lens_stable | length > 0 %}
+                {% set_global lensed_books = lensed_books | concat(with=book_entry) %}
+                {% set_global lensed_slugs = lensed_slugs | concat(with=book_entry.slug) %}
+            {% endif %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
 <div class="wiki-section">
     <div class="wiki-section__container">
         <!-- Header with title + count + search -->
@@ -57,6 +75,43 @@
                        autocomplete="off">
             </div>
         </header>
+
+        {% if lensed_books | length > 0 %}
+        <section class="library-lenses" id="library-lenses" aria-labelledby="library-lenses-heading">
+            <h2 class="library-lenses__title" id="library-lenses-heading">
+                <span class="lens-mark" aria-hidden="true"></span>
+                {{ trans(key="libraryLensesRead", lang=detected_lang) }}
+            </h2>
+            <ul class="library-lenses__list">
+                {% for lens_book in lensed_books %}
+                    {% set l_meta = load_data(path="data/library/" ~ lens_book.slug ~ "/_meta.json", required=false) %}
+                    {% set_global l_book_data = false %}
+                    {% if l_meta %}
+                        {% set_global l_book_data = l_meta %}
+                    {% else %}
+                        {% set_global l_book_data = load_data(path="data/library/" ~ lens_book.slug ~ ".json", required=false) %}
+                    {% endif %}
+                    {% if l_book_data %}
+                    {% set l_title = library_macros::get_book_title(book_data=l_book_data, lang=detected_lang) | trim %}
+                    {% set l_index = load_data(path="data/library/" ~ lens_book.slug ~ "/lenses/_lenses.json", required=false) %}
+                    {% set l_chapters = l_index.chapters | filter(attribute="status", value="stable") | map(attribute="chapter") | sort %}
+                    {% set l_first = l_chapters | first %}
+                    {% set l_last = l_chapters | last %}
+                    {% set l_lang = library_macros::lang_name(code=lens_book.originalLang | default(value="")) | trim | replace(from="Ancient ", to="") %}
+                    <li class="library-lenses__item">
+                        <a class="library-lenses__link" href="{{ i18n_url::content(path='library/' ~ lens_book.slug ~ '/lenses', lang=detected_lang) | safe }}">
+                            <span class="library-lenses__text">
+                                <span class="library-lenses__name">{{ l_title }} {{ l_first }}{% if l_last != l_first %}–{{ l_last }}{% endif %}:</span>
+                                {{ trans(key="libraryLensesLede", lang=detected_lang) | replace(from="%lang%", to=l_lang) }}
+                            </span>
+                            <span class="library-lenses__arrow" aria-hidden="true">{% include "partials/icons/arrow-right.html" %}</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
 
         {# Featured texts — editor-curated set of the most prominent
            books. Books opt in via `featuredOrder` (positive integer) in
@@ -106,6 +161,9 @@
                     <span class="wiki-featured__card-eyebrow">{{ f_tradition_name }}</span>
                     {% endif %}
                     <h3 class="wiki-featured__card-title">{{ f_title }}</h3>
+                    {% if book_entry.slug in lensed_slugs %}
+                    <span class="lens-badge"><span class="lens-mark" aria-hidden="true"></span>{{ trans(key="libraryLensesBadge", lang=detected_lang) }}</span>
+                    {% endif %}
                     {% if f_desc %}
                     {# `| safe` keeps autoescape from re-escaping the entities markdown emits (Q&amp;A → Q&amp;amp;A). #}
                     <p class="wiki-featured__card-desc">{{ f_desc | markdown(inline=true) | striptags | safe }}</p>
@@ -384,6 +442,12 @@
                                     {% if is_translation_program %}
                                     <a href="https://docs.wheelofheaven.world/contributing/content/source-text-translation/" class="wiki-card__program-chip" rel="noopener" title="{{ trans(key='libraryWoHTranslationProgramTitle', lang=detected_lang) }}">
                                         <span class="wiki-card__program-chip-label">{{ trans(key="libraryWoHTranslationProgram", lang=detected_lang) }}</span>
+                                    </a>
+                                    {% endif %}
+
+                                    {% if book_entry.slug in lensed_slugs %}
+                                    <a href="{{ i18n_url::content(path='library/' ~ book_entry.slug ~ '/lenses', lang=detected_lang) | safe }}" class="lens-badge lens-badge--link" aria-label="{{ title }}: {{ trans(key='libraryLensesRead', lang=detected_lang) }}">
+                                        <span class="lens-mark" aria-hidden="true"></span>{{ trans(key="libraryLensesBadge", lang=detected_lang) }}
                                     </a>
                                     {% endif %}
 
@@ -672,6 +736,10 @@ document.addEventListener('DOMContentLoaded', function() {
         const featured = document.getElementById('library-featured');
         if (featured) {
             featured.classList.toggle('hidden', filtersActive);
+        }
+        const lenses = document.getElementById('library-lenses');
+        if (lenses) {
+            lenses.classList.toggle('hidden', filtersActive);
         }
 
         if (noResults) {
